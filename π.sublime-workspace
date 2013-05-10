@@ -1,0 +1,1267 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"arg",
+				"arguments"
+			],
+			[
+				"app",
+				"appendChild"
+			],
+			[
+				"call",
+				"callback"
+			],
+			[
+				"lo",
+				"log"
+			],
+			[
+				"con",
+				"console"
+			],
+			[
+				"head",
+				"header	Tag"
+			],
+			[
+				"sourc",
+				"sourcefile"
+			],
+			[
+				"json",
+				"json_encode"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"U",
+				"UPDATEREADY"
+			],
+			[
+				"cont",
+				"container"
+			],
+			[
+				"pos",
+				"pos-r	position: relative;"
+			],
+			[
+				"re",
+				"no-repeat"
+			],
+			[
+				"border-c",
+				"border-color"
+			],
+			[
+				"radar",
+				"radarfront"
+			],
+			[
+				"di",
+				"display"
+			],
+			[
+				"bac",
+				"background-color"
+			],
+			[
+				"backgr",
+				"background-image"
+			],
+			[
+				"show",
+				"showsecondtag"
+			],
+			[
+				"backgroun",
+				"background-color"
+			],
+			[
+				"sub",
+				"subscribe"
+			],
+			[
+				"strpo",
+				"strrpos"
+			],
+			[
+				"_ini",
+				"_init"
+			],
+			[
+				"sess",
+				"session_pid"
+			],
+			[
+				"for",
+				"fork"
+			],
+			[
+				"curr",
+				"currentSessionId"
+			],
+			[
+				"getmy",
+				"getmypid"
+			],
+			[
+				"pcnt",
+				"pcntl_exec"
+			],
+			[
+				"is_nu",
+				"is_numeric"
+			],
+			[
+				"swit",
+				"switch	switch …"
+			],
+			[
+				"conn",
+				"connectToRedis"
+			],
+			[
+				"error",
+				"error_reporting"
+			],
+			[
+				"date",
+				"date_format"
+			],
+			[
+				"th",
+				"this"
+			],
+			[
+				"ng",
+				"ng-model"
+			],
+			[
+				"print",
+				"print_r"
+			],
+			[
+				"WORK",
+				"WORKER_DIR"
+			],
+			[
+				"is_a",
+				"is_array"
+			],
+			[
+				"line",
+				"linecounter"
+			],
+			[
+				"cur",
+				"curls"
+			],
+			[
+				"number",
+				"numbers"
+			],
+			[
+				"md5",
+				"md5_file"
+			],
+			[
+				"file",
+				"filemtime"
+			],
+			[
+				"res",
+				"result"
+			],
+			[
+				"this",
+				"thisrow"
+			],
+			[
+				"cach",
+				"cache_id"
+			],
+			[
+				"cache",
+				"cache_id"
+			],
+			[
+				"send",
+				"sendReply"
+			],
+			[
+				"strto",
+				"strtolower"
+			],
+			[
+				"TO",
+				"todo	@todo"
+			],
+			[
+				"req",
+				"request"
+			],
+			[
+				"pack",
+				"packedNumber"
+			],
+			[
+				"at",
+				"auto"
+			],
+			[
+				"curl",
+				"curlresult"
+			],
+			[
+				"serv",
+				"serviceUrl"
+			],
+			[
+				"isn",
+				"is_null"
+			],
+			[
+				"in",
+				"inputfile"
+			],
+			[
+				"pa",
+				"param	@param"
+			],
+			[
+				"we",
+				"webservice"
+			],
+			[
+				"inp",
+				"inputfileOrSingleNumber"
+			],
+			[
+				"kroma",
+				"kromaviews"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"Test",
+				"TestWebService"
+			],
+			[
+				"cu",
+				"curlerrno"
+			],
+			[
+				"CURLOPT_P",
+				"CURLOPT_POSTFIELDS"
+			],
+			[
+				"c",
+				"connection"
+			],
+			[
+				"POST",
+				"POSTDATA"
+			],
+			[
+				"fget",
+				"fgetcsv"
+			],
+			[
+				"arra",
+				"array"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "srv/format_javascript.php",
+			"settings":
+			{
+				"buffer_size": 5462,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/assets/css/head.css",
+			"settings":
+			{
+				"buffer_size": 1721,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/assets/css/pi.syntax.js.css",
+			"settings":
+			{
+				"buffer_size": 635,
+				"line_ending": "Windows",
+				"name": "div.box {"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.js",
+			"settings":
+			{
+				"buffer_size": 2080,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.dom.js",
+			"settings":
+			{
+				"buffer_size": 294,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "srv/php/pi.util.file.highlight.php",
+			"settings":
+			{
+				"buffer_size": 1134,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "<!doctype html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <title> khroma</title>\n  <meta name=\"viewport\"  content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">  \n  \n\n  <link rel=\"stylesheet\" href=\"../../assets/css/head.css\">\n\n  <link rel=\"shortcut icon\" href=\"assets/ico/favicon.ico\">\n  <link rel=\"apple-touch-icon-precomposed\" sizes=\"114x114\" href=\"assets/ico/icon-114.png\">\n  <link rel=\"apple-touch-icon-precomposed\" sizes=\"72x72\"   href=\"assets/ico/icon-72.png\">\n  <link rel=\"apple-touch-icon-precomposed\"                 href=\"assets/ico/icon-57.png\">\n</head>\n\n<body>\n\n  <header>\n    <div class=\"centered\">\n      <svg version=\"1.1\" id=\"logo\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         width=\"176px\" height=\"176px\" viewBox=\"0 0 640 640\" enable-background=\"new 0 0 640 640\" xml:space=\"preserve\">\n        <g enable-background=\"new    \">\n          <path fill=\"#f8f8f2\" d=\"M517.35,558.28H345.67V224.31h-69.69v333.97H106.29V224.31H68.92V88.54h486.83V224.31H517.36v333.97H517.35z\"/>\n        </g>\n      </svg>\n    </div>  \n\n    <div class=\"highlight\">\n\n        <p class=\"keyword\">var</p> \n          <span class=\"default\">π </span><span class=\"keyword\">=</span><span class=\"default\">π </span><span class=\"keyword\">||</span><span class=\"default\">{}</span>\n    </div>\n\n    <div class=\"right\">\n      <ul>\n        <li>π.srv</li>\n        <li>π.app</li>\n        <li>π.session</li>\n        <li>π.worker</li>\n        <li>π.dom</li>\n        <li>π.debug</li>\n      </ul>\n    </div>  \n\n    <div class=\"right\">\n      <ul>\n        <li>π.files</li>\n        <li>π.files.list</li>\n        <li>π.events</li>\n        <li>π.events.list</li>\n        <li>π.plugins</li>\n        <li>π.plugins.list</li>\n      </ul>\n    </div>  \n\n  </header>\n\n  <article>\n    <div id=\"article\" class=\"code\" />\n  </article>\n\n  <script>\n\n  var\n\n    path    = \"../../assets/js/\",\n    cursor  = document.getElementsByTagName (\"head\")[0] || document.documentElement,\n    script  = null,\n\n    include = {\n\n      //includes for lazy-loading\n      js: {\n\n        // an empty object means we want the core module without submodules\n        core    : {\n          worker : true\n        },\n        app     : {},\n        dom     : {},\n//        session : true,\n        events  : {},\n        util    : {},\n        plugins : {}\n      },\n  \n      css  : {},\n  \n      img  : {},\n  \n      data : {}\n    };\n\n\n    // load pi.js\n  var \n\n    head    = document.getElementsByTagName (\"head\")[0] || document.documentElement,\n    script  = document.createElement('script'),\n    path    = '../../assets/js/pi.'; \n    script.async  = false;\n    script.defer  = true;\n    script.src    = path + 'js';\n    script.self   = script;\n    script.onload = function (event) {\n      console.log('script.onload: ', this.src);\n      console.log('this.self: ', this.self);\n    };\n\n    script.onerror = function (event) {\n      console.log('script.onerror: ', this.src);\n    };\n\n\n\n    cursor.insertBefore( script, head.firstChild ); \n\n\n    // load modules synchronously, but deferred\n    for (var module in include.js) {\n\n      script = document.createElement('script');\n      script.async  = false;\n      script.defer  = true;\n      script.src    = path + module + '.js';\n      cursor.insertBefore( script, head.firstChild ); \n\n      // then load submodules asynchronously and deferred\n      for (var submodule in include.js[module]) {\n        script = document.createElement('script');\n        script.async  = true;\n        script.defer  = true;\n        script.src    = path + module + '.js';\n        cursor.insertBefore(script, head.firstChild); \n      }\n    }\n\n  </script>\n\n  <script>\n\n    function getSource (module) {\n\n      var \n        uri = '../../../srv/php/pi.util.file.highlight.php?file=',\n        req = new XMLHttpRequest();\n      \n      req.onload = function() { \n\n        var \n          html = \"\",\n          obj  = JSON.parse(this.responseText),\n          div  = document.getElementById('article');\n\n        if(!!obj.data) {\n          obj.data.forEach( function(val, idx) {\n            html += val;\n          });\n\n        var \n          fragment  = document.createDocumentFragment(),\n          container = document.createElement(\"div\");\n\n        container.innerHTML = html;\n        fragment.appendChild(container);\n        div.appendChild(fragment); \n       }\n      };\n\n      req.onerror = function(error) { \n        console.log(error);\n      };\n\n      req.open(\"get\", uri + module, true);\n      req.send();\n    }\n\n\n  // test it\n\n    getSource('pi.session');\n\n  </script>\n\n</body>\n\n</html>",
+			"file": "src/apps/dev/index.html",
+			"file_size": 4937,
+			"file_write_time": 130126118265616392,
+			"settings":
+			{
+				"buffer_size": 4733,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.util.syntax-highlighter.js",
+			"settings":
+			{
+				"buffer_size": 75,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.util.js",
+			"settings":
+			{
+				"buffer_size": 888,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.plugins.example.js",
+			"settings":
+			{
+				"buffer_size": 2136,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.events.js",
+			"settings":
+			{
+				"buffer_size": 8353,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/assets/js/pi.plugins.js",
+			"settings":
+			{
+				"buffer_size": 309,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/C/tcc.sublime-build",
+	"command_palette":
+	{
+		"height": 335.0,
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Contr",
+				"Package Control: Discover Packages"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 402.0
+	},
+	"console":
+	{
+		"height": 216.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/public/webservice/job/index.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.dom.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.core.main.js",
+		"/C/util/loadaliases.cmd",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/server/kromaviews.appserver.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.events.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.session.background-helper.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.session.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.worker.example.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/app/dev/index.html",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.system.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.dom.scroll-listener.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.util.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.debug.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.session.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.core.main.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/π.app.cache.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/css/head.css",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/lib/pubsub.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/examples.pubsub.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/lib/PubSub.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/common/kromaviews.sessionhandler.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/public/assets/js/lib/kromaviews.sessionhandler.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/app/dev/index.html",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/games/cocos2d/src/README.txt",
+		"/C/Program Files (x86)/Cocos2D JavaScript/README.txt",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/libraries/processing-1.4.1.js",
+		"/D/Work/VG Mobil/ads.utilities/common/kroma.swarm.js",
+		"/D/Work/VG Mobil/ads.utilities/README.md",
+		"/D/Work/VG Mobil/ads.utilities/common/assets/js/lib/ads.utilities.js",
+		"/D/Work/VG Mobil/ads.utilities/templates/boilerplate/index.html",
+		"/D/Work/VG Mobil/dokumenter/gaming_presentation.txt",
+		"/D/Torrent/In The Plex - How Google Thinks, Works, and Shapes Our Lives by Steven Levy OnlyGill/In The Plex - How Google Thinks, Works, and Shapes Our Lives by Steven Levy.epub",
+		"/D/Torrent/The Democracy Project - David Graeber.epub",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/games/enchant.js/wise9-enchant.js-31c9d38/sound.as",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/games/enchant.js/wise9-enchant.js-31c9d38/README.md",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/games/css_game/readme.txt",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/libraries/phonegap-2.6.0/plugins/PushPlugin/README.md",
+		"/C/Program Files (x86)/Android/android-sdk/samples/android-17/ApiDemos/README.txt",
+		"/C/Users/ballefrans/Pictures/fillefrans/Lotten",
+		"/C/Users/ballefrans/Desktop/P2kCommander-V6.0.0/P2kAutostart_readme.txt",
+		"/C/Windows/System32/drivers/etc/HOSTS",
+		"/F/Crack/core.nfo",
+		"/D/install/dev/lazarus-ccr-xdev_toolkit/xdev_toolkit/ReadMe.txt",
+		"/F/Crack/readme.txt",
+		"/C/Program Files (x86)/Android/android-sdk/samples/android-17/ApiDemos/AndroidManifest.xml",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/libraries/phonegap-2.6.0/plugins/PushPlugin/Example/server/pushAPNS.rb",
+		"/D/Work/MOBILE/appframework/README.md",
+		"/D/Work/VG Mobil/ads.utilities/common/frameworks/intel/assets/css/icons.css",
+		"/D/Work/VG Mobil/ads.utilities/examples/sandbox.juurlink.org/test.php",
+		"/D/Work/VG Mobil/ads.utilities/examples/sandbox.juurlink.org/test2.txt",
+		"/D/Work/VG Mobil/ads.utilities/examples/kroma/index.html",
+		"/D/Work/VG Mobil/ads.utilities/examples/kroma/demos/movie/index.php",
+		"/D/Work/VG Mobil/ads.utilities/common/frameworks/intel/assets/js/lib/jq.ui.min.js",
+		"/D/Work/VG Mobil/ads.utilities/examples/snippets/bell.js",
+		"/D/Work/VG Mobil/ads.utilities/examples/sandbox.juurlink.org/index.html@C=D;O=A",
+		"/D/Work/VG Mobil/ads.utilities/common/assets/js/lib/digitalfruit-limejs/README.md",
+		"/D/dev/tcc/examples/hello_win.c",
+		"/D/Work/VG Mobil/ads.utilities/doc/server.setup.md",
+		"/C/Users/ballefrans/Desktop/attachment47.ics",
+		"/D/install/Windows/tools/gcalicsimporter/gcalicsimporter.exe.config",
+		"/C/Users/ballefrans/AppData/Roaming/Sublime Text 2/Packages/SublimeLinter/SublimeLinter.sublime-settings",
+		"/C/Users/ballefrans/AppData/Roaming/Sublime Text 2/Packages/C/tcc.sublime-build",
+		"/C/Users/ballefrans/AppData/Roaming/Sublime Text 2/Packages/C++/C++.sublime-build",
+		"/D/Work/VG Mobil/ads.utilities/doc/KRAVLISTE.txt",
+		"/D/Work/VG Mobil/ads.utilities/ads.utilities.sublime-project",
+		"/D/Work/VG Mobil/ads.utilities/doc/README.md",
+		"/D/Work/VG Mobil/templates/kroma/examples/js/helper.js",
+		"/D/Work/VG Mobil/templates/kroma/examples/humans.txt",
+		"/D/Work/VG Mobil/mars/dnb/index.html",
+		"/D/Work/VG Mobil/mars/dnb/send.php",
+		"/D/Work/VG Mobil/mars/dnb/loginterface.class.abstract.php",
+		"/D/Work/VG Mobil/mars/skjema/index.html",
+		"/D/Work/VG Mobil/Mars/Ford/Kuga/assets/css/styles.css",
+		"/D/Work/VG Mobil/mars/ford/kuga/assets/js/script.js",
+		"/C/Users/ballefrans/AppData/Roaming/AutoIt3/Examples/COM/Scriptomatic.au3",
+		"/C/Users/ballefrans/AppData/Roaming/AutoIt3/Examples/Helpfile/_ArrayConcatenate.au3",
+		"/C/Users/ballefrans/AppData/Roaming/Sublime Text 2/Packages/Web Inspector/swi.sublime-settings",
+		"/D/Work/VG Mobil/Mars/Ford/Kuga/ford_kuga_iframe.html",
+		"/D/Work/VG Mobil/mars/ford/kuga/production/Mindshare Interaction EMEA - Ford Norway JavaScript Redirects for FONO-FNO-050-01-MOE.htm",
+		"/D/dev/php/php.ini",
+		"/C/Program Files (x86)/Apache Software Foundation/Apache2.2/conf/httpd.conf",
+		"/D/Work/VG Mobil/mars/ford/kuga/m/index.php",
+		"/D/Work/VG Mobil/mars/ford/kuga/ford_kuga_iframe.html",
+		"/D/Work/VG Mobil/Mars/Ford/Kuga/index.html",
+		"/C/Windows/System32/drivers/etc/HOSTS.real",
+		"/D/dev/NginX/html/index.html",
+		"/D/dev/NginX/conf/nginx.conf",
+		"/D/Torrent/Mediafour.MacDrive.Pro.9.0.5.14-rrtn/ReadMeFirst.txt",
+		"/D/Work/VG Mobil/Mars/Ford/Kuga/Active Park _180x500.html",
+		"/D/dev/NginX/docs/README",
+		"/D/Torrent/Sothink SWF Decompiler v7.0.4395 with CRACK/swf/READ ME.txt",
+		"/D/install/dev/design/sprites-demo/sprites-demo/css/sprite.css",
+		"/D/Work/VG Mobil/Mars/Ford/Kuga/flash/Active Park _180x500/LIBRARY/park waves rear.xml",
+		"/D/Work/VG Mobil/Mars/Ford/Kuga/active_park_180x500_files/runtime0.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/public/assets/js/libs/pubsub.js.old",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/test/jquery-require-sample/r.js",
+		"/D/Work/KROMA/KromaViews/Doc/work2013.txt",
+		"/D/install/dev/kaazing-websocket-gateway-html5-3.5.1/kaazing-websocket-gateway-html5-3.5.1/README.txt",
+		"/C/Program Files/Kaazing/HTML5/3.5/Gateway/web/base/samples/html5-javascript/ws.html",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/public/test/client.html",
+		"/M/README.md",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/panel.php",
+		"/D/install/Windows/HandyCacheRC3.1.0.0.361/install.txt",
+		"/C/Users/ballefrans/AppData/Local/Temp/Temp1_HandyCacheRC3.1.0.0.361.zip/Extensions/readme.txt",
+		"/E/Torrent/Windows 8 32bit 64bit MSDN/KMSnano/ReadMe KMSnano.txt",
+		"/C/Users/ballefrans/AppData/Local/Temp/Temp1_HandyCacheRC3.1.0.0.361.zip/install.txt",
+		"/E/ei.cfg",
+		"/E/sources/ei.cfg",
+		"/E/Applications/Rainmeter/Rainmeter.ini",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/server/KromaAppProtocolSamples.json",
+		"/D/dev/php/outlet-1.0RC1/outlet-1.0RC1/INSTALL",
+		"/D/dev/lazarus/components/redis/packages/lazarus/readme.txt",
+		"/D/install/Windows/HandyCacheRC3.1.0.0.361/stat.txt",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pluginhook/config.inc.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/index.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/bmfTest.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/Benchmarker.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/config.inc.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/plugins/index.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/index.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/options.php",
+		"/C/Users/ballefrans/AppData/Roaming/Sublime Text 2/Packages/PlainTasks/messages/Tutorial.todo",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/KromaViews.todo",
+		"/D/dev/gitflow/README.mdown",
+		"/D/dev/gitflow/contrib/msysgit-install.cmd",
+		"/C/Users/ballefrans/Desktop/msysgit-install.cmd",
+		"/C/Users/ballefrans/Desktop/85983875.mp4"
+	],
+	"find":
+	{
+		"height": 45.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"D:\\Work\\KROMA\\KromaViews\\dev-server\\home\\kroma\\dev\\www\\pi\\",
+			"D:\\Work\\KROMA\\KromaViews\\dev-server\\home\\kroma\\scripts\\kromaviews\\php\\server\\",
+			"D:\\Work\\KROMA\\KromaViews\\dev-server\\home\\kroma\\scripts\\kromaviews\\php\\server\\*.php",
+			"D:\\Work\\KROMA\\KromaViews\\dev-server\\home\\kroma\\scripts\\kromaviews\\php\\server",
+			"D:\\dev\\lazarus",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"π",
+			"html",
+			" frag",
+			"frag",
+			"holder",
+			"voff",
+			"content",
+			"Request",
+			"request",
+			"Request",
+			"request",
+			"Request",
+			"request",
+			"debug",
+			"owner",
+			"callback",
+			"){",
+			"  // ",
+			"htmlsrc",
+			"hand",
+			"events",
+			"oReq",
+			"pi",
+			"p>",
+			"aw_",
+			"=\"",
+			"aw_",
+			"-out",
+			"3s",
+			"main",
+			"π.",
+			"pi.",
+			"        ",
+			"||",
+			" :",
+			":",
+			"π",
+			"> <",
+			"appCache",
+			",",
+			"plugins",
+			"=",
+			"_",
+			"\"",
+			"[",
+			"* ",
+			"[http",
+			"](",
+			"showsecondtag",
+			"\"",
+			"\\",
+			"save_path",
+			"Linear",
+			"{",
+			"relative",
+			"absolute",
+			"BODY",
+			"$topic",
+			"connectToRedis",
+			"pear ",
+			"pe",
+			"extension_",
+			"$_SESSION",
+			"session",
+			"SetErrorMode",
+			"FreeLibrary",
+			"getenv",
+			"initsocket",
+			"getenv",
+			"protected ",
+			"msg",
+			"= function",
+			"tracking",
+			"kromaviews",
+			"KromaViews",
+			"RedisBridge",
+			"currentSessionId",
+			"spawn",
+			"../",
+			"SlickGrid",
+			"slickgrid",
+			"js/jqu",
+			"/api",
+			"kromaviews",
+			"app",
+			"assets",
+			"say($msg)",
+			"Wine",
+			"wine",
+			"Wine",
+			"wine",
+			"Wine",
+			"wine",
+			"Wine",
+			"wine",
+			"Wine",
+			"wine",
+			"Wine",
+			"wines",
+			"Wines",
+			"wines",
+			"  src",
+			"type=\"text/javascript\"",
+			"[JOBS]",
+			"headerlist",
+			"microtime",
+			"->say",
+			"isset",
+			"$curl",
+			"curl",
+			"CURL",
+			"curl",
+			"master",
+			"curl_arr",
+			"sendReply",
+			"sendRe		",
+			"private",
+			"say",
+			"_connection"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "srv/format_javascript.php",
+					"settings":
+					{
+						"buffer_size": 5462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3533,
+								3533
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1450.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/assets/css/head.css",
+					"settings":
+					{
+						"buffer_size": 1721,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1721,
+								1721
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1161.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/assets/css/pi.syntax.js.css",
+					"settings":
+					{
+						"buffer_size": 635,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								635
+							]
+						],
+						"settings":
+						{
+							"auto_name": "div.box {",
+							"syntax": "Packages/CSS/CSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 233.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/assets/js/pi.js",
+					"settings":
+					{
+						"buffer_size": 2080,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								944,
+								944
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 987.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/assets/js/pi.dom.js",
+					"settings":
+					{
+						"buffer_size": 294,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								111,
+								111
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 88.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "srv/php/pi.util.file.highlight.php",
+					"settings":
+					{
+						"buffer_size": 1134,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/apps/dev/index.html",
+					"settings":
+					{
+						"buffer_size": 4733,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4494,
+								4494
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4582.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/assets/js/pi.util.syntax-highlighter.js",
+					"settings":
+					{
+						"buffer_size": 75,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								46,
+								46
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/assets/js/pi.util.js",
+					"settings":
+					{
+						"buffer_size": 888,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								860,
+								860
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 929.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/assets/js/pi.plugins.example.js",
+					"settings":
+					{
+						"buffer_size": 2136,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								869,
+								869
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 563.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/assets/js/pi.events.js",
+					"settings":
+					{
+						"buffer_size": 8353,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								448,
+								448
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "src/assets/js/pi.plugins.js",
+					"settings":
+					{
+						"buffer_size": 309,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								188,
+								188
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 263.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 47.0
+	},
+	"input":
+	{
+		"height": 45.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 186.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"src/assets/js/π.core.sessionhandler.js"
+			],
+			[
+				"read",
+				"ads.utilities/README.md"
+			],
+			[
+				"inde",
+				"index.html"
+			],
+			[
+				"in",
+				"index.html"
+			],
+			[
+				"foif",
+				"ford_kuga_iframe.html"
+			],
+			[
+				"css",
+				"assets/css/styles.css"
+			],
+			[
+				"fo",
+				"ford_kuga_iframe.html"
+			],
+			[
+				"ind",
+				"index.html"
+			],
+			[
+				"clien",
+				"public/test/client.html"
+			],
+			[
+				"head",
+				"public/assets/inc/header-main.html"
+			],
+			[
+				"we",
+				"server/websocket.server.php"
+			],
+			[
+				"conf",
+				"server/config/kromaviews.config.php"
+			],
+			[
+				"app",
+				"server/kromaviews.appserver.php"
+			],
+			[
+				"client",
+				"public/client.html"
+			],
+			[
+				"heama",
+				"public/assets/inc/header-main.html"
+			],
+			[
+				"timers",
+				"server/timers.class.php"
+			],
+			[
+				".css",
+				"public/assets/css/brand.css"
+			],
+			[
+				"index2",
+				"public/test/index2.html"
+			],
+			[
+				"headm",
+				"public/assets/inc/header-main.html"
+			],
+			[
+				"nav",
+				"public/assets/inc/nav.html"
+			],
+			[
+				"hema",
+				"public/assets/inc/header-main.html"
+			],
+			[
+				"kromaviews.report.controllers.js",
+				"public/assets/app/kromaviews.reports.controllers.js"
+			],
+			[
+				"view",
+				"public/views-report.php"
+			],
+			[
+				"viewsrepo",
+				"public/views-report.php"
+			],
+			[
+				"header",
+				"public/assets/inc/header-main.html"
+			],
+			[
+				"timer",
+				"server/timers.class.php"
+			],
+			[
+				"viin",
+				"public/views-index.php"
+			],
+			[
+				"confi",
+				"server/config/kromaviews.config.php"
+			],
+			[
+				"apps",
+				"server/kromaviews.appserver.php"
+			],
+			[
+				"func",
+				"server/utility/kromaviews.functions.php"
+			],
+			[
+				"extserv",
+				"public/externalservices/direktinfo.inc.php"
+			],
+			[
+				"query",
+				"public/query_externalservice.php"
+			],
+			[
+				"viewind",
+				"public/views-index.php"
+			],
+			[
+				"foot",
+				"public/assets/inc/footer.html"
+			],
+			[
+				"foor",
+				"public/assets/inc/footer-main.html"
+			],
+			[
+				"viewsinde",
+				"public/views-index.php"
+			],
+			[
+				"webserv",
+				"public/webservice/job/index.php"
+			],
+			[
+				"publiincheader",
+				"public/assets/inc/header-main.html"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/games/bama/bama_game.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 219.0,
+	"status_bar_visible": true
+}

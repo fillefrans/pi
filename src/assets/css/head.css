@@ -1,0 +1,104 @@
+/**
+ *    π.head.css
+ *
+ *    CSS that loads in the head-section. Only what's needed for initial page load 
+ *    should be included in this file. Other style sheets will load asynchronously
+ *    as needed by components that need them, or in background preloading.
+ *
+ *
+ *    Rules for style sheets are: 
+ *    
+ *    don't add custom classes to tags  (a, ul, li, &c)
+ *    create custom classes and namespaces
+ *    inherit as much as possible
+ *    no bloat
+ *    no #'s
+ *
+ *  @author Johan Telstad, jt@kroma.no, 2013
+ * 
+**/
+
+
+
+
+  /* The ugly */
+
+  .hwaccel {  
+    -webkit-transform: translateZ(0); 
+  }
+
+
+
+
+  /* The good */
+
+  body {
+    font-family       : "ubuntu mono", menlo, consolas, "droid sans mono", monospace;
+    font-size         : large;
+    font-weight       : 700;
+    background-color  : #272822;
+    color             : #f8f8f2;
+    margin            : 0;
+  }
+
+  header {
+    margin: 0;
+    background-color : #b21;
+    height: 240px;
+  }
+
+  ul {
+    list-style-type : none;
+  }
+
+
+  .layout {
+        
+  }
+
+  .layout.right {
+    float:right;
+  }
+
+  .layout.left {
+    float:left;
+  }
+
+  .layout.inline {
+    display: inline;
+  }
+
+  .layout.block {
+    display: block;
+  }
+
+
+
+
+/* The beautiful */
+
+  .code {
+    background-color: #272822;
+  }
+
+  .highlight {
+
+  }
+
+  .highlight.comment { color: #75715e; }
+  .highlight.keyword { color: #f92672; }
+  .highlight.default { color: #f8f8f2; }
+  .highlight.htmlsrc { color: #f92672; }
+  .highlight.string  { color: #e6db74; }
+
+
+  .behaviours {
+  
+  }
+
+  .behaviours.ease-out {
+    -webkit-transition: all 0.1s ease-out;
+       -moz-transition: all 0.1s ease-out;
+         -o-transition: all 0.1s ease-out;
+            transition: all 0.1s ease-out;
+  }

@@ -1,0 +1,23 @@
+KRAVLISTE
+----------------------------------------------------
+
+
+Løsningen må:
+
+1. Være raskt
+2. Bruke minne effektivt
+3. Bruke allerede lastede script (jQuery, jQuery Mobile)
+4. Gi tilgang til native events som accelerometer, kamera, etc
+5. Fungere like bra i iframe som i en div.
+6. Kunne brukes samtidig av flere annonser på samme side, med 
+6. Fungere cross-browser og cross-device (Mobile + Tablet)
+7. Kunne registrere/avregistrere event listeners
+8. Være modulær i den forstand at ny funksjonalitet kan hektes på et globalt objekt.
+
+
+Testes på:
+
+  Android
+  iPhone
+  iPad
+  Windows Phone

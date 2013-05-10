@@ -1,0 +1,213 @@
+<!--
+
+https://developers.google.com/maps/documentation/javascript/controls?hl=sv-SE
+
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+
+    <!-- 
+      - optional set language
+      - optional set region 
+      - optional set Maps Javascript API version, example v=3.4
+    -->
+    <script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD0bTlp8oOiInGnovWSRelxYSPgfuZQJ_I&sensor=true&language=no&region=NO">
+    </script>
+    <script type="text/javascript">
+
+      //Kroma own geo variables
+
+      var myMapHeadingStatus = 0;
+
+      var map;
+
+      function initialize() {
+
+        var mapOptions = {
+          //Zoom is from 0 to 18
+          zoom: 18,
+          center: new google.maps.LatLng(59.915132, 10.743757),
+          mapTypeId: google.maps.MapTypeId.SATELLITE,
+          disableDefaultUI: true,
+          navigationControl: true,
+          scrollwheel: false,
+          streetViewControl: false,
+        }
+        
+        //define map and settings
+        map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        
+
+        var marker = new google.maps.Marker({
+            position: map.getCenter(),
+            map: map,
+            title: 'Justine Bieber'
+          });
+
+
+          /* Can be use to alert when they move away to come back or something
+          google.maps.event.addListener(map, 'center_changed', function() {
+            // 3 seconds after the center of the map has changed, pan back to the
+            // marker.
+            window.setTimeout(function() {
+              map.panTo(marker.getPosition());
+            }, 3000);
+          });
+          */
+
+
+        google.maps.event.addListener(map, 'bounds_changed', function() {
+          //redrawMarkers(locations, myLatlng);
+        });
+
+        google.maps.event.addListener(map, 'click', function(event) {
+          //placeMarker(event.latLng);
+          map.setCenter(marker.getPosition());
+          //map.setZoom(18);
+
+        });
+
+       google.maps.event.addListener(map, 'zoom_changed', function() {
+          displayZoomInfo();
+        });
+
+       displayZoomInfo();
+        //Add a message to the position
+        attachSecretMessage(marker);
+
+        //default roadmap
+        //map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+        //sattelite
+        //map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+        //hybrid
+        //map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+        //terrain
+        //map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+
+        //you can set view angle 45 on satellite type
+        //map.setTilt(45);
+        //you can seat the rotation from the view 0-360
+        //map.setHeading(90);
+    
+      }
+
+
+
+
+      function loadScript() {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "http://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&sensor=TRUE_OR_FALSE&callback=initialize";
+        document.body.appendChild(script);
+      }
+
+      function displayZoomInfo() {
+          var zoomLevel = map.getZoom();
+          document.getElementById('zoominfo').innerHTML = "Zoom:"+zoomLevel;
+          //map.setCenter(myLatLng);
+          //infowindow.setContent('Zoom: ' + zoomLevel);
+      }
+
+
+      function changeMapType(theType) {
+        
+        switch (theType) {
+          case "ROADMAP":
+            map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+            break;
+          case "SATELLITE":
+            map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+            break;
+          case "HYBRID":
+              map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+            break;
+          case "TERRAIN":
+            map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+            break;
+          default:
+            break;
+        }
+      }
+
+
+      function attachSecretMessage(marker) {
+        var message = "Hi, this is my store <a href='www.kroma.no'>Kroma</>";
+        var infowindow = new google.maps.InfoWindow(
+            { content: message,
+              size: new google.maps.Size(50,50)
+            });
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+        });
+      }
+
+
+      /* use to place a marker where you click */
+      function placeMarker(location) {
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+
+        map.setCenter(location);
+      }
+
+      //Use this if you want to set widths when different user agents
+      function detectBrowser() {
+        var useragent = navigator.userAgent;
+        var mapdiv = document.getElementById("map_canvas");
+
+        if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+          mapdiv.style.width = '100%';
+          mapdiv.style.height = '100%';
+        } else {
+          mapdiv.style.width = '600px';
+          mapdiv.style.height = '800px';
+        }
+      }
+    
+
+      /* TODO MAKE IT WORK ROTATING
+      function autoRotate() {
+        // Determine if we're showing aerial imagery
+        if (map.getTilt() != 0) {
+          map.setHeading(180);
+          setTimeout('map.setHeading(270)',3000);
+          setTimeout('map.setHeading(0)',6000);
+          setTimeout('map.setHeading(90)',9000);
+        }
+      }
+      */
+
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+
+    <!-- some options for manipulating map -->
+    <div id="zoominfo"></div>
+    <input type="button" onclick="changeMapType('ROADMAP');" value="Roadmap">
+    <input type="button" onclick="changeMapType('SATELLITE');" value="Satelitte">
+    <input type="button" onclick="changeMapType('HYBRID');" value="Hybrid">
+    <input type="button" onclick="changeMapType('TERRAIN');" value="Terrain">
+
+    <input type="button" onclick="rotateMap();" value="Rotatemap">
+
+    <!-- Canvas for the map -->
+    <div id="map_canvas" style="width:100%; height:100%"></div>
+
+    <script type="text/javascript" src="live.js"></script>
+
+  </body>
+</html>

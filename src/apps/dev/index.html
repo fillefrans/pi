@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title> khroma</title>
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  
+
+  <link rel="stylesheet" href="../../assets/css/head.css">
+
+  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
+  <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+</head>
+
+<body>
+
+  <header>
+    <div class="centered">
+      <svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         width="176px" height="176px" viewBox="0 0 640 640" enable-background="new 0 0 640 640" xml:space="preserve">
+        <g enable-background="new    ">
+          <path fill="#f8f8f2" d="M517.35,558.28H345.67V224.31h-69.69v333.97H106.29V224.31H68.92V88.54h486.83V224.31H517.36v333.97H517.35z"/>
+        </g>
+      </svg>
+    </div>  
+
+    <div class="highlight">
+
+        <p class="keyword">var</p> 
+          <span class="default">π </span><span class="keyword">=</span><span class="default">π </span><span class="keyword">||</span><span class="default">{}</span>
+    </div>
+
+    <div class="right">
+      <ul>
+        <li>π.srv</li>
+        <li>π.app</li>
+        <li>π.session</li>
+        <li>π.worker</li>
+        <li>π.dom</li>
+        <li>π.debug</li>
+      </ul>
+    </div>  
+
+    <div class="right">
+      <ul>
+        <li>π.files</li>
+        <li>π.files.list</li>
+        <li>π.events</li>
+        <li>π.events.list</li>
+        <li>π.plugins</li>
+        <li>π.plugins.list</li>
+      </ul>
+    </div>  
+
+  </header>
+
+  <article>
+    <div id="article" class="code" />
+  </article>
+
+  <script>
+
+  var
+
+    path    = "../../assets/js/",
+    cursor  = document.getElementsByTagName ("head")[0] || document.documentElement,
+    script  = null,
+
+    include = {
+
+      //includes for lazy-loading
+      js: {
+
+        // an empty object means we want the core module without submodules
+        core    : {
+          worker : true
+        },
+        app     : {},
+        dom     : {},
+//        session : true,
+        events  : {},
+        util    : {},
+        plugins : {}
+      },
+  
+      css  : {},
+  
+      img  : {},
+  
+      data : {}
+    };
+
+
+    // load pi.js
+  var 
+
+    head    = document.getElementsByTagName ("head")[0] || document.documentElement,
+    script  = document.createElement('script'),
+    path    = '../../assets/js/pi.'; 
+    script.async  = false;
+    script.defer  = true;
+    script.src    = path + 'js';
+    script.self   = script;
+    script.onload = function (event) {
+      console.log('script.onload: ', this.src);
+      console.log('this.self: ', this.self);
+    };
+
+    script.onerror = function (event) {
+      console.log('script.onerror: ', this.src);
+    };
+
+
+
+    cursor.insertBefore( script, head.firstChild ); 
+
+
+    // load modules synchronously, but deferred
+    for (var module in include.js) {
+
+      script = document.createElement('script');
+      script.async  = false;
+      script.defer  = true;
+      script.src    = path + module + '.js';
+      cursor.insertBefore( script, head.firstChild ); 
+
+      // then load submodules asynchronously and deferred
+      for (var submodule in include.js[module]) {
+        script = document.createElement('script');
+        script.async  = true;
+        script.defer  = true;
+        script.src    = path + module + '.js';
+        cursor.insertBefore(script, head.firstChild); 
+      }
+    }
+
+  </script>
+
+  <script>
+
+    function getSource (module) {
+
+      var 
+        uri = '../../../srv/php/pi.util.file.highlight.php?file=',
+        req = new XMLHttpRequest();
+      
+      req.onload = function() { 
+
+        var 
+          html = "",
+          obj  = JSON.parse(this.responseText),
+          div  = document.getElementById('article');
+
+        if(!!obj.data) {
+          obj.data.forEach( function(val, idx) {
+            html += val;
+          });
+
+        var 
+          fragment  = document.createDocumentFragment(),
+          container = document.createElement("div");
+
+        container.innerHTML = html;
+        fragment.appendChild(container);
+        div.appendChild(fragment);
+        }
+      };
+
+      req.onerror = function(error) { 
+        console.log(error);
+      };
+
+      req.open("get", uri + module, true);
+      req.send();
+    }
+
+
+  // test it
+
+    getSource('pi.session');
+
+  </script>
+
+</body>
+
+</html>
