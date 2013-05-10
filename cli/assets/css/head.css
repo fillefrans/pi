@@ -3,7 +3,7 @@
  *
  *    CSS that loads in the head-section. Only what's needed for initial page load 
  *    should be included in this file. Other style sheets will load asynchronously
- *    as needed by components that need them, or in background preloading.
+ *    as needed by components that require them, or in background preloading.
  *
  *
  *    Rules for style sheets are: 
@@ -33,16 +33,16 @@
   /* The good */
 
   body {
-    font-family       : "ubuntu mono", menlo, consolas, "droid sans mono", monospace;
+    font-family       : monospace;
     font-size         : large;
     font-weight       : 700;
     background-color  : #272822;
     color             : #f8f8f2;
     margin            : 0;
+    padding           : 0;
   }
 
   header {
-    margin: 0;
     background-color : #b21;
     height: 240px;
   }
@@ -51,6 +51,9 @@
     list-style-type : none;
   }
 
+
+
+/*  The ugly */
 
   .layout {
         
@@ -72,31 +75,34 @@
     display: block;
   }
 
+  .layout.box {
+    display: inline-block;
+  }
 
 
 
 /* The beautiful */
 
-  .code {
-    background-color: #272822;
-  }
-
   .highlight {
 
   }
 
-  .highlight.comment { color: #75715e; }
-  .highlight.keyword { color: #f92672; }
-  .highlight.default { color: #f8f8f2; }
-  .highlight.htmlsrc { color: #f92672; }
-  .highlight.string  { color: #e6db74; }
+
+/* monokai, obviously */
+  .highlight.comment  { color: #75715e; }
+  .highlight.keyword  { color: #f92672; }
+  .highlight.default  { color: #f8f8f2; }
+  .highlight.reserved { color: #f92672; }
+  .highlight.variable { color: #f92672; }
+  .highlight.number   { color: #f92672; }
+  .highlight.string   { color: #e6db74; }
 
 
-  .behaviours {
+  .behaviour {
   
   }
 
-  .behaviours.ease-out {
+  .behaviour.ease-out {
     -webkit-transition: all 0.1s ease-out;
        -moz-transition: all 0.1s ease-out;
          -o-transition: all 0.1s ease-out;

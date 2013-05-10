@@ -15,7 +15,11 @@ Call it LAAP (Libraries as a platform).
 
 
 ###Who is it for?
-Skilled programmers who feel the need for speed. 
+Web nerds who feel the need for speed. 
+
+
+###Who decides what goes in it?
+[jsPerf](http://jsperf.com)
 
 
 
@@ -39,19 +43,66 @@ Skilled programmers who feel the need for speed.
 * PhoneGap for app installation and HW access
 
 
-###Rules for developers:
+###Rules for front-end developers:
+
+####General
+* No modernizr, we are requiring HTML5
+* No jQuery or plugins, pretty please
+* You can obviously write your own plugins any old way you want, as long as you don't touch the top namespace.
+* If you really must have the $, use jqMobi
+* No Google Maps. Use [Leaflet](http://leafletjs.com/) instead.
+* Vector graphics are preferred for almost everything.
+* GreenSock timelines are preferred over .animate()
+* Use inline base64-encoding for small images and SVGs ()
+* Don't load a whole font for the title or name of the website. Use SVG, or a Google Fonts subset
+* Use SVG for logos. Think Retina.
+* CSS injection of SVG is best practice for now
+* Type your CSS, and use inheritance. Don't copy-paste
+* Never tolerate a flash of unstyled content
+* Don't use !important
+* Don't attach event listeners outside of your container. Send a message.
+* Don't overuse the pubsub, especially not the pub
+
+
+
 
 ####Client-side
 * No jQuery. Ever.
 * Don't use Sizzle, either. Native functions are faster.
 * Don't include any frameworks.
 * Use messaging between components, and don't attach events to DOM elements. Only components should touch the DOM.
+* Only the most minimal efforts to correct browser idiosyncrasies.
 * Components have to be self-contained.
 * It is allowed to create new subnodes under the π.app and π.plugins namespaces.
 * Absolutely no XHR in the core library, even as a fallback. If you need compatibility, use Zepto or similar.
 * Write tests. Or don't. We don't care.
 * Resist any inclination towards MVC and two-way data binding.
-* No coffeescript, less, sass, or other languages that has to be compiled
+* No coffeescript, less, sass, or other languages that has to be compiled server-side
+* Use CSS inheritance over explicit setting of every property 
+* Use documentFragment when adding more than one node to the DOM
+
+
+
+
+###Rules for developers:
+
+####General
+* No bloat. 
+* Use HTML5 best practice
+
+
+####Client-side
+* No jQuery. Ever.
+* Don't use Sizzle, either. Native functions are faster.
+* Don't include any frameworks.
+* Use messaging between components, and don't attach events to DOM elements. Only components should touch the DOM.
+* Only the most minimal efforts to correct browser idiosyncrasies. If one particular browser is very bad at something, then we encourage you to expose that suckiness by not pandering to it. When encounter turd, don't sprinkle with sugar.
+* Components have to be self-contained.
+* It is allowed to create new subnodes under the π.app and π.plugins namespaces.
+* Absolutely no XHR in the core library, even as a fallback. If you need compatibility, use Zepto or similar. 
+* Write tests. Or don't. We don't care.
+* Resist any inclination towards MVC and two-way data binding.
+* No coffeescript, less, sass, or other languages that has to be compiled server-side
 * Use CSS inheritance over explicit setting of every property 
 * Use documentFragment when adding more than one node to the DOM
 

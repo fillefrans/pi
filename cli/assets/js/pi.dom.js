@@ -14,11 +14,25 @@
 
 
     __init : function (DBG) {
-      window.addEventListener("resize", this.__onresize, false);
+      window.addEventListener("focus", this.__onfocus, false);
+      window.addEventListener("blur", this.__onblur, false);
     },
 
-    __onresize : function (event) {
+    __onfocus : function (event) {
       
+    },
+
+    __onblur : function (event) {
+      
+    },
+
+    beginUpdate() {
+      // like Lazarus
+    },
+
+    endUpdate() {
+      // and again
+
     }
 
   };
