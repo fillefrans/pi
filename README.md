@@ -23,7 +23,7 @@ Skilled programmers in search of speed.
 * Salvatore Sanfilippo, creator of Redis
 * The GreenSock Animation Library
 * Higgins' PubSub
-* J. Paul Morrison's Flow Based Programming
+* J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipaedia](http://en.wikipedia.org/wiki/Flow-based_programming)
 
 
 
