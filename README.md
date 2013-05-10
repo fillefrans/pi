@@ -32,31 +32,43 @@ Skilled programmers in search of speed.
 * HTML5 native functions
 * WebSockets
 * Varnish
-* Redis
+* Apache
 * PHP
-
+    - [phpredis](https://github.com/igbinary/igbinary) 
+* Redis
 * PhoneGap for app installation and HW access
 
 
 ###Rules for developers:
 
 ####Client-side
-* Don't use jQuery. Ever.
-* Don't use Sizzle either
-* Don't use any frameworks.
-* Use messaging between components, don't attach events to the DOM.
+* No jQuery. Ever.
+* Don't use Sizzle, either. Native functions are faster.
+* Don't include any frameworks.
+* Use messaging between components, and don't attach events to DOM elements. Only components should touch the DOM.
 * Components have to be self-contained.
 * It is allowed to create new subnodes under the π.app and π.plugins namespaces.
-* Absolutely no AJAX in the core library, even as a fallback. If you need compatibility, use Zepto or similar.
+* Absolutely no XHR in the core library, even as a fallback. If you need compatibility, use Zepto or similar.
+* Write tests. Or don't. We don't care.
+* Resist any inclination towards MVC and two-way data binding.
+* No coffeescript, less, sass, or other languages that has to be compiled
+* Use CSS inheritance over explicit setting of every property 
+* Use documentFragment when adding more than one node to the DOM
+
 
 
 ####Server-side
+* Replace the PHP serializer with [igbinary](https://github.com/igbinary/igbinary).
+* Compile Redis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
+* Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient.
 * Use Redis for session storage and application shared memory.
 * Use Redis pubsub for sending messages to app clients.
 * Don't use Node.js.
-* Don't use MongoDB either
-* No REST servers
-
+* Don't use MongoDB.
+* No REST servers, please. (Unless you create a REST interface accessible over the session WebSocket)
+* No Java.
+* No application that runs in a VM, including Haskell, Erlang, Node.js, &c
+* There will not be a Windows version of the server software
 
 
 #Documentation
@@ -65,7 +77,7 @@ When we're at version 0.6 or thereabouts.
 
 ##Mission
 
-To create a HTML5/CSS3/JS template/scaffolding that can serve as a starting point for Ads and Landing Pages. Incorporate mobile optimized client-side services accessible to creatives.
+To create a HTML5/CSS3/JS template/scaffolding that can serve as a starting point for apps and web Pages. Incorporate mobile optimized client-side services accessible to creatives.
 
 Collect examples and demos in a git repository. Use shared assets where possible.
 
