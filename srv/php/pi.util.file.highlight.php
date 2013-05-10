@@ -11,12 +11,12 @@
 
   
   if(!isset($_REQUEST['file'])) {
-    $sourcefile = '../../src/assets/js/pi.js';
+    $sourcefile = '../../cli/assets/js/pi.js';
   }
   else {
-    $sourcefile = '../../src/assets/js/' . $_REQUEST['file'] . '.js';
+    $sourcefile = '../../cli/assets/js/' . $_REQUEST['file'] . '.js';
     if(!file_exists($sourcefile)) {
-      $sourcefile = '../../src/assets/js/pi.js';
+      $sourcefile = '../../cli/assets/js/pi.js';
     }
   }
 

@@ -23,7 +23,7 @@ Skilled programmers who feel the need for speed.
 * [Salvatore Sanfilippo](http://antirez.com/latest/0), creator of [Redis](http://redis.io)
 * The [GreenSock Animation Library](http://greensock.com)
 * Higgins' PubSub
-* J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipaedia](http://en.wikipedia.org/wiki/Flow-based_programming)
+* J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
 
 
 
@@ -66,9 +66,8 @@ Skilled programmers who feel the need for speed.
 * Don't use Node.js.
 * Don't use MongoDB.
 * No REST servers, please. (Unless you create a REST interface accessible over the session WebSocket)
-* No Java.
-* No application that runs in a VM, including Haskell, Erlang, Node.js, &c
-* There will not be a Windows version of the server software
+* No server application that runs in a VM, including Java, Node.js, Erlang, &c
+* There will not be a Windows version of the server
 
 
 #Documentation
@@ -122,6 +121,20 @@ We don't believe in frameworks.
 * [ApnsPHP: Apple Push Notification & Feedback Provider](https://github.com/duccio/ApnsPHP)
 
 
+###Tools
+* [git-flow - A collection of Git extensions to provide high-level repository operations for Vincent Driessen's branching model](https://github.com/nvie/gitflow)
+* [git-flow cheat sheet](http://danielkummer.github.io/git-flow-cheatsheet/)
+* [USB Remote debugging with Chrome Developer Tools](https://developers.google.com/chrome-developer-tools/docs/remote-debugging#remote-debugging)
+* [LiveReload - Chrome extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=en)
+* [Google PageSpeed](https://developers.google.com/speed/pagespeed/)
+* [mod_pagespeed - Apache module for automatic mobile optimization](https://developers.google.com/speed/pagespeed/mod)
+* [mod_spdy - Apache SPDY module](http://code.google.com/p/mod-spdy/) -> [browser support](http://caniuse.com/spdy/)
+* [Charles Web Debugging Proxy - Windows/Mac/Linux](http://www.charlesproxy.com/)
+* [Google Developers - Web Performance Best Practices](https://developers.google.com/speed/docs/best-practices/)
+* [CanIuse.com - HTML5 browser support by feature](http://caniuse.com)
+* [jsPerf — JavaScript performance playground](http://jsperf.com/)
+
+
 ### Extras
 * [Push Notification Plugin for iOS and Android](https://github.com/phonegap-build/PushPlugin)
 * [howler.js - Modern Web Audio Javascript Library](http://goldfirestudios.com/blog/104/howler.js-Modern-Web-Audio-Javascript-Library)
@@ -153,20 +166,6 @@ A global JavaScript object π will have a basic bootstrapper, and preload script
 * [Accelerometer & Gyro Tutorial](http://www.instructables.com/id/Accelerometer-Gyro-Tutorial/)
 * [iOS/Android Device orientation (pitch, yaw, roll). Is it better with accelerometer or gyroscope?](http://stackoverflow.com/questions/9304160/ios-android-device-orientation-pitch-yaw-roll-is-it-better-with-acceleromet?rq=1)
 * [MDN - Orientation and motion data explained](https://developer.mozilla.org/en-US/docs/DOM/Orientation_and_motion_data_explained)
-
-
-###Tools
-* [git-flow - A collection of Git extensions to provide high-level repository operations for Vincent Driessen's branching model](https://github.com/nvie/gitflow)
-* [USB Remote debugging with Chrome Developer Tools](https://developers.google.com/chrome-developer-tools/docs/remote-debugging#remote-debugging)
-* [LiveReload - Chrome extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=en)
-* [Google PageSpeed](https://developers.google.com/speed/pagespeed/)
-* [mod_pagespeed - Apache module for automatic mobile optimization](https://developers.google.com/speed/pagespeed/mod)
-* [mod_spdy - Apache SPDY module](http://code.google.com/p/mod-spdy/) -> [browser support](http://caniuse.com/spdy/)
-* [Charles Web Debugging Proxy - Windows/Mac/Linux](http://www.charlesproxy.com/)
-* [Google Developers - Web Performance Best Practices](https://developers.google.com/speed/docs/best-practices/)
-* [CanIuse.com - HTML5 browser support by feature](http://caniuse.com)
-* [jsPerf — JavaScript performance playground](http://jsperf.com/)
-
 
 
 
