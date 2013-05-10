@@ -11,17 +11,17 @@ Built to satisfy the need for speed, π aims to be the race car to $'s bus.
 
 Call it LAAP (Libraries as a platform).
 
-π is also very Client-Server oriented. It creates a common namespace across the client and server, with seamless access to server data and events. 
+π is Client-Server oriented. It creates a common namespace across the client and server, with seamless bi-directional access to data, events and pubsub.
 
 
 ###Who is it for?
-Skilled programmers in search of speed. 
+Skilled programmers who feel the need for speed. 
 
 
 
 ###Inspirations
-* Salvatore Sanfilippo, creator of Redis
-* The GreenSock Animation Library
+* [Salvatore Sanfilippo](http://antirez.com/latest/0), creator of [Redis](http://redis.io)
+* The [GreenSock Animation Library](http://greensock.com)
 * Higgins' PubSub
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipaedia](http://en.wikipedia.org/wiki/Flow-based_programming)
 
