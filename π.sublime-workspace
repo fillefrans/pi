@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"inline",
+				"inline-block"
+			],
+			[
 				"arg",
 				"arguments"
 			],
@@ -284,32 +288,7 @@
 	"buffers":
 	[
 		{
-			"file": "srv/format_javascript.php",
-			"settings":
-			{
-				"buffer_size": 5462,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/assets/css/head.css",
-			"settings":
-			{
-				"buffer_size": 1721,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/assets/css/pi.syntax.js.css",
-			"settings":
-			{
-				"buffer_size": 635,
-				"line_ending": "Windows",
-				"name": "div.box {"
-			}
-		},
-		{
-			"file": "src/assets/js/pi.js",
+			"file": "cli/assets/js/pi.js",
 			"settings":
 			{
 				"buffer_size": 2080,
@@ -317,69 +296,72 @@
 			}
 		},
 		{
-			"file": "src/assets/js/pi.dom.js",
+			"contents": "<!doctype html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <title>by Kroma</title>\n  <meta name=\"viewport\"  content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">  \n  \n\n  <link rel=\"stylesheet\" href=\"../../assets/css/head.css\">\n\n  <link rel=\"shortcut icon\" href=\"assets/ico/favicon.ico\">\n  <link rel=\"apple-touch-icon-precomposed\" sizes=\"114x114\" href=\"assets/ico/icon-114.png\">\n  <link rel=\"apple-touch-icon-precomposed\" sizes=\"72x72\"   href=\"assets/ico/icon-72.png\">\n  <link rel=\"apple-touch-icon-precomposed\"                 href=\"assets/ico/icon-57.png\">\n</head>\n\n<body>\n\n  <header>\n    <div class=\"centered\">\n      <svg version=\"1.1\" id=\"logo\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         width=\"200px\" height=\"200px\" viewBox=\"0 0 640 640\" style=\"enable-background:new 0 0 640 640;\" xml:space=\"preserve\">\n        <g>\n          <path d=\"M620.47,72.82c-5.95,16.47-11.38,39.06-16.28,67.78c-44.48-3.16-90.02-3.86-136.61-2.11\n            c-10.5,101.59-15.75,184.25-15.75,247.98c0,43.44,7.88,74.97,23.64,94.58c11.2,13.66,31.88,20.48,62,20.48l4.72,4.2l2.11,22.59\n            l-3.16,5.78l-105.08,24.69c-0.7,0-3.33-0.36-7.88-1.05c-14.72-8.41-26.98-23.11-36.78-44.13c-11.22-23.13-16.81-48.34-16.81-75.66\n            c0-70.05,13.83-169.88,41.5-299.48c-36.44,0-96.33,0.36-179.69,1.06c-9.45,119.78-15.23,255.16-17.33,406.13l-68.83,25.73\n            l-15.23-11.03c11.2-53.94,21.7-123.81,31.52-209.63c7.7-70.05,15.58-140.09,23.64-210.16c-3.84,0-9.28,0-16.28,0\n            c-8.06-0.34-13.31-0.53-15.77-0.53c-61.66,0-96.67,18.22-105.08,54.64l-2.63,1.58l-25.73-0.53c0.34-10.84,2.09-28.7,5.25-53.58\n            c5.25-25.56,12.42-42.91,21.53-52.02c10.86-11.2,28.55-16.81,53.08-16.81c18.2,0,74.42,0,168.64,0\n            c93.88,0.34,142.91,0.52,147.11,0.52c88.27,0,153.23-3.67,194.92-11.03L620.47,72.82z\"/>\n        </g>\n      </svg>\n\n<!--       <svg version=\"1.1\" id=\"logo\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         width=\"176px\" height=\"176px\" viewBox=\"0 0 640 640\" enable-background=\"new 0 0 640 640\" xml:space=\"preserve\">\n        <g enable-background=\"new    \">\n          <path fill=\"#f8f8f2\" d=\"M517.35,558.28H345.67V224.31h-69.69v333.97H106.29V224.31H68.92V88.54h486.83V224.31H517.36v333.97H517.35z\"/>\n        </g>\n      </svg>\n -->    </div>  \n\n    <div class=\"box highlight\">\n      <pre>\n        <code>\n          <span class=\"default\">π</span><span class=\"keyword\">=</span><span class=\"default\">π</span><span class=\"keyword\">||</span><span class=\"default\">{}</span>\n        </code>\n      </pre>\n    </div>\n\n    <div class=\"left\">\n      <ul>\n        <li>π.srv</li>\n        <li>π.app</li>\n        <li>π.session</li>\n        <li>π.worker</li>\n        <li>π.dom</li>\n        <li>π.debug</li>\n      </ul>\n    </div>  \n\n    <div class=\"left\">\n      <ul>\n        <li>π.files</li>\n        <li>π.files.list</li>\n        <li>π.events</li>\n        <li>π.events.list</li>\n        <li>π.plugins</li>\n        <li>π.plugins.list</li>\n      </ul>\n    </div>  \n\n  </header>\n\n  <article>\n    <div id=\"article\" class=\"code\" />\n  </article>\n\n  <script>\n\n\n</body>\n\n</html>",
+			"file": "cli/apps/dev/index.html",
+			"file_size": 6243,
+			"file_write_time": 130126783707765673,
 			"settings":
 			{
-				"buffer_size": 294,
+				"buffer_size": 3312,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "srv/php/pi.util.file.highlight.php",
+			"file": "cli/apps/dev/assets/js/app.bootstrap.js",
 			"settings":
 			{
-				"buffer_size": 1134,
+				"buffer_size": 2755,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "<!doctype html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <title> khroma</title>\n  <meta name=\"viewport\"  content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">  \n  \n\n  <link rel=\"stylesheet\" href=\"../../assets/css/head.css\">\n\n  <link rel=\"shortcut icon\" href=\"assets/ico/favicon.ico\">\n  <link rel=\"apple-touch-icon-precomposed\" sizes=\"114x114\" href=\"assets/ico/icon-114.png\">\n  <link rel=\"apple-touch-icon-precomposed\" sizes=\"72x72\"   href=\"assets/ico/icon-72.png\">\n  <link rel=\"apple-touch-icon-precomposed\"                 href=\"assets/ico/icon-57.png\">\n</head>\n\n<body>\n\n  <header>\n    <div class=\"centered\">\n      <svg version=\"1.1\" id=\"logo\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         width=\"176px\" height=\"176px\" viewBox=\"0 0 640 640\" enable-background=\"new 0 0 640 640\" xml:space=\"preserve\">\n        <g enable-background=\"new    \">\n          <path fill=\"#f8f8f2\" d=\"M517.35,558.28H345.67V224.31h-69.69v333.97H106.29V224.31H68.92V88.54h486.83V224.31H517.36v333.97H517.35z\"/>\n        </g>\n      </svg>\n    </div>  \n\n    <div class=\"highlight\">\n\n        <p class=\"keyword\">var</p> \n          <span class=\"default\">π </span><span class=\"keyword\">=</span><span class=\"default\">π </span><span class=\"keyword\">||</span><span class=\"default\">{}</span>\n    </div>\n\n    <div class=\"right\">\n      <ul>\n        <li>π.srv</li>\n        <li>π.app</li>\n        <li>π.session</li>\n        <li>π.worker</li>\n        <li>π.dom</li>\n        <li>π.debug</li>\n      </ul>\n    </div>  \n\n    <div class=\"right\">\n      <ul>\n        <li>π.files</li>\n        <li>π.files.list</li>\n        <li>π.events</li>\n        <li>π.events.list</li>\n        <li>π.plugins</li>\n        <li>π.plugins.list</li>\n      </ul>\n    </div>  \n\n  </header>\n\n  <article>\n    <div id=\"article\" class=\"code\" />\n  </article>\n\n  <script>\n\n  var\n\n    path    = \"../../assets/js/\",\n    cursor  = document.getElementsByTagName (\"head\")[0] || document.documentElement,\n    script  = null,\n\n    include = {\n\n      //includes for lazy-loading\n      js: {\n\n        // an empty object means we want the core module without submodules\n        core    : {\n          worker : true\n        },\n        app     : {},\n        dom     : {},\n//        session : true,\n        events  : {},\n        util    : {},\n        plugins : {}\n      },\n  \n      css  : {},\n  \n      img  : {},\n  \n      data : {}\n    };\n\n\n    // load pi.js\n  var \n\n    head    = document.getElementsByTagName (\"head\")[0] || document.documentElement,\n    script  = document.createElement('script'),\n    path    = '../../assets/js/pi.'; \n    script.async  = false;\n    script.defer  = true;\n    script.src    = path + 'js';\n    script.self   = script;\n    script.onload = function (event) {\n      console.log('script.onload: ', this.src);\n      console.log('this.self: ', this.self);\n    };\n\n    script.onerror = function (event) {\n      console.log('script.onerror: ', this.src);\n    };\n\n\n\n    cursor.insertBefore( script, head.firstChild ); \n\n\n    // load modules synchronously, but deferred\n    for (var module in include.js) {\n\n      script = document.createElement('script');\n      script.async  = false;\n      script.defer  = true;\n      script.src    = path + module + '.js';\n      cursor.insertBefore( script, head.firstChild ); \n\n      // then load submodules asynchronously and deferred\n      for (var submodule in include.js[module]) {\n        script = document.createElement('script');\n        script.async  = true;\n        script.defer  = true;\n        script.src    = path + module + '.js';\n        cursor.insertBefore(script, head.firstChild); \n      }\n    }\n\n  </script>\n\n  <script>\n\n    function getSource (module) {\n\n      var \n        uri = '../../../srv/php/pi.util.file.highlight.php?file=',\n        req = new XMLHttpRequest();\n      \n      req.onload = function() { \n\n        var \n          html = \"\",\n          obj  = JSON.parse(this.responseText),\n          div  = document.getElementById('article');\n\n        if(!!obj.data) {\n          obj.data.forEach( function(val, idx) {\n            html += val;\n          });\n\n        var \n          fragment  = document.createDocumentFragment(),\n          container = document.createElement(\"div\");\n\n        container.innerHTML = html;\n        fragment.appendChild(container);\n        div.appendChild(fragment); \n       }\n      };\n\n      req.onerror = function(error) { \n        console.log(error);\n      };\n\n      req.open(\"get\", uri + module, true);\n      req.send();\n    }\n\n\n  // test it\n\n    getSource('pi.session');\n\n  </script>\n\n</body>\n\n</html>",
-			"file": "src/apps/dev/index.html",
-			"file_size": 4937,
-			"file_write_time": 130126118265616392,
+			"file": "cli/assets/js/pi.worker.pi.js",
 			"settings":
 			{
-				"buffer_size": 4733,
+				"buffer_size": 615,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/assets/js/pi.util.syntax-highlighter.js",
+			"file": "README.md",
 			"settings":
 			{
-				"buffer_size": 75,
+				"buffer_size": 11820,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/assets/js/pi.util.js",
+			"file": "cli/assets/js/pi.events.input.js",
 			"settings":
 			{
-				"buffer_size": 888,
+				"buffer_size": 1892,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/assets/js/pi.plugins.example.js",
+			"file": "cli/assets/js/pi.dom.js",
 			"settings":
 			{
-				"buffer_size": 2136,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/assets/js/pi.events.js",
-			"settings":
-			{
-				"buffer_size": 8353,
+				"buffer_size": 497,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/assets/js/pi.plugins.js",
+			"contents": "  /**\n   *\n   * π.fonts\n   *\n   * @author Johan Telstad, jt@kroma.no, 2013\n   *\n   */\n\n\n  var \n    π = π || {};\n\n  π.files = π.files || {\n\n\n    __init : function (DBG) {\n      window.addEventListener(\"resize\", this.__onresize, false);\n    },\n\n    __onresize : function (event) {\n      \n    },\n\n    upload : function(file, host) {\n\n    }\n\n  };\n  ",
+			"file": "cli/assets/js/pi.files.js",
+			"file_size": 379,
+			"file_write_time": 130126814232871609,
 			"settings":
 			{
-				"buffer_size": 309,
+				"buffer_size": 345,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "cli/assets/css/head.css",
+			"settings":
+			{
+				"buffer_size": 2138,
 				"line_ending": "Windows"
 			}
 		}
@@ -420,6 +402,18 @@
 	},
 	"file_history":
 	[
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.plugins.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.events.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.plugins.example.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.util.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.util.syntax-highlighter.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/apps/dev/index.html",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/srv/php/pi.util.file.highlight.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.dom.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/js/pi.js",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/css/pi.syntax.js.css",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/srv/format_javascript.php",
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/src/assets/css/head.css",
 		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/php/public/webservice/job/index.php",
 		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/cli/assets/js/pi.dom.js",
 		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pi/cli/assets/js/pi.core.main.js",
@@ -535,19 +529,7 @@
 		"/D/dev/lazarus/components/redis/packages/lazarus/readme.txt",
 		"/D/install/Windows/HandyCacheRC3.1.0.0.361/stat.txt",
 		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/pluginhook/config.inc.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/index.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/bmfTest.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/Benchmarker.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/config.inc.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/plugins/index.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/index.php",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/plugins/php-plugin-hook-system-1.1/package/options.php",
-		"/C/Users/ballefrans/AppData/Roaming/Sublime Text 2/Packages/PlainTasks/messages/Tutorial.todo",
-		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/scripts/kromaviews/KromaViews.todo",
-		"/D/dev/gitflow/README.mdown",
-		"/D/dev/gitflow/contrib/msysgit-install.cmd",
-		"/C/Users/ballefrans/Desktop/msysgit-install.cmd",
-		"/C/Users/ballefrans/Desktop/85983875.mp4"
+		"/D/Work/KROMA/KromaViews/dev-server/home/kroma/dev/www/benchmark/index.php"
 	],
 	"find":
 	{
@@ -571,6 +553,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"ont",
+			"dom",
 			"π",
 			"html",
 			" frag",
@@ -707,94 +691,12 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 8,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "srv/format_javascript.php",
-					"settings":
-					{
-						"buffer_size": 5462,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3533,
-								3533
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1450.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/assets/css/head.css",
-					"settings":
-					{
-						"buffer_size": 1721,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1721,
-								1721
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1161.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/assets/css/pi.syntax.js.css",
-					"settings":
-					{
-						"buffer_size": 635,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								635
-							]
-						],
-						"settings":
-						{
-							"auto_name": "div.box {",
-							"syntax": "Packages/CSS/CSS.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 233.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/assets/js/pi.js",
+					"file": "cli/assets/js/pi.js",
 					"settings":
 					{
 						"buffer_size": 2080,
@@ -804,8 +706,8 @@
 						"selection":
 						[
 							[
-								944,
-								944
+								104,
+								104
 							]
 						],
 						"settings":
@@ -815,17 +717,183 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 987.0,
+						"translation.y": 204.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "cli/apps/dev/index.html",
+					"settings":
+					{
+						"buffer_size": 3312,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3295,
+								3295
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2785.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "cli/apps/dev/assets/js/app.bootstrap.js",
+					"settings":
+					{
+						"buffer_size": 2755,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								67,
+								67
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "cli/assets/js/pi.worker.pi.js",
+					"settings":
+					{
+						"buffer_size": 615,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								609,
+								609
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 262.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "src/assets/js/pi.dom.js",
+					"file": "README.md",
 					"settings":
 					{
-						"buffer_size": 294,
+						"buffer_size": 11820,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2014,
+								2014
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1712.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "cli/assets/js/pi.events.input.js",
+					"settings":
+					{
+						"buffer_size": 1892,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								170,
+								170
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "cli/assets/js/pi.dom.js",
+					"settings":
+					{
+						"buffer_size": 497,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								437,
+								437
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 262.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "cli/assets/js/pi.files.js",
+					"settings":
+					{
+						"buffer_size": 345,
 						"regions":
 						{
 						},
@@ -843,202 +911,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 88.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "srv/php/pi.util.file.highlight.php",
-					"settings":
-					{
-						"buffer_size": 1134,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/apps/dev/index.html",
-					"settings":
-					{
-						"buffer_size": 4733,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4494,
-								4494
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4582.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "src/assets/js/pi.util.syntax-highlighter.js",
-					"settings":
-					{
-						"buffer_size": 75,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								46,
-								46
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 204.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 8,
-					"file": "src/assets/js/pi.util.js",
+					"file": "cli/assets/css/head.css",
 					"settings":
 					{
-						"buffer_size": 888,
+						"buffer_size": 2138,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								860,
-								860
+								998,
+								998
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"syntax": "Packages/CSS/CSS.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 929.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "src/assets/js/pi.plugins.example.js",
-					"settings":
-					{
-						"buffer_size": 2136,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								869,
-								869
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 563.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "src/assets/js/pi.events.js",
-					"settings":
-					{
-						"buffer_size": 8353,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								448,
-								448
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "src/assets/js/pi.plugins.js",
-					"settings":
-					{
-						"buffer_size": 309,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								188,
-								188
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 263.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

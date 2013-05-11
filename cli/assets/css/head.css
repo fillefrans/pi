@@ -40,6 +40,7 @@
     color             : #f8f8f2;
     margin            : 0;
     padding           : 0;
+    display           : flex;
   }
 
   header {
@@ -108,3 +109,25 @@
          -o-transition: all 0.1s ease-out;
             transition: all 0.1s ease-out;
   }
+
+  .magically {
+
+  }
+
+  .magically.appear {
+
+  }
+
+  .magically.appear.fade {
+    -webkit-transition: all 0.1s ease-out;
+       -moz-transition: all 0.1s ease-out;
+         -o-transition: all 0.1s ease-out;
+            transition: all 0.1s ease-out;
+  }
+
+
+  .magically.disappear {
+    
+  }
+
+
