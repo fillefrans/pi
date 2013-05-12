@@ -20,9 +20,9 @@
 <body>
 
   <header>
-    <div class="centered">
+    <div id="logo" class="tween">
       <svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-         width="200px" height="200px" viewBox="0 0 640 640" style="enable-background:new 0 0 640 640;" xml:space="preserve">
+         fill="#ffffff" width="120px" height="120px" viewBox="0 0 640 640" style="enable-background:new 0 0 640 640;" xml:space="preserve">
         <g>
           <path d="M620.47,72.82c-5.95,16.47-11.38,39.06-16.28,67.78c-44.48-3.16-90.02-3.86-136.61-2.11
             c-10.5,101.59-15.75,184.25-15.75,247.98c0,43.44,7.88,74.97,23.64,94.58c11.2,13.66,31.88,20.48,62,20.48l4.72,4.2l2.11,22.59
@@ -42,45 +42,39 @@
         </g>
       </svg>
  -->    </div>  
+  </header>
 
-    <div class="box highlight">
+    <div class="box">
       <pre>
-        <code>
-          <span class="default">π</span><span class="keyword">=</span><span class="default">π</span><span class="keyword">||</span><span class="default">{}</span>
+        <code class="highlight">
+          <span class="reserved">var</span>
+              π<span class="keyword"> = </span>π</span><span class="keyword"> || </span>{}
         </code>
       </pre>
     </div>
 
-    <div class="left">
+    <div class="box right">
       <ul>
         <li>π.srv</li>
         <li>π.app</li>
         <li>π.session</li>
         <li>π.worker</li>
-        <li>π.dom</li>
+      </ul>
+    </div>  
+
+    <div class="box right">
+      <ul>
+        <li>π.files</li>
+        <li>π.events</li>
+        <li>π.plugins</li>
         <li>π.debug</li>
       </ul>
     </div>  
 
-    <div class="left">
-      <ul>
-        <li>π.files</li>
-        <li>π.files.list</li>
-        <li>π.events</li>
-        <li>π.events.list</li>
-        <li>π.plugins</li>
-        <li>π.plugins.list</li>
-      </ul>
-    </div>  
-
-  </header>
 
   <article>
     <div id="article" class="code" />
   </article>
-
-  <script>
-
 
 </body>
 

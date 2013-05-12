@@ -11,25 +11,21 @@
 
 
   /*  ----  Our top level namespaces  ----  */
-    π.core        = π.core        || {loaded: false};
-    π.events      = π.events      || {loaded: false};
-    π.srv         = π.srv         || {loaded: false};
-    π.app         = π.app         || {loaded: false};
-    π.session     = π.session     || {loaded: false};
-    π.system      = π.system      || {loaded: false};
-    π.debug       = π.debug       || {loaded: false};
+    π.events      = π.events      || { _self: this, _loaded: false, _parent: π, _ns: 'pi.events' };
+    π.srv         = π.srv         || { _self: this, _loaded: false, _parent: π, _ns: 'pi.srv' };
+    π.app         = π.app         || { _self: this, _loaded: false, _parent: π, _ns: 'pi.app' };
+    π.pcl         = π.pcl         || { _self: this, _loaded: false, _parent: π, _ns: 'pi.pcl' };
+    π.session     = π.session     || { _self: this, _loaded: false, _parent: π, _ns: 'pi.session' };
+    π.system      = π.system      || { _self: this, _loaded: false, _parent: π, _ns: 'pi.system' };
+    π.debug       = π.debug       || { _self: this, _loaded: false, _parent: π, _ns: 'pi.debug' };
 
-    π.util        = π.util        || {loaded: false};
-    π.plugins     = π.plugins     || {loaded: false};
-    π.math        = π.math        || {loaded: false};
-    π.statistics  = π.statistics  || {loaded: false};
+    π.util        = π.util        || { _self: this, _loaded: false, _parent: π, _ns: 'pi.util' };
+    π.plugins     = π.plugins     || { _self: this, _loaded: false, _parent: π, _ns: 'pi.plugins' };
+    π.math        = π.math        || { _self: this, _loaded: false, _parent: π, _ns: 'pi.math' };
+    π.statistics  = π.statistics  || { _self: this, _loaded: false, _parent: π, _ns: 'pi.statistics' };
 
-    π.maverick    = π.maverick    || {loaded: false};
+    π.maverick    = π.maverick    || { _self: this, _loaded: false, _parent: π, _ns: 'pi.maverick' };
 
-
-    π.core.__init = function(){
-      console.log('init');
-    };
 
 
     π.needs = function(module){
@@ -62,7 +58,6 @@
       };
 
 
-      // this might not always work. maybe.
       var node = cursor.insertBefore(script, cursor.firstChild); 
 
       console.log("Node: ", node);

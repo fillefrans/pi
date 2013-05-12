@@ -11,8 +11,6 @@
  *    don't add custom classes to tags  (a, ul, li, &c)
  *    create custom classes and namespaces
  *    inherit as much as possible
- *    no bloat
- *    no #'s
  *
  *  @author Johan Telstad, jt@kroma.no, 2013
  * 
@@ -30,8 +28,6 @@
 
 
 
-  /* The good */
-
   body {
     font-family       : monospace;
     font-size         : large;
@@ -45,7 +41,9 @@
 
   header {
     background-color : #b21;
+    width: 100%;
     height: 240px;
+    clear: both;
   }
 
   ul {
@@ -54,80 +52,55 @@
 
 
 
-/*  The ugly */
+  .right {
+      float:right;
+    }
 
-  .layout {
-        
-  }
+  .left {
+      float:left;
+    }
 
-  .layout.right {
-    float:right;
-  }
+  .inline {
+      display: inline;
+    }
 
-  .layout.left {
-    float:left;
-  }
+  .block {
+      display: block;
+    }
 
-  .layout.inline {
-    display: inline;
-  }
+  .box {
+      display: inline-block;
+    }
 
-  .layout.block {
-    display: block;
-  }
-
-  .layout.box {
-    display: inline-block;
-  }
-
-
-
-/* The beautiful */
-
-  .highlight {
-
+  .code {
+    font-family: monospace;
+    color: #f8f8f2;
   }
 
 
 /* monokai, obviously */
-  .highlight.comment  { color: #75715e; }
-  .highlight.keyword  { color: #f92672; }
-  .highlight.default  { color: #f8f8f2; }
-  .highlight.reserved { color: #f92672; }
-  .highlight.variable { color: #f92672; }
-  .highlight.number   { color: #f92672; }
-  .highlight.string   { color: #e6db74; }
+  .code .comment  { color: #75715e; }
+  .code .keyword  { color: #f92672; }
+  .code .default  { color: #f8f8f2; }
+  .code .reserved { color: #66D9EF; }
+  .code .number   { color: #AE81FF; }
+  .code .string   { color: #e6db74; }
 
 
-  .behaviour {
-  
-  }
+  /*Transitions */
 
-  .behaviour.ease-out {
-    -webkit-transition: all 0.1s ease-out;
-       -moz-transition: all 0.1s ease-out;
-         -o-transition: all 0.1s ease-out;
-            transition: all 0.1s ease-out;
-  }
 
-  .magically {
-
-  }
-
-  .magically.appear {
-
-  }
-
-  .magically.appear.fade {
-    -webkit-transition: all 0.1s ease-out;
-       -moz-transition: all 0.1s ease-out;
-         -o-transition: all 0.1s ease-out;
-            transition: all 0.1s ease-out;
+  .tween {
+    transition-property         : all;
+    transition-duration         : 0.1s;        
+    transition-timing-function  : cubic-bezier(0,0,0.58,1);
   }
 
 
-  .magically.disappear {
-    
+  .tween .ease-out {
+    transition-timing-function  : ease-out;
   }
 
-
+  .tween .ease-in {
+    transition-timing-function  : ease-in;
+  }
