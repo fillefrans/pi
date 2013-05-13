@@ -1,23 +1,29 @@
+/**
+ * Minimal app bootstrapper for internal purposes
+ *
+ * Merges existing app object with new
+ *
+ */
 
 
+    π.TMP = π.app;
 
-  π.app.cache = {
+    π.app = {
 
-    self : this,
+      APP_ROOT  : π.APP_ROOT,
+      LIB_ROOT  : π.LIB_ROOT,
 
-    __applicationCache : window.applicationCache,
+      self      : this,
 
 
-    getStatusText : function() {
-      var
-        status  = new Array('UNCACHED', 'IDLE', 'CHECKING', 'DOWNLOADING', 'UPDATEREADY', 'OBSOLETE'),
-        idx     = Math.abs(self.__applicationCache.status); 
+      __init : function() {
+        for(var key in pi.TMP) {
+          this[key] = pi.TMP[key]
+        }
+        pi.TMP = null;
+      },
+    };
 
-      if (idx >= status.length) {
-        return 'UNKNOWN';
-      }
-      else {
-        return status[idx];
-      }
-    }
-  }
+    π.app.__init();
+
+π.require('events', false);    

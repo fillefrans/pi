@@ -30,8 +30,6 @@
 
   body {
     font-family       : monospace;
-    font-size         : large;
-    font-weight       : 700;
     background-color  : #272822;
     color             : #f8f8f2;
     margin            : 0;
@@ -54,7 +52,6 @@
 
   .pcl {
     display      : block;
-    visibility   : hidden;
     background   : transparent;
     border-style : solid;
     border-color : red;
@@ -70,6 +67,12 @@
     transition-timing-function  : cubic-bezier(0,0,0.58,1);
   }
 
+
+  .pcl .visible {
+    /*visibility: visible;*/
+  }
+
+
   .pcl .title {
     font-weight : 700;
     font-size   : large; 
@@ -78,6 +81,16 @@
   .pcl .fullscreen {
     width  : 100%;
     height : 100%;
+  }
+
+  .pcl form {
+    background-color : #b21;
+  }
+
+
+  .pcl .debug {
+    background-color  : #272822;
+    color             : #75715e;
   }
 
 

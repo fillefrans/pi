@@ -1,10 +1,3 @@
-// ensure we have a global app object
-
-  if(!pi.app) {
-
-    //ensure we have loaded the app module first
-    pi.require('app');
-  }
 
 /**
  *  Session object. This is where we have to debug the pants off of this library
@@ -18,20 +11,31 @@
  * 
  */
 
+
+
+  π.require('app');
+  π.require('events', false);    
+
+
+
+
   π.app.session = {
 
     __socket         : null,
     __initsocket     : null,
     __initialized    : false,
 
-    //default values, override by passing options object to start() function
     __sessionserver  : window.location.hostname,
     __initport       : 8000,
     __inituri        : '/session',
     __sessionport    : 8101,
     __sessionuri     : '',
+
     that             : this,
     self             : this,
+
+    active    : false,
+    user      : null,
 
 
     __init : function (DEBUG) {
@@ -46,53 +50,20 @@
         pi.log("error: __init() called twice ");
         return false;
       }
+      
+      this.__initialized = this.__startSession(host);
 
-      if(DBG){
-        // go straight to session
-//        host = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__sessionuri;
-        return this.__startSession(host);
-      }
-      try {
-        this.__initsocket = this.__createSocket(host);
-        pi.log('WebSocket - status ' + this.__initsocket.readyState);
-
-        this.__initsocket.addEventListener('open', function(event) {
-          // handle open event
-          var init__command = {command: 'session'};
-
-          pi.log('Opened WebSocket. This: ' + this + ', that: ' + that);
-          self.send(JSON.stringify(init__command));
-        });
-
-        this.__initsocket.addEventListener('message', function(event) {
-          // handle message event
-          pi.log('Received (' + event.data.length + ' bytes): ' + event.data);
-          self.__startSession();
-          });
-
-        this.__initsocket.addEventListener('close', function(event) {
-          // handle close event
-          pi.log('Disconnected. Status -> ' + this.readyState);
-        });
-
-        this.__initsocket.addEventListener('error', function(event) {
-          // handle close event
-          pi.log('ERROR! -> ', event);
-        });
-
-      this.__initialized = true;
-      return true;
-      }
-      catch (ex) {
-        pi.log(ex);
-        this.log(ex);
-        return false;
-      }
+      return this.__initialized;
     },
 
     __handleError  : function(msg){
   //    alert('__handleError: ' + msg);
       pi.log('error: ' + msg);
+    },
+
+    __login : function(credentials) {
+      console.log("login: ", credentials);
+      return true;
     },
 
     send : function (obj) {
