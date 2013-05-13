@@ -39,6 +39,9 @@
     // switches pi.log and pi.debug
     π.DEBUG = true;
 
+    //keeps a running list over which modules are loaded
+    π.loaded = [];
+
 
     /*
       global support functions
@@ -105,7 +108,9 @@
 
     π.require = function(module, async, defer){
     
-      if (module in pi.loaded) {
+      pi.debug("loaded[" + module + "] : ", π.loaded[module]);
+
+      if (π.loaded[module]) {
         return true;
       }
   

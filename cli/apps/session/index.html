@@ -26,22 +26,18 @@
 <body>
 
   <div id="login" class="pcl login" data-load="autoload" data-name="login" data-ns="pcl.login">
-    <form class="" action="pi.app.session.login();">
+    <form class="" data-action="app.session.login">
       <p class="title">Log into pi</p>
-      <p>user:   <input type="email"    name="username" required></p>
+      <p>  user: <input type="email"    name="username" required></p>
       <p>passwd: <input type="password" name="password" required></p>
       <input type="submit" value="GO">
     </form>
   </div>
 
 
-  <div id="debug" class="pcl debug" data-load="lazyload" data-name="login" data-ns="pcl.login">
-    <form class="" action="pi.app.session.login();">
-      <p class="title">Log into pi</p>
-      <p>user:   <input type="email"    name="username" required></p>
-      <p>passwd: <input type="password" name="password" required></p>
-      <input type="submit" value="GO">
-    </form>
+  <div id="debug" class="pcl debug code highlight" data-load="lazyload" data-name="login" data-ns="debug">
+    
+
   </div>
 
   <!--  pi bootstrap  -->
