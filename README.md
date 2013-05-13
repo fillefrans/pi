@@ -13,8 +13,7 @@ The central concept in π is the shared namespace across the client and server.
 There are in fact two namespaces: one namespace organizes objects and components in the web app.
 The other namespace is an addressing namespace that allows message passing between arbitrary parts of the entire system of apps and services. 
 
-Over this double hub, an app can also communicate with another app or even a specific user session in another app.
-
+Over this messaging systme, an app can also communicate with another app or even a specific user session in another app.
 
 
 Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, &c
@@ -43,21 +42,6 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * Higgins' PubSub
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
 
-
-
-##Technologies
-
-* HTML5 native functions
-* WebSockets
-* Varnish
-* Apache
-* PHP
-    - [phpredis](https://github.com/igbinary/igbinary) 
-    - [phpws]http://code.google.com/p/phpws/()
-* Redis
-* Free Pascal
-    - [Bauglir2 WebSocket library](http://code.google.com/p/bauglir-websocket/)
-    - [synapse](http://synapse.ararat.cz/doku.php/start)
 
 
 ####General
@@ -156,25 +140,8 @@ When we're at version 0.6 or thereabouts.
 
 
 
-##Resources
-----------------------------
-* [Game Content Resources](http://content.gpwiki.org/index.php/Game_Content_Resources)
-* [Open Game Art](http://opengameart.org/art-search?keys=icon&page=1)
-* [Volumetric Sprites](http://gushh.net/blog/gamedev-resources/volumetric-sprites/)
-
-
-
 ### Further reading
 * [Android Push Notifications with PhoneGap](http://www.adobe.com/devnet/phonegap/articles/android-push-notifications-with-phonegap.html)
-* [Accelerometer & Gyro Tutorial](http://www.instructables.com/id/Accelerometer-Gyro-Tutorial/)
-* [iOS/Android Device orientation (pitch, yaw, roll). Is it better with accelerometer or gyroscope?](http://stackoverflow.com/questions/9304160/ios-android-device-orientation-pitch-yaw-roll-is-it-better-with-acceleromet?rq=1)
-* [MDN - Orientation and motion data explained](https://developer.mozilla.org/en-US/docs/DOM/Orientation_and_motion_data_explained)
-
-
-
-###Reports
-* [Apache config for HTML5 Mobile Boilerplate ](https://github.com/h5bp/server-configs/tree/master/apache)
-* [jQuery vs Zepto vs jQMobi - which one is the fastest?](http://www.codefessions.com/2012/08/performance-of-jquery-compatible-mobile.html)
 * [More Bandwidth Doesn’t Matter (much)](http://www.belshe.com/2010/05/24/more-bandwidth-doesnt-matter-much/)
 * [Make your mobile pages render in under one second](http://calendar.perfplanet.com/2012/make-your-mobile-pages-render-in-under-one-second/)
 * [GoogleTechTalks - Speed Up Your JavaScript](http://www.youtube.com/watch?v=mHtdZgou0qU&feature=channel_page)
@@ -187,39 +154,15 @@ When we're at version 0.6 or thereabouts.
 * [Viewport resizer - Responsive design bookmarklet](http://lab.maltewassermann.com/viewport-resizer/)
 
 
-###Docs
-* [iOS Dev Center](https://developer.apple.com/devcenter/ios/index.action)
-* [PhoneGap API documentation](http://docs.phonegap.com/en/2.5.0/index.html)
-* [DeviceMotion W3 Specification](http://dev.w3.org/geo/api/spec-source-orientation.html#devicemotion)
-* [Differences between Native Apps and Mobile Web Apps](http://en.wikipedia.org/wiki/HTML5_in_mobile_devices#Differences_from_Native_Apps_and_Mobile_Web_Apps)
-
-
-###Examples
-* [Camera and Video Control with HTML5](http://davidwalsh.name/browser-camera)
-* [seismograph.js - WebKit DeviceMotion / MozDeviceOrientation example](http://isthisanearthquake.com/seismograph.html)
-* [Accessing Accelerometer on Flash/Android 2.2 - example](http://www.mobilexweb.com/blog/android-froyo-html5-accelerometer-flash-player)
-* [PhoneGap accelerometer example](http://www.mobilexweb.com/samples/ball.html)
-
-###Videos
-* [Video: Google I/O 2012 - High Performance HTML5](http://www.youtube.com/watch?v=6EJ801el-I8)
-* [Video: Google I/O 2012 - Making Good Apps Great: More Advanced](http://www.youtube.com/watch?v=PwC1OlJo5VM)
-
-
-###HTML5 Demos
-* [Sencha Touch demos](http://www.sencha.com/products/touch/demos/)
-* [Apple HTML5 demos](http://www.apple.com/html5/)
-* [Chrome Experiments](http://www.chromeexperiments.com/)
-
 
 ###Tricks & fixes
-* [Detect rotation of Android phone in the browser with javascript](http://stackoverflow.com/questions/1649086/detect-rotation-of-android-phone-in-the-browser-with-javascript)
-* [How to access accelerometer/gyroscope data from Javascript?](http://stackoverflow.com/questions/4378435/how-to-access-accelerometer-gyroscope-data-from-javascript/4378439)
 * [How to use git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
 * [A fix for the iPhone ViewPort scale bug](http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/)
 
 
 ###Snippets
-####Detect mobile user agent with JS regex:
+
+####Detect mobile user agent with regex:
     var isMobile = /ip(hone|od|ad)|android|blackberry.*applewebkit|bb1\d.*mobile/i.test(navigator.userAgent);
 
 
@@ -234,9 +177,23 @@ When we're at version 0.6 or thereabouts.
     div[i].appendChild(fragment);
 
 
-###Browser/device feature support
-* [caniuse - DeviceOrientation API](http://caniuse.com/#feat=deviceorientation)
-* [caniuse - WebSockets](http://caniuse.com/#feat=websocket)
-* [caniuse - WebWorkers](http://caniuse.com/#feat=webworker)
-* [caniuse - GeoLocation API](http://caniuse.com/#feat=geolocation)
-* [caniuse - CORS (Cross-Origin Resource Sharing)](http://caniuse.com/#feat=cors)
+###Browser support
+  - All browsers with WebSockets: [caniuse - WebSockets](http://caniuse.com/#feat=websocket)
+
+
+
+
+##Technologies
+
+* HTML5 native functions
+* WebSockets
+* [Varnish](http://varnish-cache.org)
+* Apache
+* PHP
+    - [phpredis](https://github.com/igbinary/igbinary) 
+    - [phpws](http://code.google.com/p/phpws/)
+* [Redis](http://redis.io)
+* Free Pascal
+    - [Bauglir2 WebSocket library](http://code.google.com/p/bauglir-websocket/)
+    - [synapse](http://synapse.ararat.cz/doku.php/start)
+
