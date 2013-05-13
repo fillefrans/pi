@@ -2,25 +2,14 @@
 
 
 ###What is π?
-
-There is a tendency today of throwing hardware and cloud servers at inefficient applications. 
-
-π is the polar opposite of this approach. A super-fast, bare-bones set of libraries that serves as platform for developing Client-Server web apps/sites, with a modular architecture and a built-in dependency system using asynchronous on-demand loading. 
-
-Built to satisfy the need for speed, π aims to be the race car to $'s bus. 
+π is a super-fast, bare-bones set of libraries that serves as platform for developing Client-Server web apps/sites, with a modular architecture and a built-in dependency system using asynchronous on-demand loading. 
 
 Call it LAAP (Libraries as a platform).
 
 π is Client-Server oriented. It creates a common namespace across the client and server, with seamless bi-directional access to data, events and pubsub.
 
-
-###Who is it for?
-Web nerds who feel the need for speed. 
-
-
-###Who decides what goes in it?
-[jsPerf](http://jsperf.com)
-
+all apps and server modules share a common universal namespace, and can interact
+with any other module, plugin, component, app, user, &c
 
 
 ###Inspirations
@@ -39,42 +28,25 @@ Web nerds who feel the need for speed.
 * Apache
 * PHP
     - [phpredis](https://github.com/igbinary/igbinary) 
+    - [phpws]http://code.google.com/p/phpws/()
 * Redis
-* PhoneGap for app installation and HW access
+* Free Pascal
+    - [Bauglir2 WebSocket library](http://code.google.com/p/bauglir-websocket/)
+    - [synapse](http://synapse.ararat.cz/doku.php/start)
 
 
-
-###Rules for front-end developers:
+###Rules for library development
 
 ####General
 * No modernizr, we are requiring HTML5 already
-* No jQuery or plugins, pretty please
-* Write your own plugins
-* If you really must have the $, use jqMobi
-* No Google Maps. Use [Leaflet](http://leafletjs.com/) instead.
-* Vector graphics are preferred for almost everything.
-* Use GreenSock for animations. If you don't know it already, you should [learn it](https://www.greensock.com/tag/tutorial/).
-* Use inline base64-encoding for small images and SVGs ()
-* Don't load a whole font for the title or name of the website. Use SVG, or a Google Fonts subset
-* Use SVG for logos. Think Retina.
-* [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) is best practice for now
-* Type your CSS, and use inheritance. Don't copy-paste
-* Grow a serious distaste for the flash of unstyled content
-* Don't use !important
-* Don't attach event listeners outside of your container. Send a message.
-* Don't overuse the pubsub, especially not the pub
-* Use web workers wherever you can. You should have at least one worker per app, so you can offload as much processing as possible to the background thread. 
-* For size and position, prefer perfect cubes (or multiples): 8, 64, 216, 512. This makes it easier to stack components.
+* Feel free to write your own plugins
+* Check out [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
+* Vector graphics is great for Retina displays.
+* GreenSock is an almost hilariously good animation library. And it's small. [GSAP](https://www.greensock.com/tag/tutorial/).
+* Web workersare awesome. 
+* For size and position, using perfect cubes (or multiples): 8, 64, 216, 512, makes it easier to stack components.
 
-
-
-
-
-###Rules for developers:
-
-####General
-* No bloat. 
-* Use HTML5 best practice
+* [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
 
 
 ####Client-side
