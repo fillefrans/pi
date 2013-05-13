@@ -5,11 +5,27 @@
 
 First and foremost, it is a tool for building single-page web pages and apps.
 
+The short version is:
+
+- π is pretty fast
+- extensible
+- and very flexible
+- is heavily optimized for mobile devices
+- uses mostly messaging instead of callbacks
+- uses websockets instead of AJAX
+- uses namespaces 
+- uses background processing to avoid blocking the user thread
+- does not rely on other libraries
+- is designed to work with Varnish
+- provides a communication network between all parts of the namespace
+
+- requires an HTML5-compatible browser. 
+
 
 The central concept in π is the shared namespace across the client and server. 
 
 There are in fact two namespaces: one namespace organizes objects and components in the web app.
-The other namespace is an addressing namespace that allows message passing between arbitrary parts of the entire system of apps and services. 
+The other namespace is an addressing namespace that allows message passing between arbitrary parts of the entire system of users, apps and services. 
 
 Over this messaging systme, an app can also communicate with another app or even a specific user session in another app.
 
