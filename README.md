@@ -3,10 +3,8 @@
 
 ####What is π?
 
-First and foremost, it is a tool to build single-page web pages and apps.
+First and foremost, it is a tool for building single-page web pages and apps.
 
-
-π is a bare-bones set of libraries that serves as platform for developing client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
 
 The central concept in π is the shared namespace across the client and server. 
 
@@ -27,6 +25,10 @@ Another example: two apps may define a common namespace for exchanging messages 
 Any server script can access the PHP session information for any client, since it is stored in Redis
 
 Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can also be injected into the 
+
+
+π is a bare-bones, but extensible, set of libraries that serves as platform for developing real-time client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
+
 
 π is inspired by flow-based programming and the old-school linux toolset, where specialized agents can be configured into flexible chains of processing.
 
