@@ -1,29 +1,44 @@
 #π
 
 
-###What is π?
+####What is π?
+
+First and foremost, it is a tool to build single-page web pages and apps.
+
+
 π is a bare-bones set of libraries that serves as platform for developing client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
 
-The central concept in π are the common namespaces across the client and server. 
-In 
+The central concept in π is the shared namespace across the client and server. 
+
+There are in fact two namespaces: one namespace organizes objects and components in the web app.
+The other namespace is an addressing namespace that allows message passing between arbitrary parts of the entire system of apps and services. 
+
+Over this double hub, an app can also communicate with another app or even a specific user session in another app.
 
 
-This is enabled by Redis, an in-memory database with persistence to disk. Because it can be configured to communicate over unix domain sockets, it is a perfect store of application data
 
-
-Any part of the namespace may interact with any other part: module, plugin, component, app, user, &c
+Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, &c
 
 As an example: a server script may be invoked by a user session in an app. The app 
 can then subscribe to a separate channel where the server script publishes progress events. 
 
+Another example: two apps may define a common namespace for exchanging messages and events. A server currency exchange rate updating script might post messages with updates to a portfolio server application, or to any users who have subscribed to the service via it's globally known address in the global namespace.
+
+
 Any server script can access the PHP session information for any client, since it is stored in Redis
 
-Components can be loaded into apps on the fly, or queued for preloading.
+Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can also be injected into the 
+
+π is inspired by flow-based programming and the old-school linux toolset, where specialized agents can be configured into flexible chains of processing.
+
+
+####Kudos
+Pi could not exist without Redis, an in-memory database with persistence to disk. 
 
 
 
 ###Inspirations
-* [Salvatore Sanfilippo](http://antirez.com/latest/0), creator of [Redis](http://redis.io)
+* [Salvatore Sanfilippo](http://antirez.com/), creator of [Redis](http://redis.io)
 * The [GreenSock Animation Library](http://greensock.com)
 * Higgins' PubSub
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
