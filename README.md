@@ -2,14 +2,24 @@
 
 
 ###What is π?
-π is a super-fast, bare-bones set of libraries that serves as platform for developing Client-Server web apps/sites, with a modular architecture and a built-in dependency system using asynchronous on-demand loading. 
+π is a bare-bones set of libraries that serves as platform for developing client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
 
-Call it LAAP (Libraries as a platform).
+The central concept in π are the common namespaces across the client and server. 
+In 
 
-π is Client-Server oriented. It creates a common namespace across the client and server, with seamless bi-directional access to data, events and pubsub.
 
-all apps and server modules share a common universal namespace, and can interact
-with any other module, plugin, component, app, user, &c
+This is enabled by Redis, an in-memory database with persistence to disk. Because it can be configured to communicate over unix domain sockets, it is a perfect store of application data
+
+
+Any part of the namespace may interact with any other part: module, plugin, component, app, user, &c
+
+As an example: a server script may be invoked by a user session in an app. The app 
+can then subscribe to a separate channel where the server script publishes progress events. 
+
+Any server script can access the PHP session information for any client, since it is stored in Redis
+
+Components can be loaded into apps on the fly, or queued for preloading.
+
 
 
 ###Inspirations
@@ -35,75 +45,50 @@ with any other module, plugin, component, app, user, &c
     - [synapse](http://synapse.ararat.cz/doku.php/start)
 
 
-###Rules for library development
-
 ####General
-* No modernizr, we are requiring HTML5 already
-* Feel free to write your own plugins
+* We are requiring HTML5, and using native functions wherever possible
 * Check out [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
 * Vector graphics is great for Retina displays.
 * GreenSock is an almost hilariously good animation library. And it's small. [GSAP](https://www.greensock.com/tag/tutorial/).
-* Web workersare awesome. 
+* Web workers are awesome. 
 * For size and position, using perfect cubes (or multiples): 8, 64, 216, 512, makes it easier to stack components.
 
 * [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
 
 
 ####Client-side
-* No jQuery. Ever.
-* Don't use Sizzle, either. Native functions are faster.
-* Don't include any frameworks.
-* Use messaging between components, and don't attach events to DOM elements. Only components should touch the DOM.
-* Only the most minimal efforts to correct browser idiosyncrasies. If one particular browser is very bad at something, then we encourage you to expose that suckiness by not pandering to it. When encounter turd, don't sprinkle with sugar.
-* Components have to be self-contained.
-* It is allowed to create new subnodes under the π.app and π.plugins namespaces.
-* Absolutely no XHR in the core library, even as a fallback. If you need compatibility, use Zepto or similar. 
-* Write tests. Or don't. We don't care.
-* Resist any inclination towards MVC and two-way data binding.
-* No coffeescript, less, sass, or other languages that has to be compiled server-side
-* Use CSS inheritance over explicit setting of every property 
-* Use documentFragment when adding more than one node to the DOM
+* Components should be self-contained.
+* The π.app and π.plugins namespaces are open for anyone.
+* Feel free to write a better xhr module :) 
+* Use CSS inheritance 
+* Use documentFragment when adding more than one node to the DOM, it's faster
 
 
-
-####Server-side
+####Server-side tips
 * Replace the PHP serializer with [igbinary](https://github.com/igbinary/igbinary).
 * Compile Redis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
 * Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient.
-* Use Redis for session storage and application shared memory.
-* Use Redis pubsub for sending messages to app clients.
-* Don't use Node.js.
-* Don't use MongoDB.
-* No REST servers, please. (Unless you create a REST interface accessible over the session WebSocket)
-* No server application that runs in a VM, including Java, Node.js, Erlang, &c
-* There will not be a Windows version of the server
+* Use Redis for PHP session storage and application shared memory.
+* Use Redis pubsub for sending messages to any part of the namespace.
 
 
 #Documentation
 When we're at version 0.6 or thereabouts.
 
-
-##Mission
-
-To create a HTML5/CSS3/JS template/scaffolding that can serve as a starting point for apps and web Pages. Incorporate mobile optimized client-side services accessible to creatives.
-
-Collect examples and demos in a git repository. Use shared assets where possible.
-
-
 ---
 
-##Requirements
+
+##Aims
 * Optimized for Mobile
 * Optimized server/cache setup
 * Cross-browser, within reason
-* Cross-device support (See Target Platforms, below)
+* Cross-device support, again within reason
 * If possible, generic access to a subset of native device resources from JavaScript, such as accelerometer, camera, geolocation
 * A plugin system
-* Easy to copy a template and start adapting it
 
 
 
-##Target Platforms
+##Target Clients
 * WebKit + Firefox, all platforms
 * iOs >= 5.1
 * Android >= 4.0 (Except native browser)
@@ -113,12 +98,7 @@ Collect examples and demos in a git repository. Use shared assets where possible
 
 ###Not supported
 * Opera Mini
-* Android native browser has no session support, and no server bridge.
-
-
-###Frameworks
-
-We don't believe in frameworks.
+* Android native browser has no session support, and no Web Worker.
 
 
 ####Client Libraries
@@ -149,16 +129,15 @@ We don't believe in frameworks.
 * [howler.js - Modern Web Audio Javascript Library](http://goldfirestudios.com/blog/104/howler.js-Modern-Web-Audio-Javascript-Library)
 
 
-##Implementation
-
-A global JavaScript object π will have a basic bootstrapper, and preload scripts in the background. 
-
-
-###For speed and optimization, keep in mind:
+###Speed and optimization:
 
 * Load CSS in <head>
-* Files larger than 32KB are not cached on many iPhones
-* Avoid DOM manipulation as far as possible
+* Files larger than 32KB (uncompressed) are never cached on many mobile devices
+* Avoid DOM manipulation
+* use documentFragment
+* use getClientBoundingRect
+* use Web Workers
+* localStorage can be used even for css and scripts
 
 
 
