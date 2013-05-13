@@ -1,19 +1,12 @@
   <?php
 
-    // Ticks are needed for the setTimeout and setInterval functions in class Timers.
-    // HAS to be in the topmost file, cannot use declare() in an include file.
-    // Will probably have to be moved to a daemonizer file, eventually.
 
-    declare(ticks=32);
-
-    define('CONFIG_ROOT', '/home/kroma/scripts/kromaviews/php/server/config/');
-    require_once CONFIG_ROOT."kromaviews.config.php";
-    require_once APP_ROOT."kromaviews.exception.class.php";
-    require_once UTILITIES_DIR."kromaviews.functions.php";
-    require_once(UTILITIES_DIR."timers.class.php");
+    define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
+    require_once PI_ROOT."pi.config.php";
+    require_once PI_ROOT."pi.exception.class.php";
+    require_once PI_ROOT."pi.functions.php";
 
   	require_once("websocket.server.php");
-  	require_once("kromaviews.exception.class.php");
 
 
     error_reporting(E_ALL);
@@ -63,7 +56,7 @@
 
 
     /**
-     * The KromaViews session handler, hands off session requests to worker script,
+     * The Pi session handler, hands off session requests to worker script,
      * allocates session id as incremental port number between 8100-8999
      *
      */
@@ -74,7 +67,7 @@
       private $currentSessionPort = 0;
       private $currentSessionId   = 0;
    
-      protected function reply($request, $message="", $status = 0, $event='info'){
+      protected function reply($request, $message="", $status = 0, $event='reply'){
         $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event, "request"=>$request));
         $this->myclient->sendMessage(WebSocketMessage::create($json));
       }
@@ -115,10 +108,10 @@
         // we should really keep count in Redis, or something similar
         try{
           if (!file_exists(SESSION_SCRIPT)){
-            throw new KromaViewsException("Session handler script does not exist: ". SESSION_SCRIPT, 1);
+            throw new PiException("Session handler script does not exist: ". SESSION_SCRIPT, 1);
           }
           if(false === ($result = $this->fork(SESSION_SCRIPT))){
-            throw new KromaViewsException("Fork failed", 1);
+            throw new PiException("Fork failed", 1);
           }
         }
         catch(Exception $e){
@@ -164,13 +157,13 @@
 
 
     /**
-     * The Kroma Views application server
+     * The pi application server
      *
      * @author Johan Telstad, jt@kroma.no
      *
      */
 
-    class KromaViewsServer implements IWebSocketServerObserver{
+    class PiServer implements IWebSocketServerObserver{
         protected $debug = true;
         protected $server = null;
         //private 	$redis 	= null;
@@ -231,7 +224,7 @@
         }
     }
 
-  $server = new KromaViewsServer();
+  $server = new PiServer();
   $server->run();
 
 ?>

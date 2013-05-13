@@ -7,7 +7,8 @@
  */
 
   var 
-      π = π || {};
+      π = π || {},
+      pi = pi || π;
 
 
   /*  ----  Our top level namespaces  ----  */

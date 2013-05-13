@@ -6,11 +6,13 @@
  *
  */
 
+  π.pcl = π.pcl || {};
 
   π.pcl = {
+    parent : π,
+    ns : 'pi.pcl',
     loaded : false,
     components : []
-
   };
 
 
