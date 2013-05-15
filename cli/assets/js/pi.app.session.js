@@ -31,8 +31,8 @@
     __sessionport    : 8101,
     __sessionuri     : '',
 
-    that             : this,
-    self             : this,
+    that             : null,
+    self             : null,
 
     active    : false,
     user      : null,
@@ -44,6 +44,9 @@
         patharray = window.location.pathname.split("/"),
         host      = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri,
         DBG       = DEBUG || false;
+        this.self = this;
+        this.that = this;
+
 
       if(this.__initialized === true){
         //something is not right

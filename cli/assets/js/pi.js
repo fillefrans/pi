@@ -71,7 +71,7 @@
       var 
         caller = this;
 
-      console.log(this.name + " says: ");
+      console.log("look at ", this);
 
       if(!!obj){
         console.log(msg, obj);

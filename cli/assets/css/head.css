@@ -6,11 +6,11 @@
  *    as needed by components that require them, or in background preloading.
  *
  *
- *    Rules for style sheets are: 
+ *    Guidelines for style sheets are: 
  *    
  *    don't add custom classes to tags  (a, ul, li, &c)
  *    create custom classes and namespaces
- *    inherit as much as possible
+ *    use inheritance as much as possible
  *
  *  @author Johan Telstad, jt@kroma.no, 2013
  * 
@@ -68,17 +68,17 @@
   }
 
 
-  .pcl .visible {
+  .pcl.visible {
     /*visibility: visible;*/
   }
 
 
-  .pcl .title {
+  .pcl.title {
     font-weight : 700;
     font-size   : large; 
   }
 
-  .pcl .fullscreen {
+  .pcl.fullscreen {
     width  : 100%;
     height : 100%;
   }
@@ -88,17 +88,17 @@
   }
 
 
-  .pcl .debug {
+  .pcl.debug {
     background-color  : #272822;
     color             : #75715e;
   }
 
 
-  .pcl .login {
+  .pcl.login {
     background-color : #272822;
   }
 
-  .pcl .login .wrong {
+  .pcl.login.wrong {
     background-color : #f92672;
   }
 
@@ -130,12 +130,12 @@
 
 
 /* monokai, obviously */
-  .code .comment  { color: #75715e; }
-  .code .keyword  { color: #f92672; }
-  .code .default  { color: #f8f8f2; }
-  .code .reserved { color: #66D9EF; }
-  .code .number   { color: #AE81FF; }
-  .code .string   { color: #e6db74; }
+  .code.comment  { color: #75715e; }
+  .code.keyword  { color: #f92672; }
+  .code.default  { color: #f8f8f2; }
+  .code.reserved { color: #66D9EF; }
+  .code.number   { color: #AE81FF; }
+  .code.string   { color: #e6db74; }
 
 
   /*Transitions */
@@ -148,10 +148,10 @@
   }
 
 
-  .tween .ease-out {
+  .tween.ease-out {
     transition-timing-function  : ease-out;
   }
 
-  .tween .ease-in {
+  .tween.ease-in {
     transition-timing-function  : ease-in;
   }

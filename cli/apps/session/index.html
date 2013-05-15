@@ -1,22 +1,25 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>pi session</title>
     <script>
       var 
         π  = π  || {}, pi = pi || π;
 
+      // activate the debugger
+      π.DEBUG = true;
+
       //make a note of when we started up.
       pi.__sessionstart = (new Date()).getTime();
     </script>
-  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=no">
 
+  <title>pi session</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
   
   <link rel="stylesheet" href="../../assets/css/head.css">
-
   <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
   <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
@@ -34,13 +37,10 @@
     </form>
   </div>
 
+  <div id="debug" class="pcl debug code highlight" data-load="lazyload" data-name="login" data-ns="debug"></div>
 
-  <div id="debug" class="pcl debug code highlight" data-load="lazyload" data-name="login" data-ns="debug">
-    
-
-  </div>
-
-  <!--  pi bootstrap  -->
+  <!--  bootstrap  -->
   <script src="../../assets/js/pi.js"></script>
+
 </body>
 </html>

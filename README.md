@@ -1,9 +1,9 @@
-#π
+##π
 
 
 ####What is π?
 
-First and foremost, it is a tool for building single-page web pages and apps.
+First and foremost, it is a tool for building single-page web and mobile apps.
 
 The short version is:
 
@@ -27,23 +27,28 @@ The central concept in π is the shared namespace across the client and server.
 There are in fact two namespaces: one namespace organizes objects and components in the web app.
 The other namespace is an addressing namespace that allows message passing between arbitrary parts of the entire system of users, apps and services. 
 
-Over this messaging systme, an app can also communicate with another app or even a specific user session in another app.
+Over this messaging system, an app can also communicate with another app or even a specific user session in another app.
 
 
 Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, &c
 
 As an example: a server script may be invoked by a user session in an app. The app 
-can then subscribe to a separate channel where the server script publishes progress events. 
+can then subscribe to a dedicated channel where the server script publishes progress events. 
 
-Another example: two apps may define a common namespace for exchanging messages and events. A server currency exchange rate updating script might post messages with updates to a portfolio server application, or to any users who have subscribed to the service via it's globally known address in the global namespace.
-
-
-Any server script can access the PHP session information for any client, since it is stored in Redis
-
-Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can also be injected into the 
+Another example: two apps may define a common namespace for exchanging messages and events. A server currency exchange rate updating script might post messages with updates to a portfolio server application, or to users who have subscribed to the service via its address in the global namespace.
 
 
-π is a bare-bones, but extensible, set of libraries that serves as platform for developing real-time client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
+Any server software can access the PHP session information for any client, since it is stored in Redis.
+
+Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can be injected into the DOM in three ways:
+   1. By adding a script-src tag to the DOM (good for using browser cache)
+   2. Loaded over AJAX into the browser 
+   3. Loaded over WebSocket, and injected into the DOM
+
+For 2. and 3., it is possible to cache documents and snippets in HTML5's localStorage
+
+
+π is a bare-bones but extensible set of libraries that serves as platform for developing real-time client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
 
 
 π is inspired by flow-based programming and the old-school linux toolset, where specialized agents can be configured into flexible chains of processing.
@@ -89,7 +94,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * Use Redis pubsub for sending messages to any part of the namespace.
 
 
-#Documentation
+##Documentation
 When we're at version 0.6 or thereabouts.
 
 ---
@@ -98,6 +103,8 @@ When we're at version 0.6 or thereabouts.
 ##Aims
 * Optimized for Mobile
 * Optimized server/cache setup
+* Background processing where sensible
+* Modular loading of resources
 * Cross-browser, within reason
 * Cross-device support, again within reason
 * If possible, generic access to a subset of native device resources from JavaScript, such as accelerometer, camera, geolocation
@@ -110,12 +117,13 @@ When we're at version 0.6 or thereabouts.
 * iOs >= 5.1
 * Android >= 4.0 (Except native browser)
 * IE 10 on Windows 7/Windows Phone 8
+* In effect, any modern browser with WebSocket support
 
 
 
 ###Not supported
 * Opera Mini
-* Android native browser has no session support, and no Web Worker.
+* Android native browser has no WebSocket, and no Web Worker.
 
 
 ####Client Libraries

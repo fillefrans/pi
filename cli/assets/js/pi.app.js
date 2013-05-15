@@ -12,6 +12,8 @@
 
       APP_ROOT  : π.APP_ROOT,
       LIB_ROOT  : π.LIB_ROOT,
+      IMG_ROOT  : π.IMG_ROOT,
+      CSS_ROOT  : π.CSS_ROOT,
 
       self      : this,
 
@@ -26,4 +28,3 @@
 
     π.app.__init();
 
-π.require('events', false);    
