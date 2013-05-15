@@ -4,7 +4,7 @@
     define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
     require_once PI_ROOT."pi.config.php";
     require_once PI_ROOT."pi.exception.class.php";
-    require_once PI_ROOT."pi.functions.php";
+    require_once PI_ROOT."pi.util.functions.php";
 
   	require_once("websocket.server.php");
 
@@ -164,12 +164,13 @@
      */
 
     class PiServer implements IWebSocketServerObserver{
-        protected $debug = true;
-        protected $server = null;
+        protected $debug    = true;
+        protected $server   = null;
+        protected $address  = 'tcp://0.0.0.0:8000';
         //private 	$redis 	= null;
 
         public function __construct(){
-            $this->server = new WebSocketServer('tcp://0.0.0.0:8000', 'secretkey');
+            $this->server = new WebSocketServer( $this->address, 'secretkey');
             $this->server->addObserver($this);
 
             $this->server->addUriHandler("session", new AppSessionHandler());
@@ -215,7 +216,7 @@
             $this->say("\trunning on ". APP_PLATFORM);
             $this->say("========================================");
             $this->say("Server Started : " . date('Y-m-d H:i:s'));
-            $this->say("Listening on   : " . $this->_url);
+            $this->say("Listening on   : " . $this->address);
             $this->say("========================================");
           }
           catch(Exception $e){
@@ -225,6 +226,10 @@
     }
 
   $server = new PiServer();
-  $server->run();
-
+  try {
+    $server->run();
+  }
+  catch(Exception $e) {
+    print("ERROR: " .get_class($e). " -> " .$e->getMessage());
+  }
 ?>

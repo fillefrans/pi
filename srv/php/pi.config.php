@@ -15,13 +15,13 @@
 
     // define directories
 
-    define('APP_ROOT', "/home/kroma/dev/www/pi/srv/php//php/server/");
+    define('APP_ROOT', "/home/kroma/dev/www/pi/srv/php/");
     define('UTILITIES_DIR', APP_ROOT.'utility/');
 
-    define('UPLOAD_ROOT',"/var/www/upload/Pi/batch/");
+    define('UPLOAD_ROOT',"/var/www/upload/pi/batch/");
     define('WORKER_DIR', APP_ROOT."workers/");
-    define('WORKER_SPAWNER', WORKER_DIR.'Pi.spawn.worker.script.php');
-    define('SESSION_SCRIPT', WORKER_DIR.'Pi.sessionhandler.script.php');
+    define('WORKER_SPAWNER', WORKER_DIR.'pi.spawn.worker.script.php');
+    define('SESSION_SCRIPT', WORKER_DIR.'pi.sessionhandler.script.php');
     
 
     // Redis settings

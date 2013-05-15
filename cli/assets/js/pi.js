@@ -32,15 +32,13 @@
     π.APP_ROOT    = "assets/js/";
     π.LIB_ROOT    = "../../assets/js/";
     π.SRV_ROOT    = "../../../srv/";
-    π.PHP_ROOT    = π.SRV_ROOT + "php/";
-    π.FPC_ROOT    = π.SRV_ROOT + "fpc/";
+    // π.PHP_ROOT    = π.SRV_ROOT + "php/";
+    // π.FPC_ROOT    = π.SRV_ROOT + "fpc/";
     
 
-    // switches pi.log and pi.debug
-    π.DEBUG = true;
-
-    //keeps a running list over which modules are loaded
+    //will keep an updated list over which modules are loaded
     π.loaded = [];
+
 
 
     /*
@@ -70,8 +68,6 @@
 
       var 
         caller = this;
-
-      console.log("look at ", this);
 
       if(!!obj){
         console.log(msg, obj);
@@ -108,8 +104,6 @@
 
     π.require = function(module, async, defer){
     
-      pi.debug("loaded[" + module + "] : ", π.loaded[module]);
-
       if (π.loaded[module]) {
         return true;
       }
@@ -121,7 +115,7 @@
         mod     = module;
 
 
-      pi.log('loading module (' + (!!async ? "async" : "sync") + '): pi.' + module);
+      // pi.log('loading module (' + (!!async ? "async" : "sync") + '): pi.' + module);
 
       script.async  = async || true;
       script.defer  = defer || true;
@@ -131,7 +125,7 @@
 
 
       script.onload = function (event) {
-        pi.log('loaded:', this.module);
+        // pi.log('loaded:', this.module);
       };
 
       script.onerror = function (error) {
@@ -176,3 +170,6 @@
   window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);
+
+
+

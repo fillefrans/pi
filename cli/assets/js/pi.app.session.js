@@ -69,20 +69,49 @@
       return true;
     },
 
+    __startSession : function (host) {
+      var that = this;
+      try {
+        pi.log('Connecting session socket: ' + host);
+        this.__socket = this.__createSocket(host);
+        this.__socket.addEventListener('open', function(event) {
+          pi.log('Opened SessionSocket. Event: ', event);
+          that.send(JSON.stringify({command: 'session'}));
+        });
+        this.__socket.addEventListener('message', function(event) {
+
+          // handle message event
+
+          pi.log('Received (' + event.data.length + ' bytes): ' + event.data);
+          });
+        this.__socket.addEventListener('close', function(event) {
+
+          // handle close event
+          pi.log('Session closed. Status -> ' + this.readyState);
+        });
+      return true;
+      }
+      catch (ex) {
+        pi.log(ex);
+        return false;
+      }
+    },
+
     send : function (obj) {
       try {
         var msg = JSON.stringify(obj);
+        console.log(this);
         this.__socket.send(msg);
         pi.log('Sent (' + msg.length + ' bytes): ' + msg);
-        this.log('Sent (' + msg.length + ' bytes): ' + msg);
+        // pi.log('Sent (' + msg.length + ' bytes): ' + msg);
       }
       catch (ex) {
-        this.log(ex);
+        pi.log(ex);
       }
     },
 
     quit : function () {
-      this.log('Goodbye!');
+      pi.log('Goodbye!');
       this.__socket.close();
       this.__socket = null;
       this.__initsocket.close();
@@ -102,38 +131,12 @@
     },
 
 
-    __startSession : function (host) {
-      var that = this;
-      try {
-        this.log('Connecting: ' + host);
-        this.__sessionsocket = this.__createSocket(host);
-        this.log('SessionSocket - status ' + this.__sessionsocket.readyState);
-        this.__sessionsocket.addEventListener('open', function(event) {
-          pi.log('Opened SessionSocket. Event: ', event);
-          that.send(JSON.stringify({command: 'sessionstart'}));
-        });
-        this.__sessionsocket.addEventListener('message', function(event) {
-
-          // handle message event
-          pi.log('Received (' + event.data.length + ' bytes): ' + event.data);
-          });
-        this.__sessionsocket.addEventListener('close', function(event) {
-
-          // handle close event
-          pi.log('Session closed. Status -> ' + this.readyState);
-        });
-      return true;
-      }
-      catch (ex) {
-        pi.log(ex);
-        return false;
-      }
-    },
-
-
     start : function (DEBUG) {
       if( !this.__init(DEBUG) ) {
         pi.log('__init() returned false, aborting...');
       }
     }
   };
+
+
+  π.app.session.start();
