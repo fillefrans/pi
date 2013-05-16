@@ -223,3 +223,28 @@ When we're at version 0.6 or thereabouts.
     - [Bauglir2 WebSocket library](http://code.google.com/p/bauglir-websocket/)
     - [synapse](http://synapse.ararat.cz/doku.php/start)
 
+
+####Useful snippets
+
+    /* CSS inheritance from class to id */
+
+    div.someBaseDiv,
+    #someInhertedDiv
+    {
+        margin-top:3px;
+        margin-left:auto;
+        margin-right:auto;
+        margin-bottom:0px;
+    }
+
+    /*  This will tell your #someInhertedDiv to apply the same styles as div.someBaseDiv has. 
+        Then you extend this set of styles with more  specific to your #someInhertedDiv:
+    */
+    #someInhertedDiv
+    {
+        background-image:url("customBackground.gif");
+        background-repeat:no-repeat;
+        width:950px;
+        height:572px;
+    }
+

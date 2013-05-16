@@ -20,18 +20,18 @@
 
     define('UPLOAD_ROOT',"/var/www/upload/pi/batch/");
     define('WORKER_DIR', APP_ROOT."workers/");
-    define('WORKER_SPAWNER', WORKER_DIR.'pi.spawn.worker.script.php');
-    define('SESSION_SCRIPT', WORKER_DIR.'pi.sessionhandler.script.php');
+    define('WORKER_SPAWNER', WORKER_DIR.'pi.util.spawn.php');
+    define('SESSION_SCRIPT', WORKER_DIR.'pi.session.php');
     
 
     // Redis settings
 
-    define('DB_APP',   0);
-    define('DB_CACHE', 7);
-    define('DB_JOBS',  4);
-    define('DB_CACHE_SIZE', 20000000-1); // 20 million
-
+    define('PI_APP',   0);
+    define('PI_CACHE', 7);
+    define('PI_JOBS',  4);
+    define('PI_CACHE_SIZE', 20000000-1); // 20 million
 
     define('UPDATE_FREQUENCY', 10);
+
 
 ?>

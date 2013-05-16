@@ -222,12 +222,11 @@
 
 
         public function say($msg=''){
-          echo "$msg \r\n";
+          echo "$msg\r\n";
         }
 
 
         public function run(){
-      		print("running\n");
           $this->server->run();
         }
     }
