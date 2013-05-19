@@ -1,7 +1,5 @@
   var
-
     worker  = new WebWorker('../../assets/js/pi.worker.pi.js');
-
     path    = "../../assets/js/",
     cursor  = document.getElementsByTagName ("head")[0] || document.documentElement,
     script  = null,

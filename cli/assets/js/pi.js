@@ -57,11 +57,11 @@
         recurse = function(idx, obj) {
           if(typeof obj==="object") {
             console.log('found: ', obj);
-            pi.forEachObj(obj, recurse);
+            π.forEachObj(obj, recurse);
           }
         };
 
-      pi.forEachObj(pi, recurse);
+      π.forEachObj(π, recurse);
     };
 
     π.debug = function(msg, obj) {
@@ -90,7 +90,7 @@
     };
 
 
-    pi.inject = function (src, elem) {
+    π.inject = function (src, elem) {
       var 
         element   = elem || document.body,
         fragment  = document.createDocumentFragment(),
@@ -158,8 +158,8 @@
 
   if(π.app.components.length>0) {
     // we have components, so it's an app
-    var suffix = (π.app.components.length == 1) ? "" : "s";
-    pi.log("found " +  π.app.components.length + " pcl component" + suffix + " on page");
+
+    pi.log("found " +  π.app.components.length + " pcl component" + (π.app.components.length == 1) ? "" : "s" + " on page");
     // load modules for a web app with session support
     π.require("app");
     π.require("app.session");
@@ -167,6 +167,8 @@
   }
 
 
+
+/* a safari bug-fix, under suspicion of being useless */
   window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);

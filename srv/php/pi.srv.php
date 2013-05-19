@@ -138,7 +138,7 @@
         $message = json_decode($msg->getData(), true);
         if(!isset($message['command'])){
           // reply($request, $message="", $status = 0, $event='info'){
-          $this->reply(print_r($msg,true), "No command, expected 'session'. Also, remember that keyword 'command' should always be lowercase", 0, "error");
+          $this->reply($message, "No command, expected 'session'. Also, remember that keyword 'command' should always be lowercase", 0, "error");
           print('[SESSION] => '.print_r($msg, true));  
           return;
         }

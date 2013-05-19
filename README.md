@@ -180,7 +180,6 @@ When we're at version 0.6 or thereabouts.
 * [Viewport resizer - Responsive design bookmarklet](http://lab.maltewassermann.com/viewport-resizer/)
 
 
-
 ###Tricks & fixes
 * [How to use git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
 * [A fix for the iPhone ViewPort scale bug](http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/)
@@ -225,6 +224,9 @@ When we're at version 0.6 or thereabouts.
 
 
 ####Useful snippets
+
+
+
 
     /* CSS inheritance from class to id */
 

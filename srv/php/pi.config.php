@@ -29,6 +29,7 @@
     define('PI_APP',   0);
     define('PI_CACHE', 7);
     define('PI_JOBS',  4);
+    define('PI_DEBUG', 15);
     define('PI_CACHE_SIZE', 20000000-1); // 20 million
 
     define('UPDATE_FREQUENCY', 10);

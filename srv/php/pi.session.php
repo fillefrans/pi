@@ -208,31 +208,32 @@
 
 
         public function onDisconnect(IWebSocketConnection $user){
-          $this->say("pi.session: {$user->getId()} disconnected.");
-          $this->say("pi.session: waiting $this->timeout seconds for reconnect.");
+          $this->say("{$user->getId()} disconnected.");
+          $this->say("waiting $this->timeout seconds for reconnect.");
         }
 
 
         public function onAdminMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
-          $this->say("pi.session: Admin Message received!");
+          $this->say("Admin Message received!");
 
           $frame = WebSocketFrame::create(WebSocketOpcode::PongFrame);
           $user->sendFrame($frame);
         }
 
 
+
         public function say($msg=''){
-          echo "$msg\r\n";
+          echo "pi.session: $msg\r\n";
         }
 
 
-        public function run(){
+        public function start(){
           $this->server->run();
         }
     }
 
 
-  $server = new KromaSessionHandler();
-  $server->run();
+  $session = new KromaSessionHandler();
+  $session->start();
 
 ?>

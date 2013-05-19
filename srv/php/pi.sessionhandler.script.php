@@ -16,15 +16,17 @@
 
     if(DEBUG){
       print("DEBUGGING\n");
-      putenv('session_port=8101');
-      putenv('session_id=no session');
-      putenv('parent_script='.__FILE__);
-      putenv('parent_pid='.getmypid());
     }
 
 
-    // Ticks are needed for the setTimeout and setInterval functions in class Timers.
-    // HAS to be in the topmost file, cannot use declare() in an include file.
+    // store some variables for the script we are spawning
+    putenv('session_port=8101');
+    putenv('session_id=no session');
+    putenv('parent_script='.__FILE__);
+    putenv('parent_pid='.getmypid());
+
+
+    // ticks HAS to be in the topmost file, since you cannot use declare() in an include file.
 
     declare(ticks=100);
 
@@ -61,14 +63,25 @@
 
         public function __construct($port=8100){
           $this->starttime  = time();
+
+          // read back the env vars we set in the parent process before we forked 
           $this->port       = getenv('session_port');
           $this->id         = getenv('session_id');
           $this->parent     = getenv('parent_script');
           $this->parentpid  = getenv('parent_pid');
-          $this->server = new WebSocketServer("tcp://0.0.0.0:".$this->port, 'secretkey');
+          $this->server     = new WebSocketServer("tcp://0.0.0.0:".$this->port, 'secretkey');
           $this->server->addObserver($this);
           $this->say("Session handler started, listening on port ".$this->port);
+
+          // gives us a timer-function of sorts
           register_tick_function(array($this,'onTick'));
+        }
+
+
+        protected function publish($channel, $message) {
+
+          if($this->redis != null)
+          $this->redis.publish($channel, $message);
         }
 
 
@@ -98,7 +111,7 @@
         }
 
         public function onConnect(IWebSocketConnection $user){
-          $this->say("[REDIS-BRIDGE]{userid:{$user->getId()}, event: \"connect\", message: \"Welcome.\"}");
+          $this->say("{userid:{$user->getId()}, event: \"connect\", message: \"Welcome.\"}");
           $response = "";
           $result   = null;
           $event    = "info";
@@ -163,7 +176,6 @@
 
 
         // handle incoming requests from client
-
         public function onMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
           $this->incoming++;
           $this->lastactivity = time();
@@ -222,6 +234,14 @@
 
 
         public function say($msg=''){
+          if (DEBUG) {
+            $epoch = gettimeofday(true);
+            $time = date_format(date_create("@$epoch"), "'t'? HH [.:] MM [.:] II frac");
+            $msg_array = array('message'=>$msg, 'time' => $time);
+
+            // publish debug info on redis channel pi.srv.debug.log.sessionhandler
+            $this->redis->publish('pi.srv.debug.log.sessionhandler', $time . ": " . $msg);
+          }
           echo "$msg \r\n";
         }
 
