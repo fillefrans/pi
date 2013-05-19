@@ -26,9 +26,7 @@ default.vcl
      }
 
 ####Redis
-redis.conf
-
-- these are the sections where you should override the default values
+redis.conf:
 
     # By default Redis does not run as a daemon. Use 'yes' if you need it.
     # Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
@@ -37,17 +35,15 @@ redis.conf
     # When running daemonized, Redis writes a pid file in /var/run/redis.pid by
     # default. You can specify a custom pid file location here.
     pidfile /var/run/redis.pid
-
----
-
+    
+    ...
+    
     # Specify the path for the unix socket that will be used to listen for
     # incoming connections. There is no default, so Redis will not listen
     # on a unix socket when not specified.
     #
     unixsocket /var/run/redis/redis.sock
     unixsocketperm 755
-
----
 
 
 
