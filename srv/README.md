@@ -52,12 +52,13 @@ redis.conf:
 
 You need php >5.3 to run pi server
 
-/etc/php5/apache2/php.ini
-    ; settings for php 
-    extension=/usr/lib/php5/20100525/igbinary.so
-    extension=/usr/lib/php5/20100525/redis.so
+/etc/php5/apache2/php.ini:
 
----
+    ; settings for php 
+    extension=redis.so
+    extension=igbinary.so
+
+    ...
 
     [Session]
 
@@ -73,13 +74,30 @@ You need php >5.3 to run pi server
     ; this uses unix sockets rather than tcp, which is 30% - 90% faster
     session.save_path = "unix:///var/run/redis/redis.sock?persistent=1&weight=1&database=2"
 
----
+    ...
+
+
+    # Use igbinary as session serializer
+    session.serialize_handler=igbinary
+
+    # Enable or disable compacting of duplicate strings
+    # The default is On.
+    igbinary.compact_strings=On
+
+    # Use igbinary as serializer in APC cache (3.1.7 or later)
+    ;apc.serializer=igbinary
+
+
+.. and in your php code replace serialize and unserialize function calls
+with ``igbinary_serialize`` and ``igbinary_unserialize``.
+
 
 
 
 /etc/php5/cli/php.ini
-    ; settings for php running from command line
 
+    ; settings for php running from command line
+    ; same as for mod_php, mostly
 
 
 ####Server-side optimizations
