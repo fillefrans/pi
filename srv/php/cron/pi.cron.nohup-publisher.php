@@ -8,7 +8,7 @@
    * 
    */
 
-  define('CHANNEL', basename(__FILE__));
+  define('CHANNEL', pathinfo(__FILE__, PATHINFO_BASENAME));
 
 
   require("/home/kroma/dev/www/pi/srv/php/pi.config.php");
@@ -42,8 +42,8 @@
 
   try {
     // get stored position from previous run
-    if(false === ($FILEPOS = $redis->get(basename(__FILE__)))) {
-      print ("FILEPOS is FALSE. Initializing to 0.");
+    if(false === ($FILEPOS = $redis->get($nohupfile))) {
+      print ("First run: FILEPOS is FALSE. Initializing to 0.");
       $FILEPOS = 0;
     }
   }
@@ -51,23 +51,34 @@
       print(get_class($e) . ": " . $e->getMessage() . "\n");
   }
 
+  $startpos = $FILEPOS;
 
   //we opened the file at the top, because we want to escape early if it doesn't exist
 
   fseek($fp, $FILEPOS);
   while (!feof($fp)) {
-    $line = fgets($fp);
+    $line = trim(fgets($fp));
+    if($line==="") {
+      continue;
+    }
     print(CHANNEL . ": $line\n");
-    $redis->publish( CHANNEL, $line );
+    $recipients = $redis->publish( CHANNEL, $line );
   }
 
   $FILEPOS = ftell($fp);
 
   fclose($fp);
 
+  // has file grown since last run ?
+  if ( ($FILEPOS ^ $startpos) === 0) {
+    die();
+  }
   // store our file position for next run
-  if(false === $redis->set(CHANNEL, $FILEPOS)){
+  if(false === ($value = $redis->set($nohupfile, $FILEPOS))){
     print("Error: unable to store FILEPOS ($FILEPOS) in redis db no. ". PI_DBG);
+  }
+  else{
+//    print("Success: stored FILEPOS $FILEPOS\n");
   }
 
 

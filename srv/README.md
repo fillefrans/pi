@@ -47,7 +47,6 @@ redis.conf:
 
 
 
-
 ####PHP
 
 You need php >5.3 to run pi server

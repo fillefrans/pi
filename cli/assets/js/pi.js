@@ -102,7 +102,7 @@
     };
 
 
-    π.require = function(module, async, defer){
+    π.require = function(module, async, defer, callback){
     
       if (π.loaded[module]) {
         return true;
@@ -117,27 +117,32 @@
 
       // pi.log('loading module (' + (!!async ? "async" : "sync") + '): pi.' + module);
 
-      script.async  = async || true;
-      script.defer  = defer || true;
-      script.src    = path + module + '.js';
-      script.self   = script;
-      script.module = module;
+      script.async    = async || true;
+      script.defer    = defer || true;
+      script.src      = path + module + '.js';
+      script.self     = script;
+      script.module   = module;
+      script.callback = callback || false;
 
 
       script.onload = function (event) {
         // pi.log('loaded:', this.module);
+        π.loaded.push(this.module);
+        if(this.callback) {
+          this.callback.call(event);
+        }
       };
 
       script.onerror = function (error) {
         pi.log('error loading module: ' + this.module, error);
+        if(this.callback) {
+          this.callback.call(error);
+        }
       };
 
       var
         node = cursor.insertBefore(script, cursor.firstChild);
       
-      if(!!node) {
-        pi.loaded.push(module);
-      }
       return !!node; 
     };
 
@@ -145,33 +150,29 @@
 
 /***   ------   INITIALIZATION    ------
    *
-   *  Code we run after having created the π object.
+   *  Code we run after having created the base π object.
    *
    */
 
 
-  // this is a simple array holding the names of modules we have loaded
-  π.loaded = [];
-
-  // look for pcl components
-  π.app.components = document.getElementsByClassName("pcl");
-
-  if(π.app.components.length>0) {
-    // we have components, so it's an app
-
-    pi.log("found " +  π.app.components.length + " pcl component" + (π.app.components.length == 1) ? "" : "s" + " on page");
-    // load modules for a web app with session support
-    π.require("app");
-    π.require("app.session");
-    π.require("pcl");
-  }
+  π.log("Pi app bootstrapped. Loading modules...");
 
 
+  π.require("app", false, false, function (e) {
+    pi.log("...loaded: app", e);
+  });
 
-/* a safari bug-fix, under suspicion of being useless */
+  π.require("app.session", false, false, function (e) {
+    pi.log("...loaded: app.session", e);
+  });
+  
+  π.require("pcl", false, false, function (e) {
+    pi.log("...loaded: pcl", e);
+  });
+
+
+
+/* a safari bug-fix. under suspicion of being useless */
   window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);
-
-
-

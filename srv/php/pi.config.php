@@ -23,7 +23,7 @@
     define('UPLOAD_ROOT',"/var/www/upload/pi/batch/");
     define('WORKER_DIR', APP_ROOT."workers/");
     define('WORKER_SPAWNER', WORKER_DIR.'pi.util.spawn.php');
-    define('SESSION_SCRIPT', WORKER_DIR.'pi.session.php');
+    define('SESSION_SCRIPT', APP_ROOT.'pi.session.php');
     
 
     // Redis settings

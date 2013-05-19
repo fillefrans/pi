@@ -17,12 +17,15 @@
   π.require('events', false);    
 
 
+  if (!π.app) {
+    pi.log("pi.app is undefined!");
+  }
 
 
   π.app.session = {
 
     __socket         : null,
-    __initsocket     : null,
+    __sessionsocket  : null,
     __initialized    : false,
 
     __sessionserver  : window.location.hostname,
@@ -30,9 +33,6 @@
     __inituri        : '/session',
     __sessionport    : 8101,
     __sessionuri     : '',
-
-    that             : null,
-    self             : null,
 
     active    : false,
     user      : null,
@@ -44,8 +44,6 @@
         patharray = window.location.pathname.split("/"),
         host      = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri,
         DBG       = DEBUG || false;
-        this.self = this;
-        this.that = this;
 
 
       if(this.__initialized === true){
@@ -70,19 +68,30 @@
     },
 
     __startSession : function (host) {
-      var that = this;
       try {
         pi.log('Connecting session socket: ' + host);
         this.__socket = this.__createSocket(host);
+
+        this.__socket.addEventListener('error', function(error) {
+          pi.log('Socket error: ', error);
+        });
+
         this.__socket.addEventListener('open', function(event) {
           pi.log('Opened SessionSocket. Event: ', event);
-          that.send(JSON.stringify({command: 'session'}));
+          this.send(JSON.stringify({command: 'session'}));
         });
+
         this.__socket.addEventListener('message', function(event) {
 
-          // handle message event
-
           pi.log('Received (' + event.data.length + ' bytes): ' + event.data);
+          // handle message event
+          if(event.data.OK) {
+            π.log('OK');
+          }
+          else {
+            π.log('Not OK');
+          }
+
           });
         this.__socket.addEventListener('close', function(event) {
 
@@ -112,10 +121,10 @@
 
     quit : function () {
       pi.log('Goodbye!');
-      this.__socket.close();
-      this.__socket = null;
-      this.__initsocket.close();
-      this.__initsocket = null;
+      self.__socket.close();
+      self.__socket = null;
+      self.__initsocket.close();
+      self.__initsocket = null;
     },
 
     __createSocket : function (host) {
@@ -140,3 +149,4 @@
 
 
   π.app.session.start();
+  π.app.session._loaded = true;

@@ -27,4 +27,4 @@
     };
 
     π.app.__init();
-
+    π.app._loaded = true;

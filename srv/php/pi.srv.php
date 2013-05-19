@@ -82,9 +82,7 @@
         $env['parent_pid']    = getmypid();
         $env['parent_script'] = __FILE__;
         $env['session_port']  = $this->currentSessionPort;
-        $env['session_id']    = $_SESSION['id'];
-        $env['session']       = $_SESSION;
-        $env['session_guid']  = uniqid();
+        $env['session_id']    = uniqid();
         
         if ($pid === -1) {
              return false;
@@ -147,7 +145,7 @@
           case 'session':
             $sessionport  = $this->newSession();
             $success      = ($sessionport !== false);
-            $this->sendData(array("OK"=>$success, "SessionPort"=>$sessionport, "time"=>time()));
+            $this->sendData(array("OK"=>$success, "sessionPort"=>$sessionport, "time"=>time()));
             break;
           default:
             $this->reply($message, "Expecting the 'session' command.");
@@ -231,6 +229,6 @@
     $server->run();
   }
   catch(Exception $e) {
-    print("ERROR: " .get_class($e). " -> " .$e->getMessage());
+    print(get_class($e). " -> " .$e->getMessage());
   }
 ?>
