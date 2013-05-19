@@ -7,6 +7,22 @@
   require_once(PI_ROOT."pi.config.php");
 
 
+  function getFormattedTime($timestamp = false) {
+    if($timestamp === false) {
+      $timestamp = time();
+    }
+    return date("H:i:s ", $timestamp);
+  }
+
+
+  function getFormattedDate($timestamp=false) {
+    if($timestamp === false) {
+      $timestamp = time();
+    }
+    return date("d.m.Y H:i:s ", $timestamp);
+  }
+
+
   function addToCache(&$row){
     global $db, $reply, $request, $debug;
 

@@ -83,7 +83,8 @@
         $env['parent_script'] = __FILE__;
         $env['session_port']  = $this->currentSessionPort;
         $env['session_id']    = $_SESSION['id'];
-        $env['session']    = $_SESSION;
+        $env['session']       = $_SESSION;
+        $env['session_guid']  = uniqid();
         
         if ($pid === -1) {
              return false;

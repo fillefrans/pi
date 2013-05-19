@@ -7,6 +7,8 @@
      * 
      */
 
+    error_reporting(0);
+
     define('APP_NAME', 'Pi WebSocket Application Server');
 
     define('APP_PLATFORM', 'Pi Server/WebSocket');
@@ -26,10 +28,13 @@
 
     // Redis settings
 
-    define('PI_APP',   0);
-    define('PI_CACHE', 7);
-    define('PI_JOBS',  4);
-    define('PI_DEBUG', 15);
+    define('REDIS_SOCK', '/var/run/redis/redis.sock');
+
+    define('PI_APP',    0);
+    define('PI_PHP',    2);
+    define('PI_JOB',    4);
+    define('PI_DBG',   15);
+    define('PI_CACHE',  7);
     define('PI_CACHE_SIZE', 20000000-1); // 20 million
 
     define('UPDATE_FREQUENCY', 10);
