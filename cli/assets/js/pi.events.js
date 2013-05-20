@@ -129,6 +129,7 @@
     // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
     bindTo.publish = function(sub, callback_args) {
       var args;
+
       if (arguments.length > 2) {
         // If passing args as a set of args instead of an array, grab all but the first.
         args = Array.prototype.slice.apply(arguments, [1]); 

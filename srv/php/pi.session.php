@@ -1,8 +1,23 @@
 <?php
 
+    /**
+     * The pi session handler, a WebSocket application server
+     *
+     * @author Johan Telstad, jt@kroma.no
+     *
+     */
+
+
+    // ticks HAS to be declared first thing in the topmost file. 
+    // FYI: you cannot use declare() in an include file.
+     declare(ticks=16);
+
     define('SESSION_START', microtime(true));
-    
-    session_start();
+    define('SESSION_INIT',  getenv('session_init'));
+
+    $copy = false;
+    $env  = array();
+
 
     if(!defined('PI_ROOT')){
       define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
@@ -12,22 +27,19 @@
     require_once APP_ROOT."pi.util.functions.php";
   	require_once(APP_ROOT."websocket.server.php");
 
-    error_reporting(E_ALL);
+
     if(!defined('DEBUG')){
       define('DEBUG', true);
     }
 
 
-    // store some variables for after we fork
-    putenv('session_port=8101');
-    putenv('session_id=no session');
-    putenv('parent_script='.__FILE__);
-    putenv('parent_pid='.getmypid());
-    putenv('session_guid='.uniqid());
+    // if(DEBUG) {
+    //   print("[environment variables]\n");
+    //   foreach ($_ENV as $key => $value) {
+    //     print("$key\t= $value\n");
+    //   }
+    // }
 
-
-    // ticks HAS to be in the topmost file, since you cannot use declare() in an include file.
-    declare(ticks=16);
 
   
 
@@ -53,7 +65,6 @@
         protected $parent     = null;
         protected $parentpid  = null;
         protected $ticks      = 1;
-        protected $guid       = '.empty-guid';
   
         // Pub/Sub
         protected $requests       = array();
@@ -64,16 +75,6 @@
         public function __construct($port=8100){
           $this->starttime  = time();
 
-          // read back the env vars we set in the parent process before we forked 
-          $this->port       = getenv('session_port');
-          $this->id         = getenv('session_id');
-          $this->guid       = getenv('session_guid');
-          $this->parent     = getenv('parent_script');
-          $this->parentpid  = getenv('parent_pid');
-          $this->server     = new WebSocketServer("tcp://0.0.0.0:".$this->port, 'secretkey');
-          $this->server->addObserver($this);
-          $this->say("Session handler started, listening on port ".$this->port);
-          $this->channel    = 'pi.debug.log.session.' . $this->guid;
 
           // gives us a timer-function of sorts
           register_tick_function(array($this,'onTick'));
@@ -84,6 +85,16 @@
           if( false === ($this->redis = $this->connectToRedis())){
             throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
           }
+          // read back the env vars we set in the parent process before we forked 
+          $this->port       = getenv('session_port');
+          $this->id         = getenv('session_id');
+          $this->parent     = getenv('parent_script');
+          $this->parentpid  = getenv('parent_pid');
+          $this->server     = new WebSocketServer("tcp://0.0.0.0" . ( $this->port ? ":" . $this->port : '' ), 'secretkey');
+          $this->server->addObserver($this);
+          $this->say("Session handler started, listening on port ".$this->port);
+
+          $this->channel    = 'pi.srv.session.' . $this->id;
         }
 
 
@@ -100,17 +111,21 @@
             $this->say($reply['info']);
             $this->say($reply['message']);
 
-            $debug[]          = print_r($reply['info'],true);
-            $debug[]          = $reply['message'];
+            $debug[] = print_r($reply['info'],true);
+            $debug[] = $reply['message'];
         }
 
-        protected function publish($channel, $message, $guid="") {
+        protected function publish($channel, $message=false) {
 
           if($this->redis){
-            $this->redis->publish($channel, $message, $guid);
+            if(!$message) {
+              // we were invoked with only one param, so assume it's a message for default channel
+              $message = $channel;
+              $channel = $this->channel;
+            }
+            $this->redis->publish($channel, $message);
           }
           else {
-
             $this->say("We have no redis object in function publish()\n");
           }
         }
@@ -136,18 +151,18 @@
 
 
         public function onTick(){
-          $this->say("That's tick # ".$this->ticks++);
+          $this->say( floor(1000*(microtime(true)-SESSION_START)) . ": tick # " . $this->ticks++ );
         }
 
         public function onConnect(IWebSocketConnection $user){
           $this->say("{userid:{$user->getId()}, event: \"connect\", message: \"Welcome.\"}");
-          $response = "";
-          $result   = null;
+          $response = array('userid'=>$user->getId(), 'sessionid' => $this->id);
+          $result   = 1;
           $event    = "info";
           $this->myclient = $user;
-
           // we need an empty array for request param, since we haven't received any requests yet
-          $this->reply(array(),$response, $result, 'status');
+          $this->say("Sending response: " . json_encode($response));
+          $this->reply(array(),$response, $result, 'session');
         }
 
         protected function reply($request, $message="", $status = 0, $event='info'){
@@ -209,7 +224,7 @@
               $this->unsubscribe($message); 
               break;
             case 'publish':
-              $this->publish($message);
+              $this->publish($this->channel, $message);
               break;
             case 'queue':
               $this->handleQueueRequest($message);
@@ -235,7 +250,7 @@
 
         public function onDisconnect(IWebSocketConnection $user){
           $this->say("{$user->getId()} disconnected.");
-          $this->say("waiting $this->timeout seconds for reconnect.");
+           die("Client disconnected. Exiting.");
         }
 
 
@@ -249,10 +264,11 @@
 
         public function say($msg=''){
           $msg_array  = array( 'message' => $msg, 'time' => time() );
-          $this->say(json_encode($msg_array, JSON_PRETTY_PRINT). "\n");
 
           // publish debug info on redis channel
-          $this->publish($this->channel, getFormattedTime() . ": " . $msg);
+          if($this->redis){
+            $this->publish($this->channel, getFormattedTime() . ": " . $msg);
+          }
           print(getFormattedTime() . ": $msg\r\n");
         }
 

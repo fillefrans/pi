@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 
     define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
@@ -9,9 +9,9 @@
   	require_once("websocket.server.php");
 
 
-    error_reporting(E_ALL);
 
-    class TimeHandler extends WebSocketUriHandler{
+
+    class TimeHandler extends WebSocketUriHandler {
 
       private $user = null;
 
@@ -57,15 +57,17 @@
 
     /**
      * The Pi session handler, hands off session requests to worker script,
-     * allocates session id as incremental port number between 8100-8999
+     * allocates session port incrementally between 8100-8999
+     * generates unique session id
      *
      */
 
     class AppSessionHandler extends WebSocketUriHandler{
 
-      private $myclient           = null;
-      private $currentSessionPort = 0;
-      private $currentSessionId   = 0;
+      private $myclient             = null;
+      private $currentSessionPort   = 8100;
+      private $currentSessionId     = 0;
+      private $currentSessionStart  = 0;
    
       protected function reply($request, $message="", $status = 0, $event='reply'){
         $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event, "request"=>$request));
@@ -74,15 +76,25 @@
 
 
       protected function fork($script){
-        $pid    = pcntl_fork();
-        $env    = array();
-        $params = array($script);
+
 
         // set up child process
-        $env['parent_pid']    = getmypid();
+        // store some variables for after we fork
+        if($this->currentSessionPort<8100) {
+          throw new PiException("No session port({$this->currentSessionPort}), something is wrong.", 1);
+        }
+
+        $env["session_port"]  =  $this->currentSessionPort;
+        $env["session_init"]  =  $this->currentSessionStart;
+        $env['session_id']    =  uniqid();
         $env['parent_script'] = __FILE__;
-        $env['session_port']  = $this->currentSessionPort;
-        $env['session_id']    = uniqid();
+        $env['parent_pid']    = getmypid();
+
+        $pid    = pcntl_fork();
+        $params = array($script);
+        // foreach ($env as $value) {
+        //   array_push($params, $value);
+        // }
         
         if ($pid === -1) {
              return false;
@@ -101,16 +113,18 @@
 
       protected function newSession(){
         // next session is +1 
-        $this->currentSessionPort++;
- 
         // kind of dirty, but will do for now
         // we should really keep count in Redis, or something similar
+        $this->currentSessionStart = microtime(true);
+
+        $this->currentSessionPort = (8100 + (++$this->currentSessionPort % 900));
+ 
         try{
           if (!file_exists(SESSION_SCRIPT)){
             throw new PiException("Session handler script does not exist: ". SESSION_SCRIPT, 1);
           }
           if(false === ($result = $this->fork(SESSION_SCRIPT))){
-            throw new PiException("Fork failed", 1);
+            throw new PiException("Fork failed: " . SESSION_SCRIPT, 1);
           }
         }
         catch(Exception $e){
@@ -119,8 +133,8 @@
           $this->currentSessionPort--;
           return false;
         }
-        //calculate session port
-        return 8100 + ($this->currentSessionPort % 900);
+        //return a session port between 8100 and 8999;
+        return $this->currentSessionPort;
       }
 
 
@@ -143,9 +157,16 @@
         }
         switch (strtolower($message['command'])) {
           case 'session':
-            $sessionport  = $this->newSession();
-            $success      = ($sessionport !== false);
-            $this->sendData(array("OK"=>$success, "sessionPort"=>$sessionport, "time"=>time()));
+
+            $this->currentSessionPort  = $this->newSession();
+            $success = ($this->currentSessionPort !== false);
+            if(DEBUG) {
+              if (!$this->currentSessionPort) {
+                print("!this->sessionPort\n");
+              }
+            }
+            print("sessionPort: " . $this->currentSessionPort . "\n");
+            $this->sendData(array("OK"=>$success, "sessionPort"=>$this->currentSessionPort, "time"=>time()));
             break;
           default:
             $this->reply($message, "Expecting the 'session' command.");
@@ -203,19 +224,22 @@
 
 
         public function say($msg=''){
-            echo "$msg \r\n";
+            print("$msg\n");
         }
 
 
         public function run(){
       		print("running\n");
           try{
-            $this->server->run();
-            $this->say(APP_NAME." ".APP_VERSION);
+            $result = $this->server->run();
+            
+
+            print(APP_NAME." ".APP_VERSION."\n");
             $this->say("\trunning on ". APP_PLATFORM);
             $this->say("========================================");
             $this->say("Server Started : " . date('Y-m-d H:i:s'));
             $this->say("Listening on   : " . $this->address);
+            $this->say("Server status  : " . $result);
             $this->say("========================================");
           }
           catch(Exception $e){

@@ -7,11 +7,16 @@
      * 
      */
 
+    if(!defined('DEBUG')){
+      define('DEBUG', true);
+    }
+
+
     error_reporting(0);
 
-    define('APP_NAME', 'Pi WebSocket Application Server');
+    define('APP_NAME', 'Pi AppServer');
 
-    define('APP_PLATFORM', 'Pi Server/WebSocket');
+    define('APP_PLATFORM', 'Pi Client-Server/WebSocket');
 
     define('APP_VERSION', 'v0.1');
 
