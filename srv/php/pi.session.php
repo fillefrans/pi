@@ -274,7 +274,7 @@
 
 
         public function run(){
-      		$this->say(get_class($this) . ": running\n");
+      		$this->say("\n" . get_class($this) . ": running\n");
           $this->__init();
           $this->server->run();
         }

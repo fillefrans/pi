@@ -65,11 +65,11 @@
             log = π.timer.history.log;
 
 
-          log.forEach(function(index, value) {
+          log.forEach(function(value, index) {
             if(callback) {
               callback.call(index, value);
             }
-            pi.log(index + "\t| " + value.id + ":\tstart = " + value.start + "\tstop = " + value.stop);
+            pi.log(value.id + ": " + value.time + "ms.");
           });
         },
 
@@ -77,11 +77,12 @@
           var
             log = π.timer.history.log;
 
+          π.events.publish("pi.timer.history.on", ["clear"]);
+
           // clear log
           while(log.pop()){
             // nop
           }
-          π.events.publish("pi.timer.on", ["clear"]);
         }
       }, // end of history object
 
@@ -131,7 +132,7 @@
         history.add(self);
 
         // clear timer, this shouldn't delete the object, i think
-        timers[timerid] = false;
+//        timers[timerid] = false;
 
         // return timer value
         return result;
@@ -198,7 +199,6 @@
 
 
     π.require = function(module, async, defer, callback){
-
     
       if (π.loaded[module.replace(/\./g,'_')]) {
         if(callback) {
@@ -220,8 +220,8 @@
       script.src        = path + module + '.js';
       script.self       = script;
       script.module     = module;
-      script.callback   = callback || false;
       script.modname    = module.replace(/\./g,'_');
+      script.callback   = callback || false;
 
       pi.timer.start(module);
 

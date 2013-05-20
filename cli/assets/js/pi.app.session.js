@@ -14,7 +14,7 @@
 
 
   π.require('app');
-  π.require('events', false);    
+  π.require('events');    
 
 
   if (!π.app) {
@@ -65,6 +65,7 @@
 
 
     __init : function (DEBUG) {
+      π.timer.start("session.init");
 
       var 
         host        = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri,
@@ -73,7 +74,6 @@
       if(!π.events) {
         π.require('events');
       }
-
 
       if(this.__initialized === true){
         //something is not right
@@ -94,15 +94,16 @@
       return true;
     },
 
-
     __onopen : function (event) {
-      var
-        self = π.app.session,
-        bootstraptime = (new Date()).getTime() - π.__sessionstart;
+      // var
+      //   self = π.app.session,
+      //   bootstraptime = (new Date()).getTime() - π.__sessionstart;
 
+      π.timer.stop("session");
+      pi.log("pi.app bootstrapped in " + pi.timer.stop("bootstrap") + "ms. \nTotal startup time: " +  ((new Date()).getTime() - π.__sessionstart) + "ms.");
 
-      pi.log("pi.app bootstrapped in " + bootstraptime + " millisecs");
-
+      // lists all timers in console
+      pi.timer.history.list();
     },
 
     __onerror : function (error) {
@@ -124,6 +125,7 @@
       var 
         self = this;
 
+
       try {
         pi.log('Connecting session request socket: ' + host);
         this.__socket = this.__createSocket(host);
@@ -134,6 +136,8 @@
 
         this.__socket.addEventListener('open', function(event) {
           pi.log('Opened session request socket. Event: ', event);
+          π.timer.stop("session.init");
+          π.timer.start("session.request");
           this.send(JSON.stringify({command: 'session'}));
         });
 
@@ -147,17 +151,17 @@
           pi.log('Received (' + event.data.length + ' bytes): ' + event.data);
           // handle message event
           if(message.OK) {
+
             // it seems we have to wait a few millis for the session to come up
-
-              setTimeout(function (self) {
-                self.__sessionsocket = self.__createSocket('ws://' + self.__sessionserver + ":" + message.sessionPort);
-
-                self.__sessionsocket.addEventListener("error", self.__onerror);
-                self.__sessionsocket.addEventListener("open", self.__onopen);
-                self.__sessionsocket.addEventListener("close", self.__onclose);
-                self.__sessionsocket.addEventListener("message", self.__onmessage);
-              }, 1, self );
-              π.debug('OK', message);
+            setTimeout(function (self) {
+              π.timer.stop("session.request");
+              self.__sessionsocket = self.__createSocket('ws://' + self.__sessionserver + ":" + message.sessionPort);
+              self.__sessionsocket.addEventListener("error", self.__onerror);
+              self.__sessionsocket.addEventListener("open", self.__onopen);
+              self.__sessionsocket.addEventListener("close", self.__onclose);
+              self.__sessionsocket.addEventListener("message", self.__onmessage);
+            }, 1, self );
+            π.debug('OK', message);
           }
           else {
             π.debug('Not OK', message);
@@ -173,7 +177,7 @@
       return true;
       }
       catch (ex) {
-        pi.log(ex);
+        pi.log(ex.name + ": " + ex.message, ex);
         return false;
       }
     },
@@ -187,7 +191,7 @@
         // pi.log('Sent (' + msg.length + ' bytes): ' + msg);
       }
       catch (ex) {
-        pi.log(ex);
+        pi.log(ex.name + ": " + ex.message, ex);
       }
     },
 
@@ -217,18 +221,20 @@
         }
       }
       catch(ex) {
-        pi.log(ex.name + ": " + ex.message);
+        pi.log(ex.name + ": " + ex.message, ex);
       }
     },
 
 
     start : function (DEBUG) {
       if( !this.__init(DEBUG) ) {
-        pi.log('__init() returned false, aborting...');
+        pi.log('session.__init() returned false, aborting...');
       }
     }
   };
 
+
+  π.timer.start("session");
 
   π.app.session.start();
   π.app.session._loaded = true;
