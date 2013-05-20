@@ -184,11 +184,7 @@
 
     send : function (obj) {
       try {
-        var msg = JSON.stringify(obj);
-        console.log(this);
-        this.__socket.send(msg);
-        pi.log('Sent (' + msg.length + ' bytes): ' + msg);
-        // pi.log('Sent (' + msg.length + ' bytes): ' + msg);
+        this.__socket.send(obj);
       }
       catch (ex) {
         pi.log(ex.name + ": " + ex.message, ex);
