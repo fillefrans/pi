@@ -20,7 +20,7 @@
 
 
     if(!defined('PI_ROOT')){
-      define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
+      define('PI_ROOT', './');
       require_once PI_ROOT."pi.config.php";
     }
     require_once APP_ROOT."pi.exception.class.php";

@@ -22,7 +22,7 @@
 
     // define directories
 
-    define('APP_ROOT', "/home/kroma/dev/www/pi/srv/php/");
+    define('APP_ROOT', "/home/xman/dev/www/pi/srv/php/");
     define('UTILITIES_DIR', APP_ROOT.'utility/');
 
     define('UPLOAD_ROOT',"/var/www/upload/pi/batch/");
