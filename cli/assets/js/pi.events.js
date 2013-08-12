@@ -223,7 +223,7 @@
 
 /***   ------   INITIALIZATION    ------  
    *
-   *  Code we run after having created the event object.
+   *  Code we run after having created the events object.
    *
    */
 

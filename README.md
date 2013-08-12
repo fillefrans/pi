@@ -16,7 +16,7 @@ The short version is:
 - uses namespaces 
 - uses background processing to avoid blocking the user thread
 - does not rely on other libraries
-- is designed to work with Varnish
+- is designed to work with Varnish and Redis
 - provides a communication network between all parts of the namespace
 
 - requires an HTML5-compatible browser. 
@@ -86,12 +86,11 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * Use documentFragment when adding more than one node to the DOM, it's faster
 
 
-####Server-side tips
+####Server-side optimizations
 * Replace the PHP serializer with [igbinary](https://github.com/igbinary/igbinary).
 * Compile Redis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
 * Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient.
 * Use Redis for PHP session storage and application shared memory.
-* Use Redis pubsub for sending messages to any part of the namespace.
 
 
 ##Documentation

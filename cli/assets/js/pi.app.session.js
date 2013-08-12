@@ -35,14 +35,9 @@
    */
     __onmessage : function (event) {
       var
-        events = π.events || false,
         json   = JSON.parse(event.data);
 
-      if(!events){
-        return;
-      }
-
-      events.publish('pi.app.session', json.message);
+      π.events.publish('pi.app.session', json.message);
       pi.log("onmessage [" + typeof(json.message) + "] : ", json.message);
     },
 
