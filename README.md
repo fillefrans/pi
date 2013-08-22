@@ -3,7 +3,7 @@
 
 ####What is π?
 
-First and foremost, it is a tool for building single-page web and mobile apps.
+First and foremost, it is a tool for building single-page web and mobile apps/platforms.
 
 The short version is:
 
@@ -16,9 +16,8 @@ The short version is:
 - uses namespaces 
 - uses background processing to avoid blocking the user thread
 - does not rely on other libraries
-- is designed to work with Varnish and Redis
+- is designed to work optimally with Varnish and Redis
 - provides a communication network between all parts of the namespace
-
 - requires an HTML5-compatible browser. 
 
 
@@ -45,13 +44,13 @@ Components can be loaded into apps on the fly, or queued for preloading. Scripts
    2. Loaded over AJAX into the browser 
    3. Loaded over WebSocket, and injected into the DOM
 
-For 2. and 3., it is possible to cache documents and snippets in HTML5's localStorage
+For 2. and 3., it is possible to store documents and snippets in HTML5's localStorage
 
 
-π is a bare-bones but extensible set of libraries that serves as platform for developing real-time client-server web apps/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
+π is a bare-bones but extensible set of libraries that serves as platform for developing real-time client-server web apps/components/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
 
 
-π is inspired by flow-based programming and the old-school linux toolset, where specialized agents can be configured into flexible chains of processing.
+π is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
 
 
 ####Kudos
@@ -64,6 +63,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * The [GreenSock Animation Library](http://greensock.com)
 * Higgins' PubSub
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
+* the unix toolchain
 
 
 
@@ -72,7 +72,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * Check out [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
 * Vector graphics is great for Retina displays.
 * GreenSock is an almost hilariously good animation library. And it's small. [GSAP](https://www.greensock.com/tag/tutorial/).
-* Web workers are awesome. 
+* WebWorkers are awesome. 
 * For size and position, using perfect cubes (or multiples): 8, 64, 216, 512, makes it easier to stack components.
 
 * [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
@@ -80,10 +80,11 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 
 ####Client-side
 * Components should be self-contained.
-* The π.app and π.plugins namespaces are open for anyone.
+* The π.app and π.plugins namespaces are open to anyone.
 * Feel free to write a better xhr module :) 
 * Use CSS inheritance 
 * Use documentFragment when adding more than one node to the DOM, it's faster
+
 
 
 ####Server-side optimizations
@@ -108,7 +109,7 @@ When we're at version 0.6 or thereabouts.
 * Cross-device support, again within reason
 * If possible, generic access to a subset of native device resources from JavaScript, such as accelerometer, camera, geolocation
 * A plugin system
-
+* An extensible visual component library called pcl
 
 
 ##Target Clients
@@ -160,7 +161,7 @@ When we're at version 0.6 or thereabouts.
 * Avoid DOM manipulation
 * use documentFragment
 * use getClientBoundingRect
-* use Web Workers
+* use WebWorkers
 * localStorage can be used even for css and scripts
 
 
@@ -180,6 +181,7 @@ When we're at version 0.6 or thereabouts.
 
 
 ###Tricks & fixes
+* [Running multiple instances of Redis](http://chrislaskey.com/blog/342/running-multiple-redis-instances-on-the-same-server/)
 * [How to use git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
 * [A fix for the iPhone ViewPort scale bug](http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/)
 
@@ -202,7 +204,7 @@ When we're at version 0.6 or thereabouts.
 
 
 ###Browser support
-  - All browsers with WebSockets: [caniuse - WebSockets](http://caniuse.com/#feat=websocket)
+  - Any browser with WebSockets: [caniuse - WebSockets](http://caniuse.com/#feat=websocket)
 
 
 
@@ -211,10 +213,12 @@ When we're at version 0.6 or thereabouts.
 
 * HTML5 native functions
 * WebSockets
+* WebWorkers
 * [Varnish](http://varnish-cache.org)
 * Apache
 * PHP
-    - [phpredis](https://github.com/igbinary/igbinary) 
+    - [phpredis](https://github.com/nicolasff/phpredis‎) 
+    - [igbinary](https://github.com/igbinary/igbinary) 
     - [phpws](http://code.google.com/p/phpws/)
 * [Redis](http://redis.io)
 * Free Pascal

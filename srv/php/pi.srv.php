@@ -179,7 +179,7 @@
     /**
      * The pi application server
      *
-     * @author Johan Telstad, jt@kroma.no
+     * @author Johan Telstad, jt@enfield.no
      *
      */
 

@@ -7,7 +7,7 @@
  * 
  * A web worker used to offload as much processing as possible from the main thread
  *   
- * @author Johan Telstad, jt@kroma.no, 2013
+ * @author Johan Telstad, jt@enfield.no, 2011-2013
  *
  */
 

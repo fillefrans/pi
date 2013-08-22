@@ -1,4 +1,8 @@
 /*  
+
+    Bailey–Borwein–Plouffe formula to calculate pi
+
+
     This program implements the BBP algorithm to generate a few hexadecimal
     digits beginning immediately after a given position id, or in other words
     beginning at position id + 1.  On most systems using IEEE 64-bit floating-

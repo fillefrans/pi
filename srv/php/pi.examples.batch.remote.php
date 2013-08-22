@@ -3,7 +3,7 @@
     /**
      * Run batch through Pi WebService
      *
-     * @author Johan Telstad, jt@kroma.no
+     * @author Johan Telstad, jt@enfield.no
      * @version v1.0, 04.02.2013
      *
      *  Usage example at the bottom of this file
@@ -12,7 +12,7 @@
 
     define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
     require_once PI_ROOT."pi.config.php";
-    require_once APP_ROOT."pi.exception.class.php";
+    require_once PI_ROOT."pi.exception.class.php";
     require_once UTILITIES_DIR."pi.functions.php";
 
 

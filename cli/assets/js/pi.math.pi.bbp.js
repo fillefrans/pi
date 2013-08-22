@@ -15,8 +15,8 @@
 
 
 /**
- *  2013
- *  Translated to the JavaScript by Johan Telstad, <jt@kroma.no> 
+ *  2011-2013
+ *  Translated to the JavaScript by Johan Telstad, <jt@enfield.no> 
  * 
  */
 

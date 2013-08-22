@@ -2,7 +2,7 @@
  *
  * π.pcl
  *
- * @author Johan Telstad, jt@kroma.no, 2013
+ * @author Johan Telstad, jt@enfield.no, 2011- 2011-2013
  *
  */
 
@@ -73,11 +73,9 @@
       pi.log("adding component: " + components.item(i).className);
       π.app.components.add(components.item(i));
     }
+
+    π.app.components.__init();
   }
 
 
-
-  π.app.components.__init();
-
   π.pcl._loaded = true;
-

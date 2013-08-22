@@ -2,7 +2,7 @@
    *
    * π.fonts
    *
-   * @author Johan Telstad, jt@kroma.no, 2013
+   * @author Johan Telstad, jt@enfield.no, 2011-2013
    *
    */
 

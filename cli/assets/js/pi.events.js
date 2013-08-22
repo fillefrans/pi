@@ -5,7 +5,7 @@
  *    This is the client side hub of our messaging system.
  *    It will handle data/message passing, events, and pubsub. In a hurry.
  *
- * @author Johan Telstad, jt@kroma.no, 2013
+ * @author Johan Telstad, jt@enfield.no, 2011-2013
  *
  * 
  * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 
@@ -231,8 +231,6 @@
   document.body.addEventListener('touchmove',   π.events.__touchmove,   false); 
   document.body.addEventListener('touchstart',  π.events.__touchstart,  false); 
   document.body.addEventListener('touchend',    π.events.__touchend,    false); 
-
-
 
 
 

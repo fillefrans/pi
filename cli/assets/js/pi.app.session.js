@@ -4,8 +4,6 @@
  *  This bit should be bulletproof
  *
  *  We need to implement a feedback mechanism for js errors that we can trap
- *  (and possibly for exceptions)
- *  gif beacon
  *
  *  That way we can monitor apps in the wild and pick up on problems quickly
  * 
@@ -22,26 +20,8 @@
   }
 
 
+
   π.app.session = {
-
-  /**
-   * onmessage
-   * By far the most important function in the session object
-   *
-   * This is where we will spend a big part of our time.
-   * There shouldn't be any blocking code in here at all
-   * and no error checking, this function is only called by trusted code
-   * 
-   */
-    __onmessage : function (event) {
-      var
-        json   = JSON.parse(event.data);
-
-      π.events.publish('pi.app.session', json.message);
-      pi.log("onmessage [" + typeof(json.message) + "] : ", json.message);
-    },
-
-
 
     __socket         : null,
     __sessionsocket  : null,
@@ -57,6 +37,28 @@
 
     active    : false,
     user      : null,
+
+
+
+  /**
+   * onmessage
+   * By far the most important function in the session object
+   *
+   * This is where we will spend a big part of our time.
+   * There shouldn't be any blocking code in here at all
+   * and no error checking, this function is only called by trusted code
+   * 
+   */
+
+    __onmessage : function (event) {
+      var
+        json   = JSON.parse(event.data);
+
+      π.events.publish('pi.app.session', json.message);
+      pi.log("onmessage [" + typeof(json.message) + "] : ", json.message);
+    },
+
+
 
 
     __init : function (DEBUG) {
@@ -80,14 +82,17 @@
       return this.__initialized;
     },
 
+
     __handleError  : function(msg, obj){
       pi.log('error: ' + msg, obj);
     },
+
 
     __login : function(credentials) {
       pi.log("login: ", credentials);
       return true;
     },
+
 
     __onopen : function (event) {
       // var
@@ -101,6 +106,7 @@
       pi.timer.history.list();
     },
 
+
     __onerror : function (error) {
       var
         self = π.app.session;
@@ -109,12 +115,14 @@
       pi.log("onerror: " + event.data);
     },
 
+
     __onclose : function (event) {
       var
         self    = π.app.session;
 
       pi.log("onclose:" + event.data);
     },
+
 
     __startSession : function (host) {
       var 
@@ -147,7 +155,7 @@
           // handle message event
           if(message.OK) {
 
-            // it seems we have to wait a few millis for the session to come up
+            // we have to release the execution pointer to allow the session to start up
             setTimeout(function (self) {
               π.timer.stop("session.request");
               self.__sessionsocket = self.__createSocket('ws://' + self.__sessionserver + ":" + message.sessionPort);
@@ -177,6 +185,7 @@
       }
     },
 
+
     send : function (obj) {
       try {
         this.__socket.send(obj);
@@ -185,6 +194,7 @@
         pi.log(ex.name + ": " + ex.message, ex);
       }
     },
+
 
     quit : function () {
       var
@@ -197,6 +207,7 @@
       self.__initsocket.close();
       self.__initsocket = null;
     },
+
 
     __createSocket : function (host) {
       try{
@@ -218,6 +229,8 @@
 
 
     start : function (DEBUG) {
+      π.timer.start("session");
+
       if( !this.__init(DEBUG) ) {
         pi.log('session.__init() returned false, aborting...');
       }
@@ -225,7 +238,4 @@
   };
 
 
-  π.timer.start("session");
-
   π.app.session.start();
-  π.app.session._loaded = true;

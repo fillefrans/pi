@@ -2,7 +2,7 @@
    *
    * π, µ
    *
-   * @author @copyright Johan Telstad, jt@kroma.no, 2013
+   * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
    *
    */
 
@@ -10,6 +10,7 @@
   var 
       π  = π  || {},
       pi = pi || π;
+
 
 
   /*  ----  Our top level namespaces  ----  */
@@ -20,19 +21,20 @@
     π.session     = π.session     || { _loaded: false, _ns: 'session' };
     π.system      = π.system      || { _loaded: false, _ns: 'system' };
     π.debug       = π.debug       || { _loaded: false, _ns: 'debug' };
+    π.io          = π.io          || { _loaded: false, _ns: 'io' };
 
     π.util        = π.util        || { _loaded: false, _ns: 'util' };
     π.math        = π.math        || { _loaded: false, _ns: 'math' };
     π.statistics  = π.statistics  || { _loaded: false, _ns: 'statistics' };
 
-    // your plugins here, like so:   pi.plugins.yourcompany.yourplugin.[whatever] = { # your plugin code };
+    // your plugins here, like so:   pi.plugins.yourcompany.yourplugin.[whatever] = { # your plugin object };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
 
-    // for all you crazy cowboys, your exclusive playground
+    // for all you crazy cowboys, your own playground
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
 
-    π.APP_ROOT    = "assets/js/";
+    π.PI_ROOT    = "assets/js/";
     π.LIB_ROOT    = "../../assets/js/";
     π.SRV_ROOT    = "../../../srv/";
     // π.PHP_ROOT    = π.SRV_ROOT + "php/";
@@ -79,7 +81,7 @@
 
           π.events.publish("pi.timer.history.on", ["clear"]);
 
-          // clear log
+          // clear log, this is actually the fastest way
           while(log.pop()){
             // nop
           }
@@ -90,6 +92,7 @@
       // the timer object proper
 
       timers : {},
+
 
       start : function(timerid) {
         // replace . with _
@@ -112,6 +115,7 @@
         }
       },
 
+
       stop : function(timerid) {
         var
           timers  = π.timer.timers,
@@ -119,7 +123,7 @@
           self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
 
         if(!self) {
-          π.events.publish("pi.timer.warning", "Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
+          π.events.publish("pi.timer." + timerid, "Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
           pi.log("Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
           return false;
         }
@@ -141,13 +145,14 @@
 
 
 
-    pi.forEachObj = function(object, callback) {
+    π.forEachObj = function(object, callback) {
           for (var index in object) {
               callback.call(pi, index, object[index]);
           }
       };
 
-    // refreshes the global namespace
+
+    // recurse over the global namespace
     π.updateNS = function() {
       var 
         recurse = function(idx, obj) {
@@ -159,6 +164,7 @@
 
       π.forEachObj(π, recurse);
     };
+
 
     π.debug = function(msg, obj) {
 
@@ -197,6 +203,30 @@
       element.appendChild(fragment);
     };
 
+
+
+    π.listen = function (address, callback, onerror) {
+
+      var 
+        source  = new EventSource('/pi/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
+
+      source.addEventListener('error',    onerror,  false);
+      source.addEventListener('message',  callback, false);
+    };
+
+
+
+
+    /** π.require
+     *
+     * A simple dependency management system
+     * 
+     * @param  {string}     module    Name of the pi module to be loaded
+     * @param  {boolean}    async     Load script asynchronously
+     * @param  {boolean}    defer     Use deferred script loading
+     * @param  {Function}   callback  Callback on loaded
+     * @return {boolean}              True for success, false for failure
+     */
 
     π.require = function(module, async, defer, callback){
     
@@ -257,30 +287,35 @@
      */
 
 
-  π.log("Pi bootstrapped in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Loading modules...");
+  π.log("Pi bootstrapped in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing...");
 
   // start a timer for the application bootstrap
-  π.timer.start("bootstrap");
+  π.timer.start("initialization");
+
+  pi.log("Loading modules...");
 
   π.require("events", false, false, function (e) {
-    pi.log("...loaded: events", e);
+    pi.log("loaded: events", e);
   });
 
   π.require("app", false, false, function (e) {
-    pi.log("...loaded: app", e);
+    pi.log("loaded: app", e);
   });
 
   π.require("app.session", false, false, function (e) {
-    pi.log("...loaded: app.session", e);
+    pi.log("loaded: app.session", e);
   });
   
   π.require("pcl", false, false, function (e) {
-    pi.log("...loaded: pcl", e);
+    pi.log("loaded: pcl", e);
   });
 
 
+  π.log("Pi initialized in " + π.timer.stop("initialization") + " ms.");
+  
 
-  /* a safari bug-fix. under suspicion of being useless */
+
+  /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
   window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);

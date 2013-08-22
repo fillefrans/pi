@@ -22,7 +22,7 @@
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="1"/>
       <Language Value="0809"/>
-      <StringTable CompanyName="Kroma AS" LegalCopyright="Johan Telstad, 2013" LegalTrademarks="pi" OriginalFilename="pi-server" ProductName="pi" ProductVersion="v0.1@"/>
+      <StringTable CompanyName="Kroma AS" LegalCopyright="Johan Telstad, 2011-2013" LegalTrademarks="pi" OriginalFilename="pi-server" ProductName="pi" ProductVersion="v0.1@"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>

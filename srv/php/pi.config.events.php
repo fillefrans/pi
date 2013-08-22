@@ -1,7 +1,7 @@
 <?php
 
     /**
-     *  @author Johan Telstad <jt@kroma.no>
+     *  @author Johan Telstad <jt@enfield.no>
      *  
      *  Config file for pi
      * 

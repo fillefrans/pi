@@ -1,7 +1,7 @@
 <?php
 
     /**
-     *  @author Johan Telstad <jt@kroma.no>
+     *  @author Johan Telstad <jt@enfield.no>
      *  
      *  Config file for Pi
      * 
@@ -18,17 +18,17 @@
 
     define('APP_PLATFORM', 'Pi Client-Server/WebSocket');
 
-    define('APP_VERSION', 'v0.1');
+    define('APP_VERSION', 'v0.3');
 
     // define directories
 
-    define('APP_ROOT', "/home/xman/dev/www/pi/srv/php/");
-    define('UTILITIES_DIR', APP_ROOT.'utility/');
+    define('PI_ROOT', dirname(__FILE__) . "/");
+    define('UTILITIES_DIR', PI_ROOT.'utility/');
 
     define('UPLOAD_ROOT',"/var/www/upload/pi/batch/");
-    define('WORKER_DIR', APP_ROOT."workers/");
+    define('WORKER_DIR', PI_ROOT."workers/");
     define('WORKER_SPAWNER', WORKER_DIR.'pi.util.spawn.php');
-    define('SESSION_SCRIPT', APP_ROOT.'pi.session.php');
+    define('SESSION_SCRIPT', PI_ROOT.'pi.session.php');
     
 
     // Redis settings
@@ -40,6 +40,7 @@
     define('PI_JOB',    4);
     define('PI_DBG',   15);
     define('PI_CACHE',  7);
+
     define('PI_CACHE_SIZE', 20000000-1); // 20 million
 
     define('UPDATE_FREQUENCY', 10);

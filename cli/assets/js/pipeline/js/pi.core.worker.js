@@ -7,7 +7,7 @@
  * 
  * A web worker used to offload as much processing as possible from the main thread
  *   
- * @author Johan Telstad, jt@kroma.no, 2013
+ * @author Johan Telstad, jt@enfield.no, 2011-2013
  *
  */
 
@@ -34,7 +34,7 @@
 /**   GLOBALS
  *
  *    We define all globals as object literals: it allows us to build namespaces
-w */
+ */
 
 
 //  thread global constants

@@ -4,7 +4,7 @@
  *
  * The client-side statistics module
  * 
- * @author @copyright Johan Telstad, jt@kroma.no, 2013
+ * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
  *
  */
 

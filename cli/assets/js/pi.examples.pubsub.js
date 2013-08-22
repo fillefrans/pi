@@ -1,27 +1,3 @@
-  // --------
-  // Get it ready
-  // --------
-
-  // // Bind to an object
-  // var o = {};
-  // PubSub(o);
-
-  // // Or construct a new one
-  // var c = new PubSub();
-
-  // // Or even to jQuery!
-  // PubSub(jQuery);
-
-  // // Want the published path passed to each handler?
-  // PubSub(o, true);
-
-  // // Want to specify a different internally-unique handler (in case you want to use an event named "_sub")?
-  // PubSub(o, true, "unique_string_here_52434675");
-
-  // // Mix and match parameters!
-  // PubSub(true, "uniq");
-  // PubSub(o, "uniq");
-
   // ------
   // Use it
   // ------
@@ -59,28 +35,27 @@
   pi.events.publish("an.event"); // "Event fired: an.event"
 
 
-
   // Unsubscribe by handler!
-  var hand = function(){
+  var handler = function(){
   	console.error("failed to remove");
   };
 
-  pi.events.subscribe("remove.me", hand);
-  pi.events.unsubscribe("remove.me", hand);
+  pi.events.subscribe("remove.me", handler);
+  pi.events.unsubscribe("remove.me", handler);
   pi.events.publish("remove.me") // nothing happens!
 
   // Unsubscribe by path!
-  pi.events.subscribe("remove.me", hand);
+  pi.events.subscribe("remove.me", handler);
   pi.events.unsubscribe("remove.me");
   pi.events.publish("remove.me") // nothing happens!
 
   // Unsubscribe recursively!
-  pi.events.subscribe("remove.me", hand);
-  pi.events.unsubscribe("remove", hand, true);
+  pi.events.subscribe("remove.me", handler);
+  pi.events.unsubscribe("remove", handler, true);
   pi.events.publish("remove.me") // nothing happens!
 
   // Unsubscribe everything!
-  pi.events.subscribe("remove", hand).subscribe("another.hierarchy", hand);
+  pi.events.subscribe("remove", handler).subscribe("another.hierarchy", handler);
   pi.events.unsubscribe("", true);
   pi.events.publish("remove").publish("another.hierarchy"); // nothing happens!
 

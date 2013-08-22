@@ -3,14 +3,14 @@
     /**
      * The pi session handler, a WebSocket application server
      *
-     * @author Johan Telstad, jt@kroma.no
+     * @author Johan Telstad, jt@enfield.no, 2011-2013
      *
      */
 
 
     // ticks HAS to be declared first thing in the topmost file. 
     // FYI: you cannot use declare() in an include file.
-     declare(ticks=16);
+    declare(ticks=16);
 
     define('SESSION_START', microtime(true));
     define('SESSION_INIT',  getenv('session_init'));
@@ -20,12 +20,12 @@
 
 
     if(!defined('PI_ROOT')){
-      define('PI_ROOT', './');
-      require_once PI_ROOT."pi.config.php";
+      define('PI_ROOT', dirname(__FILE__)."/");
+      require_once(PI_ROOT."pi.config.php");
     }
-    require_once APP_ROOT."pi.exception.class.php";
-    require_once APP_ROOT."pi.util.functions.php";
-  	require_once(APP_ROOT."websocket.server.php");
+    require_once(PI_ROOT."pi.exception.class.php");
+    require_once(PI_ROOT."pi.util.functions.php");
+  	require_once(PI_ROOT."websocket.server.php");
 
 
     if(!defined('DEBUG')){
@@ -33,38 +33,21 @@
     }
 
 
-    // if(DEBUG) {
-    //   print("[environment variables]\n");
-    //   foreach ($_ENV as $key => $value) {
-    //     print("$key\t= $value\n");
-    //   }
-    // }
-
-
-  
-
-    /**
-     * The pi session handler, a WebSocket application server
-     *
-     * @author Johan Telstad, jt@kroma.no
-     *
-     */
-
     class PiSessionHandler implements IWebSocketServerObserver{
-        protected $DEBUG      = true;
-        protected $server     = null;
-        protected $redis      = null;
-        protected $incoming   = 0;
-        protected $outgoing   = 0;
-        protected $starttime  = null;
-        protected $timeout    = 1;
-        protected $lastactivity  = null;
-        protected $myclient   = null;
-        protected $port       = null;
-        protected $id         = null;
-        protected $parent     = null;
-        protected $parentpid  = null;
-        protected $ticks      = 1;
+        protected $DEBUG        = true;
+        protected $server       = null;
+        protected $redis        = null;
+        protected $incoming     = 0;
+        protected $outgoing     = 0;
+        protected $starttime    = null;
+        protected $timeout      = 1;
+        protected $lastactivity = null;
+        protected $myclient     = null;
+        protected $port         = null;
+        protected $id           = null;
+        protected $parent       = null;
+        protected $parentpid    = null;
+        protected $ticks        = 1;
   
         // Pub/Sub
         protected $requests       = array();
@@ -75,10 +58,10 @@
         public function __construct($port=8100){
           $this->starttime  = time();
 
-
           // gives us a timer-function of sorts
           register_tick_function(array($this,'onTick'));
         }
+
 
         protected function __init() {
           // this is the place for any code that raises exceptions
@@ -91,6 +74,7 @@
           $this->parent     = getenv('parent_script');
           $this->parentpid  = getenv('parent_pid');
           $this->server     = new WebSocketServer("tcp://0.0.0.0" . ( $this->port ? ":" . $this->port : '' ), 'secretkey');
+
           $this->server->addObserver($this);
           $this->say("Session handler started, listening on port ".$this->port);
 
@@ -154,6 +138,7 @@
           $this->say( floor(1000*(microtime(true)-SESSION_START)) . ": tick # " . $this->ticks++ );
         }
 
+
         public function onConnect(IWebSocketConnection $user){
           $this->say("{userid:{$user->getId()}, event: \"connect\", message: \"Welcome.\"}");
           $response = array('userid'=>$user->getId(), 'sessionid' => $this->id);
@@ -165,10 +150,12 @@
           $this->reply(array(),$response, $result, 'session');
         }
 
+
         protected function reply($request, $message="", $status = 0, $event='info'){
           $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event, "request"=>$request));
           $this->myclient->sendMessage(WebSocketMessage::create($json));
         }
+
 
         protected function sendData($data=null, $event='data'){
           $json = json_encode(array('data'=>$data, "event"=>$event));
@@ -186,6 +173,7 @@
             }
         }
 
+
         protected function unsubscribe($channel){
           if(isset($this->subscriptions[$channel])){
             unset($this->subscriptions[$channel]);
@@ -194,6 +182,7 @@
             throw new PiException("Error unsubscribing from Redis channel '$channel'.", 1);
           }
         }
+
 
         protected function subscribe($channel, $request){
           if(false === ($result = $this->redis->subscribe($channel, array($this, 'onPubSubMessage')))){
@@ -249,7 +238,7 @@
 
 
         public function onDisconnect(IWebSocketConnection $user){
-          $this->say("{$user->getId()} disconnected.");
+          $this->say("User {$user->getId()} disconnected.");
            die("Client disconnected. Exiting.");
         }
 
@@ -283,8 +272,6 @@
 
 
 
-  // let's go
-
   $server = new PiSessionHandler();
 
   try {
@@ -293,7 +280,6 @@
   catch(Exception $e) {
     $this->say(get_class($e) . ": " . $e->getMessage() . "\n");
   }
-
 
 
 ?>

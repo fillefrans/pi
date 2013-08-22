@@ -13,7 +13,7 @@
  *
  * @requires Web Worker support in browser
  * 
- * @author Johan Telstad, jt@kroma.no, 2013
+ * @author Johan Telstad, jt@enfield.no, 2011-2013
  *
  */
 
@@ -183,7 +183,7 @@ if (!π.dom) {
    *  
    *  @description Register an event listener to receive our custom scroll events 
    *
-   *  @author Johan Telstad <jt@kroma.no>
+   *  @author Johan Telstad <jt@enfield.no>
    * 
    */
   
