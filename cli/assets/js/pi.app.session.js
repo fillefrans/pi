@@ -3,9 +3,11 @@
  *  Session object. This is where we have to debug the pants off of this library
  *  This bit should be bulletproof
  *
- *  We need to implement a feedback mechanism for js errors that we can trap
+ *  Basically, this is where our application runs. 
  *
- *  That way we can monitor apps in the wild and pick up on problems quickly
+ * 
+ *  We should implement a feedback mechanism for js errors that we can trap
+ *  That way we could monitor apps in the wild and pick up on problems quickly
  * 
  */
 

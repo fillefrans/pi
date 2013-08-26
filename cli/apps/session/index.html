@@ -3,13 +3,10 @@
 <head>
     <script>
       var 
-        π  = π  || {}, pi = pi || π;
-
-      // activate the debugger
-      π.DEBUG = true;
-
-      //make a note of when we started up.
-      pi.__sessionstart = (new Date()).getTime();
+        π  = {
+          DEBUG : true,
+          __sessionstart : (new Date()).getTime()
+        };
     </script>
 
   <title>pi session</title>
@@ -29,13 +26,16 @@
 <body>
 
   <div id="login" class="pcl login" data-load="autoload" data-name="login" data-ns="pcl.login">
-    <form class="pcl-form" data-action="app.session.login">
-      <p class="title">Log into pi</p>
+    <form class="pcl form" data-action="pi.app.session.login">
+      <p class="title">Log in</p>
       <p>  e-mail: <input type="email"    name="email" required></p>
       <p>password: <input type="password" name="password" required></p>
       <input type="submit" value="login">
     </form>
   </div>
+
+  <div id="app" class="pi app pcl" data-name="app" data-ns="pi.app"></div>
+
 
   <div id="debug" class="pcl debug code highlight" data-load="lazyload" data-name="debug" data-ns="debug"></div>
 

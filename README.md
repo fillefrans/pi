@@ -34,20 +34,20 @@ Any part of the namespace may interact with any other part: server, app, user, m
 As an example: a server script may be invoked by a user session in an app. The app 
 can then subscribe to a dedicated channel where the server script publishes progress events. 
 
-Another example: two apps may define a common namespace for exchanging messages and events. A server currency exchange rate updating script might post messages with updates to a portfolio server application, or to users who have subscribed to the service via its address in the global namespace.
+Another example: two apps may define a common namespace for exchanging messages and events.
 
 
 Any server software can access the PHP session information for any client, since it is stored in Redis.
 
 Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can be injected into the DOM in three ways:
    1. By adding a script-src tag to the DOM (good for using browser cache)
-   2. Loaded over AJAX into the browser 
-   3. Loaded over WebSocket, and injected into the DOM
+   2. Loaded over AJAX, injected into the DOM 
+   3. Loaded over WebSocket, injected into the DOM
 
 For 2. and 3., it is possible to store documents and snippets in HTML5's localStorage
 
 
-π is a bare-bones but extensible set of libraries that serves as platform for developing real-time client-server web apps/components/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
+π is a bare-bones but extensible set of libraries that serves as a platform for developing real-time client-server web apps/components/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
 
 
 π is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
@@ -60,7 +60,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 
 ###Inspirations
 * [Salvatore Sanfilippo](http://antirez.com/), creator of [Redis](http://redis.io)
-* The [GreenSock Animation Library](http://greensock.com)
+* The [GreenSock Animation Platform](http://greensock.com)
 * Higgins' PubSub
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
 * the unix toolchain
@@ -72,7 +72,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * Check out [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
 * Vector graphics is great for Retina displays.
 * GreenSock is an almost hilariously good animation library. And it's small. [GSAP](https://www.greensock.com/tag/tutorial/).
-* WebWorkers are awesome. 
+* WebWorkers are awesome.
 * For size and position, using perfect cubes (or multiples): 8, 64, 216, 512, makes it easier to stack components.
 
 * [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
@@ -83,14 +83,14 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * The π.app and π.plugins namespaces are open to anyone.
 * Feel free to write a better xhr module :) 
 * Use CSS inheritance 
-* Use documentFragment when adding more than one node to the DOM, it's faster
+* Use documentFragment when adding more than one node to the DOM at a time
 
 
 
 ####Server-side optimizations
 * Replace the PHP serializer with [igbinary](https://github.com/igbinary/igbinary).
 * Compile Redis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
-* Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient.
+* Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient, as Redis is very pointer-intensive
 * Use Redis for PHP session storage and application shared memory.
 
 
@@ -101,7 +101,7 @@ When we're at version 0.6 or thereabouts.
 
 
 ##Aims
-* Optimized for Mobile
+* Optimized for devices
 * Optimized server/cache setup
 * Background processing where sensible
 * Modular loading of resources

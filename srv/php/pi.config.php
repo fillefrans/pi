@@ -14,11 +14,11 @@
 
     error_reporting(0);
 
-    define('APP_NAME', 'Pi AppServer');
+    define('APP_NAME', 'Views running on Pi Server');
 
     define('APP_PLATFORM', 'Pi Client-Server/WebSocket');
 
-    define('APP_VERSION', 'v0.3');
+    define('APP_VERSION', 'v0.2@');
 
     // define directories
 
@@ -32,16 +32,27 @@
     
 
     // Redis settings
-
     define('REDIS_SOCK', '/var/run/redis/redis.sock');
 
-    define('PI_APP',    0);
-    define('PI_PHP',    2);
-    define('PI_JOB',    4);
-    define('PI_DBG',   15);
-    define('PI_CACHE',  7);
 
-    define('PI_CACHE_SIZE', 20000000-1); // 20 million
+    // Redis database names and numbers
+    define('PI_APP',      1);
+
+    define('PI_CORE',     2);
+    define('PI_SESSION',  3);
+    define('PI_DATA',     4);
+    define('PI_CALLBACK', 5);
+    define('PI_FILES',    6);
+    define('PI_SVC',      7);
+    define('PI_DB',       8);
+    define('PI_USERS',    9);
+    define('PI_TASKS',   10);
+
+    define('PI_PCL',     11);
+    define('PI_MVRCK',   12);
+
+    define('PI_TMP',     14);
+    define('PI_DBG',     15);
 
     define('UPDATE_FREQUENCY', 10);
 

@@ -24,10 +24,8 @@
     π.io          = π.io          || { _loaded: false, _ns: 'io' };
 
     π.util        = π.util        || { _loaded: false, _ns: 'util' };
-    π.math        = π.math        || { _loaded: false, _ns: 'math' };
-    π.statistics  = π.statistics  || { _loaded: false, _ns: 'statistics' };
 
-    // your plugins here, like so:   pi.plugins.yourcompany.yourplugin.[whatever] = { # your plugin object };
+    // your plugins here, like so:   pi.plugins.yourcompany.yourplugin[.whatever] = { # your plugin object };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
 
     // for all you crazy cowboys, your own playground
@@ -135,9 +133,6 @@
           result = self.time;
         history.add(self);
 
-        // clear timer, this shouldn't delete the object, i think
-//        timers[timerid] = false;
-
         // return timer value
         return result;
       }
@@ -204,9 +199,7 @@
     };
 
 
-
     π.listen = function (address, callback, onerror) {
-
       var 
         source  = new EventSource('/pi/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
 
@@ -231,7 +224,7 @@
     π.require = function(module, async, defer, callback){
     
       if (π.loaded[module.replace(/\./g,'_')]) {
-        if(callback) {
+        if(typeof callback==="function") {
           this.callback.call("loaded");
         }
         return true;
@@ -242,8 +235,6 @@
         path    = '../../assets/js/pi.',
         script  = document.createElement('script');
 
-
-      // pi.log('loading module (' + (!!async ? "async" : "sync") + '): pi.' + module);
 
       script.async      = async || true;
       script.defer      = defer || true;
@@ -289,8 +280,8 @@
 
   π.log("Pi bootstrapped in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing...");
 
-  // start a timer for the application bootstrap
-  π.timer.start("initialization");
+  // start a timer for the platform initialization
+  π.timer.start("pi.initialization");
 
   pi.log("Loading modules...");
 
@@ -311,7 +302,7 @@
   });
 
 
-  π.log("Pi initialized in " + π.timer.stop("initialization") + " ms.");
+  π.log("Pi initialized in " + π.timer.stop("pi.initialization") + " ms.");
   
 
 
