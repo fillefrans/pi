@@ -6,16 +6,13 @@
  *  Basically, this is where our application runs. 
  *
  * 
- *  We should implement a feedback mechanism for js errors that we can trap
+ *  We should implement a feedback mechanism for js errors
  *  That way we could monitor apps in the wild and pick up on problems quickly
  * 
  */
 
 
-
   π.require('app');
-  π.require('events');    
-
 
   if (!π.app) {
     pi.log("pi.app is undefined!");
@@ -24,6 +21,8 @@
 
 
   π.app.session = {
+
+    // private
 
     __socket         : null,
     __sessionsocket  : null,
@@ -36,6 +35,11 @@
     __sessionport    : 8101,
     __sessionuri     : '',
 
+
+    // protected
+
+
+    // public
 
     active    : false,
     user      : null,
@@ -62,6 +66,7 @@
 
 
 
+    //private
 
     __init : function (DEBUG) {
       π.timer.start("session.init");
@@ -126,27 +131,46 @@
     },
 
 
+    __createSocket : function (host) {
+      try{
+        pi.log("Connecting to: " + host);
+        if (window.WebSocket){
+          return new WebSocket(host);
+        }
+        else if (window.MozWebSocket){
+          return new MozWebSocket(host);
+        }
+        else{
+          return false;
+        }
+      }
+      catch(ex) {
+        pi.log(ex.name + ": " + ex.message, ex);
+      }
+    },
+
+
     __startSession : function (host) {
       var 
-        self = this;
+        self = π.app.session;
 
 
       try {
         pi.log('Connecting session request socket: ' + host);
-        this.__socket = this.__createSocket(host);
+        self.__socket = self.__createSocket(host);
 
-        this.__socket.addEventListener('error', function(error) {
+        self.__socket.addEventListener('error', function(error) {
           self.__handleError(error, self);
         });
 
-        this.__socket.addEventListener('open', function(event) {
+        self.__socket.addEventListener('open', function(event) {
           pi.log('Opened session request socket. Event: ', event);
           π.timer.stop("session.init");
           π.timer.start("session.request");
-          this.send(JSON.stringify({command: 'session'}));
+          self.send({command: 'session'});
         });
 
-        this.__socket.addEventListener('message', function(event) {
+        self.__socket.addEventListener('message', function(event) {
 
           var
             json = JSON.parse(event.data);
@@ -187,13 +211,22 @@
       }
     },
 
+    //protected
+
+
+    //public
 
     send : function (obj) {
+      var
+        self = π.app.session;
+
       try {
-        this.__socket.send(obj);
+        self.__socket.send(JSON.stringify((obj));
+        return true;
       }
       catch (ex) {
-        pi.log(ex.name + ": " + ex.message, ex);
+        pi.log(ex.name + ": " + ex.message, obj);
+        return false;
       }
     },
 
@@ -208,25 +241,6 @@
       self.__socket = null;
       self.__initsocket.close();
       self.__initsocket = null;
-    },
-
-
-    __createSocket : function (host) {
-      try{
-        pi.log("Connecting to: " + host);
-        if (window.WebSocket){
-          return new WebSocket(host);
-        }
-        else if (window.MozWebSocket){
-          return new MozWebSocket(host);
-        }
-        else{
-          return false;
-        }
-      }
-      catch(ex) {
-        pi.log(ex.name + ": " + ex.message, ex);
-      }
     },
 
 

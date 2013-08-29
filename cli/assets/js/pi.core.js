@@ -1,6 +1,6 @@
   /**
    *
-   * π, µ
+   * π v0.3
    *
    * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
    *
@@ -8,8 +8,7 @@
 
 
   var 
-      π  = π  || {},
-      pi = pi || π;
+      π  = π  || {};
 
 
 
@@ -28,15 +27,12 @@
     // your plugins here, like so:   pi.plugins.yourcompany.yourplugin[.whatever] = { # your plugin object };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
 
-    // for all you crazy cowboys, your own playground
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
 
     π.PI_ROOT    = "assets/js/";
     π.LIB_ROOT    = "../../assets/js/";
     π.SRV_ROOT    = "../../../srv/";
-    // π.PHP_ROOT    = π.SRV_ROOT + "php/";
-    // π.FPC_ROOT    = π.SRV_ROOT + "fpc/";
     
 
     //will keep an updated list over which modules are loaded
@@ -44,99 +40,6 @@
 
 
 
-    /*
-      global support functions
-    */
-
-
-    π.timer = {
-      
-      history : {
-        
-        log   : [],
-
-        add : function (obj) {
-          π.timer.history.log.push(obj);
-          π.events.publish("pi.timer.on", ["add", obj]);
-        },
-
-        list  : function (callback){
-          var
-            log = π.timer.history.log;
-
-
-          log.forEach(function(value, index) {
-            if(callback) {
-              callback.call(index, value);
-            }
-            pi.log(value.id + ": " + value.time + "ms.");
-          });
-        },
-
-        clear : function () {
-          var
-            log = π.timer.history.log;
-
-          π.events.publish("pi.timer.history.on", ["clear"]);
-
-          // clear log, this is actually the fastest way
-          while(log.pop()){
-            // nop
-          }
-        }
-      }, // end of history object
-
-
-      // the timer object proper
-
-      timers : {},
-
-
-      start : function(timerid) {
-        // replace . with _
-        id = timerid.replace(/\./g,'_');
-        var
-          timers  = π.timer.timers,
-          self    = π.timer.timers[id] || false,
-          events  = π.events || false;
-
-        if(self) {
-          if(events.publish) {
-            events.publish("pi.timer.warning", ["Warning: starting timer " + timerid + " for a second time. Results unpredictable."]);
-          }
-          pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
-        }
-        timers[id] = { id : timerid, start : (new Date()).getTime() };
-
-        if(events.publish) {
-          events.publish("pi.timer.on", ["start", timers[id]]);
-        }
-      },
-
-
-      stop : function(timerid) {
-        var
-          timers  = π.timer.timers,
-          history = π.timer.history,
-          self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
-
-        if(!self) {
-          π.events.publish("pi.timer." + timerid, "Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
-          pi.log("Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
-          return false;
-        }
-
-        self.stop = (new Date()).getTime();
-
-        self.time = self.stop - self.start;
-        var 
-          result = self.time;
-        history.add(self);
-
-        // return timer value
-        return result;
-      }
-    };
 
 
 
@@ -199,6 +102,24 @@
     };
 
 
+
+    π.copy = function (obj) {
+      return JSON.parse(JSON.stringify(obj));
+    };
+
+
+
+    /** π.listen
+     *
+     * Listen to an address in the namespace via EventSource/SSE
+     * 
+     * @param  {string}     address   Address in the pi namespace to listen to
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   callback  Callback for each message
+     * @return {void}
+     */
+
+
     π.listen = function (address, callback, onerror) {
       var 
         source  = new EventSource('/pi/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
@@ -207,6 +128,147 @@
       source.addEventListener('message',  callback, false);
     };
 
+
+
+
+    /** π.await
+     *
+     * Wait for named event, then trigger a given callback
+     * If the event has not occurred within the given timeout, 
+     * try to read the value directly. 
+     * 
+     * @param  {string}     address   Address in the pi namespace to wait for
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   onresult  Callback when return value available
+     * @return {boolean}              Should always return true
+     */
+
+    π.await = function(address, onresult, timeout){
+    
+      // await named event
+      π.events.subscribe(address, onresult);
+      //request an update from the server
+      π._send("await", address);
+    };
+
+
+
+
+    /** π.read
+     *
+     * Read a remote value
+     * 
+     * @param  {string}     address   Address in the pi namespace to read from
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   callback  Callback when return value available
+     * @return {boolean}              Result if success, false if failure
+     */
+
+    π.read = function(address, onresult){
+    
+      // TBC
+
+      π._send("read", address, null, onresult);
+  
+    };
+
+    /** π.write
+     *
+     * Write a value to a remote variable location
+     * 
+     * @param  {string}     address   Address in the pi namespace to write to
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   callback  Callback when return value available
+     * @return {boolean}              Old value if success, false if failure
+     */
+
+    π.write = function(address, value, onresult){
+      // TBC
+      π._send("write", address, value, onresult);
+    };
+
+
+
+    /** π.send
+     *
+     * Handle app request for sending a message to an address in the pi namespace
+     * Conform to pi packet specification
+     *
+     * 
+     * @param  {string}     address   Address in the pi namespace to read from
+     * @param  {Function}   callback  Callback when return value available
+     * @return {boolean}              Result if success, false if failure
+     */
+
+    π._send = function(command, address, data){
+      var
+        packet = {command: command, address: address, data: data};
+
+      // TBC
+        if(!!π.app.session._loaded) {
+          π.app.session.send(packet);
+        }
+
+    };
+
+
+    /** π.__send
+     *
+     * Does the actual sending of a message to an address in the pi namespace
+     * 
+     * @param  {string}     address   Address in the pi namespace to read from
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   callback  Callback when return value available
+     * @return {boolean}              Result if success, false if failure
+     */
+
+    π.__send = function(address, data, callback, onerror){
+      
+      // TBC
+
+  
+    };
+
+
+
+
+    /** π.readfile
+     *
+     * Read a remote (text) file
+     * 
+     * @param  {string}     fileaddress   File address in the pi namespace
+     * @param  {string}     filetype      The file extension
+     * @param  {Function}   onerror       Callback on error
+     * @param  {Function}   callback      Callback for each return value available
+     * @return {boolean}                  File contents on success, false on failure
+     */
+
+    π.readfile = function(fileaddress, filetype, callback, onerror){
+    
+      // TBC
+
+  
+    };
+
+
+
+
+    /** π.call
+     *
+     * Call a remote procedure
+     * 
+     * @param  {string}     module    Name of the pi module to be loaded
+     * @param  {boolean}    func      Remote procedure to call
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   callback  Callback when return value available
+     * @return {boolean}              True for success, false for failure
+     */
+
+    π.call = function(module, func, callback, onerror){
+    
+      // TBC
+  
+    };
 
 
 
@@ -271,6 +333,102 @@
 
 
 
+
+
+    /*
+      core support modules
+    */
+
+
+    π.timer = {
+      
+      timers : {},
+
+
+      start : function(timerid) {
+        // replace . with _
+        id = timerid.replace(/\./g,'_');
+        var
+          timers  = π.timer.timers,
+          self    = π.timer.timers[id] || false,
+          events  = π.events || false;
+
+        if(self) {
+          if(events.publish) {
+            events.publish("pi.timer.warning", ["Warning: starting timer " + timerid + " for a second time. Results unpredictable."]);
+          }
+          pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
+        }
+        timers[id] = { id : timerid, start : (new Date()).getTime() };
+
+        if(events.publish) {
+          events.publish("pi.timer.on", ["start", timers[id]]);
+        }
+      },
+
+
+      stop : function(timerid) {
+        var
+          timers  = π.timer.timers,
+          history = π.timer.history,
+          self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
+
+        if(!self) {
+          π.events.publish("pi.timer." + timerid, "Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
+          pi.log("Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
+          return false;
+        }
+
+        self.stop = (new Date()).getTime();
+
+        self.time = self.stop - self.start;
+        var 
+          result = self.time;
+        history.add(self);
+
+        // return timer value
+        return result;
+      },
+
+      history : {
+        
+        log   : [],
+
+        add : function (obj) {
+          π.timer.history.log.push(obj);
+          π.events.publish("pi.timer.on", ["add", obj]);
+        },
+
+        list  : function (callback){
+          var
+            log = π.timer.history.log;
+
+
+          log.forEach(function(value, index) {
+            if(callback) {
+              callback.call(index, value);
+            }
+            pi.log(value.id + ": " + value.time + "ms.");
+          });
+        },
+
+        clear : function () {
+          var
+            log = π.timer.history.log;
+
+          π.events.publish("pi.timer.history.on", ["clear"]);
+
+          // clear log, this is actually the fastest way
+          while(log.pop()){
+            // nop
+          }
+        }
+      } // end of history object
+    };
+
+
+
+
   /***   ------   INITIALIZATION    ------
      *
      *  Code we run after having created the base π object.
@@ -285,20 +443,20 @@
 
   pi.log("Loading modules...");
 
-  π.require("events", false, false, function (e) {
-    pi.log("loaded: events", e);
+  π.require("events", false, false, function (module) {
+    pi.log("loaded: events", module);
   });
 
-  π.require("app", false, false, function (e) {
-    pi.log("loaded: app", e);
+  π.require("app", false, false, function (module) {
+    pi.log("loaded: app", module);
   });
 
-  π.require("app.session", false, false, function (e) {
-    pi.log("loaded: app.session", e);
+  π.require("app.session", false, false, function (module) {
+    pi.log("loaded: app.session", module);
   });
   
-  π.require("pcl", false, false, function (e) {
-    pi.log("loaded: pcl", e);
+  π.require("pcl", false, false, function (module) {
+    pi.log("loaded: pcl", module);
   });
 
 

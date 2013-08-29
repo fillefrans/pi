@@ -64,7 +64,9 @@
 
 
         protected function __init() {
+
           // this is the place for any code that raises exceptions
+
           if( false === ($this->redis = $this->connectToRedis())){
             throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
           }
@@ -78,7 +80,7 @@
           $this->server->addObserver($this);
           $this->say("Session handler started, listening on port ".$this->port);
 
-          $this->channel    = 'pi.srv.session.' . $this->id;
+          $this->address    = 'pi.srv.session.' . $this->id;
         }
 
 
@@ -99,15 +101,15 @@
             $debug[] = $reply['message'];
         }
 
-        protected function publish($channel, $message=false) {
+        protected function publish($address, $message=false) {
 
           if($this->redis){
             if(!$message) {
-              // we were invoked with only one param, so assume it's a message for default channel
-              $message = $channel;
-              $channel = $this->channel;
+              // we were invoked with only one param, so assume it's a message for default address
+              $message = $address;
+              $address = $this->address;
             }
-            $this->redis->publish($channel, $message);
+            $this->redis->publish($address, $message);
           }
           else {
             $this->say("We have no redis object in function publish()\n");
@@ -163,33 +165,33 @@
         }
 
 
-        public function onPubSubMessage($redis, $channel, $message){
+        public function onPubSubMessage($redis, $address, $message){
           foreach ($this->subscriptions as $value){
-            if(false !== fnmatch ( $channel , $value['channel'], FNM_CASEFOLD )){
-              // we have a subscriber to this channel
-              $message['channel'] = $channel;
+            if(false !== fnmatch ( $address , $value['address'], FNM_CASEFOLD )){
+              // we have a subscriber to this address
+              $message['address'] = $address;
               $this->sendData($message, 'publish');
               }
             }
         }
 
 
-        protected function unsubscribe($channel){
-          if(isset($this->subscriptions[$channel])){
-            unset($this->subscriptions[$channel]);
+        protected function unsubscribe($address){
+          if(isset($this->subscriptions[$address])){
+            unset($this->subscriptions[$address]);
           }
-          if(false === ($result = $this->redis->unsubscribe($channel))){
-            throw new PiException("Error unsubscribing from Redis channel '$channel'.", 1);
+          if(false === ($result = $this->redis->unsubscribe($address))){
+            throw new PiException("Error unsubscribing from Redis address '$address'.", 1);
           }
         }
 
 
-        protected function subscribe($channel, $request){
-          if(false === ($result = $this->redis->subscribe($channel, array($this, 'onPubSubMessage')))){
-            throw new PiException("Error subscribing to Redis channel '$channel'.", 1);
+        protected function subscribe($address, $request){
+          if(false === ($result = $this->redis->subscribe($address, array($this, 'onPubSubMessage')))){
+            throw new PiException("Error subscribing to Redis address '$address'.", 1);
           }
           // add subscription to our internal list
-          unset($this->subscriptions[$channel]);
+          unset($this->subscriptions[$address]);
         }
 
 
@@ -213,17 +215,23 @@
               $this->unsubscribe($message); 
               break;
             case 'publish':
-              $this->publish($this->channel, $message);
+              $this->publish($this->address, $message);
               break;
             case 'queue':
               $this->handleQueueRequest($message);
               break;
+            case 'read':
+            case 'write':
             case 'setbit':
             case 'getbit':
             case 'set':
             case 'get':
             case 'lpop':
+            case 'lpush':
             case 'rpop':
+            case 'rpush':
+            case 'lpushrpop':
+            case 'rpushlpop':
               $this->redisCommand($message);
               break;
             case 'quit':
@@ -232,6 +240,29 @@
               break;
             default:
               $this->reply($message, "Unknown command: '{$message['command']}'", 0, "error");
+              throw new PiException("Client sent unknown command: '{$message['command']}'", 1);
+              break;
+          }
+        }
+
+
+        private function redisCommand($message) {
+          $result = false;
+
+          switch ($message['command']) {
+
+            case 'read':
+            case 'get':
+              return $this->redis->get($message['address']);
+              break;
+
+            case 'write':
+            case 'set':
+              return $this->redis->set($message['address'], json_encode($message['data']));
+              break;
+            
+            default:
+              # code...
               break;
           }
         }
@@ -254,9 +285,9 @@
         public function say($msg=''){
           $msg_array  = array( 'message' => $msg, 'time' => time() );
 
-          // publish debug info on redis channel
+          // publish debug info on redis address
           if($this->redis){
-            $this->publish($this->channel, getFormattedTime() . ": " . $msg);
+            $this->publish($this->address, getFormattedTime() . ": " . $msg);
           }
           print(getFormattedTime() . ": $msg\r\n");
         }

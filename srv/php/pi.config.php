@@ -29,17 +29,19 @@
     define('WORKER_DIR', PI_ROOT."workers/");
     define('WORKER_SPAWNER', WORKER_DIR.'pi.util.spawn.php');
     define('SESSION_SCRIPT', PI_ROOT.'pi.session.php');
-    
+
 
     // Redis settings
     define('REDIS_SOCK', '/var/run/redis/redis.sock');
 
 
     // Redis database names and numbers
-    define('PI_APP',      1);
+    define('PI_APP',      0);
+    define('PI_CORE',     1);
 
-    define('PI_CORE',     2);
+    define('PHP_SESSION', 2);
     define('PI_SESSION',  3);
+
     define('PI_DATA',     4);
     define('PI_CALLBACK', 5);
     define('PI_FILES',    6);
