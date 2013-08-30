@@ -221,7 +221,7 @@
         self = π.core.session;
 
       try {
-        self.__socket.send(JSON.stringify((obj));
+        self.__socket.send(JSON.stringify(obj));
         return true;
       }
       catch (ex) {

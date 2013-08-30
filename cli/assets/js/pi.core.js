@@ -12,6 +12,7 @@
 
 
   /*  ----  Our top level namespaces  ----  */
+    π.core        = π.core        || { _loaded: false, _ns: 'core' };
     π.events      = π.events      || { _loaded: false, _ns: 'events' };
     π.srv         = π.srv         || { _loaded: false, _ns: 'srv' };
     π.app         = π.app         || { _loaded: false, _ns: 'app' };
@@ -180,12 +181,12 @@
             // ie, "a.b.c" would call "c", then "b", then "a".
             // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
             bindTo.publish = function(sub, callback_args) {
-              var args;
+              var args=null;
 
               if (arguments.length > 2) {
                 // If passing args as a set of args instead of an array, grab all but the first.
                 args = Array.prototype.slice.apply(arguments, [1]); 
-              } else if (callback_args) {
+              } else if (Array.isArray(callback_args)) {
                 args = callback_args;
               } else {
                 args = [];
@@ -270,15 +271,6 @@
         */
 
           PubSub(π.events, true);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -677,10 +669,17 @@
      */
 
 
-  π.log("Pi bootstrapped in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing...");
+  π.log("Page loaded in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing pi...");
 
   // start a timer for the platform initialization
   π.timer.start("pi.initialization");
+
+
+  pi.log("Loading core modules...");
+
+  π.require("core.session", false, false, function (module) {
+    pi.log("loaded: core.session", module);
+  });
 
   pi.log("Loading app modules...");
 
@@ -691,6 +690,8 @@
   π.require("pcl", false, false, function (module) {
     pi.log("loaded: pcl", module);
   });
+
+
 
 
   π.log("Pi initialized in " + π.timer.stop("pi.initialization") + " ms.");
