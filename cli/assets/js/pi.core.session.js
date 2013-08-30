@@ -12,15 +12,15 @@
  */
 
 
-  π.require('app');
+  π.require('core');
 
-  if (!π.app) {
-    pi.log("pi.app is undefined!");
+  if (!π.core) {
+    pi.log("pi.core is undefined!");
   }
 
 
 
-  π.app.session = {
+  π.core.session = {
 
     // private
 
@@ -60,7 +60,7 @@
       var
         json   = JSON.parse(event.data);
 
-      π.events.publish('pi.app.session', json.message);
+      π.events.publish('pi.core.session', json.message);
       pi.log("onmessage [" + typeof(json.message) + "] : ", json.message);
     },
 
@@ -103,11 +103,11 @@
 
     __onopen : function (event) {
       // var
-      //   self = π.app.session,
+      //   self = π.core.session,
       //   bootstraptime = (new Date()).getTime() - π.__sessionstart;
 
-      π.timer.stop("session");
-      pi.log("pi.app bootstrapped in " + pi.timer.stop("bootstrap") + "ms. \nTotal startup time: " +  ((new Date()).getTime() - π.__sessionstart) + "ms.");
+      π.timer.stop("pi.session");
+      pi.log("pi.session bootstrapped in " + pi.timer.stop("bootstrap") + "ms. \nTotal startup time: " +  ((new Date()).getTime() - π.__sessionstart) + "ms.");
 
       // lists all timers in console
       pi.timer.history.list();
@@ -116,7 +116,7 @@
 
     __onerror : function (error) {
       var
-        self = π.app.session;
+        self = π.core.session;
 
       self.__handleError(error, self);
       pi.log("onerror: " + event.data);
@@ -125,7 +125,7 @@
 
     __onclose : function (event) {
       var
-        self    = π.app.session;
+        self    = π.core.session;
 
       pi.log("onclose:" + event.data);
     },
@@ -152,7 +152,7 @@
 
     __startSession : function (host) {
       var 
-        self = π.app.session;
+        self = π.core.session;
 
 
       try {
@@ -218,7 +218,7 @@
 
     send : function (obj) {
       var
-        self = π.app.session;
+        self = π.core.session;
 
       try {
         self.__socket.send(JSON.stringify((obj));
@@ -233,7 +233,7 @@
 
     quit : function () {
       var
-        self = π.app.session;
+        self = π.core.session;
 
       pi.log('Goodbye!');
 
@@ -245,7 +245,7 @@
 
 
     start : function (DEBUG) {
-      π.timer.start("session");
+      π.timer.start("pi.session");
 
       if( !this.__init(DEBUG) ) {
         pi.log('session.__init() returned false, aborting...');
@@ -254,4 +254,4 @@
   };
 
 
-  π.app.session.start();
+  π.core.session.start();

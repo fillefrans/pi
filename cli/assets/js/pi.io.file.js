@@ -1,6 +1,6 @@
   /**
    *
-   * π.fonts
+   * π.files
    *
    * @author Johan Telstad, jt@enfield.no, 2011-2013
    *
