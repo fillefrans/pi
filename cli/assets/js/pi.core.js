@@ -12,25 +12,36 @@
 
 
   /*  ----  Our top level namespaces  ----  */
+
+
+    // These are the core modules
     π.core        = π.core        || { _loaded: false, _ns: 'core' };
+    π.callback    = π.callback    || { _loaded: false, _ns: 'callback' };
+    π.session     = π.session     || { _loaded: false, _ns: 'session' };
     π.events      = π.events      || { _loaded: false, _ns: 'events' };
+    π.tasks       = π.tasks       || { _loaded: false, _ns: 'tasks' };
+    π.timer       = π.timer       || { _loaded: false, _ns: 'timer' };
+
+
+    // These are our built-in libraries
     π.srv         = π.srv         || { _loaded: false, _ns: 'srv' };
     π.app         = π.app         || { _loaded: false, _ns: 'app' };
     π.pcl         = π.pcl         || { _loaded: false, _ns: 'pcl' };
-    π.session     = π.session     || { _loaded: false, _ns: 'session' };
     π.system      = π.system      || { _loaded: false, _ns: 'system' };
     π.debug       = π.debug       || { _loaded: false, _ns: 'debug' };
     π.io          = π.io          || { _loaded: false, _ns: 'io' };
+    π.file        = π.file        || { _loaded: false, _ns: 'file' };
 
+
+
+    // These are for extending the platform
+    π.lib         = π.lib         || { _loaded: false, _ns: 'lib' };
     π.util        = π.util        || { _loaded: false, _ns: 'util' };
-
-    // your plugins here, like so:   pi.plugins.yourcompany.yourplugin[.whatever] = { # your plugin object };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
-
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
 
-    π.PI_ROOT    = "assets/js/";
+    π.PI_ROOT     = "assets/js/";
     π.LIB_ROOT    = "../../assets/js/";
     π.SRV_ROOT    = "../../../srv/";
     
@@ -42,8 +53,6 @@
     // create pi as an alias for π
     var 
       pi  = π;
-
-
 
 
 
@@ -201,145 +210,145 @@
            **/
 
 
-        /**
-         *  PubSub 
-         *
-         * Creates a new subscription object.  If passed, attaches to the passed object; otherwise, assumes it was called with "new" and binds to `this`.
-         * If passed, unique defines the internal unique subscription list's storage name.  By default it is "_sub".
-         * This should be relatively safe to call even without "new" - it just makes the global object an event system.
-         * If true, alsoPassPath will result in the publishing-path being pushed to the end of the arguments passed to subscribers.
-         * 
-         */
+          /**
+           *  PubSub 
+           *
+           * Creates a new subscription object.  If passed, attaches to the passed object; otherwise, assumes it was called with "new" and binds to `this`.
+           * If passed, unique defines the internal unique subscription list's storage name.  By default it is "_sub".
+           * This should be relatively safe to call even without "new" - it just makes the global object an event system.
+           * If true, alsoPassPath will result in the publishing-path being pushed to the end of the arguments passed to subscribers.
+           * 
+           */
 
-          var PubSub = function PubSub(obj_or_alsoPassPath_or_unique, alsoPassPath_or_unique, uniqueName) {
-            var unique = "_sub",
-            passPath = false,
-            bindTo = this;
-            
-            if (typeof(uniqueName) === "string") {
-              unique = uniqueName;
-            } else if (typeof(alsoPassPath_or_unique) === "string") {
-              unique = alsoPassPath_or_unique;
-            } else if (typeof(obj_or_alsoPassPath_or_unique) === "string") {
-              unique = obj_or_alsoPassPath_or_unique;
-            }
-
-            if (typeof(alsoPassPath_or_unique) === "boolean") {
-              passPath = alsoPassPath_or_unique;
-            } else if (typeof(obj_or_alsoPassPath_or_unique) === "boolean") {
-              passPath = obj_or_alsoPassPath_or_unique;
-            }
-            
-            if (typeof(obj_or_alsoPassPath_or_unique) === "object" || typeof(obj_or_alsoPassPath_or_unique) === "function") {
-              bindTo = obj_or_alsoPassPath_or_unique;
-            }
-            
-            // all subscriptions, nested.
-            var subscriptions = {};
-            subscriptions[unique] = [];
-            
-            // Removes all instances of handler from the passed subscription chunk.
-            var _unsubscribe = function(cache, handler) {
-              for(var i = 0; i < cache[unique].length; i++) {
-                if(handler === undefined || handler === null || cache[unique][i] === handler) {
-                  cache[unique].splice(i, 1);
-                  i--;
-                }
+            var PubSub = function PubSub(obj_or_alsoPassPath_or_unique, alsoPassPath_or_unique, uniqueName) {
+              var unique = "_sub",
+              passPath = false,
+              bindTo = this;
+              
+              if (typeof(uniqueName) === "string") {
+                unique = uniqueName;
+              } else if (typeof(alsoPassPath_or_unique) === "string") {
+                unique = alsoPassPath_or_unique;
+              } else if (typeof(obj_or_alsoPassPath_or_unique) === "string") {
+                unique = obj_or_alsoPassPath_or_unique;
               }
-            };
-            
-            // Recursively removes all instances of handler from the passed subscription chunk.
-            var _deepUnsubscribe = function(cache, handler) {
-              for(sub in cache) {
-                if(typeof(cache[sub]) !== "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
-                _deepUnsubscribe(cache[sub], handler);
-              }
-              _unsubscribe(cache, handler);
-            };
-            
-            // Calls all handlers on the path to the passed subscription.
-            // ie, "a.b.c" would call "c", then "b", then "a".
-            // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
-            bindTo.publish = function(sub, callback_args) {
-              var args=null;
 
-              if (arguments.length > 2) {
-                // If passing args as a set of args instead of an array, grab all but the first.
-                args = Array.prototype.slice.apply(arguments, [1]); 
-              } else if (Array.isArray(callback_args)) {
-                args = callback_args;
-              } else {
-                args = [];
-              } 
-              if (args.length === undefined) {
-                args = [args];
+              if (typeof(alsoPassPath_or_unique) === "boolean") {
+                passPath = alsoPassPath_or_unique;
+              } else if (typeof(obj_or_alsoPassPath_or_unique) === "boolean") {
+                passPath = obj_or_alsoPassPath_or_unique;
               }
               
-              var cache = subscriptions;
-              var stack = [];
-              sub = sub || "";
-              var s = sub.split(".");
-              if (passPath) args.push(s);
-              stack.push(cache);
-              for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                if(cache[s[i]] === undefined) break;
-                cache = cache[s[i]];
-                stack.push(cache);
+              if (typeof(obj_or_alsoPassPath_or_unique) === "object" || typeof(obj_or_alsoPassPath_or_unique) === "function") {
+                bindTo = obj_or_alsoPassPath_or_unique;
               }
-              var c;
-              var exit = false;
-              while((c = stack.pop())) {
-                for(var j = 0; j < c[unique].length; j++) {
-                  if(c[unique][j].apply(this,args) === false) exit = true;
+              
+              // all subscriptions, nested.
+              var subscriptions = {};
+              subscriptions[unique] = [];
+              
+              // Removes all instances of handler from the passed subscription chunk.
+              var _unsubscribe = function(cache, handler) {
+                for(var i = 0; i < cache[unique].length; i++) {
+                  if(handler === undefined || handler === null || cache[unique][i] === handler) {
+                    cache[unique].splice(i, 1);
+                    i--;
+                  }
                 }
-                if (exit) break;
-              }
-              return bindTo;
-            };
+              };
+              
+              // Recursively removes all instances of handler from the passed subscription chunk.
+              var _deepUnsubscribe = function(cache, handler) {
+                for(sub in cache) {
+                  if(typeof(cache[sub]) !== "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
+                  _deepUnsubscribe(cache[sub], handler);
+                }
+                _unsubscribe(cache, handler);
+              };
+              
+              // Calls all handlers on the path to the passed subscription.
+              // ie, "a.b.c" would call "c", then "b", then "a".
+              // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
+              bindTo.publish = function(sub, callback_args) {
+                var args=null;
 
-            
-            bindTo.subscribe = function(sub, handler) {
-              var cache = subscriptions;
-              sub = sub || "";
-              var s = sub.split(".");
-              for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                if (!cache[s[i]]) {
-                  cache[s[i]] = {};
-                  cache[s[i]][unique] = [];
+                if (arguments.length > 2) {
+                  // If passing args as a set of args instead of an array, grab all but the first.
+                  args = Array.prototype.slice.apply(arguments, [1]); 
+                } else if (Array.isArray(callback_args)) {
+                  args = callback_args;
+                } else {
+                  args = [];
+                } 
+                if (args.length === undefined) {
+                  args = [args];
                 }
-                cache = cache[s[i]];
-              }
-              cache[unique].push(handler);
-              return bindTo;
-            };
-            
-            
-            // Removes _all_ identical handlers from the subscription.  
-            // If no handler is passed, all are removed.
-            // If deep, recursively removes handlers beyond the passed sub.
-            bindTo.unsubscribe = function(sub, handler, deep) {
-              var cache = subscriptions;
-              sub = sub || "";
-              if (sub != "") {
+                
+                var cache = subscriptions;
+                var stack = [];
+                sub = sub || "";
+                var s = sub.split(".");
+                if (passPath) args.push(s);
+                stack.push(cache);
+                for(var i = 0; i < s.length && s[i] !== ""; i++) {
+                  if(cache[s[i]] === undefined) break;
+                  cache = cache[s[i]];
+                  stack.push(cache);
+                }
+                var c;
+                var exit = false;
+                while((c = stack.pop())) {
+                  for(var j = 0; j < c[unique].length; j++) {
+                    if(c[unique][j].apply(this,args) === false) exit = true;
+                  }
+                  if (exit) break;
+                }
+                return bindTo;
+              };
+
+              
+              bindTo.subscribe = function(sub, handler) {
+                var cache = subscriptions;
+                sub = sub || "";
                 var s = sub.split(".");
                 for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                  if(cache[s[i]] === undefined) return;
+                  if (!cache[s[i]]) {
+                    cache[s[i]] = {};
+                    cache[s[i]][unique] = [];
+                  }
                   cache = cache[s[i]];
                 }
-              }
-              if (typeof(handler) === "boolean") {
-                deep = handler;
-                handler = null;
-              }
+                cache[unique].push(handler);
+                return bindTo;
+              };
               
-              if (deep) {
-                _deepUnsubscribe(cache, handler);
-              } else {
-                _unsubscribe(cache, handler);
-              }
-              return bindTo;
+              
+              // Removes _all_ identical handlers from the subscription.  
+              // If no handler is passed, all are removed.
+              // If deep, recursively removes handlers beyond the passed sub.
+              bindTo.unsubscribe = function(sub, handler, deep) {
+                var cache = subscriptions;
+                sub = sub || "";
+                if (sub != "") {
+                  var s = sub.split(".");
+                  for(var i = 0; i < s.length && s[i] !== ""; i++) {
+                    if(cache[s[i]] === undefined) return;
+                    cache = cache[s[i]];
+                  }
+                }
+                if (typeof(handler) === "boolean") {
+                  deep = handler;
+                  handler = null;
+                }
+                
+                if (deep) {
+                  _deepUnsubscribe(cache, handler);
+                } else {
+                  _unsubscribe(cache, handler);
+                }
+                return bindTo;
+              };
             };
-          };
 
 
           /*
@@ -440,12 +449,12 @@
 
     π.await = function(eventaddress, onresult, timeout){
     
-      // await named event
       if(eventaddress.substring(0,7)==='pi.app.') {
+        // await named event locally
         π.events.subscribe(eventaddress, onresult);
       }
       else {
-        // request an update from the server
+        // request a named event from the server
         π._send("await", eventaddress, timeout, onresult);
       }
     };
@@ -541,27 +550,6 @@
     };
 
 
-
-
-    /** π.call
-     *
-     * Call a remote procedure
-     * 
-     * @param  {string}     module    Name of the pi module to be loaded
-     * @param  {boolean}    func      Remote procedure to call
-     * @param  {Function}   onerror   Callback on error
-     * @param  {Function}   callback  Callback when return value available
-     * @return {boolean}              True for success, false for failure
-     */
-
-    π.call = function(module, func, callback){
-    
-      // TBC
-  
-    };
-
-
-
     /** π.require
      *
      * A simple dependency management system
@@ -574,14 +562,14 @@
      */
 
     π.require = function(module, async, defer, callback){
-    
+
       if (π.loaded[module.replace(/\./g,'_')]) {
         if(typeof callback==="function") {
           this.callback.call("loaded");
         }
         return true;
       }
-  
+
       var 
         cursor  = document.getElementsByTagName ("head")[0] || document.documentElement,
         path    = '../../assets/js/pi.',
@@ -665,6 +653,35 @@
         }
       },
 
+
+      check : function(timerid) {
+        var
+
+          // replace . with _
+          id          = timerid.replace(/\./g,'_'),
+          timers      = π.timer.__items,
+          self        = π.timer.__items[id] || false,
+          events      = π.events            || false,
+          ontick      = ontick              || false,
+          interval    = interval            || 1000,
+          tickid      = false;
+
+
+        if(self) {
+          pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
+        }
+
+        if(typeof ontick === "function") {
+          tickid = setInterval(ontick, interval);
+        }
+
+
+        timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
+
+        if(events.publish) {
+          events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
+        }
+      },
 
       stop : function(timerid) {
         var
@@ -755,6 +772,10 @@
     // pi.log("loaded: core.session", module);
   });
 
+  π.require("core.tasks", false, false, function (module) {
+    // pi.log("loaded: core.session", module);
+  });
+
   pi.log("Loading app modules...");
 
   π.require("app", false, false, function (module) {
@@ -767,10 +788,8 @@
 
 
 
-
   π.log("Pi initialized in " + π.timer.stop("pi.initialization") + " ms.");
   
-
 
   /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
   window.addEventListener('load', function(e) {

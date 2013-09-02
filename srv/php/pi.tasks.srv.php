@@ -1,8 +1,10 @@
 <?php
 
     /**
-     * The pi task master, a server that listens for tasks
-     * and executes them as they are requested
+     * The pi task service, a server that listens for tasks
+     * and executes them as they are requested.
+     *
+     * progress is reported back through the task's unique address
      * 
      *
      * This is part of the backbone of our application server
@@ -12,40 +14,11 @@
      *
      */
 
-
-    if(!defined('PI_ROOT')){
-      define('PI_ROOT', dirname(__FILE__)."/");
-      require_once(PI_ROOT."pi.config.php");
-    }
-
-    require_once(PI_ROOT."pi.exception.class.php");
-    require_once(PI_ROOT."pi.util.functions.php");
+    require_once(PI_ROOT . "pi.service.php");
 
 
-    if(!defined('DEBUG')){
-      define('DEBUG', true);
-    }
+    class PiServiceTasks extends PiService {
 
-
-
-
-    class PiService extends Pi{
-
-
-      private $name       = "svc";
-
-
-
-      public function __construct() {
-      }
-
-
-
-    }
-
-
-
-    class PiTaskService extends PiService {
 
         // handle incoming requests from client
         public function onMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
@@ -54,10 +27,10 @@
           $message = json_decode($msg->getData(), true);
  
           switch ($message['command']) {
-            case 'query':
+            case 'peek':
               $this->query($message);
               break;
-            case 'subscribe': 
+            case 'subscribe':
               $this->subscribe($message); 
               break;
             case 'unsubscribe': 
@@ -96,10 +69,10 @@
 
 
 
-  $server = new PiTaskService();
+  $service = new PiServiceTasks();
 
   try {
-    $server->run();
+    $service->run();
   }
   catch(Exception $e) {
     $this->say(get_class($e) . ": " . $e->getMessage() . "\n");
