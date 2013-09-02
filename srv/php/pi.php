@@ -53,7 +53,6 @@
       if( false === ($this->redis = $this->connectToRedis())){
         throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
       }
-      $this->channel    = 'pi';
     }
 
 
@@ -89,8 +88,8 @@
     protected function publish($channel, $message=false) {
 
       if($this->redis){
-        if(!$message) {
-          // we were invoked with only one param, so assume it's a message for default channel
+        if($message===false) {
+          // we were invoked with only one param, so we assume that's a message for default channel
           $message = $channel;
           $channel = $this->channel;
         }
