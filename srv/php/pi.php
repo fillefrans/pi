@@ -25,10 +25,7 @@
         if( false === ($this->redis = $this->connectToRedis())){
           throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
         }
-
-        $this->say("Service started: ". $this->name);
-
-        $this->channel    = 'pi.svc.session.' . $this->id;
+        $this->channel    = 'pi' . $this->id;
       }
 
 

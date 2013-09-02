@@ -17,7 +17,9 @@ Apache
 
 And preferably also:
 
+
 Varnish
      -vmod_redis
 
-Node.js
+
+Node.js / NPM (for nodemon, minify)

@@ -165,6 +165,10 @@ When we're at version 0.6 or thereabouts.
 * localStorage can be used even for css and scripts
 
 
+###New in HTML5:
+* [The TIME tag](http://www.brucelawson.co.uk/2012/best-of-time/)
+
+
 
 ### Further reading
 * [Android Push Notifications with PhoneGap](http://www.adobe.com/devnet/phonegap/articles/android-push-notifications-with-phonegap.html)

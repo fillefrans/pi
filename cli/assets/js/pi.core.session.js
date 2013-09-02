@@ -12,14 +12,6 @@
  */
 
 
-  π.require('core');
-
-  if (!π.core) {
-    pi.log("pi.core is undefined!");
-  }
-
-
-
   π.core.session = {
 
     // private
@@ -47,7 +39,9 @@
 
 
   /**
-   * onmessage
+   * π.core.session.__onmessage
+   * 
+   * Handles incoming messages on the session WebSocket
    * By far the most important function in the session object
    *
    * This is where we will spend a big part of our time.
@@ -58,10 +52,23 @@
 
     __onmessage : function (event) {
       var
-        json   = JSON.parse(event.data);
+        packet   = JSON.parse(event.data);
 
-      π.events.publish('pi.core.session', json.message);
-      pi.log("onmessage [" + typeof(json.message) + "] : ", json.message);
+      // publish all messages on local session channel, for debugging
+      π.events.publish('pi.session', packet);
+
+      if(!!packet.address) {
+        pi.log("publishing packet to '" + packet.address + "' : ", packet);
+        π.events.publish(packet.address, packet);
+      }
+      if(!!packet.callback) {
+        pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
+        
+        π.core.callback.call(packet.callback, packet);
+      }
+      else {
+        pi.log("onmessage [" + typeof packet + "] : ", packet);
+      }
     },
 
 
@@ -72,12 +79,7 @@
       π.timer.start("session.init");
 
       var 
-        host        = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri,
-        sessionhost = 'ws://' + this.__sessionserver + ':' + this.__sessionport;
-
-      if(!π.events) {
-        π.require('events');
-      }
+        host        = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri;
 
       if(this.__initialized === true){
         //something is not right
@@ -106,8 +108,8 @@
       //   self = π.core.session,
       //   bootstraptime = (new Date()).getTime() - π.__sessionstart;
 
-      π.timer.stop("pi.session");
-      pi.log("pi.session bootstrapped in " + pi.timer.stop("bootstrap") + "ms. \nTotal startup time: " +  ((new Date()).getTime() - π.__sessionstart) + "ms.");
+      
+      pi.log("pi session started in " + π.timer.stop("pi.session") + "\nElapsed since page head eval: " + ((new Date()).getTime() - π.__sessionstart) + "ms.");
 
       // lists all timers in console
       pi.timer.history.list();
@@ -166,7 +168,7 @@
         self.__socket.addEventListener('open', function(event) {
           pi.log('Opened session request socket. Event: ', event);
           π.timer.stop("session.init");
-          π.timer.start("session.request");
+          π.timer.start("session.request");          
           self.send({command: 'session'});
         });
 
@@ -181,6 +183,7 @@
           // handle message event
           if(message.OK) {
 
+            // pi.log(message);
             // we have to release the execution pointer to allow the session to start up
             setTimeout(function (self) {
               π.timer.stop("session.request");
@@ -221,8 +224,20 @@
         self = π.core.session;
 
       try {
-        self.__socket.send(JSON.stringify(obj));
-        return true;
+        if(self.__sessionsocket && (self.__sessionsocket.readyState === 1) ){
+          self.__sessionsocket.send(JSON.stringify(obj));
+          return true;
+        }
+        else if(self.__socket && (self.__socket.readyState === 1) ){
+          self.__socket.send(JSON.stringify(obj));
+          return true;
+        }
+        else {
+          pi.log("Error: Socket not ready.");
+          pi.log("__socket.readyState: " + self.__socket.readyState);
+          pi.log("__sessionsocket.readyState: " + self.__sessionsocket.readyState);
+          return false;
+        }
       }
       catch (ex) {
         pi.log(ex.name + ": " + ex.message, obj);
@@ -239,8 +254,8 @@
 
       self.__socket.close();
       self.__socket = null;
-      self.__initsocket.close();
-      self.__initsocket = null;
+      self.__sessionsocket.close();
+      self.__sessionsocket = null;
     },
 
 
@@ -249,9 +264,18 @@
 
       if( !this.__init(DEBUG) ) {
         pi.log('session.__init() returned false, aborting...');
+        return false;
+      }
+      else {
+        return true;
       }
     }
   };
 
 
-  π.core.session.start();
+  // Create pi.session as an alias for pi.core.session 
+  π.session = π.core.session;
+  
+  π.session._loaded = π.session.start();
+
+

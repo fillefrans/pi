@@ -2,18 +2,18 @@
 
 
 
-internal data types
+π data types
 
 
 
-pi routeable JSON packets
+π routeable JSON packets
 
 
 
-pi command packet
+π command packet
 
 {
-  command : [ session publish listen read write service run sysinfo fileinfo *unset ]
+  command : [ session publish require listen read write svc.list svc.run sys.info file.info file.read file.write *unset ]
   address: "",
   replyto: "",
   scope: 2,
@@ -25,19 +25,16 @@ pi command packet
 }
 
 
-pi data packet
+π packet
 
 {
   address: "",
-  scope: 2,
   data : {}
 }
 
 
 
-
-
-pi REDIS data structures
+redis data types
 
 
 queue
@@ -52,4 +49,4 @@ sorted set
 bitmap
 
 
-
+key-value

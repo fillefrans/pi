@@ -1,4 +1,4 @@
-/**   π.core.rpc
+/**   π.core.callback
   *
   *   Store references to local callback functions
   *   Call remote procedure and create a listener for the result
@@ -10,56 +10,70 @@
 
   var π = π  || {};
 
- 
-
-  π.callback = π.callback || {
+  π.core.callback = π.core.callback || {
 
     /**
-     * Callback handlers
+     * Manages callback handlers
+     *
+     * Issues replyaddresses, and invokes related
+     * callback when response is received from server
      * 
      */
 
-    id : 0,
-    items : {},
-
-
+    __id      : 0,
+    __prefix  : "___callback",
+    __items   : {},
 
     
 
-    __add : function (address, replyaddress, command) {
-      // insert item and return index of newly inserted item
-      return 
-        this.items.push({
-          address: address, 
-          replyaddress: replyaddress, 
-          command: command, 
-          time: {
-            added: new Date().getTime()
-          }
-        });
-    },
-
-
     //public
 
-    add : function (address, replyaddress, command) {
-      // insert item and return index of newly inserted item
-      return 
-        this.items.push({
-          address: address, 
-          replyaddress: replyaddress, 
-          command: command, 
-          time: {
-            added: new Date().getTime()
-          }
-        });
+    add : function (callback) {
+
+      // check input
+      if(typeof callback !== "function") {
+        return false;
+      }
+
+      // insert callback and return name of newly inserted item
+      var
+        self  = π.core.callback;
+      var
+        id    = self.__prefix + (self.__id++).toString(16);
+
+
+
+      self.__items[id] = { callback : callback };
+
+      pi.log("added callback '" + id + "': " + callback);
+
+      return id;
+
     },
 
 
-    call : function (address, command, callback, onerror) {
-      // body...
+    call : function (id, data) {
+      var 
+        item    = π.core.callback.__items[id],
+        result  = false;
+
+      if(item && (typeof item.callback === "function")) {
+
+        pi.log("invoking callback...");
+        result = item.callback.call(this, data);
+        pi.log(result);
+        
+        // clear callback item
+        item = null;
+      }
+      else {
+        pi.log("Error invoking callback: " + id, item);
+      }
+
+      return result;
     }
 
   };
 
 
+π.callback = π.core.callback;

@@ -37,6 +37,8 @@
         protected $DEBUG        = true;
         protected $server       = null;
         protected $redis        = null;
+        protected $currentdb    = PI_APP;
+
         protected $incoming     = 0;
         protected $outgoing     = 0;
         protected $starttime    = null;
@@ -48,28 +50,27 @@
         protected $parent       = null;
         protected $parentpid    = null;
         protected $ticks        = 1;
+
+        public    $userid       = 'root';
+        public    $name         = 'pi.session';
+        public    $address      = 'pi.srv.session';
+
+
   
-        // Pub/Sub
-        protected $requests       = array();
-        protected $subscriptions  = array();
-
-
-
         public function __construct($port=8100){
           $this->starttime  = time();
 
-          // gives us a timer-function of sorts
+          // gives us an interval-like function
           register_tick_function(array($this,'onTick'));
         }
 
 
         protected function __init() {
 
-          // this is the place for any code that raises exceptions
-
           if( false === ($this->redis = $this->connectToRedis())){
             throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
           }
+
           // read back the env vars we set in the parent process before we forked 
           $this->port       = getenv('session_port');
           $this->id         = getenv('session_id');
@@ -80,7 +81,7 @@
           $this->server->addObserver($this);
           $this->say("Session handler started, listening on port ".$this->port);
 
-          $this->address    = 'pi.srv.session.' . $this->id;
+          $this->address   .=  '.' . $this->userid;
         }
 
 
@@ -100,6 +101,7 @@
             $debug[] = print_r($reply['info'],true);
             $debug[] = $reply['message'];
         }
+
 
         protected function publish($address, $message=false) {
 
@@ -127,6 +129,7 @@
               return false;
             }
             $redis->select($db);
+            $this->currentdb = $db;
             return $redis;
           }
           catch(RedisException $e){
@@ -137,24 +140,30 @@
 
 
         public function onTick(){
-          $this->say( floor(1000*(microtime(true)-SESSION_START)) . ": tick # " . $this->ticks++ );
+          // $this->say( floor(1000*(microtime(true)-SESSION_START)) . ": tick # " . $this->ticks );
+          $this->ticks++;
         }
+
 
 
         public function onConnect(IWebSocketConnection $user){
           $this->say("{userid:{$user->getId()}, event: \"connect\", message: \"Welcome.\"}");
-          $response = array('userid'=>$user->getId(), 'sessionid' => $this->id);
-          $result   = 1;
-          $event    = "info";
+
+          $response = array('address' => 'pi.session.connect', 'data' => array('userid' => $user->getId(), 'sessionid' => $this->id));
           $this->myclient = $user;
-          // we need an empty array for request param, since we haven't received any requests yet
-          $this->say("Sending response: " . json_encode($response));
-          $this->reply(array(),$response, $result, 'session');
+
+          $this->say("Sending connect event: " . json_encode($response));
+          $this->send($response);
         }
 
 
-        protected function reply($request, $message="", $status = 0, $event='info'){
-          $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event, "request"=>$request));
+        protected function send($mixed){
+          $this->myclient->sendMessage(WebSocketMessage::create(json_encode($mixed)));
+        }
+
+
+        protected function reply($message="", $status = 0, $event='info'){
+          $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event));
           $this->myclient->sendMessage(WebSocketMessage::create($json));
         }
 
@@ -166,22 +175,14 @@
 
 
         public function onPubSubMessage($redis, $address, $message){
-          foreach ($this->subscriptions as $value){
-            if(false !== fnmatch ( $address , $value['address'], FNM_CASEFOLD )){
-              // we have a subscriber to this address
-              $message['address'] = $address;
-              $this->sendData($message, 'publish');
-              }
-            }
+          // relay messages to client
+          $this->send(array('address' => $address, 'data' => $message));
         }
 
 
         protected function unsubscribe($address){
-          if(isset($this->subscriptions[$address])){
-            unset($this->subscriptions[$address]);
-          }
           if(false === ($result = $this->redis->unsubscribe($address))){
-            throw new PiException("Error unsubscribing from Redis address '$address'.", 1);
+            throw new PiException("Error unsubscribing from Redis address '$address'", 1);
           }
         }
 
@@ -190,38 +191,80 @@
           if(false === ($result = $this->redis->subscribe($address, array($this, 'onPubSubMessage')))){
             throw new PiException("Error subscribing to Redis address '$address'.", 1);
           }
-          // add subscription to our internal list
-          unset($this->subscriptions[$address]);
         }
 
 
         // handle incoming requests from client
         public function onMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
+
+          // assume the worst
+          $result   = null;
+          $message  = json_decode($msg->getData(), true);
+
           $this->incoming++;
           $this->lastactivity = time();
-          $message = json_decode($msg->getData(), true);
+
           if(!isset($message['command'])){
-            $this->reply($msg, $user, "No command. Remember that 'command' should always be lowercase. Message was: ".$message);
+            $this->reply($msg, $user, "No command. 'command' should always be lowercase. Message was: ".$message);
             return;
           }
+
+          // IF command CONTAINS '.' AND IF NOT command STARTS WITH '.'
+          if(false != ($commandpos = strpos($message['command'], '.'))) {
+            // split at first '.' into $handler.$subcommand
+            $handler    = substr($message['command'], 0, $commandpos);
+            $subcommand = substr($message['command'], $commandpos);
+            switch ($handler) {
+              case 'redis':
+                // should be refactored, for now we simply strip the 'redis.' prefix
+                // since we have implemented all the redis commands directly in the 
+                // top-level message handler further down
+                $message['command'] = $subcommand;
+                break;
+
+              case 'task':
+              case 'file':
+                // rewrite [handler.command] to [command][handler]
+                // e.g.: "file.read" -> "readfile"
+                // since we have implemented some built-in 
+                // top-level message handlers further down
+                $message['command'] = $subcommand . $handler;
+                break;
+
+              case 'io':
+              case 'service':
+                $message['handler'] = $handler;
+                $message['command'] = $subcommand;
+                break;
+
+              default:
+                $this->reply($message, "Unknown command: '{$message['command']}'", 0, "error");
+                throw new PiException("Client sent unknown command: '{$message['command']}'", 1);
+                break;
+            }
+          }
+
           switch ($message['command']) {
             case 'query':
-              $this->query($message);
+              // handle DB/SQL queries here
+              $result = $this->query($message);
               break;
-            case 'subscribe': 
-              $this->subscribe($message); 
+            case 'subscribe':
+              $result = $this->subscribe($message); 
               break;
-            case 'unsubscribe': 
-              $this->unsubscribe($message); 
+            case 'unsubscribe':
+              $result = $this->unsubscribe($message); 
               break;
             case 'publish':
-              $this->publish($this->address, $message);
+              $result = $this->publish($this->address, $message);
               break;
             case 'queue':
-              $this->handleQueueRequest($message);
+              $result = $this->handleQueueRequest($message);
               break;
             case 'read':
             case 'write':
+            case 'list':
+
             case 'setbit':
             case 'getbit':
             case 'set':
@@ -232,17 +275,31 @@
             case 'rpush':
             case 'lpushrpop':
             case 'rpushlpop':
-              $this->redisCommand($message);
+              $result = $this->redisCommand($message);
               break;
+
+            case 'readfile': 
+              $result = file_get_contents(PI_ROOT . $message['fileaddress'] );
+              break;
+
             case 'quit':
-              $this->reply($message, "Goodbye.", 1);
-              die("Client sent 'quit' command. Exiting.");
+              die("Client sent 'quit' command. Exiting.\n");
+              // kind of _have_ to put the break in there, even if we just died.
               break;
             default:
-              $this->reply($message, "Unknown command: '{$message['command']}'", 0, "error");
               throw new PiException("Client sent unknown command: '{$message['command']}'", 1);
               break;
           }
+
+          if($result !== null) {
+            $response = array('address' => $message['address'], 'callback' => $message['callback'], 'data' => $result);
+            $this->say("sending response to \"{$message['address']}\": " . json_encode($result));
+            $this->send($response);
+          }
+
+          // this function returns void
+          $this->say("handled redis command \"{$message['command']}\": " . $result);
+          return;
         }
 
 
@@ -251,41 +308,74 @@
 
           switch ($message['command']) {
 
-            case 'read':
-            case 'get':
-              return $this->redis->get($message['address']);
+            case 'shift' : // alias
+            case 'lpush' :
+              $result = $redis->lPush($message['address'], json_encode($message['data']));
+              $this->say("Data lPushed onto \"{$message['address']}\": " . $result);
               break;
 
-            case 'write':
-            case 'set':
-              return $this->redis->set($message['address'], json_encode($message['data']));
+            case 'unshift'  : // alias
+            case 'lpop' : 
+              $result = $redis->lPop($message['address']);
+              $this->say("Data lPopped from \"{$message['address']}\": " . $result);
               break;
-            
+
+            case 'pop'  : // alias 
+            case 'rpop' : 
+              $result = $redis->rPop($message['address']);
+              $this->say("Data rPopped from \"{$message['address']}\": " . $result);
+              break;
+
+            case 'push'  : // alias
+            case 'rpush' :
+              $result = $redis->rPush($message['address'], json_encode($message['data']));
+              $this->say("Data rPushed onto \"{$message['address']}\": " . $result);
+              break;
+
+            case 'list' : // alias
+              $result = $redis->lRange($message['address'], 0, -1);
+              $this->say("Read list from \"{$message['address']}\": " . $result);
+              break;
+
+            case 'read' : // alias
+            case 'get'  :
+              $result = $this->redis->get($message['address']);
+              $this->say("Read from \"{$message['address']}\": " . $result);
+              break;
+
+            case 'write': // alias
+            case 'set':
+              $result = $this->redis->set($message['address'], json_encode($message['data']));
+              $this->say("Wrote to \"{$message['address']}\": " . print_r($message['data'], true));
+              break;
+
             default:
-              # code...
+              $this->say("ERROR: no command in message: " . print_r($message, true));
               break;
           }
+
+          return $result;
         }
 
 
         public function onDisconnect(IWebSocketConnection $user){
           $this->say("User {$user->getId()} disconnected.");
-           die("Client disconnected. Exiting.");
+          die("Client disconnected. Exiting.");
         }
 
 
         public function onAdminMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
-          $this->say("Admin Message received!");
+          $this->say("user # " . $this->userid . ": admin message received.");
 
           $frame = WebSocketFrame::create(WebSocketOpcode::PongFrame);
           $user->sendFrame($frame);
         }
 
 
-        public function say($msg=''){
+        public function say($msg="nothing to say"){
           $msg_array  = array( 'message' => $msg, 'time' => time() );
 
-          // publish debug info on redis address
+          // publish debug info to our own address
           if($this->redis){
             $this->publish($this->address, getFormattedTime() . ": " . $msg);
           }
@@ -294,7 +384,7 @@
 
 
         public function run(){
-      		$this->say("\n" . get_class($this) . ": running\n");
+      		$this->say(get_class($this) . ": running");
           $this->__init();
           $this->server->run();
         }
@@ -309,7 +399,7 @@
     $server->run();
   }
   catch(Exception $e) {
-    $this->say(get_class($e) . ": " . $e->getMessage() . "\n");
+    $this->say(get_class($e) . ": " . $e->getMessage());
   }
 
 

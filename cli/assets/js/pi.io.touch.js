@@ -1,10 +1,10 @@
-/**   π.io.touch  
- *
- *   Touch event handlers and utilities related to touchscreen interfaces
- *
- * @author Johan Telstad, jt@enfield.no, 2011-2013
- *
-**/
+  /**  π.io.touch  
+   *
+   *   Touch event handlers and utilities related to touch interfaces
+   *
+   * @author Johan Telstad, jt@enfield.no, 2011-2013
+   *
+  **/
 
 
   var π = π  || {};
@@ -40,7 +40,7 @@
 
 /***   ------   INITIALIZATION    ------  
    *
-   *  Code we run after having created the io.touch object.
+   *  Code we run after having created the π.io.touch object.
    *
    */
 
