@@ -23,16 +23,16 @@
 
 
 
+
+  // load pi config
   if(!defined('PI_ROOT')){
     define('PI_ROOT', dirname(__FILE__)."/");
     require_once(PI_ROOT."pi.config.php");
   }
 
+  // include utility classes and libraries
   require_once(PI_ROOT."pi.class.exception.php");
   require_once(PI_ROOT."pi.util.php");
-
-
-
 
 
 
@@ -40,12 +40,13 @@
   class Pi {
 
 
-    protected   $starttime  = microtime(true);
+    protected   $starttime  = null;
     protected   $redis      = null;
     protected   $pubsub     = null;
     protected   $channel    = 'pi';
 
     public function __construct() {
+      $this->starttime = microtime(true);
     }
 
 
@@ -58,10 +59,10 @@
   
       // open a separate connection for pubsub
       // from the redis docs:
-      // A client subscribed to one or more channels 
-      // should not issue commands, although it can 
-      // subscribe and unsubscribe to and from 
-      // other channels. The reply of the ...
+      // > A client subscribed to one or more channels 
+      // > should not issue commands, although it can 
+      // > subscribe and unsubscribe to and from 
+      // > other channels. The reply of the ...
       if( false === ($this->pubsub = $this->connectToRedis())){
         throw new PiException("Unable to connect pubsub client to redis on " . REDIS_SOCK, 1);
       }
@@ -121,6 +122,25 @@
         $this->say("We have no redis pubsub object in function publish()\n");
       }
     }
+
+
+
+    protected function subscribe($channel, &$callback=false) {
+
+      if($callback===false) {
+        // we were invoked without the callback param, which is not right
+        throw new PiException("pi->subscribe() was called without the callback parameter.", 1);
+        return false;
+      }
+      if($this->pubsub){
+        $this->pubsub->subscribe($channel, $callback);
+      }
+      else {
+        $this->say("We have no redis pubsub object in function publish()\n");
+      }
+    }
+
+
 
   }
 

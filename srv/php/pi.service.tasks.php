@@ -19,9 +19,11 @@
 
     class PiServiceTasks extends PiService {
 
+      protected $address = basename(__FILE__,'.php');
 
-        // handle incoming requests from client
-        public function onMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
+
+        // handle incoming pubsub messages from redis
+        public function onMessage(){
           $this->incoming++;
           $this->lastactivity = microtime(true);
           $message = json_decode($msg->getData(), true);

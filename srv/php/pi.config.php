@@ -7,28 +7,35 @@
      * 
      */
 
-    if(!defined('DEBUG')){
-      define('DEBUG', true);
+
+
+    if(DEBUG) {
+      error_reporting(-1);
     }
 
 
-    error_reporting(0);
-
-    define('APP_NAME', 'Views running on Pi Server');
-
-    define('APP_PLATFORM', 'Pi Client-Server/WebSocket');
-
-    define('APP_VERSION', 'v0.2@');
+    define('APP_NAME',      'Pi Server');
+    define('APP_PLATFORM',  'Pi Server/WebSocket');
+    define('APP_VERSION',   'v0.2@');
 
     // define directories
 
-    define('PI_ROOT', dirname(__FILE__) . "/");
-    define('UTILITIES_DIR', PI_ROOT.'utility/');
+    define('PI_ROOT',           dirname(__FILE__) . "/");
+    define('UTILITIES_DIR',     PI_ROOT.'utility/');
 
-    define('UPLOAD_ROOT',"/var/www/upload/pi/batch/");
-    define('WORKER_DIR', PI_ROOT."workers/");
-    define('WORKER_SPAWNER', WORKER_DIR.'pi.util.spawn.php');
-    define('SESSION_SCRIPT', PI_ROOT.'pi.session.php');
+    define('UPLOAD_ROOT',       "/var/www/upload/pi/batch/");
+    define('WORKER_DIR',        PI_ROOT."workers/");
+    define('WORKER_SPAWNER',    WORKER_DIR.'pi.util.spawn.php');
+    define('SESSION_SCRIPT',    PI_ROOT.'pi.session.php');
+
+
+
+
+    define('HEARTBEATS_PER_SECOND', 10);
+    define('UPDATE_FREQUENCY',      10);
+    define('SECONDS_IN_A_DAY',      24*60*60);
+
+    define('A_COOL_MILLION',        1000000);
 
 
     // Redis settings
@@ -39,9 +46,10 @@
     define('PI_APP',      0);
     define('PI_CORE',     1);
 
+    // PHP is using one db for session storage
     define('PHP_SESSION', 2);
-    define('PI_SESSION',  3);
 
+    define('PI_SESSION',  3);
     define('PI_DATA',     4);
     define('PI_CALLBACK', 5);
     define('PI_FILES',    6);
@@ -55,8 +63,6 @@
 
     define('PI_TMP',     14);
     define('PI_DBG',     15);
-
-    define('UPDATE_FREQUENCY', 10);
 
 
 ?>
