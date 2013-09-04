@@ -12,9 +12,9 @@
   /**
    *  Pi base class
    *
-   *  Implements basic functions and
-   *  includes files that most other Pi 
-   *  classes will need.
+   *  provides basic methods.
+   *  includes config and code that 
+   *  most other Pi classes need.
    *
    *
    * @author 2011-2013 Johan Telstad <jt@enfield.no>
@@ -42,6 +42,7 @@
 
     protected   $starttime  = microtime(true);
     protected   $redis      = null;
+    protected   $pubsub     = null;
     protected   $channel    = 'pi';
 
     public function __construct() {
@@ -49,20 +50,40 @@
 
 
     private function __init() {
-      // this is the place for any code that raises exceptions
+
+      // open a data connection for redis 
       if( false === ($this->redis = $this->connectToRedis())){
-        throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
+        throw new PiException("Unable to connect data client to redis on " . REDIS_SOCK, 1);
+      }
+  
+      // open a separate connection for pubsub
+      // from the redis docs:
+      // A client subscribed to one or more channels 
+      // should not issue commands, although it can 
+      // subscribe and unsubscribe to and from 
+      // other channels. The reply of the ...
+      if( false === ($this->pubsub = $this->connectToRedis())){
+        throw new PiException("Unable to connect pubsub client to redis on " . REDIS_SOCK, 1);
       }
     }
 
 
     private function exceptionToArray(&$e) {
-      return array( 'code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTrace());
+      return array(
+                   'class'    => get_class($e), 
+                   'message'  => $e->getMessage(), 
+                   'file'     => $e->getFile(), 
+                   'code'     => $e->getCode(), 
+                   'file'     => $e->getFile(), 
+                   'line'     => $e->getLine(), 
+                   'trace'    => $e->getTrace());
     }
 
 
     private function handleException(&$e) {
-
+      if(DEBUG) {
+        
+      }
     }
 
 
@@ -87,17 +108,17 @@
 
     protected function publish($channel, $message=false) {
 
-      if($this->redis){
+      if($this->pubsub){
         if($message===false) {
           // we were invoked with only one param, so we assume that's a message for default channel
           $message = $channel;
           $channel = $this->channel;
         }
 
-        $this->redis->publish($channel, $message);
+        $this->pubsub->publish($channel, $message);
       }
       else {
-        $this->say("We have no redis object in function publish()\n");
+        $this->say("We have no redis pubsub object in function publish()\n");
       }
     }
 

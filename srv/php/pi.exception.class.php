@@ -1,8 +1,10 @@
 <?php
+
 /**
  * π custom exception class
  * 
- * @author Johan Telstad, Kroma AS
+ * @author Johan Telstad, 2011-2013
+ * 
  */
 
 
