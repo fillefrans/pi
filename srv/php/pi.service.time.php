@@ -6,8 +6,7 @@
      * The pi time service, a server that emits time signals 
      * which can be subscribed to by other services
      *
-     * This is part of the backbone of our application server
-     * It needs to be extra bullet-proof
+     * This is part of the backbone of the pi server
      *
      * @author Johan Telstad, jt@enfield.no, 2011-2013
      *
@@ -22,7 +21,7 @@
 
         private   $subscribercount  = -1;
         private   $running          = false;
-        private   $ticks            = 0;
+        private   $ticks            = -1;
         private   $ticklength       = 0;
 
         protected $address          = "";
@@ -40,9 +39,9 @@
 
         /**
          *
-         * π.service.time.heartbeat()
+         * π.service.time.tick()
          *
-         * Emits a heartbeat event to subscribers at a rate of HEARTBEATS_PER_SECOND,
+         * Emits a tick event to subscribers at a rate of TICKS_PER_SECOND,
          * as defined in pi.config.php
          *
          * Also emits a time event every second, giving the current server time
@@ -51,41 +50,62 @@
          */
 
 
-        private function heartbeat() {
+        protected function tick() {
 
-          $this->subscribercount = $this->pubsub->publish('pi.service.time.heartbeat', null);
+          $now = microtime(true);
+
+          $this->subscribercount = $this->pubsub->publish('pi.service.time.tick', null);
 
           // emit time in microseconds once per second
-          if( $this->ticks++ % HEARTBEATS_PER_SECOND === 0 ) {
-            $this->pubsub->publish('pi.service.time', microtime(true));
-            if($this->debug) {
-              print("\r".microtime(true));
-            }
+          if( ++$this->ticks % TICKS_PER_SECOND === 0 ) {
+            $this->pubsub->publish('pi.service.time', $now);
 
             // emit an each.minute event every whole minute
-            if( ($this->ticks % (HEARTBEATS_PER_SECOND*60)) === 0 ) {
-              $this->pubsub->publish('pi.service.time.each.minute', microtime(true));
-              if($this->debug) {
-                print( "\n" . date("D, d M Y H:i:s") . "\n" );
+            if( ($this->ticks % (TICKS_PER_SECOND*60)) === 0 ) {
+
+              // Is this the very first run?
+              if( $this->ticks === 0 ) {
+
+                // a small cheat to align our tick counter to 
+                // whole minutes and seconds from the get-go:
+                // initialize the ticks variable to the number 
+                // of ticks since the previous whole minute
+                $this->ticks += (TICKS_PER_SECOND* (time() % 60)) + (round(TICKS_PER_SECOND*$now) % TICKS_PER_SECOND);
+              }
+              else {
+                $this->pubsub->publish('pi.service.time.each.minute', $now);
               }
 
-            // emit an each.hour event every whole hour
-              if( (time() % (HEARTBEATS_PER_SECOND*3600)) === 0 ) {
-                $this->pubsub->publish('pi.service.time.each.hour', microtime(true));
+              // emit an each.hour event every whole hour
+              if( (time() % 3600) === 0 ) {
+                if( ($this->ticks > 600) && ((time() % SECONDS_IN_A_DAY) === 0) ) {
+                  $this->quit("We have run until midnight, stopping.");
+                }
+                $this->pubsub->publish('pi.service.time.each.hour', $now);
               }
+
             }
+
           }
+
         }
 
 
-        private function timeToNextHeartbeat() {
+        private function timeToNextTick() {
 
           // round up to nearest whole tick
-          $nextbeat = ceil(microtime(true) * HEARTBEATS_PER_SECOND)/HEARTBEATS_PER_SECOND;
+          $nexttick = ceil(microtime(true) * TICKS_PER_SECOND)/TICKS_PER_SECOND;
 
           // return difference in microseconds 
           // we call microtime *again* on exit, for accuracy
-          return floor( A_COOL_MILLION * ($nextbeat - microtime(true)) );
+          return floor( A_COOL_MILLION * ($nexttick - microtime(true)) );
+        }
+
+
+        private function quit($msg="No message. Goodbye.") {
+
+          die($msg);
+
         }
 
 
@@ -93,34 +113,14 @@
 
         public function run($dbg=false){
 
-          if($dbg) {
-            print("\nRunning : " . basename(__FILE__, '.php') . "\n");
-          }
+          $this->__init();
+          print("\nRunning : " . basename(__FILE__, '.php') . "\n");
 
           $this->running  = true;
-          $this->debug    = $dbg;
-
-
-          if($dbg) {
-            print("Waiting for next heartbeat...");
-          }
-          // wait for next heartbeat
-          usleep($this->timeToNextHeartbeat());
-          if($dbg) {
-            print("done!\n");
-          }
-
-          // a small cheat to align our tick counter to 
-          // whole minutes and seconds from the get-go
-          $this->ticks = HEARTBEATS_PER_SECOND * (time() % 60);
-
-          if($dbg) {
-            print("Starting at " . $this->ticks . " ticks.\n");
-          }
 
           while ( $this->running === true ) {
-            $this->heartbeat();
-            usleep($this->timeToNextHeartbeat());
+            $this->tick();
+            usleep($this->timeToNextTick());
           }
         }
 
@@ -132,10 +132,10 @@
   $time = new PiServiceTime();
 
   try {
-    $time->run(true);
+    $time->run();
   }
   catch(Exception $e) {
-    $print(get_class($e) . ": " . $e->getMessage() . "\n");
+    print(get_class($e) . ": " . $e->getMessage() . "\n");
   }
 
 

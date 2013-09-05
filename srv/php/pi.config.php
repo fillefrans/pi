@@ -12,30 +12,35 @@
     if(DEBUG) {
       error_reporting(-1);
     }
+    else {
+      error_reporting(0);
+    }
 
 
     define('APP_NAME',      'Pi Server');
     define('APP_PLATFORM',  'Pi Server/WebSocket');
     define('APP_VERSION',   'v0.2@');
 
+
     // define directories
-
     define('PI_ROOT',           dirname(__FILE__) . "/");
-    define('UTILITIES_DIR',     PI_ROOT.'utility/');
+    define('UTILITIES_DIR',     PI_ROOT . 'utility/');
 
-    define('UPLOAD_ROOT',       "/var/www/upload/pi/batch/");
-    define('WORKER_DIR',        PI_ROOT."workers/");
-    define('WORKER_SPAWNER',    WORKER_DIR.'pi.util.spawn.php');
-    define('SESSION_SCRIPT',    PI_ROOT.'pi.session.php');
+    define('DATA_ROOT',         PI_ROOT . "data/");
+    define('FILE_ROOT',         PI_ROOT . "data/files/");
+    define('UPLOAD_ROOT',       PI_ROOT . "data/files/upload/");
+    define('WORKER_DIR',        PI_ROOT . "workers/");
+    define('WORKER_SPAWNER',    WORKER_DIR . 'pi.util.spawn.php');
+    define('SESSION_SCRIPT',    PI_ROOT . 'pi.session.php');
 
 
 
 
-    define('HEARTBEATS_PER_SECOND', 10);
-    define('UPDATE_FREQUENCY',      10);
-    define('SECONDS_IN_A_DAY',      24*60*60);
+    define('TICKS_PER_SECOND',  10);
+    define('UPDATE_FREQUENCY',  1);
+    define('SECONDS_IN_A_DAY',  24*60*60);
 
-    define('A_COOL_MILLION',        1000000);
+    define('A_COOL_MILLION',    1000000);
 
 
     // Redis settings

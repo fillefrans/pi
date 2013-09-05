@@ -17,15 +17,11 @@
 
 
 
-    class PiService {
+    class PiService extends Pi {
 
       private $name = 'service';
 
       public function __construct() {
-      }
-
-
-      private function __init() {
       }
 
 

@@ -1,83 +1,133 @@
 <?php
 
     /**
-     * The pi task service, a server that listens for tasks
-     * and executes them as they are requested.
-     *
-     * progress is reported back through the task's unique address
+     * π.service.tasks
      * 
+     * The pi task service, a server that controls task 
+     * execution, queueing and control
      *
-     * This is part of the backbone of our application server
-     * It needs to be extra bullet-proof
+     * This is part of the backbone of the pi server
      *
      * @author Johan Telstad, jt@enfield.no, 2011-2013
      *
      */
 
-    require_once(PI_ROOT . "pi.service.php");
+    require_once("pi.service.php");
 
 
     class PiServiceTasks extends PiService {
 
-      protected $address = basename(__FILE__,'.php');
+        private   $debug            = false;
+
+        private   $subscribercount  = -1;
+        private   $running          = false;
+        private   $ticks            = -1;
+        private   $ticklength       = 0;
+
+        protected $address          = "";
+        protected $name             = "";
 
 
-        // handle incoming pubsub messages from redis
-        public function onMessage(){
-          $this->incoming++;
-          $this->lastactivity = microtime(true);
-          $message = json_decode($msg->getData(), true);
- 
-          switch ($message['command']) {
-            case 'peek':
-              $this->query($message);
-              break;
-            case 'subscribe':
-              $this->subscribe($message); 
-              break;
-            case 'unsubscribe': 
-              $this->unsubscribe($message); 
-              break;
-            case 'publish':
-              $this->publish($this->channel, $message);
-              break;
-            case 'queue':
-              $this->handleQueueRequest($message);
-              break;
-            case 'setbit':
-            case 'getbit':
-            case 'set':
-            case 'get':
-            case 'lpop':
-            case 'rpop':
-              $this->redisCommand($message);
-              break;
-            case 'quit':
-              $this->reply($message, "Goodbye.", 1);
-              die("Client sent 'quit' command. Exiting.");
-              break;
-            default:
-              $this->reply($message, "Unknown command: '{$message['command']}'", 0, "error");
-              break;
+
+
+        public function __construct() {
+          $this->address    = basename(__FILE__, '.php');
+          $this->name       = $this->address;
+        }
+
+
+
+        /**
+         *
+         * π.service.time.tick()
+         *
+         * Emits a tick event to subscribers at a rate of TICKS_PER_SECOND,
+         * which is defined in pi.config.php
+         *
+         * Also emits a time event every second, giving the current server time
+         * as a float, where the whole part represents a standard unix timestamp
+         *
+         */
+
+
+        protected function tick() {
+
+          $now = microtime(true);
+
+          $this->subscribercount = $this->pubsub->publish('pi.service.time.tick', null);
+
+          // emit time in microseconds once per second
+          if( ++$this->ticks % TICKS_PER_SECOND === 0 ) {
+            $this->pubsub->publish('pi.service.time', $now);
+
+            // emit an each.minute event every whole minute
+            if( ($this->ticks % (TICKS_PER_SECOND*60)) === 0 ) {
+
+              // Is this the very first run?
+              if( $this->ticks === 0 ) {
+
+                // a small cheat to align our tick counter to 
+                // whole minutes and seconds from the get-go:
+                // initialize the ticks variable to number of 
+                // ticks since the previous whole minute
+                $this->ticks = (TICKS_PER_SECOND* (time() % 60)) + (round(TICKS_PER_SECOND*$now) % TICKS_PER_SECOND);
+              }
+              else {
+                $this->pubsub->publish('pi.service.time.each.minute', $now);
+              }
+
+            // emit an each.hour event every whole hour
+              if( (time() % 3600) === 0 ) {
+                if( ($this->ticks > SECONDS_IN_A_DAY) && ((time() % SECONDS_IN_A_DAY) === 0) ) {
+                  $this->quit("We have run until midnight, stopping.");
+                }
+                $this->pubsub->publish('pi.service.time.each.hour', $now);
+              }
+            }
           }
+
         }
 
-        public function run(){
-      		$this->say("\n" . get_class($this) . ": running\n");
-          $this->__init();
+
+        private function timeToNextTick() {
+
+          // round up to nearest whole tick
+          $nexttick = ceil(microtime(true) * TICKS_PER_SECOND)/TICKS_PER_SECOND;
+
+          // return difference in microseconds 
+          // we call microtime() again on exit, for accuracy
+          return floor( A_COOL_MILLION * ($nexttick - microtime(true)) );
         }
+
+
+        private function quit($msg="Goodbye. No message.") {
+
+          die($msg);
+
+        }
+
+
+
+
+        public function run($dbg=false){
+
+          $this->__init();
+          print("\nRunning : " . basename(__FILE__, '.php') . "\n");
+
+        }
+
     }
 
 
 
 
-  $service = new PiServiceTasks();
+  $tasks = new PiServiceTasks();
 
   try {
-    $service->run();
+    $tasks->run();
   }
   catch(Exception $e) {
-    $this->say(get_class($e) . ": " . $e->getMessage() . "\n");
+    print(get_class($e) . ": " . $e->getMessage() . "\n");
   }
 
 
