@@ -1,48 +1,23 @@
 <?php
 
+
+  /**
+   *  π.varnish.aggregator
+   *
+   *  A script that reads lines from varnishlog through stdin
+   *  and aggregates the data across keys and time
+   *
+   *  @author Johan Telstad <jt@enfield.no>, 2011-2013
+   *  
+   */
+
+
+
+
   declare( ticks = 16 );
 
 
-  require_once( __DIR__ . '/pi.php');
-
-
-  // config
-  $outputdir = LOG_DIR;
-  $logfile   = $outputdir . basename(__FILE__, '.php') . ".log";
-
-  // in seconds
-  $timetorun = 3600;  
-
-
-  // initialize variables
-  $linecounter		= 0;
-  $eventcounter		= 0;
-  $viewcounter		= 0;
-  $eventsskipped	= 0;
-
-  $objects	= null;
-  $events 	= null;
-
-
-  $currentobjectid  = null;
-  $currenteventtype = null;
-
-  $skipevent 		= false;
-  $skipcounter	= 0;
-
-  $dataset['start'] = time();
-  $stoptime = $dataset['start'] + $timetorun;
-  $fileprefix = Date("Ymd.His", $dataset['start'])."-".Date("His",$stoptime);
-
-
-  function floorHour($time){
-  	return floor($time/3600)*3600;
-  	}
-
-  function secondsToNextHour($time){
-  	return 3600 - ($time % 3600);
-  	}
-
+  $aggregator = null;
 
 
   // Interrupt handling
@@ -51,222 +26,312 @@
   pcntl_signal( SIGINT,  "signalhandler" );
 
 
-  function printreport(){
-
-      global 	$linecounter, $dataset, $objects, 
-  						$viewcounter, $eventcounter, $eventsskipped, $skipcounter;
-  		
-  		$dataset["loglinesread"]		= $linecounter;
-  		$dataset["events"]					= $eventcounter;
-  		$dataset["views"]						= $viewcounter;
-  		$dataset["skipped"]					= $eventsskipped;
-  		$dataset["memused"]					= memory_get_usage();
-  		$dataset["memmaxused"]			= memory_get_peak_usage();
-  		$dataset["memmaxallocated"]	= memory_get_peak_usage(true);
-  		$dataset["stop"]						= time();
-  		$objects["dataset"]					= $dataset;
-
-
-  		print( Date("His:\n"));
-      print( "\tLines read:\t$linecounter\n" );
-      print( "\tEvents read:\t$eventcounter\n" );
-      print( "\tViews read:\t" . ( $viewcounter ) . "\n" );
-  		print( "\tSkipped:\t$eventsskipped\n" );
-
-      var_dump( $dataset );
-  }
-
-
   function signalhandler( $signal ){
-      switch( $signal ) {
-         
-  			  case SIGTERM:
-  	        print( "Received shutdown signal, shutting down now...\n" );
-  	        flushdata();
-  	        exit;
-         
-  			  case SIGINT:
-  	        print( "Interrupted, quitting...\n" );
-  	        flushdata();
-  	        exit;  
-      }
+    global $aggregator;
+
+    switch( $signal ) {
+       
+      case SIGTERM:
+        print( "Received shutdown signal, shutting down now...\n" );
+        $aggregator->flushdata();
+        exit;
+     
+      case SIGINT:
+        print( "Interrupted, quitting...\n" );
+        $aggregator->flushdata();
+        exit;
+    }
   }
 
 
-  function flushdata(){
-
-  		global $objects, $events, $fileprefix, $outputdir, $fp;
-  		fclose($fp);
-      printreport();
-    
-      
-  		if( count( $objects ) > 0 ){ 
-  	  	echo "\nflushing views to ./views-log.json ...";
-      	if( file_put_contents("$outputdir/$fileprefix.views-log.json", json_encode( $objects )))
-          echo "done!\n";
-      	else
-          echo "error!  Unable to flush data to file.\n";
-    		}
-  	
-  		if( count( $events ) > 0 ){ 
-  	  	echo "\nflushing events to ./events-log.json ...";
-      
-      	if( file_put_contents( "$outputdir/$fileprefix.events-log.json", json_encode( $events )))
-          echo "done!\n";
-      	else
-          echo "error!  Unable to flush data to file.\n";
-   			}
-     }
+  require_once( __DIR__ . '/../pi.php');
 
 
 
-  /**   MAIN   **/
 
-  $fp = fopen( $logfile, "w");
+  class PiVarnishAggregator extends Pi {
 
+    // config
 
-  while( true ){
+    protected $address = "pi.varnish.aggregator";
 
-      $line = fgets( STDIN );
-  		if(($linecounter & 3) === 3){
-  			if(time()>$stoptime){
-  				print("we have run our designated time of $timetorun seconds, clean up and exit\n");
-  				flushdata();
-  				die(0);
-  				}
-  		}
-  //		fwrite($fp, $line);
-  		//var_dump($logline);
-  		$linecounter++;
+    private $outputdir = LOG_DIR;
+    private $logfile   = "";
+
+    // in seconds
+    private $timetorun = 3600;  
 
 
-      if (( strpos( $line, "SessionOpen", 6 )) === 6 ) {
-          list( $ip, $counter, $port ) = explode( " ", substr( $line, 21 ));
-          if( $skipevent ){ 
-          	$eventsskipped++;
-          }
-          $skipevent = false;
-      }
-      
-  		elseif ( strpos( $line, "RxURL", 6) === 6 ) {
-          $urlarray = explode( "/", substr( $line, 22 ));
-          if( count( $urlarray ) < 5 ){
-          	print("Skipping event: $line\n");
-  					$skipevent = true;
-  	        continue;
-  	        }
-  				else{
-  					} 
-  	    
-  				$elements 				= count( $urlarray ) >> 1;
-  	    	$currentobjectid  = $urlarray[1];
-  	    	$currenteventtype = $urlarray[0];
-  	  
-  			  unset( $params ); // Just-in-Time
-  	
-  	    	while( $elements-- > 1 ){ // 1 => skip the two first elements, they are objectid and eventtype
-  	        $params[$urlarray[$elements << 1]] = $urlarray[( $elements << 1 ) + 1];  // create assoc
-   	        }
-  				unset($params['cb']);  // cachebuster param
-  				unset($params['s']);	// 
-          }
-      
-  		elseif ( strpos( $line, "ReqEnd", 6) == 6 ) {
-      	if( $skipevent ){
-         	print("Skipping line: $line\n");
-  				continue;
-  	  		}
+    // initialize variables
+    private $linecounter	 = 0;
+    private $eventcounter	 = 0;
+    private $viewcounter	 = 0;
+    private $eventsskipped = 0;
 
-      	$timeline = substr( $line, 21 );
-      	list( $XID, $startproc, $endproc, $reqtime, $resptime, $deliverytime ) = explode( " ", $timeline );
-      	$paramvalues = "";
-       
-      	if( !isset( $objects[$currenteventtype][$currentobjectid] )){ 
+    private $objects	     = null;
+    private $events 	     = null;
 
-  	    	//no views/events yet on this objectid
-        	$objects[$currenteventtype][$currentobjectid]['count'] = 1;
-  				if( $currenteventtype != "v" ){
-  						if($currenteventtype=="e"){
-  						$eventcounter++;
-  						$params['ip'] 	= $ip;
-  						$params['time'] = $startproc;
-  						$params['objectid'] = $currentobjectid;
-  						
-  						// add to events array.
-  						$events[] = $params;
-  //						unset( $params['objectid'] );
-  						}
-  					else{
-  						print("Invalid eventtype: $currenteventtype\nurl: $line\n");
-  						continue;
-  						}
-  						
-  					}
-  				else{
-  					$viewcounter++;
-  					}
-  	    	foreach( $params as $key => $value ){
-  	    		$objects[$currenteventtype][$currentobjectid][$key][$value]=1;
-    	    	}
-  	    	}
-      	else {
 
-  	    	// Count it
-  	    	$objects[$currenteventtype][$currentobjectid]['count']++;
-  				if( $currenteventtype != "v" ){
-  					if($currenteventtype=="e"){
-  						$eventcounter++;
-  						$params['ip'] 	= $ip;
-  						$params['time'] = $startproc;
-  						$params['objectid'] = $currentobjectid;
-  						
-  						// add to events array.
-  						$events[] = $params;
-  						}
-  				else{
-  						print("Invalid eventtype: $currenteventtype\nurl: $line\n");
-  						continue;
-  						}
-  					unset( $params['objectid'] );
-  										
-  					}
-  				else{
-  					$viewcounter++;
-  					//print ( "counting: $line\n" );
-  					}
-  	    	foreach( $params as $key => $value ){
-        		if( isset( $objects[$currenteventtype][$currentobjectid][$key][$value] )){
-  	        	//Exists, so inc counter
-  	        	$objects[$currenteventtype][$currentobjectid][$key][$value]++;
-  	        	}
-  	    		else{
-  	        	// First of its kind
-  	        	$objects[$currenteventtype][$currentobjectid][$key][$value] = 1;
-    	      	}
-          	}
-      		}
+    private $currobjectid  = null;
+    private $curreventtype = null;
 
-  		//update screen
+    private $skipevent 		 = false;
+    private $skipcounter	 = 0;
 
-      if( DEBUG ){ // every x event
+    private $dataset       = null;
+    private $stoptime      = 0;
+    private $fileprefix    = null;
 
-  			$memusage 			= memory_get_usage();
-        $gccycles				= gc_collect_cycles(); // force garbage collection
-  			$timecomponents = explode( ".", $startproc );
-  			if( count( $timecomponents ) > 1 ){
-  				$time  = strftime( "%T", (int) $timecomponents[0] ) . "." . substr( $timecomponents[1], 0, 3 );
-  				}
-        echo "\r$time\tviews:".number_format( $viewcounter ) . "\tEvents:\t" . 
-  			number_format( $eventcounter ) . "\tmem:\t$memusage\t$ip $currenteventtype:$currentobjectid". 
-  			( DEBUG ? "\n" : "" );
+
+    function floorHour($time){
+    	return floor($time/3600)*3600;
+  	}
+
+    function secondsToNextHour($time){
+    	return 3600 - ($time % 3600);
+  	}
+
+
+    protected function __init() {
+
+      $this->outputdir  = LOG_DIR;
+      $this->logfile    = $this->outputdir . basename(__FILE__, '.php') . ".log";
+      $this->dataset    = array('start' => time());
+      $this->stoptime   = $this->dataset['start'] + $this->timetorun;
+      $this->fileprefix = Date("Ymd.His", $this->dataset['start'])."-".Date("His",$this->stoptime);
+
+      return true;
+    }
+
+
+
+    function printreport(){
+    		
+    		$this->dataset["loglinesread"]		= $this->linecounter;
+    		$this->dataset["events"]					= $this->eventcounter;
+    		$this->dataset["views"]						= $this->viewcounter;
+    		$this->dataset["skipped"]					= $this->eventsskipped;
+    		$this->dataset["memused"]					= memory_get_usage();
+    		$this->dataset["memmaxused"]			= memory_get_peak_usage();
+    		$this->dataset["memmaxallocated"]	= memory_get_peak_usage(true);
+    		$this->dataset["stop"]						= time();
+    		$this->objects["dataset"]					= $this->dataset;
+
+
+    		print( Date("His:\n"));
+        print( "\tLines read:\t$this->linecounter\n" );
+        print( "\tEvents read:\t$this->eventcounter\n" );
+        print( "\tViews read:\t" . ( $this->viewcounter ) . "\n" );
+    		print( "\tSkipped:\t$this->eventsskipped\n" );
+
+        var_dump( $this->dataset );
+    }
+
+
+
+
+    public function flushdata(){
+
+        if($this->fp) {
+          fclose($this->fp);
         }
 
-      unset( $currentobjectid  );  
-      unset( $currenteventtype );
+        $this->printreport();
+      
+        
+    		if( count( $this->objects ) > 0 ){ 
+    	  	echo "\nflushing views to ./views-log.json ...";
+        	if( file_put_contents("$this->outputdir/$this->fileprefix.views-log.json", json_encode( $this->objects )))
+            echo "done!\n";
+        	else
+            echo "error!  Unable to flush data to file.\n";
+      		}
+    	
+    		if( count( $this->events ) > 0 ){ 
+    	  	echo "\nflushing events to ./events-log.json ...";
+        
+        	if( file_put_contents( "$this->outputdir/$this->fileprefix.events-log.json", json_encode( $this->events )))
+            echo "done!\n";
+        	else
+            echo "error!  Unable to flush data to file.\n";
+     			}
+       }
+
+
+    public function onTick(){
+
+      $this->say("tick!");
+
+    }
+
+
+    public function run() {
+      /**   MAIN   **/
+
+      if(!$this->__init()) {
+        return false;
       }
+
+
+      $this->fp = fopen( $this->logfile, "w");
+
+      $this->subscribe("pi.service.time.tick", array($this,"onTick"));
+
+      while( true ){
+
+          $line = fgets( STDIN );
+          if(($this->linecounter & 3) === 3){
+            if(time()>$this->stoptime){
+              print("we have run our designated time of $timetorun seconds, clean up and exit\n");
+              $this->flushdata();
+              die(0);
+              }
+          }
+      //    fwrite($fp, $line);
+          //var_dump($logline);
+          $this->linecounter++;
+
+
+          if (( strpos( $line, "SessionOpen", 6 )) === 6 ) {
+              list( $ip, $counter, $port ) = explode( " ", substr( $line, 21 ));
+              if( $this->skipevent ){ 
+                $this->eventsskipped++;
+              }
+              $this->skipevent = false;
+          }
+          
+          elseif ( strpos( $line, "RxURL", 6) === 6 ) {
+              $urlarray = explode( "/", substr( $line, 22 ));
+              if( count( $urlarray ) < 5 ){
+                print("Skipping event: $line\n");
+                $this->skipevent = true;
+                continue;
+                }
+              else{
+                } 
+            
+              $elements         = count( $urlarray ) >> 1;
+              $this->currobjectid  = $urlarray[1];
+              $this->curreventtype = $urlarray[0];
+          
+              unset( $this->params ); // Just-in-Time
+        
+              while( $elements-- > 1 ){ // 1 => skip the two first elements, they are objectid and eventtype
+                $this->params[$urlarray[$elements << 1]] = $urlarray[( $elements << 1 ) + 1];  // create assoc
+                }
+              unset($this->params['cb']);  // cachebuster param
+              unset($this->params['s']);  // 
+              }
+          
+          elseif ( strpos( $line, "ReqEnd", 6) == 6 ) {
+            if( $this->skipevent ){
+              print("Skipping line: $line\n");
+              continue;
+              }
+
+            $timeline = substr( $line, 21 );
+            list( $XID, $startproc, $endproc, $reqtime, $resptime, $deliverytime ) = explode( " ", $timeline );
+            $paramvalues = "";
+           
+            if( !isset( $this->objects[$this->curreventtype][$this->currobjectid] )){ 
+
+              //no views/events yet on this objectid
+              $this->objects[$this->curreventtype][$this->currobjectid]['count'] = 1;
+              if( $this->curreventtype != "v" ){
+                  if($this->curreventtype=="e"){
+                  $this->eventcounter++;
+                  $this->params['ip']   = $ip;
+                  $this->params['time'] = $startproc;
+                  $this->params['objectid'] = $currobjectid;
+                  
+                  // add to events array.
+                  $this->events[] = $this->params;
+      //            unset( $params['objectid'] );
+                  }
+                else{
+                  print("Invalid eventtype: $curreventtype\nurl: $line\n");
+                  continue;
+                  }
+                  
+                }
+              else{
+                $this->viewcounter++;
+                }
+              foreach( $this->params as $key => $value ){
+                $this->objects[$this->curreventtype][$this->currobjectid][$key][$value]=1;
+                }
+              }
+            else {
+
+              // Count it
+              $this->objects[$this->curreventtype][$this->currobjectid]['count']++;
+              if( $this->curreventtype != "v" ){
+                if($this->curreventtype=="e"){
+                  $this->eventcounter++;
+                  $this->params['ip']   = $ip;
+                  $this->params['time'] = $startproc;
+                  $this->params['objectid'] = $this->currobjectid;
+                  
+                  // add to events array.
+                  $this->events[] = $this->params;
+                  }
+              else{
+                  print("Invalid eventtype: $this->curreventtype\nurl: $line\n");
+                  continue;
+                  }
+                unset( $this->params['objectid'] );
+                          
+                }
+              else{
+                $this->viewcounter++;
+                //print ( "counting: $line\n" );
+                }
+              foreach( $this->params as $key => $value ){
+                if( isset( $this->objects[$this->curreventtype][$this->currobjectid][$key][$value] )){
+                  //Exists, so inc counter
+                  $this->objects[$this->curreventtype][$this->currobjectid][$key][$value]++;
+                  }
+                else{
+                  // First of its kind
+                  $this->objects[$this->curreventtype][$this->currobjectid][$key][$value] = 1;
+                  }
+                }
+              }
+
+          //update screen
+
+          if( DEBUG ){ // every x event
+
+            $memusage       = memory_get_usage();
+            $gccycles       = gc_collect_cycles(); // force garbage collection
+            $timecomponents = explode( ".", $startproc );
+            if( count( $timecomponents ) > 1 ){
+              $time  = strftime( "%T", (int) $timecomponents[0] ) . "." . substr( $timecomponents[1], 0, 3 );
+              }
+            echo "\r$time\tviews:".number_format( $this->viewcounter ) . "\tEvents:\t" . 
+            number_format( $this->eventcounter ) . "\tmem:\t$memusage\t$ip $this->curreventtype:$this->currobjectid". 
+            ( DEBUG ? "\n" : "" );
+            }
+
+          unset( $this->currobjectid  );  
+          unset( $this->curreventtype );
+        }
+      }
+
+    }
+
+
+
   }
 
 
-  exit(0);
+  $aggregator = new PiVarnishAggregator();
+
+  try {
+    $aggregator->run();
+  }
+  catch(Exception $e) {
+    print(get_class($e) . ": " . $e->getMessage()."\n");
+  }
 
 ?>

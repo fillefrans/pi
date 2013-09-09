@@ -23,17 +23,19 @@
 
 
     // define directories
-    define('PI_ROOT',           dirname(__FILE__) . "/");
-    define('UTILITIES_DIR',     PI_ROOT . 'utility/');
+    define('PI_ROOT',           __DIR__ . "/../../");
+    define('SRV_ROOT',          __DIR__ . "/../");
+    define('PHP_ROOT',          dirname(__FILE__) . "/");
+    define('UTILITIES_DIR',     PHP_ROOT . 'utility/');
 
-    define('DATA_ROOT',         PI_ROOT . "data/");
-    define('FILE_ROOT',         PI_ROOT . "data/files/");
-    define('UPLOAD_ROOT',       PI_ROOT . "data/upload/");
-    define('TMP_ROOT',          PI_ROOT . "data/tmp/");
-    define('LOG_DIR',           PI_ROOT . "data/logs/");
-    define('WORKER_DIR',        PI_ROOT . "workers/");
+    define('DATA_ROOT',         SRV_ROOT . "data/");
+    define('FILE_ROOT',         SRV_ROOT . "data/files/");
+    define('UPLOAD_ROOT',       SRV_ROOT . "data/upload/");
+    define('TMP_ROOT',          SRV_ROOT . "data/tmp/");
+    define('LOG_DIR',           SRV_ROOT . "data/logs/");
+    define('WORKER_DIR',        PHP_ROOT . "workers/");
     define('WORKER_SPAWNER',    WORKER_DIR . 'pi.util.spawn.php');
-    define('SESSION_SCRIPT',    PI_ROOT . 'pi.session.php');
+    define('SESSION_SCRIPT',    PHP_ROOT . 'pi.session.php');
 
 
 

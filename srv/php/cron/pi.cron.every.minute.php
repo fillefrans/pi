@@ -44,9 +44,9 @@
         public function run($dbg=false){
 
           $this->__init();
-          print("Running : " . basename(__FILE__, '.php') . "\n");
+          // print("Running : " . basename(__FILE__, '.php') . "\n");
           $this->publish("Crontab running: " . basename(__FILE__));
-          $this->quit();
+          // $this->quit();
         }
 
     }

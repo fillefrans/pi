@@ -1,19 +1,12 @@
-/**
- *
- * π.pcl
- *
- * @author Johan Telstad, jt@enfield.no, 2011- 2011-2013
- *
- */
+  /**
+   *
+   * π.pcl
+   *
+   * @author Johan Telstad, jt@enfield.no, 2011- 2011-2013
+   *
+   */
 
   π.pcl = π.pcl || {};
-
-  π.pcl = {
-    parent : π,
-    ns : 'pi.pcl',
-    loaded : false,
-    components : []
-  };
 
 
   /**
@@ -58,15 +51,17 @@
 
   // look for pcl components
   var 
-    components = document.getElementsByClassName("pcl");
+    elements    = document.getElementsByClassName("pcl"),
+    components  = document.getElementsByClassName("pcl component"),
+    forms       = document.getElementsByClassName("pcl form");
   var
-    count = components.length; 
+    count = elements.length; 
 
 
   if(count>0) {
 
     // we have pcl components, so it's an app
-    pi.log("found " +  count + " pcl component" + (count == 1) ? "" : "s" + " on page");
+    pi.log("found " +  count + " pcl elements" + (count == 1) ? "" : "s" + " on page");
     // load modules for a web app with session support
 
     for( var i = 0; i < count; i++ ) {

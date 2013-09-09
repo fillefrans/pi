@@ -28,8 +28,8 @@
   require_once("pi.config.php");
 
   // include utility classes and libraries
-  require_once(PI_ROOT."pi.exception.php");
-  require_once(PI_ROOT."pi.util.php");
+  require_once(PHP_ROOT."pi.exception.php");
+  require_once(PHP_ROOT."pi.util.php");
 
 
 
@@ -142,7 +142,7 @@
 
 
 
-    protected function subscribe($address, &$callback=false) {
+    protected function subscribe($address, $callback=false) {
 
       if($callback===false) {
         // we were invoked without the callback param, which is not right

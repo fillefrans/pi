@@ -214,6 +214,8 @@
 
 
 
+
+
     /** π.require
      *
      * A simple dependency management system
@@ -272,6 +274,44 @@
       
       return !!node; 
     };
+
+
+
+    /** π.await
+     *
+     * Wait for specified events, then invoke callback
+     * 
+     * @param  {Array}      events      Name(s) of the pi events to wait for
+     * @param  {Function}   callback    Callback when all events have occurred
+     * @param  {int}        timeout     How long to wait before giving up
+     * @return {boolean}                True for success, false for failure
+     */
+
+    π.await = function(events, callback, progress, timeout){
+      var
+        eventlist = {},
+        progress = progress || false,
+        timeout  = timeout  || 30;
+
+      if(typeof callback!=="function") {
+        return false;
+      }
+
+      if(typeof events==="string") {
+        // subscribe to this event
+        pi.log("Awaiting: " + events);
+        // π.subscribe(events, )
+      }
+
+      if(events.length) {
+        for(var i = 0, count = events.length; i < count; i++) {
+          // call ourselves for each entry
+          π.await(events[i]);
+        }
+
+      }
+    };
+  
 
 
 
