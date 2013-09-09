@@ -1,31 +1,33 @@
 <?php
 
-  declare( ticks = 1 );
+  declare( ticks = 16 );
 
 
-  require_once('pi.php');
+  require_once( __DIR__ . '/pi.php');
 
 
   // config
-  $outputdir = "/var/log/views";
-  $timetorun = 3600;  // in seconds
+  $outputdir = LOG_DIR;
+  $logfile   = $outputdir . basename(__FILE__, '.php') . ".log";
+
+  // in seconds
+  $timetorun = 3600;  
 
 
   // initialize variables
-
   $linecounter		= 0;
   $eventcounter		= 0;
   $viewcounter		= 0;
   $eventsskipped	= 0;
 
-  $objects	= NULL;
-  $events 	= NULL;
+  $objects	= null;
+  $events 	= null;
 
 
-  $currentobjectid  = NULL;
-  $currenteventtype = NULL;
+  $currentobjectid  = null;
+  $currenteventtype = null;
 
-  $skipevent 		= FALSE;
+  $skipevent 		= false;
   $skipcounter	= 0;
 
   $dataset['start'] = time();
@@ -60,7 +62,7 @@
   		$dataset["skipped"]					= $eventsskipped;
   		$dataset["memused"]					= memory_get_usage();
   		$dataset["memmaxused"]			= memory_get_peak_usage();
-  		$dataset["memmaxallocated"]	= memory_get_peak_usage( true );
+  		$dataset["memmaxallocated"]	= memory_get_peak_usage(true);
   		$dataset["stop"]						= time();
   		$objects["dataset"]					= $dataset;
 
@@ -68,7 +70,7 @@
   		print( Date("His:\n"));
       print( "\tLines read:\t$linecounter\n" );
       print( "\tEvents read:\t$eventcounter\n" );
-      print( "\tviews read:\t" . ( $viewcounter ) . "\n" );
+      print( "\tViews read:\t" . ( $viewcounter ) . "\n" );
   		print( "\tSkipped:\t$eventsskipped\n" );
 
       var_dump( $dataset );
@@ -120,13 +122,13 @@
 
   /**   MAIN   **/
 
-  $fp = fopen("aggr.log", "w");
+  $fp = fopen( $logfile, "w");
 
 
-  while( TRUE ){
-   
+  while( true ){
+
       $line = fgets( STDIN );
-  		if(($linecounter & 15) === 15){
+  		if(($linecounter & 3) === 3){
   			if(time()>$stoptime){
   				print("we have run our designated time of $timetorun seconds, clean up and exit\n");
   				flushdata();
@@ -143,14 +145,14 @@
           if( $skipevent ){ 
           	$eventsskipped++;
           }
-          $skipevent = FALSE;
+          $skipevent = false;
       }
       
   		elseif ( strpos( $line, "RxURL", 6) === 6 ) {
           $urlarray = explode( "/", substr( $line, 22 ));
           if( count( $urlarray ) < 5 ){
           	print("Skipping event: $line\n");
-  					$skipevent = TRUE;
+  					$skipevent = true;
   	        continue;
   	        }
   				else{
@@ -247,13 +249,12 @@
   		//update screen
 
       if( DEBUG ){ // every x event
-  			
+
   			$memusage 			= memory_get_usage();
         $gccycles				= gc_collect_cycles(); // force garbage collection
   			$timecomponents = explode( ".", $startproc );
   			if( count( $timecomponents ) > 1 ){
-  				$time  = strftime( "%T", (int) $timecomponents[0] );
-  				$time	.= "." . substr( $timecomponents[1], 0, 3 );
+  				$time  = strftime( "%T", (int) $timecomponents[0] ) . "." . substr( $timecomponents[1], 0, 3 );
   				}
         echo "\r$time\tviews:".number_format( $viewcounter ) . "\tEvents:\t" . 
   			number_format( $eventcounter ) . "\tmem:\t$memusage\t$ip $currenteventtype:$currentobjectid". 
@@ -268,4 +269,4 @@
 
   exit(0);
 
-  ?>
+?>

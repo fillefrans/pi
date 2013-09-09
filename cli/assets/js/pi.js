@@ -1,15 +1,15 @@
   /**
    *
-   * π, µ
+   * π
    *
    * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
    *
+   * @version 0.2
    */
 
 
   var 
-      π  = π  || {},
-      pi = pi || π;
+      π  = π  || {};
 
 
 
@@ -28,7 +28,6 @@
     // your plugins here, like so:   pi.plugins.yourcompany.yourplugin[.whatever] = { # your plugin object };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
 
-    // for all you crazy cowboys, your own playground
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
 
@@ -57,7 +56,7 @@
 
         add : function (obj) {
           π.timer.history.log.push(obj);
-          π.events.publish("pi.timer.on", ["add", obj]);
+          π.events.publish("pi.timer.history.on.add", obj);
         },
 
         list  : function (callback){
@@ -77,7 +76,7 @@
           var
             log = π.timer.history.log;
 
-          π.events.publish("pi.timer.history.on", ["clear"]);
+          π.events.publish("pi.timer.history.on.clear", true);
 
           // clear log, this is actually the fastest way
           while(log.pop()){
@@ -109,7 +108,8 @@
         timers[id] = { id : timerid, start : (new Date()).getTime() };
 
         if(events.publish) {
-          events.publish("pi.timer.on", ["start", timers[id]]);
+          events.publish("pi.timer.on.start", timers[id]);
+          // events.publish("pi.timer.on", ["start", timers[id]]);
         }
       },
 
@@ -121,7 +121,7 @@
           self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
 
         if(!self) {
-          π.events.publish("pi.timer." + timerid, "Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
+          π.events.publish("pi.timer.items." + timerid, "Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
           pi.log("Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
           return false;
         }
@@ -129,6 +129,10 @@
         self.stop = (new Date()).getTime();
 
         self.time = self.stop - self.start;
+
+        π.events.publish("pi.timer.on.stop", self);
+
+
         var 
           result = self.time;
         history.add(self);
@@ -201,7 +205,7 @@
 
     π.listen = function (address, callback, onerror) {
       var 
-        source  = new EventSource('/pi/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
+        source  = new EventSource('/api/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
 
       source.addEventListener('error',    onerror,  false);
       source.addEventListener('message',  callback, false);
@@ -278,6 +282,11 @@
      */
 
 
+
+  var
+    // create 'pi' as an alias for π 
+    pi = π;
+
   π.log("Pi bootstrapped in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing...");
 
   // start a timer for the platform initialization
@@ -285,7 +294,7 @@
 
   pi.log("Loading modules...");
 
-  π.require("events", false, false, function (e) {
+  π.require("core.events", false, false, function (e) {
     pi.log("loaded: events", e);
   });
 
@@ -293,8 +302,8 @@
     pi.log("loaded: app", e);
   });
 
-  π.require("app.session", false, false, function (e) {
-    pi.log("loaded: app.session", e);
+  π.require("core.session", false, false, function (e) {
+    pi.log("loaded: session", e);
   });
   
   π.require("pcl", false, false, function (e) {
@@ -306,7 +315,7 @@
   
 
 
-  /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
+  /* a safari bug-fix, supposedly */
   window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);

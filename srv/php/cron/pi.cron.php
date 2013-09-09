@@ -11,7 +11,7 @@
      *
      */
 
-    require_once("../pi.php");
+    require_once( __DIR__ . "/../pi.php");
 
 
     class PiCron extends Pi {

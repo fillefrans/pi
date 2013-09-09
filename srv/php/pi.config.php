@@ -28,7 +28,9 @@
 
     define('DATA_ROOT',         PI_ROOT . "data/");
     define('FILE_ROOT',         PI_ROOT . "data/files/");
-    define('UPLOAD_ROOT',       PI_ROOT . "data/files/upload/");
+    define('UPLOAD_ROOT',       PI_ROOT . "data/upload/");
+    define('TMP_ROOT',          PI_ROOT . "data/tmp/");
+    define('LOG_DIR',           PI_ROOT . "data/logs/");
     define('WORKER_DIR',        PI_ROOT . "workers/");
     define('WORKER_SPAWNER',    WORKER_DIR . 'pi.util.spawn.php');
     define('SESSION_SCRIPT',    PI_ROOT . 'pi.session.php');

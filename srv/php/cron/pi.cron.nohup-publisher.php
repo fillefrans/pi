@@ -1,5 +1,6 @@
 <?php
 
+
   /**
    * Simple script to tail a nohup.out file and publish
    * the output to a redis pubsub channel
@@ -7,8 +8,6 @@
    * @author & @copyright Johan Telstad, Kroma <jt@enfield.no>
    * 
    */
-
-
 
 
 
