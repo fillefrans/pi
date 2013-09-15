@@ -37,69 +37,6 @@
 
 
 
-        /**
-         *
-         * π.service.time.tick()
-         *
-         * Emits a tick event to subscribers at a rate of TICKS_PER_SECOND,
-         * which is defined in pi.config.php
-         *
-         * Also emits a time event every second, giving the current server time
-         * as a float, where the whole part represents a standard unix timestamp
-         *
-         */
-
-
-        protected function tick() {
-
-          $now = microtime(true);
-
-          $this->subscribercount = $this->pubsub->publish('pi.service.time.tick', null);
-
-          // emit time in microseconds once per second
-          if( ++$this->ticks % TICKS_PER_SECOND === 0 ) {
-            $this->pubsub->publish('pi.service.time', $now);
-
-            // emit an each.minute event every whole minute
-            if( ($this->ticks % (TICKS_PER_SECOND*60)) === 0 ) {
-
-              // Is this the very first run?
-              if( $this->ticks === 0 ) {
-
-                // a small cheat to align our tick counter to 
-                // whole minutes and seconds from the get-go:
-                // initialize the ticks variable to number of 
-                // ticks since the previous whole minute
-                $this->ticks = (TICKS_PER_SECOND* (time() % 60)) + (round(TICKS_PER_SECOND*$now) % TICKS_PER_SECOND);
-              }
-              else {
-                $this->pubsub->publish('pi.service.time.each.minute', $now);
-              }
-
-            // emit an each.hour event every whole hour
-              if( (time() % 3600) === 0 ) {
-                if( ($this->ticks > SECONDS_IN_A_DAY) && ((time() % SECONDS_IN_A_DAY) === 0) ) {
-                  $this->quit("We have run until midnight, stopping.");
-                }
-                $this->pubsub->publish('pi.service.time.each.hour', $now);
-              }
-            }
-          }
-
-        }
-
-
-        private function timeToNextTick() {
-
-          // round up to nearest whole tick
-          $nexttick = ceil(microtime(true) * TICKS_PER_SECOND)/TICKS_PER_SECOND;
-
-          // return difference in microseconds 
-          // we call microtime() again on exit, for accuracy
-          return floor( A_COOL_MILLION * ($nexttick - microtime(true)) );
-        }
-
-
         private function quit($msg="Goodbye. No message.") {
 
           die($msg);
@@ -111,9 +48,10 @@
 
         public function run($dbg=false){
 
-          $this->__init();
+          if(!$this->__init($dbg)) {
+            $this->quit("__init() returned false, aborting run().");
+          }
           print("\nRunning : " . basename(__FILE__, '.php') . "\n");
-
         }
 
     }

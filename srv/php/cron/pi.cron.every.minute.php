@@ -5,6 +5,9 @@
      * 
      * This script is run by cron every minute
      *
+     * Start batch scripts as necessary by
+     * adding to the run() method
+     * 
      * This class is part of the pi server
      *
      * @author Johan Telstad, jt@enfield.no, 2011-2013

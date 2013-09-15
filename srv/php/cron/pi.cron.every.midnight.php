@@ -1,9 +1,12 @@
 <?php
 
     /**
-     * π.cron.every.midnight
+     * pi.cron.every.midnight
      * 
      * This script is run by cron every midnight
+     * 
+     * Start batch scripts as necessary by
+     * adding to the run() method
      *
      * This class is part of the pi server
      *

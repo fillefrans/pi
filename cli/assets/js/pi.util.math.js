@@ -1,9 +1,11 @@
 
 /**
- *  π.util.math
+ *  π.util.sets
  *  
- *  Useful math functions, trig tables, etc
+ *  Implements js-equivalents of sets, sorted sets, etc
+ *  with related functions to operate on them
  *  
+ *  @author Johan Telstad, <jt@enfield.no>, 2011-2013
  * 
  */
 
@@ -18,11 +20,9 @@
 
 
 
-  π.util.math = {
+  π.util.sets = {
 
 
-    // init: calculate trig tables and what have you
-    // 
     __init : function (DEBUG) {
 
       if(this.__initialized === true){
@@ -43,14 +43,14 @@
 
     __onerror : function (error) {
       var
-        self = π.util.math;
+        self = π.util.sets;
 
       self.__handleError(error, self);
       pi.log("onerror: " + event.data);
     },
 
 
-    start : function (DEBUG) {
+    run : function (DEBUG) {
       π.timer.start("session");
 
       if( !this.__init(DEBUG) ) {
@@ -62,4 +62,4 @@
 
 
 
-  π.util.math.start();
+  π.util.sets.run();

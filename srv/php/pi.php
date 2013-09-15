@@ -91,8 +91,7 @@
         $json = json_encode($e, JSON_PRETTY_PRINT) . "\n";
         file_put_contents(basename(__FILE__, '.php') . '.errorlog', $json, FILE_APPEND);
       }
-      print("Unhandled exception:");
-      print_r(exceptionToArray($e));
+      $this->say("UNHANDLED " . get_class($e) . ": " . json_encode(exceptionToArray($e), JSON_PRETTY_PRINT));
     }
 
 

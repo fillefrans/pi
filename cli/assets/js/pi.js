@@ -287,7 +287,7 @@
      * @return {boolean}                True for success, false for failure
      */
 
-    π.await = function(events, callback, progress, timeout){
+    π.await = function(eventParam, callback, progress, timeout){
       var
         eventlist = {},
         progress = progress || false,
@@ -297,16 +297,16 @@
         return false;
       }
 
-      if(typeof events==="string") {
+      if(typeof eventParam==="string") {
         // subscribe to this event
-        pi.log("Awaiting: " + events);
-        // π.subscribe(events, )
+        pi.log("Awaiting: " + eventParam);
+        // π.subscribe(eventParam, )
       }
 
-      if(events.length) {
-        for(var i = 0, count = events.length; i < count; i++) {
-          // call ourselves for each entry
-          π.await(events[i]);
+      if(eventParam.length) {
+        for(var i = 0, count = eventParam.length; i < count; i++) {
+          // call ourselves for each individual entry
+          π.await(eventParam[i]);
         }
 
       }
