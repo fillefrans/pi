@@ -55,7 +55,7 @@
     components  = document.getElementsByClassName("pcl component"),
     forms       = document.getElementsByClassName("pcl form");
   var
-    count = elements.length; 
+    count = components.length; 
 
 
   if(count>0) {
