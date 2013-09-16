@@ -138,9 +138,10 @@
       } else {
         args = [];
       } 
-      if (args.length === undefined) {
+      if(typeof args.push !== "function")) {
         args = [args];
       }
+
       
       var cache = subscriptions;
       var stack = [];

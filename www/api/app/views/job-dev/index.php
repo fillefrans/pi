@@ -15,9 +15,10 @@
 // load global config settings for views
 
 
-define('CONFIG_ROOT', '/home/kroma/scripts/views/php/server/config/');
-require_once CONFIG_ROOT."views.config.php";
-require_once PI_ROOT."views.exception.class.php";
+define('CONFIG_ROOT', __DIR__ .'/../../../../../srv/php/');
+require_once CONFIG_ROOT."pi.config.php";
+
+require_once PHP_ROOT."pi.exception.php";
 
 
 /**

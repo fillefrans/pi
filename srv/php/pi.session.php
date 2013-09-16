@@ -19,18 +19,11 @@
     $env  = array();
 
 
-    if(!defined('PI_ROOT')){
-      define('PI_ROOT', dirname(__FILE__)."/");
-      require_once(PI_ROOT."pi.config.php");
-    }
-    require_once(PI_ROOT."pi.exception.class.php");
-    require_once(PI_ROOT."pi.util.functions.php");
-  	require_once(PI_ROOT."websocket.server.php");
+    require_once("pi.config.php");
 
-
-    if(!defined('DEBUG')){
-      define('DEBUG', true);
-    }
+    require_once(PHP_ROOT."pi.exception.php");
+    require_once(PHP_ROOT."pi.util.functions.php");
+  	require_once(PHP_ROOT."websocket.server.php");
 
 
     class PiSessionHandler implements IWebSocketServerObserver{
@@ -93,10 +86,10 @@
         protected function handleException(&$e) {
             $reply['OK']      = 0;
             $reply['message'] = "Redis exception: ". $e->getMessage();
-            
             $reply['info']    = $this->exceptionToArray($e);
-            $this->say($reply['info']);
+
             $this->say($reply['message']);
+            $this->say($reply['info']);
 
             $debug[] = print_r($reply['info'],true);
             $debug[] = $reply['message'];
@@ -279,7 +272,7 @@
               break;
 
             case 'readfile': 
-              $result = file_get_contents(PI_ROOT . $message['fileaddress'] );
+              $result = file_get_contents(PHP_ROOT . $message['fileaddress'] );
               break;
 
             case 'quit':
@@ -399,7 +392,7 @@
     $server->run();
   }
   catch(Exception $e) {
-    $this->say(get_class($e) . ": " . $e->getMessage());
+    print(get_class($e) . ": " . $e->getMessage());
   }
 
 

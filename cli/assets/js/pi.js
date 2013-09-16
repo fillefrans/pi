@@ -31,7 +31,7 @@
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
 
-    π.PI_ROOT    = "assets/js/";
+    π.PHP_ROOT    = "assets/js/";
     π.LIB_ROOT    = "../../assets/js/";
     π.SRV_ROOT    = "../../../srv/";
     // π.PHP_ROOT    = π.SRV_ROOT + "php/";

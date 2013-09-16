@@ -1,12 +1,14 @@
 <?php
 
 
-    define('PI_ROOT', './');
-    require_once PI_ROOT."pi.config.php";
-    require_once PI_ROOT."pi.exception.class.php";
-    require_once PI_ROOT."pi.util.functions.php";
+
+    require_once "pi.config.php";
+
+    require_once PHP_ROOT."pi.exception.php";
+    require_once PHP_ROOT."pi.util.functions.php";
 
   	require_once("websocket.server.php");
+
 
 
 
@@ -56,7 +58,7 @@
 
 
     /**
-     * The Pi session handler, hands off session requests to worker script,
+     * The Pi session handler, hands off session requests to session script,
      * allocates session port incrementally between 8100-8999
      * generates unique session id
      *
@@ -64,15 +66,21 @@
 
     class AppSessionHandler extends WebSocketUriHandler{
 
-      private $myclient             = null;
+      private $currentClient        = null;
       private $currentSessionPort   = 8100;
       private $currentSessionId     = 0;
       private $currentSessionStart  = 0;
    
       protected function reply($request, $message="", $status = 0, $event='reply'){
         $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event, "request"=>$request));
-        $this->myclient->sendMessage(WebSocketMessage::create($json));
+        $this->currentClient->sendMessage(WebSocketMessage::create($json));
       }
+
+
+      protected function createPacket ($arr) {
+        return WebSocketMessage::create(json_encode($json));
+      }
+
 
 
       protected function fork($script){
@@ -104,7 +112,7 @@
              return $pid;
         } else {
           $this->say("Child: starting with pid ".getmypid().". \nScript: $script");
-          pcntl_exec("/usr/bin/php",$params,$env);
+          pcntl_exec(PHP_BINARY, $params, $env);
           print("exec failed!");
           exit(0);
              // we are the child
@@ -117,12 +125,13 @@
         // we should really keep count in Redis, or something similar
         $this->currentSessionStart = microtime(true);
 
-        $this->currentSessionPort = (8100 + (++$this->currentSessionPort % 900));
+        $this->currentSessionPort = (8100 + (++$this->currentSessionPort % MAX_WEBSOCKET_SESSIONS));
  
         try{
           if (!file_exists(SESSION_SCRIPT)){
             throw new PiException("Session handler script does not exist: ". SESSION_SCRIPT, 1);
           }
+          // replace 
           if(false === ($result = $this->fork(SESSION_SCRIPT))){
             throw new PiException("Fork failed: " . SESSION_SCRIPT, 1);
           }
@@ -140,17 +149,17 @@
 
       protected function sendData($data=null, $event='session'){
         $json = json_encode(array('content'=>$data, "event"=>$event));
-        $this->myclient->sendMessage(WebSocketMessage::create($json));
+        $this->currentClient->sendMessage(WebSocketMessage::create($json));
       }
 
 
       public function onMessage(IWebSocketConnection $user, IWebSocketMessage $msg){
-        if($this->myclient===null){
-          $this->myclient = $user;
-        }
+
+        $this->currentClient = $user;
+
         $message = json_decode($msg->getData(), true);
         if(!isset($message['command'])){
-          // reply($request, $message="", $status = 0, $event='info'){
+
           $this->reply($message, "No command, expected 'session'. Also, remember that keyword 'command' should always be lowercase", 0, "error");
           print('[SESSION] => '.print_r($msg, true));  
           return;
@@ -158,13 +167,11 @@
         switch (strtolower($message['command'])) {
           case 'session':
 
-            $this->currentSessionPort  = $this->newSession();
-            $success = ($this->currentSessionPort !== false);
-            if(DEBUG) {
+            $success = (false !== $this->newSession());
               if (!$this->currentSessionPort) {
                 print("!this->sessionPort\n");
               }
-            }
+
             print("sessionPort: " . $this->currentSessionPort . "\n");
             $this->sendData(array("OK"=>$success, "sessionPort"=>$this->currentSessionPort, "time"=>time()));
             break;

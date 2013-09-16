@@ -8,12 +8,22 @@
      */
 
 
+    if (!defined('DEBUG')) {
+      define('DEBUG', true);
+    }
 
-    if(DEBUG) {
+
+
+    if (DEBUG) {
       error_reporting(-1);
     }
     else {
       error_reporting(0);
+    }
+
+
+    if(!defined('PHP_BINARY')) {
+      define('PHP_BINARY', "/usr/bin/php");
     }
 
 
@@ -23,7 +33,7 @@
 
 
     // define directories
-    define('PI_ROOT',           __DIR__ . "/../../");
+    define('PI__ROOT',           __DIR__ . "/../../");
     define('SRV_ROOT',          __DIR__ . "/../");
     define('PHP_ROOT',          dirname(__FILE__) . "/");
     define('UTILITIES_DIR',     PHP_ROOT . 'utility/');
@@ -39,6 +49,8 @@
 
 
 
+    // limit the number of WebSocket sessions
+    define('MAX_WEBSOCKET_SESSIONS', 5);
 
     define('TICKS_PER_SECOND',  10);
     define('UPDATE_FREQUENCY',  1);
@@ -49,6 +61,7 @@
 
     // Redis settings
     define('REDIS_SOCK', '/var/run/redis/redis.sock');
+    // define('REDIS_SOCK', '/tmp/redis.sock');
 
 
     // Redis database names and numbers

@@ -10,7 +10,7 @@
 
     π.app = {
 
-      PI_ROOT   : π.PI_ROOT,
+      PHP_ROOT   : π.PHP_ROOT,
       LIB_ROOT  : π.LIB_ROOT,
       IMG_ROOT  : π.IMG_ROOT,
       CSS_ROOT  : π.CSS_ROOT,

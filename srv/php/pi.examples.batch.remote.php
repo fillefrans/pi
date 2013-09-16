@@ -10,10 +10,9 @@
      */
 
 
-    define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');
-    require_once PI_ROOT."pi.config.php";
-    require_once PI_ROOT."pi.exception.class.php";
-    require_once UTILITIES_DIR."pi.functions.php";
+    require_once "pi.config.php";
+    require_once PHP_ROOT."pi.exception.php";
+    require_once PHP_ROOT."pi.util.functions.php";
 
 
     /**

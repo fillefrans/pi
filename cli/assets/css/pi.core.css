@@ -30,14 +30,14 @@
 
   body {
     font-family       : sans-serif;
-    background-color  : #272822;
-    color             : #f8f8f2;
+    background-color  : #f8f8f2;
+    color             : #272822;
     margin            : 0;
     padding           : 0;
   }
 
   header {
-    background-color : #b21;
+    background : transparent;
     width: 100%;
     height: 240px;
     overflow: hidden;
@@ -52,11 +52,12 @@
 
   .pcl {
     display      : block;
+    float        : left;
     background   : transparent;
     border-style : solid;
-    border-color : red;
+    border-color : #75715e;
     border-width : 1px;
-    color        : #f8f8f2; 
+    color        : #272822; 
     font-family  : sans-serif; 
     font-size    : normal;
     font-weight  : 400;  
@@ -69,7 +70,12 @@
 
 
   .pcl.visible {
-    /*visibility: visible;*/
+    visibility: visible;
+  }
+
+
+  .pcl.hidden {
+    visibility: hidden;
   }
 
 
@@ -101,7 +107,8 @@
 
 
   .pcl.component {
-    background-color : #272822;
+    width: 512px;
+    /*background-color : #272822;*/
   }
 
   .pcl.error {
@@ -131,8 +138,9 @@
     }
 
   .code {
-    font-family: monospace;
-    color: #f8f8f2;
+    font-family       : monospace;
+    background-color  : #272822;
+    color             : #f8f8f2;
   }
 
 

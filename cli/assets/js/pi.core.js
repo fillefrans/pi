@@ -41,7 +41,7 @@
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
 
-    π.PI_ROOT     = "assets/js/";
+    π.PHP_ROOT     = "assets/js/";
     π.LIB_ROOT    = "../../assets/js/";
     π.SRV_ROOT    = "../../../srv/";
     
@@ -97,7 +97,6 @@
 
               // check input
               if(typeof callback !== "function") {
-                pi.log("Error: Tried to add non-function as callback:", callback);
                 return false;
               }
 
