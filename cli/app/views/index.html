@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+    <script>
+      var 
+        π  = {
+          DEBUG : true,
+          __sessionstart : (new Date()).getTime()
+        };
+    </script>
+
+  <title>pi session</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  
+  <link rel="stylesheet" href="../../assets/css/pi.core.css">
+
+  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
+  <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+</head>
+
+<body class="pi">
+
+  <div class="pcl login" data-load="autoload" data-name="login" data-ns="pcl.login">
+    <form id="login" class="pcl modal login form" data-action="pi.user.login">
+      <p class="title">Log in</p>
+      <p>  e-mail: <input type="email"    name="email" required></p>
+      <p>password: <input type="password" name="password" required></p>
+      <input type="submit" value="login">
+    </form>
+  </div>
+
+  <div id="app" class="pi app" data-name="views" data-ns="pi.app"></div>
+
+
+  <div id="debug" class="pcl debug code highlight" data-load="lazyload" data-name="debug" data-ns="debug"></div>
+
+  <!--  bootstrap  -->
+  <script src="../../assets/js/pi.core.js"></script>
+
+</body>
+</html>
