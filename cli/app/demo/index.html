@@ -1,15 +1,15 @@
 <!doctype html>
 <html>
 <head>
-    <script>
-      var 
-        π  = {
-          DEBUG : true,
-          __sessionstart : (new Date()).getTime()
-        };
-    </script>
+  <script>
+    var 
+      π  = {
+        DEBUG : true,
+        __sessionstart : (new Date()).getTime()
+      };
+  </script>
 
-  <title>pi session</title>
+  <title>π demo</title>
 
   <meta charset="utf-8">
   <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -23,24 +23,15 @@
   <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
   <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
 </head>
-
+ 
 <body class="pi">
 
-  <div id="login" class="pcl component" data-name="pi.pcl.login" data-ns="pcl.login">
-    <form id="frmlogin" class="pcl form" data-action="pi.user.login">
-      <p class="title">Log in</p>
-            <input type="hidden" name="command" value="login"></p>
-            <p>  e-mail: <input type="email"    name="email" required></p>
-            <p>password: <input type="password" name="password" required></p>
-            <input type="submit" value="login" class="pcl hidden">
-    </form>
+  <div id="login" class="pcl component" data-name="pcl.dialogs.login">
+    <!--  set classes "pcl" and "component" to mark as PCL component -->
+    <!--  then the PCL boottrapper will load the component given in attribute "data-name" -->
   </div>
 
-  <div id="app" class="pi app" data-name="views" data-ns="pi.app"></div>
-
-
-  <div id="debug" class="pcl component debug code highlight" data-load="lazyload" data-name="debug" data-ns="debug">
-    DEBUG
+  <div id="debug" class="pcl component" data-name="pcl.debug.debugger">
   </div>
 
 
@@ -54,7 +45,7 @@
   <script src="../../assets/js/pi.core.js"></script>
 
   <!--  bootstrap app -->
-  <script src="assets/js/pi.app.bootstrap.js"></script>
+  <script src="assets/js/app.bootstrap.js"></script>
 
 </body>
 </html>

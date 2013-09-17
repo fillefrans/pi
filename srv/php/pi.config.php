@@ -60,7 +60,7 @@
 
 
     // Redis settings
-    define('REDIS_SOCK', '/var/run/redis/redis.sock');
+    define('REDIS_SOCK', '/var/data/redis/redis.sock');
     // define('REDIS_SOCK', '/tmp/redis.sock');
 
 
