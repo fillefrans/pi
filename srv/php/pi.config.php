@@ -36,6 +36,7 @@
     define('PI__ROOT',           __DIR__ . "/../../");
     define('SRV_ROOT',          __DIR__ . "/../");
     define('PHP_ROOT',          dirname(__FILE__) . "/");
+    define('LIB_ROOT',          PHP_ROOT . 'lib/');
     define('UTILITIES_DIR',     PHP_ROOT . 'utility/');
 
     define('DATA_ROOT',         SRV_ROOT . "data/");
@@ -85,6 +86,10 @@
 
     define('PI_TMP',     14);
     define('PI_DBG',     15);
+
+
+    // JSONH 
+    require_once(LIB_ROOT . "jsonh.class.php");
 
 
 ?>

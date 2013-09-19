@@ -9,8 +9,9 @@
  * 
  */
 
+  error_reporting(-1);
 
-  define('REDIS_SOCK', '/var/run/redis/redis.sock');
+  define('REDIS_SOCK', '/var/data/redis/redis.sock');
 
   $session = session_start();
 
@@ -32,7 +33,6 @@
 
   // start output
   ob_start();
-  error_reporting(0);
 
   $ID = 0;
 
@@ -75,9 +75,11 @@
     }
 
     try{
+      sendEvent("connected", "welcome");
       $redis->subscribe(array($channel), 'onMessage');
     }
     catch (Exception $e) {
+      sendEvent("error", get_class($e) . ": " . $e->getMessage());
       $debug[] = get_class($e) . ": " . $e->getMessage();
     }
   }
@@ -134,7 +136,7 @@
 
   while (true) {
     // wait for messages from Redis
-    usleep(10000); 
+    usleep(10000);
   }
 
 

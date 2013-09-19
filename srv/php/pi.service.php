@@ -19,7 +19,11 @@
 
     class PiService extends Pi {
 
+      protected   $subscribercount  = -1;
+
       private $name = 'service';
+
+
 
       public function __construct() {
       }

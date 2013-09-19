@@ -10,7 +10,6 @@
   var 
       π  = π  || {};
 
-
   /*  ----  Our top level namespaces  ----  */
 
 
@@ -57,6 +56,14 @@
 
 
 
+    π.__onload = function (event) {
+      π.__loadtime = new Date().getTime() - π.__sessionstart;
+      pi.log("Page loaded in " + π.__loadtime + "milliseconds.", event);
+    };
+
+
+
+ 
 
     /*    begin core modules     */
 
@@ -360,10 +367,16 @@
 
           PubSub(π.events, true);
 
+          // create π.subscribe as an alias for π.events.subscribe
+          π.subscribe = π.events.subscribe;
+
           π.events._loaded = true;
 
 
+
+
     /*    end of core modules     */
+
 
 
 
@@ -424,11 +437,23 @@
 
 
     π.listen = function (address, callback, onerror) {
-      var
-        source  = new EventSource('/pi/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
 
-      source.addEventListener('error',    onerror,  false);
+      if( typeof callback !== "function" ) {
+        return false; 
+      }
+
+      var
+        source  = new EventSource('/api/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
+
       source.addEventListener('message',  callback, false);
+      source.onmessage = callback;
+
+
+      if( typeof onerror === "function" ) {
+        source.addEventListener('error',    onerror,  false);
+      }
+
+      return source;
     };
 
 
@@ -495,7 +520,7 @@
 
 
 
-    /** π.send
+    /** π._send
      *
      * Handle app request for sending a message to an address in the pi namespace
      * Conform to pi packet specification
@@ -545,7 +570,7 @@
         parameter = { fileaddress: fileaddress, filetype: filetype };
     
       // TBC
-      return π._send("file.read", address, parameter, onresult);
+      return π._send("file.read", fileaddress, parameter, onresult);
     };
 
 
@@ -556,15 +581,19 @@
      * @param  {string}     module    Name of the pi module to be loaded
      * @param  {boolean}    async     Load script asynchronously
      * @param  {boolean}    defer     Use deferred script loading
-     * @param  {Function}   callback  Callback on loaded
-     * @return {boolean}              True for success, false for failure
+     * @param  {function}   callback  Callback on loaded
+     * @param  {function}   __onerror Callback on error
+     * @return {variant}              Result of insert operation
      */
 
-    π.require = function(module, async, defer, callback){
+    π.require = function(module, async, defer, callback, __onerror){
 
+
+      // If this module has been loaded already, then
+      // immediately invoke the callback and return true
       if (π.loaded[module.replace(/\./g,'_')]) {
         if(typeof callback==="function") {
-          this.callback.call("loaded");
+          this.callback.call();
         }
         return true;
       }
@@ -578,34 +607,33 @@
       script.async      = async || true;
       script.defer      = defer || true;
       script.src        = path + module + '.js';
-      script.self       = script;
-      script.module     = module;
-      script.modname    = module.replace(/\./g,'_');
-      script.callback   = callback || false;
+      script.π = {
+          module    : module,
+          modname   : module.replace(/\./g,'_'),
+          callback  : callback  || false,
+          __onerror : __onerror || false
+        };
 
       pi.timer.start(module);
 
       script.onload = function (event) {
         var
-          loadtime = π.timer.stop(this.modname);
+          loadtime = π.timer.stop(this.π.modname);
 
-        π.loaded[this.modname] = { time: (new Date()).getTime(), loadtime: loadtime };
-        if(this.callback) {
-          this.callback.call(event);
+        π.loaded[this.π.modname] = { time: (new Date()).getTime(), loadtime: loadtime };
+        if(this.π.callback) {
+          this.π.callback.call(event);
         }
       };
 
       script.onerror = function (error) {
-        pi.log('error loading module: ' + this.module, error);
-        if(this.callback) {
-          this.callback.call(error);
+        pi.log('error loading module: ' + this.π.module, error);
+        if(this.π.__onerror) {
+          this.π.__onerror.call(error);
         }
       };
-
-      var
-        node = cursor.insertBefore(script, cursor.firstChild);
       
-      return !!node; 
+      return cursor.insertBefore(script, cursor.firstChild); 
     };
 
 
@@ -648,38 +676,20 @@
         timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
 
         if(events.publish) {
-          events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
+          events.publish("pi.timer." + timerid, {event: "start", data: timers[id]});
         }
       },
 
 
       check : function(timerid) {
         var
-
           // replace . with _
-          id          = timerid.replace(/\./g,'_'),
-          timers      = π.timer.__items,
-          self        = π.timer.__items[id] || false,
-          events      = π.events            || false,
-          ontick      = ontick              || false,
-          interval    = interval            || 1000,
-          tickid      = false;
+          timer = π.timer.__items[timerid.replace(/\./g,'_')] || false;
 
-
-        if(self) {
-          pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
+        if(timer.start) {
+          return (new Date()).getTime() - timer.start; 
         }
-
-        if(typeof ontick === "function") {
-          tickid = setInterval(ontick, interval);
-        }
-
-
-        timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
-
-        if(events.publish) {
-          events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
-        }
+        return false;
       },
 
       stop : function(timerid) {
@@ -705,12 +715,10 @@
 
         self.time = self.stop - self.start;
 
-        var 
-          result = self.time;
         history.add(self);
 
         // return timer value
-        return result;
+        return self.time;
       },
 
       history : {
@@ -719,7 +727,7 @@
 
         add : function (obj) {
           π.timer.history.log.push(obj);
-          π.events.publish("pi.timer.on", ["add", obj]);
+          π.events.publish("event.pi.timer.add", obj);
         },
 
         list  : function (callback){
@@ -739,7 +747,7 @@
           var
             log = π.timer.history.log;
 
-          π.events.publish("pi.timer.history.on", ["clear"]);
+          π.events.publish("event.pi.timer.history.clear", "");
 
           // clear log array, this is actually the fastest way
           while(log.pop()){
@@ -790,7 +798,10 @@
   π.log("Pi initialized in " + π.timer.stop("pi.initialization") + " ms.");
   
 
-  /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
   window.addEventListener('load', function(e) {
-      setTimeout(function() { window.scrollTo(0, 1); }, 1);
+
+      π.__onload();
+
+      setTimeout(function() { window.scrollTo(0, 1); }, 1); /* a safari bug-fix, supposedly.*/
+
     }, false);

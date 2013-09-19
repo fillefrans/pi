@@ -10,6 +10,7 @@
   	require_once("websocket.server.php");
 
 
+    error_reporting(-1);
 
 
 

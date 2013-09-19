@@ -19,10 +19,10 @@
 
         private   $debug            = false;
 
-        private   $subscribercount  = -1;
-        private   $running          = false;
-        private   $ticks            = -1;
-        private   $ticklength       = 0;
+        protected $subscribercount  = -1;
+        protected $running          = false;
+        protected $ticks            = -1;
+        protected $ticklength       = 0;
 
         protected $address          = "";
         protected $name             = "";
@@ -54,11 +54,12 @@
 
           $now = microtime(true);
 
-          $this->subscribercount = $this->pubsub->publish('pi.service.time.tick', null);
+          $this->subscribercount = $this->pubsub->publish('pi.service.time.tick', $this->ticks . " : " . $this->subscribercount);
 
           // emit time in microseconds once per second
           if( ++$this->ticks % TICKS_PER_SECOND === 0 ) {
             $this->pubsub->publish('pi.service.time', $now);
+            // print("second: " . $now);
 
             // emit an each.minute event every whole minute
             if( ($this->ticks % (TICKS_PER_SECOND*60)) === 0 ) {
@@ -69,17 +70,18 @@
                 // a small cheat to align our tick counter to 
                 // whole minutes and seconds from the get-go:
                 // initialize the ticks variable to the number 
-                // of ticks since the previous whole minute
-                $this->ticks += (TICKS_PER_SECOND* (time() % 60)) + (round(TICKS_PER_SECOND*$now) % TICKS_PER_SECOND);
+                // of ticks since the previous midnight
+                $this->ticks = TICKS_PER_SECOND * ( time() % SECONDS_IN_A_DAY );
               }
               else {
                 $this->pubsub->publish('pi.service.time.each.minute', $now);
+                // print("minute: " . $now);
               }
 
               // emit an each.hour event every whole hour
               if( (time() % 3600) === 0 ) {
                 if( ($this->ticks > 600) && ((time() % SECONDS_IN_A_DAY) === 0) ) {
-                  $this->quit("We have run until midnight, stopping.");
+                  $this->quit("\n\npi.service.time : We have run until midnight, stopping.\n\n");
                 }
                 $this->pubsub->publish('pi.service.time.each.hour', $now);
               }

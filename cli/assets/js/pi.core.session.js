@@ -120,7 +120,7 @@
         self = π.core.session;
 
       self.__handleError(error, self);
-      pi.log("onerror: " + event.data);
+      pi.log("onerror: " + error.data);
     },
 
 
@@ -215,7 +215,7 @@
               self.__sessionsocket.addEventListener("close", self.__onclose);
               self.__sessionsocket.addEventListener("message", self.__onmessage);
 
-            }, 300, self );
+            }, 500, self );
             π.debug('OK', message);
           }
           else {

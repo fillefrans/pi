@@ -2,7 +2,7 @@
    *
    * π.pcl
    *
-   * @author Johan Telstad, jt@enfield.no, 2011- 2011-2013
+   * @author Johan Telstad, jt@enfield.no, 2011-2013
    *
    */
 
@@ -10,9 +10,10 @@
 
 
   /**
-   *  Set up our app to handle pcl components
+   *  Initialise PCL elements
    * 
    */
+
 
   π.pcl.components = {
 
@@ -22,15 +23,17 @@
     // scan DOM for PCL components
     __scan : function() {
       var 
-        item = null,
-        self = π.pcl.components;
+        self    = π.pcl.components,
+        element = null;
 
-      self.__elements = document.getElementsByClassName("pcl component");
+      self.__elements = document.getElementsByClassName("pcl");
+
+      pi.log("π.pcl.components.__scan()");
 
       for( var i = 0, count = self.__elements.length; i < count; i++ ) {
-        item = self.__elements.item(i);
-        pi.log("adding component " + i + ": " + item.className, item);
-        π.pcl.components.add(item);
+        element = self.__elements.item(i);
+        pi.log("found component " + i + ": " + element.className, element);
+        π.pcl.components.add(element);
       }
 
       // we have pcl components, so it's an app
@@ -38,6 +41,19 @@
 
       // return number of items found
       return count;
+    },
+
+
+    // load found components into DOM
+    __load : function() {
+      var 
+        self    = π.pcl.components;
+
+      for( var i = 0, count = self.__elements.length; i < count; i++ ) {
+        element = self.__elements.item(i);
+        pi.log("loading component " + i + ": " + element.className, element);
+        π.pcl.components.add(element);
+      }
     },
 
     __init : function() {
@@ -48,10 +64,12 @@
     add : function (elem) {
       var 
         component = {},
-        self = π.pcl.components;
+        self      = π.pcl.components;
 
-      component.element = elem;
-      component.index   = self.__items.length;
+      component.element   = elem;
+      component.index     = self.__items.length;
+      component.name    = elem.getAttribute("data-name");
+
 
       return self.__items.push(component);
     },
@@ -92,7 +110,7 @@
 
       for( var i = 0, count = self.__elements.length; i < count; i++ ) {
         item = self.__elements.item(i);
-        pi.log("adding form: " + item.className, item);
+        // pi.log("adding form: " + item.className, item);
         π.pcl.forms.add(item);
       }
 
@@ -114,8 +132,11 @@
         self = π.pcl.forms;
 
       form.element = elem;
+
+      // new item's index will be same as current array length
       form.index   = self.__items.length;
 
+      // return new item count
       return self.__items.push(form);
     },
 
@@ -135,9 +156,9 @@
 
 
 
-  pi.log("Loaded " + π.pcl.components.__init() + " component(s)");
+  pi.log("PCL: loaded " + π.pcl.components.__init() + " component(s)");
   // π.pcl.forms.__init();
-  pi.log("Loaded " + π.pcl.forms.__init() + " form(s)");
+  pi.log("PCL: loaded " + π.pcl.forms.__init() + " form(s)");
 
 
   π.pcl._loaded = true;

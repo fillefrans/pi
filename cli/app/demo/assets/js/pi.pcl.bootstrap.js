@@ -8,22 +8,26 @@
    */
 
 
-   π.app = π.app || {};
+  π.pcl = π.pcl || {};
 
 
-  π.app.__init = function (DBG) {
+  π.pcl.__init = function (DBG) {
     pi.log("ready to run: ", this);
     return true;
   };
 
 
+  π.pcl.__scan = function (DBG) {
+    pi.log("ready to run: ", this);
+    return true;
+  };
 
 
   
   // whatever you need to do to start things up
-  π.app.run = function (DBG) {
+  π.pcl.run = function (DBG) {
     var
-      self = π.app;
+      self = π.pcl;
 
     if (!self.__init(DBG)) {
       return false;
@@ -36,5 +40,5 @@
 
 
 
-  // run app
-  π.app.run();
+  // run pcl
+  π.pcl.run();
