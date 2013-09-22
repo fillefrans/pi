@@ -1,38 +1,94 @@
 <?php
 
-  /* highlight source file with CSS classes and line numbers
-     Author: Andy Wrigley (http://means.us.com) */
+  require_once( __DIR__ . "/../../srv/php/pi.php");
 
 
-  header('Content-Type: application/json; charset=utf-8');
-  header("Cache-Control: no-cache, must-revalidate");
-  header("Expires: Thu, 25 Feb 1971 00:00:00 GMT");
 
-  include('format_javascript.php');
+  class PiFileUpload extends Pi {
+
+    protected $id       = null;
+    protected $name     = 'pi.io.file.upload';
+    protected $address  = 'file.pi.io.file.upload.';
 
 
-  if(!isset($_REQUEST['file'])) {
-    $sourcefile = '../../cli/assets/js/pi.js';
-  }
-  else {
-    $sourcefile = '../../cli/assets/js/' . $_REQUEST['file'] . '.js';
-    if(!file_exists($sourcefile)) {
-      $sourcefile = '../../cli/assets/js/pi.js';
+
+    private $allowedExts  = array("gif", "jpeg", "jpg", "png");
+    private $temp         = explode(".", $_FILES["file"]["name"]);
+    private $extension    = end($temp);
+
+
+    public function __construct($allowedExts=false) {
+      if( is_array($allowedExts) && (count($allowedExts) > 0) ) {
+        $this->allowedExts = $allowedExts;
+      }
     }
+
+
+    public function __init() {
+      $this->id = uniqid();
+      $this->address .= $this->id;
+    }
+
+
+
+   if ((($_FILES["file"]["type"] == "image/gif")
+   || ($_FILES["file"]["type"] == "image/jpeg")
+   || ($_FILES["file"]["type"] == "image/jpg")
+  || ($_FILES["file"]["type"] == "image/pjpeg")
+  || ($_FILES["file"]
+      ["type"] == "image/x-png")
+   || ($_FILES["file"]["type"] == "image/png"))
+   && ($_FILES["file"]["size"] < 20000)
+   && in_array($extension, $allowedExts))
+     {
+     if ($_FILES["file"]["error"] > 0)
+       {
+       echo "Return Code: " . $_FILES["file"]["error"] . "<br>";
+       }
+     else
+       {
+       echo "Upload: " . $_FILES["file"]["name"] . "<br>";
+       echo "Type: " . $_FILES["file"]["type"] . "<br>";
+       echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
+       echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";
+
+       if (file_exists("upload/" . $_FILES["file"]["name"]))
+         {
+         echo $_FILES["file"]["name"] . " already exists. ";
+         }
+       else
+         {
+         move_uploaded_file($_FILES["file"]["tmp_name"],
+         "upload/" . $_FILES["file"]["name"]);
+         echo "Stored in: " . "upload/" . $_FILES["file"]["name"];
+         }
+       }
+     }
+   else
+     {
+     echo "Invalid file";
+     }
+
+
+     public function run() {
+      if ($this->__init()) {
+
+      }
+     }
+
+
   }
 
 
-  $source = file_get_contents($sourcefile);
+  $receiver = new PiFileUpload();
 
-  ini_set( 'highlight.default',   '"class="highlight default"'  ); 
-  ini_set( 'highlight.keyword',   '"class="highlight keyword"'  ); 
-  ini_set( 'highlight.string',    '"class="highlight string"'   ); 
-  ini_set( 'highlight.html',      '"class="highlight htmlsrc"'  );
-  ini_set( 'highlight.comment',   '"class="highlight comment"'  );
+  try {
+    $receiver->run();
+  }
+  catch($e) {
+    print(get_class($e) . ": " . $e->getMessage() . "\n");
+  }
 
-  //$source = format_javascript($sourcefile);
-  $result = array( 'ok'=>1, 'type'=>'documentFragment', 'data'=>[$source]);
 
-  print(json_encode($result));
 
-?>
+ ?>

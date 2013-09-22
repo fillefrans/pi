@@ -37,6 +37,17 @@
     __touchend : function(event) {
       console.log("touchend");
       event.preventDefault();
+    },
+
+    __fullscreenchange :  function(){
+      if(document.fullscreen){
+        // We are now in full screen!
+        alert("fullscreen");
+      }
+      else{
+        // We have exited full screen mode
+        alert("not fullscreen anymore");
+      }
     }
 
   };
@@ -232,6 +243,12 @@
   document.body.addEventListener('touchmove',   π.events.__touchmove,   false); 
   document.body.addEventListener('touchstart',  π.events.__touchstart,  false); 
   document.body.addEventListener('touchend',    π.events.__touchend,    false); 
+
+
+    // When a full screen change is detected,
+    // an event will be dispatched on the document
+
+    document.addEventListener("fullscreenchange", π.events.__fullscreenchange, false);
 
 
 

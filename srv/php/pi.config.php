@@ -37,7 +37,7 @@
     define('SRV_ROOT',          __DIR__ . "/../");
     define('PHP_ROOT',          dirname(__FILE__) . "/");
     define('LIB_ROOT',          PHP_ROOT . 'lib/');
-    define('UTILITIES_DIR',     PHP_ROOT . 'utility/');
+    define('UTILITIES_DIR',     PHP_ROOT . 'util/');
 
     define('DATA_ROOT',         SRV_ROOT . "data/");
     define('FILE_ROOT',         SRV_ROOT . "data/files/");

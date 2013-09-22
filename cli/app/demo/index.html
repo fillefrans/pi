@@ -36,6 +36,7 @@
     <script>
 
       var 
+
         numberstation = document.getElementById("numberstation"),
         randomWalk = {
 
@@ -47,14 +48,18 @@
           },
 
 
-          onRandomWalk : function (randomNumber) {
-            pi.log("randomWalk: " + randomNumber, randomNumber);
+          onRandomWalk : function (message) {
+            var
+              randomNumber = JSON.parse(message.data);
+
+            // pi.log("randomWalk: " + json, json);
           },
 
           run : function() {
             pi.log("starting randomWalk listener...");
             this.starttime    = new Date().getTime();
             this.eventsource  = pi.listen("pi.service.numberstation.randomwalk", this.onRandomWalk, this.__onerror);
+            this.eventsource.addEventListener("data", this.onRandomWalk, false);
             pi.log("done.", this.eventsource);
             pi.log("onmessage:", this.eventsource.onmessage);
           }
@@ -70,7 +75,67 @@
   </div>
 
   <div id="debug" class="pcl" data-name="pcl.debug.debugger">
+
+    <script>
+      var
+
+        fullscreenclick = function (event) {
+          if(document.fullscreen) {
+            return pi.fullscreen.exit();
+          }
+          else {
+            return pi.fullscreen.request();
+          }
+        },
+
+        onopen = function (event) {
+          pi.log("DEBUG: onopen - ", event);
+        },
+
+        onerror = function (error) {
+          pi.log("DEBUG: onerror - ", error);
+        },
+
+
+        ondebugdata = function (message) {
+
+          pi.log("DATA: " + JSON.parse(message.data));
+        },
+
+        ondebugmessage = function (message) {
+          pi.log("DEBUG: ", message);
+
+        },
+
+        init = function() {
+          var
+            source = pi.listen("pi.*", ondebugmessage, onerror);
+
+          source.addEventListener("open", onopen, false);
+          // source.addEventListener("message", ondebugmessage, false);
+          source.addEventListener("data", ondebugdata, false);
+
+          pi.log("INIT debugger!", source);
+
+        },
+
+
+
+        onload = function () {
+          pi.log("ONLOAD debugger!");
+          init();            
+        };
+
+
+      window.addEventListener("load", onload);
+    </script>
+
+    <button onclick="fullscreenclick();">fullscreen</button>
+
+    <div id="console"></div>
+
   </div>
+
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>

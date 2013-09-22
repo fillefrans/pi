@@ -112,11 +112,12 @@
              $this->say("Parent: started child process with pid ".$pid);
              return $pid;
         } else {
+          // we are the child
           $this->say("Child: starting with pid ".getmypid().". \nScript: $script");
           pcntl_exec(PHP_BINARY, $params, $env);
           print("exec failed!");
-          exit(0);
-             // we are the child
+          // just exit() is not enough after forking
+          posix_kill(getmypid(), 9);
         }
       }
 

@@ -17,9 +17,9 @@
   // load global config settings for views
 
 
-  require_once("../../../../srv/pi.php");
+  require_once( __DIR__ .  "/../../../../../srv/php/pi.php");
 
-
+  define('UTILITIES_DIR', __DIR__ . "/../util/");
 
 
   /**

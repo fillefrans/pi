@@ -27,7 +27,6 @@
     __sessionport    : 8101,
     __sessionuri     : '',
 
-    __sessionid      : null,
 
     // protected
 
@@ -35,7 +34,6 @@
     // public
 
     active    : false,
-    loggedin  : false,
     user      : null,
 
 
@@ -57,19 +55,19 @@
         packet   = JSON.parse(event.data);
 
       // publish all messages on local session channel, for debugging
-      // π.events.publish('pi.session', [packet.data]);
+      π.events.publish('pi.session', packet);
 
       if(!!packet.address) {
-        pi.log("publishing packet to '" + packet.address + "' : ", packet.data);
-        π.events.publish(packet.address, [packet.data]);
+        pi.log("publishing packet to '" + packet.address + "' : ", packet);
+        π.events.publish(packet.address, packet);
       }
       if(!!packet.callback) {
         pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
         
-        π.core.callback.call(packet.callback, packet.data);
+        π.core.callback.call(packet.callback, packet);
       }
       else {
-        pi.log("onmessage [" + packet.address + "] : ", packet.data);
+        pi.log("onmessage [" + typeof packet + "] : ", packet);
       }
     },
 
@@ -106,10 +104,13 @@
 
 
     __onopen : function (event) {
-      var
-        self = π.core.session;
+      // var
+      //   self = π.core.session,
+      //   bootstraptime = (new Date()).getTime() - π.__sessionstart;
 
+      
       pi.log("pi session started in " + π.timer.stop("pi.session") + "\nElapsed since page head eval: " + ((new Date()).getTime() - π.__sessionstart) + "ms.");
+
       // lists all timers in console
       pi.timer.history.list();
     },
@@ -120,7 +121,7 @@
         self = π.core.session;
 
       self.__handleError(error, self);
-      pi.log("onerror: " + error.data);
+      pi.log("onerror: " + event.data);
     },
 
 
@@ -128,27 +129,7 @@
       var
         self    = π.core.session;
 
-        self.active = false;
-        self.__sessionid = null;
       pi.log("onclose:" + event.data);
-    },
-
-
-    __onconnected : function (event) {
-      var
-        self    = π.core.session,
-        packet  = event || false;
-
-      if(packet.sessionid) {
-        self.__sessionid = packet.sessionid;
-        self.active = true;
-      }
-      else {
-        pi.log('Error: wrong packet format in pi.session.__onconnected');
-      }
-
-      pi.log("onconnected: " + JSON.stringify(event));
-      π.events.unsubscribe('pi.session.connect', self.__onconnected);
     },
 
 
@@ -187,14 +168,12 @@
         self.__socket.addEventListener('open', function(event) {
           pi.log('Opened session request socket. Event: ', event);
           π.timer.stop("session.init");
-          π.timer.start("session.request");
-          π.events.subscribe('pi.session.connect', self.__onconnected);
-          pi.log("Sending session command");
-          this.send(JSON.stringify({command: 'session'}));
+          π.timer.start("session.request");          
+          self.send({command: 'session'});
         });
 
-
         self.__socket.addEventListener('message', function(event) {
+
           var
             json = JSON.parse(event.data);
           var
@@ -208,18 +187,15 @@
             // we have to release the execution pointer to allow the session to start up
             setTimeout(function (self) {
               π.timer.stop("session.request");
-              pi.log("Connecting to " + 'ws://' + self.__sessionserver + ":" + message.sessionPort);
               self.__sessionsocket = self.__createSocket('ws://' + self.__sessionserver + ":" + message.sessionPort);
               self.__sessionsocket.addEventListener("error", self.__onerror);
               self.__sessionsocket.addEventListener("open", self.__onopen);
               self.__sessionsocket.addEventListener("close", self.__onclose);
               self.__sessionsocket.addEventListener("message", self.__onmessage);
-
-            }, 500, self );
+            }, 1, self );
             π.debug('OK', message);
           }
           else {
-            pi.log('Server says Not OK.', message);
             π.debug('Not OK', message);
           }
 
@@ -238,15 +214,7 @@
       }
     },
 
-
-    __onlogin : function (message) {
-      pi.log("User logged in.", message);
-    },
-
-
     //protected
-
-
 
 
     //public
@@ -258,6 +226,10 @@
       try {
         if(self.__sessionsocket && (self.__sessionsocket.readyState === 1) ){
           self.__sessionsocket.send(JSON.stringify(obj));
+          return true;
+        }
+        else if(self.__socket && (self.__socket.readyState === 1) ){
+          self.__socket.send(JSON.stringify(obj));
           return true;
         }
         else {

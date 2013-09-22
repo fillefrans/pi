@@ -49,6 +49,7 @@
         public    $address      = 'pi.srv.session';
 
 
+
   
         public function __construct($port=8100){
           $this->starttime  = time();
@@ -353,7 +354,10 @@
 
         public function onDisconnect(IWebSocketConnection $user){
           $this->say("User {$user->getId()} disconnected.");
-          die("Client disconnected. Exiting.");
+
+          // exit() doesn't work properly when we're in a forked child process
+          posix_kill(getmypid(),9);
+          // die("Client disconnected. Exiting.");
         }
 
 
@@ -393,6 +397,7 @@
   }
   catch(Exception $e) {
     print(get_class($e) . ": " . $e->getMessage());
+    posix_kill(getmypid(),9);
   }
 
 

@@ -419,8 +419,45 @@
 
 
 
+
     π.copy = function (obj) {
       return JSON.parse(JSON.stringify(obj));
+    };
+
+
+
+    π.fullscreen = {
+
+      request : function(elem) {
+        var
+          elem = elem || document.body;
+
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } 
+        else if (elem.mozRequestFullScreen) {
+          elem.mozRequestFullScreen();
+        } 
+        else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        }
+        return document.fullscreen;
+      },
+
+      exit : function() {
+        if(document.fullscreen) {
+          if (elem.exitFullscreen) {
+            elem.exitFullscreen();
+          } 
+          else if (elem.mozExitFullScreen) {
+            elem.mozExitFullScreen();
+          } 
+          else if (elem.webkitExitFullscreen) {
+            elem.webkitExitFullscreen();
+          }
+        }
+        return document.fullscreen;
+      }
     };
 
 
@@ -446,8 +483,11 @@
         source  = new EventSource('/api/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
 
       source.addEventListener('message',  callback, false);
-      source.onmessage = callback;
+      // source.onmessage = callback;
 
+      source.addEventListener('open',  function() {
+        pi.log('on open');
+      }, false);
 
       if( typeof onerror === "function" ) {
         source.addEventListener('error',    onerror,  false);
@@ -475,7 +515,10 @@
     
       if(eventaddress.substring(0,7)==='pi.app.') {
         // await named event locally
-        π.events.subscribe(eventaddress, onresult);
+        π.events.subscribe(eventaddress, function(onresult, eventaddress) {
+          onresult.call();
+          π.events.unsubscribe(eventaddress, onresult);
+        });
       }
       else {
         // request a named event from the server
@@ -548,7 +591,7 @@
           return π.session.send(packet);
         }
         else {
-          pi.log("pi.session not loaded! Packet:", packet);
+          pi.log("pi.session not loaded in π._send()! Packet:", packet);
           return false;
         }
     };

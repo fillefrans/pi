@@ -72,7 +72,7 @@
           var send = $("#form").formToJSON();
           $('#result').html('Sending: <br /><pre>' + send + '</pre>');
           $.ajax({
-            url: "http://www.kromaviews.no/pi/webservice/job/",
+            url: "http://kromaviews.no:8080/api/app/views/job-dev/",
             //type: "POST",
             data: send,
             error: function(xhr, error) {

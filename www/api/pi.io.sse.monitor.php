@@ -15,7 +15,8 @@
 
   $session = session_start();
 
-  header("Content-Type: text/event-stream; charset=utf-8");
+  header("Content-Type: text/event-stream\n\n");
+  header('Access-Control-Allow-Origin: *');
   header('Cache-Control: no-cache'); 
 
 
@@ -25,6 +26,7 @@
   @ini_set('output_buffering', 'Off');
   @ini_set('implicit_flush', 1);
 
+  @set_time_limit(300);
   // flush buffers
   ob_implicit_flush(1);
   for ( $i = 0, $level = ob_get_level(); $i < $level; $i++ ) {
@@ -38,7 +40,7 @@
 
   if(!isset($_REQUEST['address'])) {
     sendEvent("error", "No address.");
-    die();
+    die("No address.");
   }
 
   $channel = $_REQUEST['address'];
@@ -61,7 +63,9 @@
     print("event: $event\n");
     print("id: $ID\n");
     print("data: $message\n");
-    print("\n");
+    print("\n\n");
+  
+    @set_time_limit(300);
 
     ob_flush();
     flush();
@@ -97,7 +101,7 @@
     print("event: $event\n");
     print("id: $ID\n");
     print("data: $message\n");
-    print("\n");
+    print("\n\n");
 
     ob_flush();
     flush();
@@ -110,7 +114,7 @@
 
     $redis = new Redis();
     try{ 
-      if(false===($redis->connect(REDIS_SOCK))){
+      if(false===($redis->pconnect(REDIS_SOCK))){
         sendEvent("error", 'Unable to connect to Redis.');
         return false;
       }
