@@ -9,7 +9,7 @@ The short version is:
 
 - π is pretty fast
 - extensible
-- and very flexible
+- very flexible
 - is heavily optimized for mobile devices
 - uses mostly messaging instead of callbacks
 - uses websockets instead of AJAX
@@ -29,7 +29,7 @@ The other namespace is an addressing namespace that allows message passing betwe
 Over this messaging system, an app can also communicate with another app or even a specific user session in another app.
 
 
-Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, &c
+Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, etc
 
 As an example: a server script may be invoked by a user session in an app. The app 
 can then subscribe to a dedicated channel where the server script publishes progress events. 
