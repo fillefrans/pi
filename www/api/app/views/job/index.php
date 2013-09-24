@@ -19,7 +19,6 @@
 
   require_once( __DIR__ .  "/../../../../../srv/php/pi.php");
 
-  define('UTILITIES_DIR', __DIR__ . "/../util/");
 
 
   /**
@@ -27,6 +26,8 @@
    *
    * @param Exception $exception
    */
+
+
   function exception_handler(Exception $exception) {
     die(json_encode(array('OK'=>0, 'message'=>'Unhandled '. get_class($exception) .": ". $exception->getMessage())));
   }
@@ -35,15 +36,20 @@
   set_exception_handler('exception_handler');
 
 
+
+
+
+
   /**
    *  Initialize
    *
    */
+
   $redis = false;
   $request = json_decode(file_get_contents('php://input'), true);
   $reply = array('OK'=>0, 'message'=>"Ambiguous result: Script ran to the end without setting a reply.");
 
-  $db = array('host'=>'localhost', 'port'=>3306, 'db'=>'views_externalservices_direktinfo', 'user'=>'views', 'password'=>'1234tsxx');
+  $db = array('host'=>'localhost', 'port'=>3306, 'db'=>'appviews_externalservices_direktinfo', 'user'=>'views', 'password'=>'1234tsxx');
 
   // set output type and disallow caching
   header('Content-Type: application/json; charset=utf-8');
@@ -176,7 +182,7 @@
     $debug[] = 'Successfully connected to Redis.';
   }
 
-  include UTILITIES_DIR."views.functions.php";
+  // include UTILITIES_DIR."views.functions.php";
 
   if (false!==($packedNumber = packNumber($request['phone']))) {
     $request['packedNumber']=$packedNumber;
@@ -310,7 +316,7 @@
     if($key==="xdWhKikqUkYk8C7b0n43LTmc"){
       return true;
     }
-    elseif(strtolower($key)==="kroma"){
+    elseif(strtolower($key)==="views"){
       return true;
     }
     else{

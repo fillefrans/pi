@@ -71,6 +71,8 @@
       private $currentSessionPort   = 8100;
       private $currentSessionId     = 0;
       private $currentSessionStart  = 0;
+      private $children             = array();
+
    
       protected function reply($request, $message="", $status = 0, $event='reply'){
         $json = json_encode(array('OK'=>$status, 'message'=>$message, "event"=>$event, "request"=>$request));
@@ -109,13 +111,13 @@
              return false;
         } else if ($pid) {
              // we are the parent
-             $this->say("Parent: started child process with pid ".$pid);
+             array_push($this->children, array('pid' => $pid, 'starttime' => microtime(true)));
+             $this->say("Parent: started child process #" . count($this->children) . " with pid ".$pid);
              return $pid;
         } else {
           // we are the child
           $this->say("Child: starting with pid ".getmypid().". \nScript: $script");
           pcntl_exec(PHP_BINARY, $params, $env);
-          print("exec failed!");
           // just exit() is not enough after forking
           posix_kill(getmypid(), 9);
         }

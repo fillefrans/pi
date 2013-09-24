@@ -40,9 +40,19 @@
       $debug[]          = 'ERROR! Number of fields and values do not match in addToCache()';
     }
 
+    $updateQuery = "";
+    foreach ($row as $key => $value) {
+      $updateQuery .= "$key='$value', ";
+    }
+
+    if(strlen($updateQuery)>3) {
+      $updateQuery = substr($updateQuery, 0, -2);
+    }
+
 
     $query    = "INSERT INTO cache ($fields) 
-                  VALUES('$values');";
+                  VALUES('$values')
+                  ON DUPLICATE KEY UPDATE $updateQuery;";
     $debug[]   = 'Running query: ' . $query;
 
     if(FALSE===$mysqli->query($query)){

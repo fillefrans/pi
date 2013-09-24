@@ -44,9 +44,12 @@
         protected $parentpid    = null;
         protected $ticks        = 1;
 
+        private $alarmInterval  = 300;
+
         public    $userid       = 'root';
         public    $name         = 'pi.session';
         public    $address      = 'pi.srv.session';
+        public    $control      = 'ctrl.pi.srv.session';
 
 
 
@@ -65,6 +68,13 @@
             throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
           }
 
+          $this->address   .=  '.' . $this->userid;
+          $this->control    = "ctrl." . $this->address;
+          $sessionName      = str_replace(".", "-", "pi.session." . $this->id);
+
+          session_id($sessionName);
+          session_start();
+
           // read back the env vars we set in the parent process before we forked 
           $this->port       = getenv('session_port');
           $this->id         = getenv('session_id');
@@ -75,12 +85,13 @@
           $this->server->addObserver($this);
           $this->say("Session handler started, listening on port ".$this->port);
 
-          $this->address   .=  '.' . $this->userid;
+          $_SESSION['sessionid'] = $this->id;
+          pcntl_signal(SIGALRM, [$this, "onAlarm"], true);
         }
 
 
         protected function exceptionToArray(&$e) {
-          return array( 'code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTrace());
+          return array( 'message'=> $e->getMessage(), 'code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTrace());
         }
 
 
@@ -138,7 +149,12 @@
           $this->ticks++;
         }
 
+        public function onAlarm($signal) {
 
+          print "Caught SIGALRM\n";
+          print( "Last acivity was " . (time() - $this->lastactivity) . "seconds ago."); 
+          pcntl_alarm($this->alarmInterval);
+        }
 
         public function onConnect(IWebSocketConnection $user){
           $this->say("{userid:{$user->getId()}, event: \"connect\", message: \"Welcome.\"}");
@@ -277,6 +293,7 @@
               break;
 
             case 'quit':
+              posix_kill(getmypid(), 9);
               die("Client sent 'quit' command. Exiting.\n");
               // kind of _have_ to put the break in there, even if we just died.
               break;
@@ -353,7 +370,7 @@
 
 
         public function onDisconnect(IWebSocketConnection $user){
-          $this->say("User {$user->getId()} disconnected.");
+          $this->say("User {$user->getId()} disconnected. Proceeding to kill client.");
 
           // exit() doesn't work properly when we're in a forked child process
           posix_kill(getmypid(),9);
@@ -381,9 +398,9 @@
 
 
         public function run(){
-      		$this->say(get_class($this) . ": running");
           $this->__init();
           $this->server->run();
+          $this->say(get_class($this) . ": running");
         }
     }
 

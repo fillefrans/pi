@@ -46,6 +46,17 @@
   $channel = $_REQUEST['address'];
 
 
+  if(!isset($_SESSION['sessionid'])) {
+    if(!isset($_REQUEST['sessionid'])) {
+      sendEvent("error", "No session.");
+      die("No session.");
+    }
+    else {
+      $_SESSION['sessionid'] = $_REQUEST['sessionid'];
+    }
+  }
+
+
 
 
   // on message from Redis pubsub on the DEBUG channel
@@ -61,6 +72,7 @@
     $ID++;
 
     print("event: $event\n");
+    print("address: $chan\n");
     print("id: $ID\n");
     print("data: $message\n");
     print("\n\n");
@@ -72,22 +84,33 @@
   }
 
 
-  function subscribeToChannel($channel) {
+  function subscribeToChannel($channels) {
+
 
     if( false === ($redis = connectToRedis())) {
       return false;
     }
 
+    if (!is_array($channels)) {
+      $channels = array($channels);
+    }
+
+
     try{
+
+      $redis->subscribe($channels, 'onMessage');
       sendEvent("connected", "welcome");
-      $redis->subscribe(array($channel), 'onMessage');
     }
     catch (Exception $e) {
-      sendEvent("error", get_class($e) . ": " . $e->getMessage());
+      sendEvent("error", get_class($e) . ": " . json_encode(exceptionToArray($e)));
       $debug[] = get_class($e) . ": " . $e->getMessage();
     }
   }
 
+
+  function exceptionToArray(&$e) {
+    return array( 'message'=> $e->getMessage(), 'code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTrace());
+  }
 
 
   function sendEvent ($event, $data) {
@@ -115,13 +138,14 @@
     $redis = new Redis();
     try{ 
       if(false===($redis->pconnect(REDIS_SOCK))){
-        sendEvent("error", 'Unable to connect to Redis.');
-        return false;
+      // if(false===($redis->connect('127.0.0.1', 6379, $timeout, $_SESSION['sessionid']))){
+        // sendEvent("error", "Unable to connect to Redis on TCP after $timeout seconds.");
+        sendEvent("error", "Unable to connect to Redis on " . REDIS_SOCK);
       }
       return $redis;
     }
     catch(RedisException $e){
-      sendEvent("error", get_class($e) . ': ' . $e->getMessage() );
+      sendEvent("error", get_class($e) . ': ' . json_encode(exceptionToArray($e) ));
       return false;
     }
   }
@@ -136,7 +160,14 @@
    */
 
 
-  subscribeToChannel($channel);
+  if($_SESSION['sessionid']) {
+    subscribeToChannel(["pi.srv.session." . $_SESSION['sessionid']]);
+  }
+  else {
+    sendEvent("error", "No session: " . json_encode($_SESSION));
+    // die();
+  }
+
 
   while (true) {
     // wait for messages from Redis

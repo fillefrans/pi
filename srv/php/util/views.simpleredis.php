@@ -28,8 +28,8 @@
     }
     try{  
       //      $redis->connect('127.0.0.1', 6379);
-      if(false===($redis->select(REDIS_CACHE))){
-        $debug[] = 'Unable to select Redis DB no. '.REDIS_CACHE;
+      if(false===($redis->select(PI_CACHE))){
+        $debug[] = 'Unable to select Redis DB no. '.PI_CACHE;
         return false;
       }
       // Check if cache exists. If not, create it
@@ -62,8 +62,8 @@
     }
     try{  
 //      $redis->connect('127.0.0.1', 6379);
-       if(false===($redis->select(REDIS_CACHE))){
-        $debug[] = 'Unable to select Redis DB no. '.REDIS_CACHE;
+       if(false===($redis->select(PI_CACHE))){
+        $debug[] = 'Unable to select Redis DB no. '.PI_CACHE;
         return false;
       }
 

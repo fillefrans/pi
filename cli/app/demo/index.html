@@ -16,7 +16,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
   
+  <!-- the core CSS from pi -->
   <link rel="stylesheet" href="../../assets/css/pi.core.css">
+  <!-- the app CSS -->
+  <link rel="stylesheet" href="assets/css/pi.app.css">
 
   <link rel="shortcut icon" href="assets/ico/favicon.ico">
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
@@ -37,11 +40,13 @@
 
       var 
 
+
         numberstation = document.getElementById("numberstation"),
         randomWalk = {
 
           eventsource : null,
           starttime   : null,
+          element     : null,
 
           __onerror : function (err) {
             pi.log("Error in randomWalk: ", err);
@@ -50,14 +55,18 @@
 
           onRandomWalk : function (message) {
             var
-              randomNumber = JSON.parse(message.data);
+              randomNumber  = JSON.parse(message.data),
+              self          = pi.maverick.randomWalk;
 
-            // pi.log("randomWalk: " + json, json);
+            if(self.element) {
+              self.element.innerHTML = randomNumber;
+            }
           },
 
           run : function() {
             pi.log("starting randomWalk listener...");
             this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("randomwalk");
             this.eventsource  = pi.listen("pi.service.numberstation.randomwalk", this.onRandomWalk, this.__onerror);
             this.eventsource.addEventListener("data", this.onRandomWalk, false);
             pi.log("done.", this.eventsource);
@@ -65,13 +74,16 @@
           }
         };
 
-      window.addEventListener("load", function() {
-        pi.maverick.randomWalk = randomWalk;
-        pi.maverick.randomWalk.run();
-      }, false);
+
+        window.addEventListener("pi.session.start", function() {
+          pi.maverick.randomWalk = randomWalk;
+          pi.maverick.randomWalk.run();
+        }, false);
 
 
     </script>
+    <div id="randomwalk"></div>
+
   </div>
 
   <div id="debug" class="pcl" data-name="pcl.debug.debugger">
@@ -111,26 +123,26 @@
           var
             source = pi.listen("pi.*", ondebugmessage, onerror);
 
-          source.addEventListener("open", onopen, false);
-          // source.addEventListener("message", ondebugmessage, false);
-          source.addEventListener("data", ondebugdata, false);
-
-          pi.log("INIT debugger!", source);
+          if(source) {
+            source.addEventListener("open", onopen, false);
+            // source.addEventListener("message", ondebugmessage, false);
+            source.addEventListener("data", ondebugdata, false);
+          } else {
+            pi.log("Error: source is no good: ", source);
+          }
 
         },
 
 
 
-        onload = function () {
-          pi.log("ONLOAD debugger!");
+        onload = function (evt) {
+          pi.log("ONLOAD debugger!", evt);
           init();            
         };
 
 
-      window.addEventListener("load", onload);
+      window.addEventListener("pi.session.start", onload, false);
     </script>
-
-    <button onclick="fullscreenclick();">fullscreen</button>
 
     <div id="console"></div>
 

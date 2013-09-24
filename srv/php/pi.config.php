@@ -83,6 +83,7 @@
 
     define('PI_PCL',     11);
     define('PI_MVRCK',   12);
+    define('PI_CACHE',   13);
 
     define('PI_TMP',     14);
     define('PI_DBG',     15);

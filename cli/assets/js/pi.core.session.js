@@ -32,7 +32,7 @@
 
 
     // public
-
+    sessionid : false,
     active    : false,
     user      : null,
 
@@ -58,16 +58,18 @@
       π.events.publish('pi.session', packet);
 
       if(!!packet.address) {
-        pi.log("publishing packet to '" + packet.address + "' : ", packet);
+        // this is our normal case, a packet with an address
+        // pi.log("publishing packet to '" + packet.address + "' : ", packet);
         π.events.publish(packet.address, packet);
       }
       if(!!packet.callback) {
-        pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
-        
+        // check for callback and invoke if present
+        // pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
         π.core.callback.call(packet.callback, packet);
       }
       else {
-        pi.log("onmessage [" + typeof packet + "] : ", packet);
+        // not a callback
+        // pi.log("onmessage [" + typeof packet + "] : ", packet);
       }
     },
 
@@ -76,16 +78,33 @@
     //private
 
     __init : function (DEBUG) {
-      π.timer.start("session.init");
+      π.timer.start("session.init"); 
 
       var 
         host        = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri;
 
       if(this.__initialized === true){
         //something is not right
-        pi.log("error: __init() called twice ");
+        pi.log("error: __init() called twice");
         return false;
       }
+
+      // wait for session connect msg from server
+      π.events.subscribe("pi.session.connect", function(evt) {
+        var
+          json = evt,
+          sessionstart = new CustomEvent("pi.session.start");
+
+        π.session.sessionid = json.data.sessionid || false;
+        π.events.publish("pi.session.start", π.session.sessionid);
+        π.events.unsubscribe("pi.session.connect");
+        
+        // some browsers complain if we set .detail in the CustomEvent constructor
+        sessionstart.detail = {sessionid : π.session.sessionid};
+
+        window.dispatchEvent(sessionstart);
+        return;
+      });
       
       this.__initialized = this.__startSession(host);
       return this.__initialized;
@@ -104,15 +123,10 @@
 
 
     __onopen : function (event) {
-      // var
-      //   self = π.core.session,
-      //   bootstraptime = (new Date()).getTime() - π.__sessionstart;
-
-      
-      pi.log("pi session started in " + π.timer.stop("pi.session") + "\nElapsed since page head eval: " + ((new Date()).getTime() - π.__sessionstart) + "ms.");
+      π.timer.stop("pi.session");
 
       // lists all timers in console
-      pi.timer.history.list();
+      /// pi.timer.history.list();
     },
 
 
@@ -127,9 +141,9 @@
 
     __onclose : function (event) {
       var
-        self    = π.core.session;
+        self = π.core.session;
 
-      pi.log("onclose:" + event.data);
+      // pi.log("onclose:" + event.data);
     },
 
 
@@ -158,7 +172,7 @@
 
 
       try {
-        pi.log('Connecting session request socket: ' + host);
+        /// pi.log('Connecting session request socket: ' + host);
         self.__socket = self.__createSocket(host);
 
         self.__socket.addEventListener('error', function(error) {
@@ -166,7 +180,6 @@
         });
 
         self.__socket.addEventListener('open', function(event) {
-          pi.log('Opened session request socket. Event: ', event);
           π.timer.stop("session.init");
           π.timer.start("session.request");          
           self.send({command: 'session'});
@@ -204,7 +217,7 @@
         this.__socket.addEventListener('close', function(event) {
 
           // handle close event
-          pi.log('Session closed. Status -> ' + this.readyState);
+          // pi.log('Session closed. Status -> ' + this.readyState);
         });
       return true;
       }
@@ -275,7 +288,6 @@
 
   // Create pi.session as an alias for pi.core.session 
   π.session = π.core.session;
-  
   π.session._loaded = π.session.start();
 
 

@@ -1,12 +1,7 @@
 <?php
 
-  if(!defined('CONFIG_ROOT')){
-    define('CONFIG_ROOT', '/home/kroma/scripts/views/php/server/config/');  
-  }
-  require_once(CONFIG_ROOT."views.config.php");
 
 require_once(UTILITIES_DIR."refAwareSoap.php");
-include_once(UTILITIES_DIR."json-pretty-print.php");
 
 $result = array();
 
