@@ -421,8 +421,9 @@ class WebSocketServer implements WebSocketObserver {
     }
 
     public function debug($msg) {
-        if ($this->debug)
+        if ($this->debug) {
             echo date("Y-m-d H:i:s") . " | " . $msg . "\n";
+        }
     }
 
     public function onFlashXMLRequest(WebSocketConnectionFlash $connection) {

@@ -58,9 +58,28 @@
 
     π.__onload = function (event) {
       π.__loadtime = new Date().getTime() - π.__sessionstart;
-      pi.log("Page loaded in " + π.__loadtime + "milliseconds.", event);
+      pi.log("Page loaded in " + π.__loadtime + " milliseconds.");
     };
 
+
+
+    /** π.report
+     *
+     * Report an exception
+     * 
+     * @param  {object}     exception   The exception to report
+     * @param  {string}     address     Address in the pi namespace to report to
+     * @return {boolean}                True if success, false if failure
+     */
+
+    π.report = function(exception, address) {
+      // var
+      //   image = new Image(),
+      //   _encode:function(e){var t="",n="/";for(key in e)if(key=="v"||key=="e")t=n+key+n+encodeURIComponent(e[key])+t;else{var r=typeof e[key];r!=="undefined"&&r!=="object"&&r!=="function"&&r!==null&&(t+=n+encodeURIComponent(key)+n+encodeURIComponent(e[key]))}return t+"/kv.gif"}
+
+      console.log('reporting error: ' + encodeURIComponent(JSON.stringify(exception)));
+      return true;
+    };
 
 
  
@@ -168,12 +187,13 @@
             _signatures : {},
 
 
-            // log and report exception (this function is attached to window.onerror)
+            // log and report exception 
+            // this function gets attached to window.onerror
             add : function(message, url, linenumber) {
               var
                 self      = π.core.exception,
                 exception = { message: message, url: url, linenumber: linenumber, timestamp: (new Date().getTime()) },
-                signature = (url + linenumber).replace([^a-zA-Z0-9], "_");
+                signature = String(url + linenumber).replace(/[^a-zA-Z0-9]/g, "_");
 
               if(self.history.length > self.MAX_ERRORS) {
                 exception.MAX_ERRORS_HIT  = true;
@@ -182,12 +202,11 @@
 
                 π.report(exception);
                 // detach
-                window.onerror = null;
+                window.onerror = pi.maverick.oldonerror;
               }
 
               // push onto log
               exception.errorcount = self.history.push({ exception : exception});
-
 
               if(exception.count > self.MIN_ERRORS){
                 // count signatures
@@ -195,6 +214,11 @@
 
                 }
 
+              }
+
+              // call original error handler, if we replaced one
+              if(typeof pi.maverick.oldonerror === "function") {
+                pi.maverick.oldonerror.call(message, url, linenumber);
               }
 
               // pi.report() sends objects through a GIF beacon to pi server
@@ -211,7 +235,8 @@
 
         // install handler for uncaught exceptions and parse errors
         if(window.onerror) {
-          pi.log("Overwriting existing window.onerror: ", window.onerror);
+          pi.maverick.oldonerror = window.onerror;
+          // console.log("Overwriting existing window.onerror: " + window.onerror.toString());
         }
         window.onerror = π.core.exception.add;
         π.core.exception._loaded = true;
@@ -464,6 +489,7 @@
 
 
     π.log = function(msg, obj) {
+
       if(!!obj){
         console.log(msg, obj);
       }
@@ -550,6 +576,7 @@
 
     π.listen = function (address, callback, onerror) {
 
+        // early escape
         if( typeof callback !== "function" ) {
           return false; 
         }
@@ -560,20 +587,24 @@
           return false;
         }
 
+      try {
 
+        var
+          onerror = onerror || false,
+          source  = new EventSource( '/api/pi.io.sse.monitor.php?sessionid=' + pi.session.sessionid + ((address!='') ? '&address=' + encodeURI(address) : '') );
 
-      var
-        source  = new EventSource('/api/pi.io.sse.monitor.php?sessionid=' + pi.session.sessionid + ((address!='') ? '&address=' + encodeURI(address) : '')  );
+        source.addEventListener('message', callback, false);
+        source.onopen     = function() {  pi.log('EventSource opened: ', source); /* for debugging only */ };
 
-      source.addEventListener('message',  callback, false);
-      // source.onmessage = callback;
-
-      source.addEventListener('open',  function() {
-        pi.log('on open');
-      }, false);
-
-      if( typeof onerror === "function" ) {
-        source.addEventListener('error',    onerror,  false);
+        if( typeof onerror === "function" ) {
+          source.addEventListener('error', onerror, false);
+          // source.onerror = onerror;
+        }
+      }
+      catch(e) {
+        if( (typeof onerror === typeof onerror.call) === "function" ) {
+          onerror.call(e);
+        }
       }
 
       return source;
@@ -605,6 +636,8 @@
 
           pi.log("await() calling onresult for " + eventaddress, onresult);
           onresult.call(msg);
+
+          // remove event listener
           π.events.unsubscribe(eventaddress, onresult);
         });
     };
@@ -714,12 +747,28 @@
 
     π.require = function(module, async, defer, callback, __onerror){
 
+      // if more than one module is given
+      if( module.indexOf(',') > -1 ) {
+        var
+          modules = module.split(','),
+          async   = async || false,
+          defer   = defer || false;
+
+        // load all modules
+        
+        modules.forEach(function(element, index, array){
+          π.require(element, async, defer, callback, __onerror);
+        });
+        return true;
+      }
+
+      module = module.trim();
 
       // If this module has been loaded already, then
       // immediately invoke the callback and return true
       if (π.loaded[module.replace(/\./g,'_')]) {
         if(typeof callback==="function") {
-          this.callback.call();
+          this.callback.call(this, module, false);
         }
         return true;
       }
@@ -729,6 +778,7 @@
         path    = '../../assets/js/pi.',
         script  = document.createElement('script');
 
+      pi.timer.start(module);
 
       script.async      = async || true;
       script.defer      = defer || true;
@@ -740,22 +790,20 @@
           __onerror : __onerror || false
         };
 
-      pi.timer.start(module);
-
-      script.onload = function (event) {
+      script.onload = function (e) {
         var
           loadtime = π.timer.stop(this.π.modname);
 
         π.loaded[this.π.modname] = { time: (new Date()).getTime(), loadtime: loadtime };
         if(this.π.callback) {
-          this.π.callback.call(event);
+          this.π.callback.call(this, this.π.module, e);
         }
       };
 
       script.onerror = function (error) {
         pi.log('error loading module: ' + this.π.module, error);
         if(this.π.__onerror) {
-          this.π.__onerror.call(error);
+          this.π.__onerror.call(this, error);
         }
       };
       
@@ -778,10 +826,9 @@
      */
 
     π.load = function(resourcefile, callback, __onerror, async, defer){
-      // If this module has been loaded already, then
+
+      // If this resource has been loaded already, then
       // immediately invoke the callback and return true
-
-
       if (π.loaded[resourcefile.replace(/[.:\/]/g,'_')]) {
         if(typeof callback==="function") {
           this.callback.call();
@@ -813,15 +860,15 @@
 
 
       if(elemtype==="link") {
-        resource.setAttribute("rel", "stylesheet");
-        resource.setAttribute("type", "text/css");
-        resource.setAttribute("href", resourcefile);
+        resource.href = resourcefile;
+        resource.type = "text/css";
+        resource.rel  = "stylesheet";
       }
       else if(elemtype==="script") {
         resource.src        = resourcefile;
         resource.async      = async || true;
         resource.defer      = defer || true;
-        resource.setAttribute("type", "text/javascript");
+        resource.type       = "text/javascript";
       }
 
       resource.π = {
@@ -839,7 +886,7 @@
 
         π.loaded[this.π.modname] = { time: (new Date()).getTime(), loadtime: loadtime };
         if(this.π.callback) {
-          this.π.callback.call(event);
+          this.π.callback.call(this, event);
         }
       };
 
@@ -908,6 +955,7 @@
         return false;
       },
 
+
       stop : function(timerid) {
         var
           timers  = π.timer.timers,
@@ -936,6 +984,7 @@
         // return timer value
         return self.time;
       },
+
 
       history : {
         
@@ -983,36 +1032,27 @@
      */
 
 
-  π.log("Page loaded in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing pi...");
-
   // start a timer for the platform initialization
-  π.timer.start("pi.initialization");
+  // π.timer.start("pi.initialization");
 
-
-  pi.log("Loading core modules...");
-
-  π.require("core.session", false, false, function (module) {
+  π.require("core.session", false, false, function (module, loadEvent) {
     // pi.log("loaded: core.session", module);
   });
 
-  π.require("core.tasks", false, false, function (module) {
+  π.require("core.tasks", false, false, function (module, loadEvent) {
     // pi.log("loaded: core.session", module);
   });
 
-  pi.log("Loading app modules...");
-
-  π.require("app", false, false, function (module) {
-    // pi.log("loaded: app", module);
+  π.require("app, pcl", false, false, function (module, loadEvent) {
+    // pi.log("loaded: " + module + " - " + (new Date().getTime()), loadEvent);
   });
 
-  π.require("pcl", false, false, function (module) {
-    // pi.log("loaded: pcl", module);
-  });
+  // π.require("pcl", false, false, function (module) {
+  //   // pi.log("loaded: pcl", module);
+  // });
 
 
 
-  π.log("Pi initialized in " + π.timer.stop("pi.initialization") + " ms.");
-  
 
   window.addEventListener('load', function(e) {
 

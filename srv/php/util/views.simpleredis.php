@@ -5,7 +5,7 @@
     $redis = new Redis();
     try{ 
 //      if(false===($redis->connect('127.0.0.1', 6379, $timeout))){
-      if(false===($redis->pconnect('127.0.0.1', 6379))){
+      if(false===($redis->connect(REDIS_SOCK))){
         $debug[] = 'Unable to connect to Redis';
         return false;
       }

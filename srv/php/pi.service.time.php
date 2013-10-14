@@ -106,6 +106,7 @@
 
         private function quit($msg="No message. Goodbye.") {
 
+          $this->running = false;
           die($msg);
 
         }

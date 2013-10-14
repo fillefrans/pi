@@ -18,10 +18,11 @@
   
   <!-- the core CSS from pi -->
   <link rel="stylesheet" href="../../assets/css/pi.core.css">
-  <!-- the app CSS -->
-  <link rel="stylesheet" href="assets/css/pi.app.css">
 
-  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+  <!-- the app CSS -->
+  <link href='http://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="assets/css/pi.app.css">
+  <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
   <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
   <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
@@ -29,17 +30,91 @@
  
 <body class="pi">
 
-  <div id="login" class="pcl" data-name="pcl.dialogs.login">
-    <!--  set classes "pcl" and "component" to mark as PCL component -->
-    <!--  then the PCL bootstrapper will load the component given in attribute "data-name" -->
+
+
+  <!-- This is the demo's div -->
+
+
+  <div id="demo" class="pcl" data-name="pcl.table.xfilter">
+
+    <table id="xfilter_table">
+      <thead id="xfilter_table_head">xfilter</thead>
+      <tbody id="xfilter_table_body">
+      </tbody>
+    </table>
+
+    <script>
+
+      var 
+
+        xtable  = document.getElementById("xfilter_table"),
+        xhead   = document.getElementById("xfilter_table_head"),
+        xbody   = document.getElementById("xfilter_table_body"),
+
+        xfilter = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+          __data      : [],
+
+          __onerror : function (err) {
+            pi.log("Error in xfilter: " + JSON.stringify(err), err);
+          },
+
+          __init : function() {
+
+          },
+
+          onData : function (message) {
+            var
+              data = JSON.parse(message.data),
+              self = pi.maverick.xfilter;
+
+            pi.log("xfilter.onData: " + message.data);
+
+          },
+
+          run : function() {
+            // pi.log("starting xfilter listener...");
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("xfilter");
+            this.eventsource  = pi.listen("pi.app.demo.crossfilter.1", this.onData, this.__onerror);
+            this.eventsource.addEventListener("data", this.onData, false);
+            // pi.log("done.", this.eventsource);
+            // pi.log("onmessage:", this.eventsource.onmessage);
+          }
+        };
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.maverick.xfilter = xfilter;
+          pi.maverick.xfilter.run();
+        }, false);
+
+
+    </script>
+
   </div>
+
+
+
+
+
+
+
+  <!-- End of demo's div -->
+
+
+
+
+
 
 
   <div id="numberstation" class="pcl" data-name="pcl.debug.numberstation">
     <script>
 
       var 
-
 
         numberstation = document.getElementById("numberstation"),
         randomWalk = {
@@ -64,95 +139,32 @@
           },
 
           run : function() {
-            pi.log("starting randomWalk listener...");
+            // pi.log("starting randomWalk listener...");
             this.starttime    = new Date().getTime();
             this.element      = document.getElementById("randomwalk");
             this.eventsource  = pi.listen("pi.service.numberstation.randomwalk", this.onRandomWalk, this.__onerror);
             this.eventsource.addEventListener("data", this.onRandomWalk, false);
-            pi.log("done.", this.eventsource);
-            pi.log("onmessage:", this.eventsource.onmessage);
+            // pi.log("done.", this.eventsource);
+            // pi.log("onmessage:", this.eventsource.onmessage);
           }
         };
 
 
         window.addEventListener("pi.session.start", function() {
           pi.maverick.randomWalk = randomWalk;
-          pi.maverick.randomWalk.run();
+          // pi.maverick.randomWalk.run();
         }, false);
 
 
     </script>
     <div id="randomwalk"></div>
-
-  </div>
-
-  <div id="debug" class="pcl" data-name="pcl.debug.debugger">
-
-    <script>
-      var
-
-        fullscreenclick = function (event) {
-          if(document.fullscreen) {
-            return pi.fullscreen.exit();
-          }
-          else {
-            return pi.fullscreen.request();
-          }
-        },
-
-        onopen = function (event) {
-          pi.log("DEBUG: onopen - ", event);
-        },
-
-        onerror = function (error) {
-          pi.log("DEBUG: onerror - ", error);
-        },
-
-
-        ondebugdata = function (message) {
-
-          pi.log("DATA: " + JSON.parse(message.data));
-        },
-
-        ondebugmessage = function (message) {
-          pi.log("DEBUG: ", message);
-
-        },
-
-        init = function() {
-          var
-            source = pi.listen("pi.*", ondebugmessage, onerror);
-
-          if(source) {
-            source.addEventListener("open", onopen, false);
-            // source.addEventListener("message", ondebugmessage, false);
-            source.addEventListener("data", ondebugdata, false);
-          } else {
-            pi.log("Error: source is no good: ", source);
-          }
-
-        },
-
-
-
-        onload = function (evt) {
-          pi.log("ONLOAD debugger!", evt);
-          init();            
-        };
-
-
-      window.addEventListener("pi.session.start", onload, false);
-    </script>
-
-    <div id="console"></div>
-
   </div>
 
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
   <script src="assets/js/lib/raphael.min.js"></script>
-  <script src="../../assets/js/lib/crossfilter.min.js"></script>
+  <script src="../../assets/js/lib/crossfilter.js"></script>
 
 
   <!--  bootstrap pi -->

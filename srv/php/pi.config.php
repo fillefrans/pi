@@ -49,9 +49,15 @@
     define('SESSION_SCRIPT',    PHP_ROOT . 'pi.session.php');
 
 
+    define('PI_SESSION_PORT',   8008);
 
     // limit the number of WebSocket sessions
-    define('MAX_WEBSOCKET_SESSIONS', 5);
+    define('MAX_WEBSOCKET_SESSIONS', 50);
+    
+    // in seconds
+    define('WEBSOCKET_TIMEOUT', 300);
+
+
 
     define('TICKS_PER_SECOND',  10);
     define('UPDATE_FREQUENCY',  1);

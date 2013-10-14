@@ -1,16 +1,23 @@
 <?php
 
-/**
- *  A pass-through script for relaying all messages on a given
- *  Redis channel to a client via Server-Sent Events
- *
- *  @param string address The address to listen to
- *
- * 
- */
+  /**
+   *  A pass-through script for relaying all messages on a given
+   *  Redis channel to a client as Server-Sent Events which 
+   *  can be opened from javascript with EventSource
+   *
+   *  @todo   add access control, check session validity
+   *  @param  string address The pi address to listen to
+   * 
+   */
+
+
 
   error_reporting(-1);
 
+  // a small cheat so we can re-use code here, 
+  // even if we don't have a unix socket
+
+  // define('REDIS_SOCK', '127.0.0.1');
   define('REDIS_SOCK', '/var/data/redis/redis.sock');
 
   $session = session_start();
@@ -26,9 +33,12 @@
   @ini_set('output_buffering', 'Off');
   @ini_set('implicit_flush', 1);
 
+  // allow 5 minutes of inactivity before disconnect 
   @set_time_limit(300);
+
   // flush buffers
   ob_implicit_flush(1);
+
   for ( $i = 0, $level = ob_get_level(); $i < $level; $i++ ) {
     ob_end_flush();
   }
@@ -61,7 +71,7 @@
 
   // on message from Redis pubsub on the DEBUG channel
 
-  function onMessage($redis, $chan, $msg, $event="data") {
+  function onMessage($redis, $channel, $msg, $event="data") {
     global $ID;
 
     // strip out newlines
@@ -72,12 +82,13 @@
     $ID++;
 
     print("event: $event\n");
-    print("address: $chan\n");
+    print("address: $channel\n");
     print("id: $ID\n");
     print("data: $message\n");
     print("\n\n");
-  
-    @set_time_limit(300);
+
+    // wait for 5 more minutes
+    set_time_limit(300);
 
     ob_flush();
     flush();
@@ -137,7 +148,7 @@
 
     $redis = new Redis();
     try{ 
-      if(false===($redis->pconnect(REDIS_SOCK))){
+      if(false===($redis->connect(REDIS_SOCK))){
       // if(false===($redis->connect('127.0.0.1', 6379, $timeout, $_SESSION['sessionid']))){
         // sendEvent("error", "Unable to connect to Redis on TCP after $timeout seconds.");
         sendEvent("error", "Unable to connect to Redis on " . REDIS_SOCK);
@@ -161,7 +172,7 @@
 
 
   if($_SESSION['sessionid']) {
-    subscribeToChannel(["pi.srv.session." . $_SESSION['sessionid']]);
+    subscribeToChannel($channel);
   }
   else {
     sendEvent("error", "No session: " . json_encode($_SESSION));

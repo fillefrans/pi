@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <CONFIG>
-  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\x86_64-win64\fpc.exe" Date="1114731730"/>
-  <Params Value=" -Mfpc -Sh -CirotR -O1 -OoREGVAR -Twin64 -Px86_64 -g -gl -gh -gv -Xs -veild -FlD:\Work\KROMA\views\dev-server\home\kroma\dev\www\units -FlD:\Work\KROMA\views\dev-server\home\kroma\dev\www\pi\srv\src -FuD:\Work\KROMA\views\dev-server\home\kroma\dev\www\pi\srv\fpc\library -FuD:\Work\KROMA\views\dev-server\home\kroma\dev\www\pi\srv\fpc\ -l pi.lpr"/>
+  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\x86_64-win64\fpc.exe" Date="1122317030"/>
+  <Params Value=" -Mfpc -Sh -CirotR -O1 -OoREGVAR -Twin64 -Px86_64 -g -gl -gh -gv -Xs -veild -FlD:\work\TT\pi\srv\fpc\library -FlD:\work\TT\pi\srv\fpc\library\synapse -FlD:\work\TT\pi\srv\fpc\library\redis -FlD:\work\TT\pi\srv\fpc\library\bauglir -FuD:\work\TT\pi\srv\fpc\library -FuD:\work\TT\pi\srv\fpc\library\bauglir -FuD:\work\TT\pi\srv\fpc\library\redis -FuD:\work\TT\pi\srv\fpc\ -l pi.lpr"/>
   <Complete Value="False"/>
 </CONFIG>

@@ -1,7 +1,7 @@
 <?php
 
   /**
-   *  π.webservice.job
+   *  app.views.webservice.job
    * 
    *  @author Johan Telstad, jt@enfield.no
    *  @version  v0.3, 23.08.2013
@@ -14,29 +14,21 @@
    *
    */
 
-  // load global config settings for views
 
-
+  // load global config settings for pi
   require_once( __DIR__ .  "/../../../../../srv/php/pi.php");
 
 
-
-  /**
-   *
-   *
-   * @param Exception $exception
-   */
-
-
-  function exception_handler(Exception $exception) {
-    die(json_encode(array('OK'=>0, 'message'=>'Unhandled '. get_class($exception) .": ". $exception->getMessage())));
+  function exception_handler(Exception $e) {
+    die(json_encode(array('OK'=>0, 'message'=>'Unhandled '. get_class($e) .": ". $e->getMessage())));
   }
 
 
   set_exception_handler('exception_handler');
 
 
-
+  // global array var to hold the assembled values of this event
+  $item = [];
 
 
 
@@ -45,11 +37,11 @@
    *
    */
 
-  $redis = false;
-  $request = json_decode(file_get_contents('php://input'), true);
-  $reply = array('OK'=>0, 'message'=>"Ambiguous result: Script ran to the end without setting a reply.");
+  $redis    = false;
+  $request  = json_decode(file_get_contents('php://input'), true);
+  $reply    = array('OK'=>0, 'message'=>"Ambiguous result: Script ran to the end without setting a reply.");
 
-  $db = array('host'=>'localhost', 'port'=>3306, 'db'=>'appviews_externalservices_direktinfo', 'user'=>'views', 'password'=>'1234tsxx');
+  $db = array('host'=>'localhost', 'port'=>3306, 'db'=>'views_externalservices_direktinfo', 'user'=>'views', 'password'=>'1234tsxx');
 
   // set output type and disallow caching
   header('Content-Type: application/json; charset=utf-8');
@@ -58,10 +50,8 @@
 
 
   if (DEBUG) {
-    // define('WEBSERVICE_LOG', 'webservice.log');
-    $starttime = microtime(true);
-    $debug = array();
-    $debug[] = "Starting...";
+    $starttime  = microtime(true);
+    $debug      = array("Starting...");
   }
 
 

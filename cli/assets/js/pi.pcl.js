@@ -28,11 +28,8 @@
 
       self.__elements = document.getElementsByClassName("pcl");
 
-      pi.log("π.pcl.components.__scan()");
-
       for( var i = 0, count = self.__elements.length; i < count; i++ ) {
         element = self.__elements.item(i);
-        pi.log("found component " + i + ": " + element.className, element);
         π.pcl.components.add(element);
       }
 
@@ -51,7 +48,6 @@
 
       for( var i = 0, count = self.__elements.length; i < count; i++ ) {
         element = self.__elements.item(i);
-        pi.log("loading component " + i + ": " + element.className, element);
         π.pcl.components.add(element);
       }
     },
@@ -153,12 +149,6 @@
         return this.__items.push.apply(this.__items, rest);
     }
   };
-
-
-
-  pi.log("PCL: loaded " + π.pcl.components.__init() + " component(s)");
-  // π.pcl.forms.__init();
-  pi.log("PCL: loaded " + π.pcl.forms.__init() + " form(s)");
 
 
   π.pcl._loaded = true;

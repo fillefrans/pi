@@ -9,8 +9,21 @@
 
   	require_once("websocket.server.php");
 
-
     error_reporting(-1);
+
+
+    function signal_handler($signo) {
+       switch ($signo) {
+        case SIGCHLD:
+          echo "SIGCHLD received\n";
+          $count = pcntl_waitpid(-1, $status);
+          print("Cleaned up $count children, status: $status\n");
+       }
+     }
+
+    // install signal handler for dead children
+    pcntl_signal(SIGCHLD, "signal_handler");
+
 
 
 
@@ -110,16 +123,22 @@
         if ($pid === -1) {
              return false;
         } else if ($pid) {
-             // we are the parent
-             array_push($this->children, array('pid' => $pid, 'starttime' => microtime(true)));
-             $this->say("Parent: started child process #" . count($this->children) . " with pid ".$pid);
-             return $pid;
+          // we are the parent
+          array_push($this->children, array('pid' => $pid, 'starttime' => microtime(true)));
+
+          // pcntl_waitpid(-1) cleans up defunct children
+          $pcntl_info     = null;
+          $defunct_procs  = pcntl_waitpid(-1, $pcntl_info, WNOHANG);
+
+          $this->say("Parent: cleaned up {$defunct_procs} child process(es).");
+          $this->say("Parent: pcntl_status is : " . $pcntl_info);
+          $this->say("Parent: started child process #" . count($this->children) . " with pid ".$pid);
+          return $pid;
         } else {
           // we are the child
           $this->say("Child: starting with pid ".getmypid().". \nScript: $script");
           pcntl_exec(PHP_BINARY, $params, $env);
-          // just exit() is not enough after forking
-          posix_kill(getmypid(), 9);
+
         }
       }
 

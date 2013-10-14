@@ -12,6 +12,9 @@
       <Title Value="pi server"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -64,7 +67,7 @@
     <Version Value="11"/>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <Libraries Value="../../../units;../src"/>
+      <Libraries Value="library;library/synapse;library/redis;library/bauglir"/>
       <OtherUnitFiles Value="library;library/bauglir;library/redis"/>
     </SearchPaths>
     <Parsing>

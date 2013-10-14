@@ -148,9 +148,9 @@
   .code.comment  { color: #75715e; }
   .code.keyword  { color: #f92672; }
   .code.default  { color: #f8f8f2; }
-  .code.reserved { color: #66D9EF; }
-  .code.number   { color: #AE81FF; }
-  .code.string   { color: #e6db74; }
+  .code.reserved { color: #66D9EF; }  /* 102 217  */
+  .code.number   { color: #AE81FF; }  /* 249 38 114 */
+  .code.string   { color: #e6db74; }  /* 230 219 116 */
 
 
   /*Transitions */

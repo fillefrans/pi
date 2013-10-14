@@ -12,7 +12,7 @@ The short version is:
 - very flexible
 - is heavily optimized for mobile devices
 - uses mostly messaging instead of callbacks
-- uses websockets instead of AJAX
+- uses websockets instead of XHR
 - uses namespaces 
 - uses background processing to avoid blocking the user thread
 - does not rely on other libraries
@@ -41,7 +41,7 @@ Any server software can access the PHP session information for any client, since
 
 Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can be injected into the DOM in three ways:
    1. By adding a script-src tag to the DOM (good for using browser cache)
-   2. Loaded over AJAX, injected into the DOM 
+   2. Loaded over XHR, injected into the DOM 
    3. Loaded over WebSocket, injected into the DOM
 
 For 2. and 3., it is possible to store documents and snippets in HTML5's localStorage

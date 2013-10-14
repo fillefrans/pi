@@ -23,7 +23,7 @@
   function addToCache(&$row){
     global $db, $reply, $request, $debug;
 
-    $mysqli = new mysqli($db['host'],$db['user'],$db['password'],$db['db']);
+    $mysqli = new mysqli( $db['host'], $db['user'], $db['password'], $db['db'] );
 
     if(mysqli_connect_errno()){
       $reply['OK'] = 0;
@@ -59,7 +59,7 @@
   }
 
   function getCacheId($idx=null){
-    global $db, $reply, $debug;
+    global $db, $reply, $debug, $item;
 
     if($idx === null){
       return false;
@@ -75,7 +75,7 @@
     }
 
 
-    $query = "SELECT id
+    $query = "SELECT id, type, county, state, age, lifePhase, sex
         FROM cache 
         WHERE idx = SHA1('$idx')
         LIMIT 1;";
@@ -101,9 +101,9 @@
   }
 
   function addToReport(&$request, $cache_id=null){
-    global $db, $reply, $debug;
+    global $db, $reply, $debug, $redis, $item;
 
-    $mysqli = new mysqli($db['host'],$db['user'],$db['password'],$db['db']);
+    $mysqli = new mysqli( $db['host'], $db['user'], $db['password'], $db['db'] );
 
     if(mysqli_connect_errno()){
       $reply['OK'] = 0;
@@ -114,11 +114,16 @@
 
 
     // create a list of our values. The last 4 are optional, so check availability before adding to array
-    $values = implode(", ", array('idx'=> 'SHA1('.$request['phone'].')', $request['job'], is_null($cache_id) ? 'NULL' : $cache_id, isset($request['param1']) ? $request['param1'] : "NULL", isset($request['param2']) ? $request['param2'] : "NULL",isset($request['param3']) ? $request['param3'] : "NULL",isset($request['param4']) ? $request['param4'] : "NULL",)); 
+    $values = implode(", ", array('idx'=> 'SHA1('.$request['phone'].')', $request['job'], is_null($cache_id) ? 'NULL' : $cache_id, isset($request['param1']) ? $request['param1'] : "NULL", isset($request['param2']) ? $request['param2'] : "NULL",isset($request['param3']) ? $request['param3'] : "NULL",isset($request['param4']) ? $request['param4'] : "NULL")); 
 
+    $item = array_merge($item, $values);
+
+    $redis->publish("pi.app.demo.crossfilter.{$request['job']}", json_encode($item));
 
     $query = "INSERT INTO reportlines (idx, report_id, cache_id, param1, param2, param3, param4) 
               VALUES($values);";
+
+    ///
 
 //    $debug[] = 'Running query :'.$query; 
 

@@ -25,11 +25,16 @@
     require_once(PHP_ROOT."pi.util.functions.php");
   	require_once(PHP_ROOT."websocket.server.php");
 
+    // report all errors
+    error_reporting(-1);
+
+
 
     class PiSessionHandler implements IWebSocketServerObserver{
         protected $DEBUG        = true;
         protected $server       = null;
         protected $redis        = null;
+        protected $pubsub       = null;
         protected $currentdb    = PI_APP;
 
         protected $incoming     = 0;
@@ -67,6 +72,11 @@
           if( false === ($this->redis = $this->connectToRedis())){
             throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
           }
+
+          if( false === ($this->pubsub = $this->connectToRedis())){
+            throw new PiException("Unable to connect to pubsub on " . REDIS_SOCK, 1);
+          }
+
 
           $this->address   .=  '.' . $this->userid;
           $this->control    = "ctrl." . $this->address;
@@ -110,27 +120,25 @@
 
         protected function publish($address, $message=false) {
 
-          if($this->redis){
+          if($this->pubsub){
             if(!$message) {
               // we were invoked with only one param, so assume it's a message for default address
               $message = $address;
               $address = $this->address;
             }
-            $this->redis->publish($address, $message);
+            $this->pubsub->publish($address, $message);
           }
           else {
-            $this->say("We have no redis object in function publish()\n");
+            $this->say("We have no pubsub object in function publish()\n");
           }
         }
 
 
         protected function connectToRedis( $timeout = 5, $db = PI_APP ){
-          global $reply, $debug;
           $redis = new Redis();
           try{ 
       //      if(false===($redis->connect('127.0.0.1', 6379, $timeout))){
             if(false===($redis->connect(REDIS_SOCK))){
-              $debug[] = 'Unable to connect to Redis';
               return false;
             }
             $redis->select($db);
@@ -150,10 +158,15 @@
         }
 
         public function onAlarm($signal) {
-
-          print "Caught SIGALRM\n";
-          print( "Last acivity was " . (time() - $this->lastactivity) . "seconds ago."); 
-          pcntl_alarm($this->alarmInterval);
+          $idle_time = (time() - $this->lastactivity);
+          $this->say("Caught SIGALRM");
+          $this->say("Last activity was " . $idle_time . "seconds ago."); 
+          if($idle_time < WEBSOCKET_TIMEOUT) {
+            pcntl_alarm($this->alarmInterval);
+          }
+          else {
+            $this->quit("Timed out, no activity for {$idle_time} seconds.");
+          }
         }
 
         public function onConnect(IWebSocketConnection $user){
@@ -191,14 +204,14 @@
 
 
         protected function unsubscribe($address){
-          if(false === ($result = $this->redis->unsubscribe($address))){
+          if(false === ($result = $this->pubsub->unsubscribe($address))){
             throw new PiException("Error unsubscribing from Redis address '$address'", 1);
           }
         }
 
 
         protected function subscribe($address, $request){
-          if(false === ($result = $this->redis->subscribe($address, array($this, 'onPubSubMessage')))){
+          if(false === ($result = $this->pubsub->subscribe($address, array($this, 'onPubSubMessage')))){
             throw new PiException("Error subscribing to Redis address '$address'.", 1);
           }
         }
@@ -293,8 +306,7 @@
               break;
 
             case 'quit':
-              posix_kill(getmypid(), 9);
-              die("Client sent 'quit' command. Exiting.\n");
+              $this->quit("Client sent 'quit' command.");
               // kind of _have_ to put the break in there, even if we just died.
               break;
             default:
@@ -317,34 +329,36 @@
         private function redisCommand($message) {
           $result = false;
 
+
+
           switch ($message['command']) {
 
             case 'shift' : // alias
             case 'lpush' :
-              $result = $redis->lPush($message['address'], json_encode($message['data']));
+              $result = $this->redis->lPush($message['address'], json_encode($message['data']));
               $this->say("Data lPushed onto \"{$message['address']}\": " . $result);
               break;
 
             case 'unshift'  : // alias
             case 'lpop' : 
-              $result = $redis->lPop($message['address']);
+              $result = $this->redis->lPop($message['address']);
               $this->say("Data lPopped from \"{$message['address']}\": " . $result);
               break;
 
             case 'pop'  : // alias 
             case 'rpop' : 
-              $result = $redis->rPop($message['address']);
+              $result = $this->redis->rPop($message['address']);
               $this->say("Data rPopped from \"{$message['address']}\": " . $result);
               break;
 
             case 'push'  : // alias
             case 'rpush' :
-              $result = $redis->rPush($message['address'], json_encode($message['data']));
+              $result = $this->redis->rPush($message['address'], json_encode($message['data']));
               $this->say("Data rPushed onto \"{$message['address']}\": " . $result);
               break;
 
             case 'list' : // alias
-              $result = $redis->lRange($message['address'], 0, -1);
+              $result = $this->redis->lRange($message['address'], 0, -1);
               $this->say("Read list from \"{$message['address']}\": " . $result);
               break;
 
@@ -390,8 +404,8 @@
           $msg_array  = array( 'message' => $msg, 'time' => time() );
 
           // publish debug info to our own address
-          if($this->redis){
-            $this->publish($this->address, getFormattedTime() . ": " . $msg);
+          if($this->DEBUG){
+            $this->publish("debug." $this->address, getFormattedTime() . ": " . $msg);
           }
           print(getFormattedTime() . ": $msg\r\n");
         }
@@ -413,8 +427,7 @@
     $server->run();
   }
   catch(Exception $e) {
-    print(get_class($e) . ": " . $e->getMessage());
-    posix_kill(getmypid(),9);
+    die(get_class($e) . ": " . $e->getMessage());
   }
 
 

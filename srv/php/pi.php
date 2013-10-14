@@ -100,7 +100,7 @@
       try{ 
         // use pconnect to open a persistent connection
         // a persistent connection is not closed by the close() command
-        if(false===($redis->pconnect(REDIS_SOCK))){
+        if(false===($redis->connect(REDIS_SOCK))){
           $debug[] = 'Unable to connect to Redis';
           return false;
         }
