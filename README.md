@@ -9,10 +9,10 @@ The short version is:
 
 - π is pretty fast
 - extensible
-- and very flexible
+- very flexible
 - is heavily optimized for mobile devices
 - uses mostly messaging instead of callbacks
-- uses websockets instead of AJAX
+- uses websockets instead of XHR
 - uses namespaces 
 - uses background processing to avoid blocking the user thread
 - does not rely on other libraries
@@ -29,7 +29,7 @@ The other namespace is an addressing namespace that allows message passing betwe
 Over this messaging system, an app can also communicate with another app or even a specific user session in another app.
 
 
-Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, &c
+Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, etc
 
 As an example: a server script may be invoked by a user session in an app. The app 
 can then subscribe to a dedicated channel where the server script publishes progress events. 
@@ -41,7 +41,7 @@ Any server software can access the PHP session information for any client, since
 
 Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can be injected into the DOM in three ways:
    1. By adding a script-src tag to the DOM (good for using browser cache)
-   2. Loaded over AJAX, injected into the DOM 
+   2. Loaded over XHR, injected into the DOM 
    3. Loaded over WebSocket, injected into the DOM
 
 For 2. and 3., it is possible to store documents and snippets in HTML5's localStorage
@@ -180,6 +180,7 @@ When we're at version 0.6 or thereabouts.
 
 
 ###Testing & debugging
+* [Airline on-time performance dataset](http://stat-computing.org/dataexpo/2009/)
 * [Using the Android Emulator](http://developer.android.com/tools/devices/emulator.html)
 * [Viewport resizer - Responsive design bookmarklet](http://lab.maltewassermann.com/viewport-resizer/)
 
