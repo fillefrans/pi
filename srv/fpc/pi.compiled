@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <CONFIG>
-  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\x86_64-win64\fpc.exe" Date="1122317030"/>
-  <Params Value=" -Mfpc -Sh -CirotR -O1 -OoREGVAR -Twin64 -Px86_64 -g -gl -gh -gv -Xs -veild -FlD:\work\TT\pi\srv\fpc\library -FlD:\work\TT\pi\srv\fpc\library\synapse -FlD:\work\TT\pi\srv\fpc\library\redis -FlD:\work\TT\pi\srv\fpc\library\bauglir -FuD:\work\TT\pi\srv\fpc\library -FuD:\work\TT\pi\srv\fpc\library\bauglir -FuD:\work\TT\pi\srv\fpc\library\redis -FuD:\work\TT\pi\srv\fpc\ -l pi.lpr"/>
-  <Complete Value="False"/>
+  <Compiler Value="D:\lazarus32\fpc\2.6.2\bin\i386-win32\fpc.exe" Date="1125670419"/>
+  <Params Value=" -Mfpc -Sh -CirotR -O1 -OoREGVAR -Twin32 -Pi386 -g -gl -gh -gv -Xs -veild -FlD:\work\TT\pi\srv\fpc\library -FlD:\work\TT\pi\srv\fpc\library\synapse -FlD:\work\TT\pi\srv\fpc\library\redis -FlD:\work\TT\pi\srv\fpc\library\bauglir -FuD:\work\TT\pi\srv\fpc\library -FuD:\work\TT\pi\srv\fpc\library\bauglir -FuD:\work\TT\pi\srv\fpc\library\redis -FuD:\work\TT\pi\srv\fpc\ -l -FED:\work\TT\pi\bin\ pi.lpr"/>
 </CONFIG>

@@ -7,7 +7,7 @@
  *
  * 
  *  We should implement a feedback mechanism for js errors
- *  That way we could monitor apps in the wild and pick up on problems quickly
+ *  That way we can monitor apps in the wild and pick up on problems quickly
  * 
  */
 
@@ -73,7 +73,7 @@
 
 
 
-    //private
+    // private
 
     __init : function (DEBUG) {
       π.timer.start("session.init"); 
@@ -82,7 +82,7 @@
         host = this.__protocol + this.__server + ':' + this.__port + this.__uri;
 
       if(this.__initialized === true){
-        //something is not right
+        // something is not right
         pi.exception.add("error: __init() called twice", this);
         return false;
       }
@@ -189,10 +189,10 @@
       }
     },
 
-    //protected
+    // protected
 
 
-    //public
+    // public
 
     send : function (obj) {
       var

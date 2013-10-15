@@ -15,22 +15,58 @@ type
 
   TPiServer = class(TCustomApplication)
   protected
+    Redis : TRedisIO;
+
+    procedure Say( msg: string);
+
     procedure DoRun; override;
+    function ConnectRedis : boolean;
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure WriteHelp; virtual;
+
+    procedure OnRedisConnect(Sender: TObject);
   end;
 
-{ TPiServer }
+
+  {$R *.res}
+
+
+var
+  pi: TPiServer;
+
+
+
+
+procedure TPiServer.Say( msg: string);
+begin
+  Writeln (msg);
+end;
+
+procedure TPiServer.OnRedisConnect(Sender: TObject);
+begin
+  if Redis.Connected then
+    Say('Connected to Redis...')
+  else
+    Say('Unable to connect to Redis.');
+
+end;
+
+function TPiServer.ConnectRedis : boolean;
+begin
+  Redis.TargetHost := '127.0.0.1';
+  Redis.TargetPort := '6379';
+  Redis.Connect;
+end;
 
 procedure TPiServer.DoRun;
 var
   ErrorMsg: String;
 begin
   // quick check parameters
-  ErrorMsg:=CheckOptions('h','help');
-  if ErrorMsg<>'' then begin
+  ErrorMsg := CheckOptions('h','help');
+  if ErrorMsg <> '' then begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
     Exit;
@@ -43,20 +79,24 @@ begin
     Exit;
   end;
 
-  { add your program here }
+  ConnectRedis;
 
-  // stop program loop
-  Terminate;
+
 end;
 
 constructor TPiServer.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  StopOnException:=True;
+  StopOnException := True;
+
+  Redis := TRedisIO.Create;
+  Redis.OnAfterConnect := @OnRedisConnect;
+
 end;
 
 destructor TPiServer.Destroy;
 begin
+  Redis.Free;
   inherited Destroy;
 end;
 
@@ -66,15 +106,11 @@ begin
   writeln('Usage: ',ExeName,' -h');
 end;
 
-var
-  Application: TPiServer;
-
-{$R *.res}
 
 begin
-  Application:=TPiServer.Create(nil);
-  Application.Title:='Pi Server';
-  Application.Run;
-  Application.Free;
+  pi := TPiServer.Create(nil);
+  pi.Title:='Pi Server';
+  pi.Run;
+  pi.Free;
 end.
 

@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <Units Count="5">
+    <Units Count="10">
       <Unit0>
         <Filename Value="pi.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -11,9 +11,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="30" Y="13"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="6"/>
+        <CursorPos X="5" Y="18"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -23,7 +23,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="43"/>
         <CursorPos X="3" Y="58"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="22"/>
       </Unit1>
       <Unit2>
         <Filename Value="library\bauglir\websocket2.pas"/>
@@ -32,18 +32,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="448"/>
         <CursorPos X="27" Y="455"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="22"/>
       </Unit2>
       <Unit3>
         <Filename Value="library\redis\rd_protocol.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="rd_protocol"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
-        <CursorPos X="14" Y="33"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
+        <CursorPos X="1" Y="49"/>
+        <UsageCount Value="22"/>
       </Unit3>
       <Unit4>
         <Filename Value="library\customserver2.pas"/>
@@ -53,23 +51,91 @@
         <CursorPos X="30" Y="28"/>
         <UsageCount Value="10"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="library\ssfpc.pas"/>
+        <UnitName Value="ssfpc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="63"/>
+        <CursorPos X="18" Y="66"/>
+        <UsageCount Value="10"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\unix\baseunix.pp"/>
+        <UnitName Value="BaseUnix"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="49"/>
+        <CursorPos X="7" Y="51"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="library\rd_protocol.pas"/>
+        <UnitName Value="rd_protocol"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="173"/>
+        <CursorPos X="1" Y="180"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="library\blcksock.pas"/>
+        <UnitName Value="blcksock"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="3820"/>
+        <CursorPos X="16" Y="3826"/>
+        <UsageCount Value="10"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="library\sswin32.pas"/>
+        <UnitName Value="sswin32"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1028"/>
+        <CursorPos X="7" Y="1034"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit9>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
-        <Filename Value="pi.lpr"/>
-        <Caret Line="11" Column="51" TopLine="1"/>
+        <Filename Value="library\sswin32.pas"/>
+        <Caret Line="1039" Column="1" TopLine="1027"/>
       </Position1>
       <Position2>
-        <Filename Value="library\redis\rd_protocol.pas"/>
-        <Caret Line="29" Column="17" TopLine="28"/>
+        <Filename Value="library\sswin32.pas"/>
+        <Caret Line="1020" Column="1" TopLine="1008"/>
       </Position2>
       <Position3>
-        <Filename Value="library\redis\rd_protocol.pas"/>
-        <Caret Line="41" Column="30" TopLine="29"/>
+        <Filename Value="library\sswin32.pas"/>
+        <Caret Line="1022" Column="1" TopLine="1008"/>
       </Position3>
+      <Position4>
+        <Filename Value="library\sswin32.pas"/>
+        <Caret Line="1028" Column="1" TopLine="1008"/>
+      </Position4>
+      <Position5>
+        <Filename Value="library\sswin32.pas"/>
+        <Caret Line="1040" Column="1" TopLine="1028"/>
+      </Position5>
     </JumpHistory>
   </ProjectSession>
+  <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="library\rd_protocol.pas"/>
+        <Line Value="178"/>
+      </Item1>
+    </BreakPoints>
+    <Watches Count="1">
+      <Item1>
+        <Expression Value="BaseUnix"/>
+      </Item1>
+    </Watches>
+  </Debugging>
 </CONFIG>

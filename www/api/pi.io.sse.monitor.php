@@ -15,9 +15,11 @@
   error_reporting(-1);
 
   // a small cheat so we can re-use code here, 
-  // even if we don't have a unix socket
-
+  // even if we don't have a unix socket:
+  //
   // define('REDIS_SOCK', '127.0.0.1');
+
+
   define('REDIS_SOCK', '/var/data/redis/redis.sock');
 
   $session = session_start();
