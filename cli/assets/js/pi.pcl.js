@@ -2,7 +2,7 @@
    *
    * π.pcl
    *
-   * @author Johan Telstad, jt@enfield.no, 2011- 2011-2013
+   * @author Johan Telstad, jt@enfield.no, 2011-2013
    *
    */
 
@@ -10,67 +10,145 @@
 
 
   /**
-   *  Set up our app to handle pcl components
+   *  Initialise PCL elements
    * 
    */
 
-  π.app.components = {
 
-    items : [],
+  π.pcl.components = {
+
+    __items : [],
+    __elements : null,
+
+    // scan DOM for PCL components
+    __scan : function() {
+      var 
+        self    = π.pcl.components,
+        element = null;
+
+      self.__elements = document.getElementsByClassName("pcl");
+
+      for( var i = 0, count = self.__elements.length; i < count; i++ ) {
+        element = self.__elements.item(i);
+        π.pcl.components.add(element);
+      }
+
+      // we have pcl components, so it's an app
+      pi.log("found " +  count + " pcl component" + (count == 1) ? "" : "s" + " on page");
+
+      // return number of items found
+      return count;
+    },
+
+
+    // load found components into DOM
+    __load : function() {
+      var 
+        self    = π.pcl.components;
+
+      for( var i = 0, count = self.__elements.length; i < count; i++ ) {
+        element = self.__elements.item(i);
+        π.pcl.components.add(element);
+      }
+    },
 
     __init : function() {
+
+      return this.__scan();
     },
 
     add : function (elem) {
       var 
         component = {},
-        self = π.app.components;
+        self      = π.pcl.components;
 
-      component.element = elem;
-      component.index   = self.items.length;
+      component.element   = elem;
+      component.index     = self.__items.length;
+      component.name    = elem.getAttribute("data-name");
 
-      return self.items.push(component);
+
+      return self.__items.push(component);
     },
 
     forEach : function (callback) {
-      π.app.components.items.forEach(callback);
+      π.pcl.components.__items.forEach(callback);
     },
 
     // Array Remove - By John Resig (MIT Licensed)
     remove : function (from, to) {
       var 
-        rest = self.items.slice((to || from) + 1 || self.items.length);
+        rest = this.__items.slice((to || from) + 1 || this.__items.length);
         
-        self.items.length = from < 0 ? self.items.length + from : from;
-        return self.items.push.apply(self.items, rest);
+        this.__items.length = from < 0 ? this.__items.length + from : from;
+        return this.__items.push.apply(this.__items, rest);
     }
   };
 
 
 
+  /**
+   *  Set up our app to handle pcl forms
+   * 
+   */
 
-  // look for pcl components
-  var 
-    elements    = document.getElementsByClassName("pcl"),
-    components  = document.getElementsByClassName("pcl component"),
-    forms       = document.getElementsByClassName("pcl form");
-  var
-    count = elements.length; 
+  π.pcl.forms = {
 
+    __items : [],
+    __elements : null,
 
-  if(count>0) {
+    // scan DOM for PCL forms
+    __scan : function() {
+      var 
+        item = null,
+        self = π.pcl.forms;
 
-    // we have pcl components, so it's an app
-    pi.log("found " +  count + " pcl elements" + (count == 1) ? "" : "s" + " on page");
-    // load modules for a web app with session support
+      self.__elements = document.getElementsByClassName("pcl form");
 
-    for( var i = 0; i < count; i++ ) {
-      pi.log("adding component: " + components.item(i).className);
-      π.app.components.add(components.item(i));
+      for( var i = 0, count = self.__elements.length; i < count; i++ ) {
+        item = self.__elements.item(i);
+        // pi.log("adding form: " + item.className, item);
+        π.pcl.forms.add(item);
+      }
+
+      // we have pcl forms, so it's an app
+      pi.log("found " +  count + " pcl form" + (count == 1) ? "" : "s" + " on page");
+
+      // return number of items found
+      return count;
+    },
+
+    __init : function() {
+
+      return this.__scan();
+    },
+
+    add : function (elem) {
+      var 
+        form = {},
+        self = π.pcl.forms;
+
+      form.element = elem;
+
+      // new item's index will be same as current array length
+      form.index   = self.__items.length;
+
+      // return new item count
+      return self.__items.push(form);
+    },
+
+    forEach : function (callback) {
+      π.pcl.forms.__items.forEach(callback);
+    },
+
+    // Array Remove - By John Resig (MIT Licensed)
+    remove : function (from, to) {
+      var 
+        rest = this.__items.slice((to || from) + 1 || this.__items.length);
+        
+        this.__items.length = from < 0 ? this.__items.length + from : from;
+        return this.__items.push.apply(this.__items, rest);
     }
-
-    π.app.components.__init();
-  }
+  };
 
 
   π.pcl._loaded = true;

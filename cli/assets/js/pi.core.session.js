@@ -16,16 +16,13 @@
 
     // private
 
-    __socket         : null,
-    __sessionsocket  : null,
-    __initialized    : false,
+    __socket        : null,
+    __initialized   : false,
 
-    __sessionserver  : window.location.hostname,
-    __protocol       : 'ws://',
-    __initport       : 8000,
-    __inituri        : '/session',
-    __sessionport    : 8101,
-    __sessionuri     : '',
+    __server        : window.location.hostname,
+    __protocol      : 'ws://',
+    __port          : 8000,
+    __uri           : '',
 
 
     // protected
@@ -79,7 +76,7 @@
       π.timer.start("session.init");
 
       var 
-        host        = 'ws://' + this.__sessionserver + ':' + this.__initport + this.__inituri;
+        host        = 'ws://' + this.__server + ':' + this.__port + this.__uri;
 
       if(this.__initialized === true){
         //something is not right
@@ -129,7 +126,7 @@
       var
         self    = π.core.session;
 
-      pi.log("onclose:" + event.data);
+      pi.log("onclose:", event);
     },
 
 
@@ -153,60 +150,15 @@
 
 
     __startSession : function (host) {
-      var 
-        self = π.core.session;
-
-
       try {
-        pi.log('Connecting session request socket: ' + host);
-        self.__socket = self.__createSocket(host);
-
-        self.__socket.addEventListener('error', function(error) {
-          self.__handleError(error, self);
-        });
-
-        self.__socket.addEventListener('open', function(event) {
-          pi.log('Opened session request socket. Event: ', event);
-          π.timer.stop("session.init");
-          π.timer.start("session.request");          
-          self.send({command: 'session'});
-        });
-
-        self.__socket.addEventListener('message', function(event) {
-
-          var
-            json = JSON.parse(event.data);
-          var
-            message = json.content;
-
-          pi.log('Received (' + event.data.length + ' bytes): ' + event.data);
-          // handle message event
-          if(message.OK) {
-
-            // pi.log(message);
-            // we have to release the execution pointer to allow the session to start up
-            setTimeout(function (self) {
-              π.timer.stop("session.request");
-              self.__sessionsocket = self.__createSocket('ws://' + self.__sessionserver + ":" + message.sessionPort);
-              self.__sessionsocket.addEventListener("error", self.__onerror);
-              self.__sessionsocket.addEventListener("open", self.__onopen);
-              self.__sessionsocket.addEventListener("close", self.__onclose);
-              self.__sessionsocket.addEventListener("message", self.__onmessage);
-            }, 1, self );
-            π.debug('OK', message);
-          }
-          else {
-            π.debug('Not OK', message);
-          }
-
-        });
-
-        this.__socket.addEventListener('close', function(event) {
-
-          // handle close event
-          pi.log('Session closed. Status -> ' + this.readyState);
-        });
-      return true;
+        pi.log('Connecting session socket: ' + host);
+        if (false !== (this.__socket = this.__createSocket(host))) {
+          this.__socket.addEventListener('error', this.__onerror);
+          this.__socket.addEventListener('open', this.__onopen);
+          this.__socket.addEventListener('message', this.__onmessage);
+          this.__socket.addEventListener('close', this.__onclose);
+          return true;
+        }
       }
       catch (ex) {
         pi.log(ex.name + ": " + ex.message, ex);
@@ -224,18 +176,13 @@
         self = π.core.session;
 
       try {
-        if(self.__sessionsocket && (self.__sessionsocket.readyState === 1) ){
-          self.__sessionsocket.send(JSON.stringify(obj));
-          return true;
-        }
-        else if(self.__socket && (self.__socket.readyState === 1) ){
+        if(self.__socket && (self.__socket.readyState === 1) ){
           self.__socket.send(JSON.stringify(obj));
           return true;
         }
         else {
           pi.log("Error: Socket not ready.");
           pi.log("__socket.readyState: " + self.__socket.readyState);
-          pi.log("__sessionsocket.readyState: " + self.__sessionsocket.readyState);
           return false;
         }
       }
@@ -254,8 +201,6 @@
 
       self.__socket.close();
       self.__socket = null;
-      self.__sessionsocket.close();
-      self.__sessionsocket = null;
     },
 
 
@@ -275,7 +220,6 @@
 
   // Create pi.session as an alias for pi.core.session 
   π.session = π.core.session;
-  
+
+  // do the thing
   π.session._loaded = π.session.start();
-
-

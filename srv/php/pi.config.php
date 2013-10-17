@@ -3,10 +3,14 @@
     /**
      *  @author Johan Telstad <jt@enfield.no>
      *  
-     *  Config file for Pi
+     *  Config file for Pi Server
      * 
      */
 
+
+    if (!defined('DEBUG')) {
+      define('DEBUG', false);
+    }
 
 
     if(DEBUG) {
@@ -48,7 +52,7 @@
 
 
     // Redis settings
-    define('REDIS_SOCK', '/var/run/redis/redis.sock');
+    define('REDIS_SOCK', '/var/data/redis/redis.sock');
 
 
     // Redis database names and numbers

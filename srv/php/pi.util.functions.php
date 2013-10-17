@@ -1,10 +1,10 @@
 <?php
 
 
-  if(!defined('PI_ROOT')){
-    define('PI_ROOT', '/home/kroma/dev/www/pi/srv/php/');  
+  if(!defined('PHP_ROOT')){
+    define('PHP_ROOT', __DIR__ . '/');  
+    require_once(PHP_ROOT."pi.config.php");
   }
-  require_once(PI_ROOT."pi.config.php");
 
 
   function getFormattedTime($timestamp = false) {

@@ -29,7 +29,7 @@
 
   // include utility classes and libraries
   require_once(PHP_ROOT."pi.exception.php");
-  require_once(PHP_ROOT."pi.util.php");
+  require_once(PHP_ROOT."pi.util.functions.php");
 
 
 
