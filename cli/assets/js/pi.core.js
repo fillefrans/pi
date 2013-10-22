@@ -1,6 +1,6 @@
   /**
    *
-   * π v0.3
+   * π v0.4.0
    *
    * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
    *
@@ -120,7 +120,7 @@
 
               if(item && (typeof item.callback === "function")) {        
 
-                pi.log("invoking " + id + " after " + ( (new Date().getTime()) - item.timestamp ) + "ms");
+                pi.log("invoking callback " + id + " after " + ( (new Date().getTime()) - item.timestamp ) + "ms");
                 result = item.callback.call(this, data);
                 // clear callback item
                 item = null;
@@ -166,6 +166,7 @@
              * 
              */
 
+            // private section
             __touchmove : function(event) {
               console.log("touchmove");
               event.preventDefault();
@@ -179,6 +180,24 @@
             __touchend : function(event) {
               console.log("touchend");
               event.preventDefault();
+            },
+
+
+            // public functions
+            trigger : function(eventName, eventData){
+              var
+                eventObject = null,
+                eventName   = eventName   || false,
+                eventData   = eventData   || false;
+
+              if(!eventName){
+                return false;
+              }
+              if(!eventData) {
+                window.dispatchEvent(new CustomEvent(eventName));
+              } else {
+                window.dispatchEvent(new CustomEvent(eventName, eventData));
+              }
             }
 
           };
@@ -442,20 +461,19 @@
      * try to read the value directly. 
      * 
      * @param  {string}     eventaddress  Address in the pi namespace to wait for
-     * @param  {Function}   onerror       Callback on error
-     * @param  {Function}   onresult      Callback when return value available
+     * @param  {Function}   callback      Callback when return value available
      * @return {boolean}                  Should always return true
      */
 
-    π.await = function(eventaddress, onresult, timeout){
+    π.await = function(eventaddress, callback, timeout){
     
       if(eventaddress.substring(0,7)==='pi.app.') {
         // await named event locally
-        π.events.subscribe(eventaddress, onresult);
+        π.events.subscribe(eventaddress, callback);
       }
       else {
         // request a named event from the server
-        π._send("await", eventaddress, timeout, onresult);
+        π._send("await", eventaddress, timeout, callback);
       }
     };
 
@@ -472,9 +490,9 @@
      * @return {boolean}              Result if success, false if failure
      */
 
-    π.read = function(address, onresult){
+    π.read = function(address, callback){
     
-      return π._send("read", address, null, onresult);
+      return π._send("read", address, null, callback || false);
     };
 
 
@@ -505,18 +523,21 @@
      * @param  {string}     command   pi command to issue
      * @param  {string}     address   Address in the pi namespace to read from
      * @param  {object}     data      The data to send
-     * @param  {Function}   onresult  Callback when return value available
+     * @param  {Function}   callback  Callback when return value available
      * @return {boolean}              Result if success, false if failure
      */
 
-    π._send = function(command, address, data, onresult){
+    π._send = function(command, address, data, callback){
       var
         packet = {
           command   : command, 
           address   : address, 
-          data      : data, 
-          callback  : π.core.callback.add(onresult)
+          data      : data
         };
+
+        if(typeof callback === "function") {
+          packet.callback = π.core.callback.add(callback);
+        }
 
         if(!!π.session._loaded) {
           pi.log("Sending packet:", packet);
@@ -561,11 +582,11 @@
      * @return {boolean}              True for success, false for failure
      */
 
-    π.require = function(module, async, defer, callback){
+    π.require = function(module, async, defer, callback, onerror){
 
       if (π.loaded[module.replace(/\./g,'_')]) {
         if(typeof callback==="function") {
-          this.callback.call("loaded");
+          callback.call(this);
         }
         return true;
       }
@@ -576,30 +597,38 @@
         script  = document.createElement('script');
 
 
+
       script.async      = async || true;
       script.defer      = defer || true;
       script.src        = path + module + '.js';
       script.self       = script;
+
+      // add some extra vars to the script object
+      // so we can reference them in the event handlers
       script.module     = module;
       script.modname    = module.replace(/\./g,'_');
-      script.callback   = callback || false;
+      script.callback   = callback  || false;
+      script.onerror    = onerror   || false;
 
       pi.timer.start(module);
 
-      script.onload = function (event) {
+      script.onload = function () {
         var
           loadtime = π.timer.stop(this.modname);
 
         π.loaded[this.modname] = { time: (new Date()).getTime(), loadtime: loadtime };
         if(this.callback) {
-          this.callback.call(event);
+          this.callback.call(this);
         }
       };
 
       script.onerror = function (error) {
         pi.log('error loading module: ' + this.module, error);
-        if(this.callback) {
-          this.callback.call(error);
+        if(this.onerror) {
+          this.onerror.call(this, error);
+        }
+        else {
+          throw "Error loading required module '" + this.module + "' from " + this.src;
         }
       };
 
@@ -759,37 +788,11 @@
      *
      */
 
+  π.require("core.session", false, false);
+  π.require("core.tasks",   false, false);
 
-  π.log("Page loaded in " + ((new Date()).getTime() - π.__sessionstart) + " ms. Initializing pi...");
-
-  // start a timer for the platform initialization
-  π.timer.start("pi.initialization");
-
-
-  pi.log("Loading core modules...");
-
-  π.require("core.session", false, false, function (module) {
-    // pi.log("loaded: core.session", module);
-  });
-
-  π.require("core.tasks", false, false, function (module) {
-    // pi.log("loaded: core.session", module);
-  });
-
-  pi.log("Loading app modules...");
-
-  π.require("app", false, false, function (module) {
-    // pi.log("loaded: app", module);
-  });
-
-  π.require("pcl", false, false, function (module) {
-    // pi.log("loaded: pcl", module);
-  });
-
-
-
-  π.log("Pi initialized in " + π.timer.stop("pi.initialization") + " ms.");
-  
+  π.require("app", false, false);
+  π.require("pcl", false, false);
 
   /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
   window.addEventListener('load', function(e) {

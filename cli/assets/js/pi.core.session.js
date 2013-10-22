@@ -7,7 +7,7 @@
  *
  * 
  *  We should implement a feedback mechanism for js errors
- *  That way we could monitor apps in the wild and pick up on problems quickly
+ *  That way we can monitor apps in the wild and pick up on problems quickly
  * 
  */
 
@@ -51,26 +51,33 @@
       var
         packet   = JSON.parse(event.data);
 
-      // publish all messages on local session channel, for debugging
-      π.events.publish('pi.session', packet);
+      // publish all messages on local debug channel, for debugging
+      π.events.publish('debug.pi.session', packet);
 
-      if(!!packet.address) {
-        pi.log("publishing packet to '" + packet.address + "' : ", packet);
-        π.events.publish(packet.address, packet);
-      }
-      if(!!packet.callback) {
+      // packet has a callback?
+      if( typeof packet.callback === "function" ) {
         pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
-        
+
+        // invoke callback, pass along packet
         π.core.callback.call(packet.callback, packet);
       }
+      // packet has an address?
+      else if(packet.address instanceof String) {
+        pi.log("publishing packet to '" + packet.address + "' : ", packet);
+
+        // publish to address
+        π.events.publish(packet.address, packet);
+      }
+      // packet has neither address or callback
       else {
+        // orphan packet - no address or callback
         pi.log("onmessage [" + typeof packet + "] : ", packet);
       }
     },
 
 
 
-    //private
+    // private
 
     __init : function (DEBUG) {
       π.timer.start("session.init");
@@ -79,7 +86,7 @@
         host        = 'ws://' + this.__server + ':' + this.__port + this.__uri;
 
       if(this.__initialized === true){
-        //something is not right
+        // something is not right
         pi.log("error: __init() called twice ");
         return false;
       }
@@ -153,10 +160,11 @@
       try {
         pi.log('Connecting session socket: ' + host);
         if (false !== (this.__socket = this.__createSocket(host))) {
-          this.__socket.addEventListener('error', this.__onerror);
-          this.__socket.addEventListener('open', this.__onopen);
+
+          this.__socket.addEventListener('error',   this.__onerror);
+          this.__socket.addEventListener('open',    this.__onopen);
           this.__socket.addEventListener('message', this.__onmessage);
-          this.__socket.addEventListener('close', this.__onclose);
+          this.__socket.addEventListener('close',   this.__onclose);
           return true;
         }
       }
@@ -166,10 +174,10 @@
       }
     },
 
-    //protected
+    // protected
 
 
-    //public
+    // public
 
     send : function (obj) {
       var
@@ -197,7 +205,7 @@
       var
         self = π.core.session;
 
-      pi.log('Goodbye!');
+      pi.log('Closing session socket.');
 
       self.__socket.close();
       self.__socket = null;
@@ -223,3 +231,4 @@
 
   // do the thing
   π.session._loaded = π.session.start();
+
