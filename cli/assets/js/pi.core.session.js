@@ -15,7 +15,6 @@
   π.core.session = {
 
     // private
-
     __socket        : null,
     __initialized   : false,
 
@@ -26,12 +25,12 @@
 
 
     // protected
+    _connected  : false,
 
 
     // public
-
-    active    : false,
-    user      : null,
+    active      : false,
+    user        : null,
 
 
 
@@ -108,12 +107,19 @@
 
 
     __onopen : function (event) {
-      // var
-      //   self = π.core.session,
-      //   bootstraptime = (new Date()).getTime() - π.__sessionstart;
+      var
+        self = π.core.session,
+        bootstraptime = (new Date()).getTime() - π.__sessionstart;
 
+      self._connected = true;
+
+      π.events.trigger('pi.session.ready');
+
+      // smallish hack, because we don't do login yet
+      pi.events.trigger('pi.session.start');
       
-      pi.log("pi session started in " + π.timer.stop("pi.session") + "\nElapsed since page head eval: " + ((new Date()).getTime() - π.__sessionstart) + "ms.");
+      pi.log("pi session started in " + π.timer.stop("pi.session") + "ms.");
+      pi.log("pi bootstrapped in " + bootstraptime + "ms.");
 
       // lists all timers in console
       pi.timer.history.list();
@@ -178,6 +184,50 @@
 
 
     // public
+
+    /** π.core.session.addStreamListener
+     *
+     * Listen to an address in the global namespace via session WebSocket
+     * 
+     * @param  {string}     address   Address in the pi namespace
+     * @param  {Function}   listener  Callback for data chunks
+     * @return true or false
+     */
+
+
+    addStreamListener : function (address, listener) {
+      var
+        self = π.core.session,
+        commandpacket = { 
+          command: "subscribe",
+          address : address,
+          data : address
+        };
+
+      // create the listener
+      π.events.subscribe(address, listener);
+
+      // request the stream
+      return self.send(commandpacket);
+    },
+
+
+    removeStreamListener : function (address, listener) {
+      var
+        self = π.core.session,
+        commandpacket = { 
+          command: "unsubscribe",
+          address : address,
+          data : address
+        };
+
+      // remove the listener
+      π.events.unsubscribe(address, listener);
+
+      // stop the stream
+      return self.send(commandpacket);
+    },
+
 
     send : function (obj) {
       var

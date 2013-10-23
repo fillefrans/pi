@@ -106,7 +106,7 @@
 
     class PiServer implements IWebSocketServerObserver{
 
-        protected $DEBUG          = true;
+        protected $DEBUG          = DEBUG;
         protected $currentdb      = 0;
         protected $server         = null;
         protected $address        = 'tcp://0.0.0.0:8000';
@@ -208,15 +208,15 @@
           }
 
 
-        // copy original message
-        $reply = json_decode($msg->getData(), true);
+          // copy original message
+          $reply = json_decode($msg->getData(), true);
 
-        // replace data, but keep address and callback params unchanged
-        $reply['data'] = $message;
+          // replace data, but keep address and callback params unchanged
+          $reply['data'] = $message;
 
-        // echo callback and address parameters back to client
-        // along with the new data
-        $user->sendMessage(WebSocketMessage::create(json_encode($message)));
+          // echo callback and address parameters back to client
+          // along with the new data
+          return $user->sendMessage(WebSocketMessage::create(json_encode($message)));
         }
 
 
@@ -279,13 +279,13 @@
               $result = $this->query($message, $user);
               break;
             case 'subscribe':
-              $result = $this->subscribe($message, $user); 
+              $result = $this->subscribe($message['address'], $user); 
               break;
             case 'unsubscribe':
-              $result = $this->unsubscribe($message, $user); 
+              $result = $this->unsubscribe($message['address'], $user); 
               break;
             case 'publish':
-              $result = $this->publish($this->address, $message);
+              $result = $this->publish($message['address'], $message);
               break;
             case 'queue':
               $result = $this->handleQueueRequest($message, $user);
@@ -411,13 +411,13 @@
           $result = false;
 
 
-          if($user !== null) {
+          if($user!==null) {
             if(isset($this->subscriptions[$address])) {
               $result = $this->subscriptions[$address]->addSubscriber($user);
             }
             else {
               $this->subscriptions[$address] = new PiSubscription($address, $user);
-              if(false === ($result = $this->pubsub->subscribe($address, [$this->subscriptions[$address], 'onPubSubMessage']))){
+              if(false === ($result = $this->pubsub->subscribe([$address], [$this->subscriptions[$address], 'onPubSubMessage']))){
                 throw new PiException("Error subscribing to '$address'", 1);
               }
               else {

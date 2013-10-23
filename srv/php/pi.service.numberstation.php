@@ -57,6 +57,14 @@
           $this->pubsub->publish("pi.service.numberstation.randomwalk", $this->randwalk_position);
         }
 
+        protected function randomVote() {
+          $packet = array();
+
+          $packet['county'] = rand(21);
+          $packet['vote'] = rand(9);
+          
+          $this->pubsub->publish("pi.service.numberstation.randomvote", json_encode($packet));
+        }
 
         protected function tick() {
           // runs at system-configured intervals (TICKS_PER_SECOND)

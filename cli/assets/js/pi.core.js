@@ -40,10 +40,12 @@
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
+    π.const       = {};
 
-    π.PI_ROOT     = "assets/js/";
-    π.LIB_ROOT    = "../../assets/js/";
-    π.SRV_ROOT    = "../../../srv/";
+    π.const.PI_ROOT     = "assets/js/";
+    π.const.LIB_ROOT    = "../../assets/js/";
+    π.const.API_ROOT    = "/api/";
+    π.const.SRV_ROOT    = "../../../srv/";
     
 
     //will keep an updated list over which modules are loaded
@@ -53,9 +55,6 @@
     // create pi as an alias for π
     var 
       pi  = π;
-
-
-
 
 
     /*    begin core modules     */
@@ -159,48 +158,7 @@
 
          
 
-          π.events = π.events || {
-
-            /**
-             * Event handlers
-             * 
-             */
-
-            // private section
-            __touchmove : function(event) {
-              console.log("touchmove");
-              event.preventDefault();
-            },
-
-            __touchstart : function(event) {
-              console.log("touchstart");
-              event.preventDefault();
-            },
-
-            __touchend : function(event) {
-              console.log("touchend");
-              event.preventDefault();
-            },
-
-
-            // public functions
-            trigger : function(eventName, eventData){
-              var
-                eventObject = null,
-                eventName   = eventName   || false,
-                eventData   = eventData   || false;
-
-              if(!eventName){
-                return false;
-              }
-              if(!eventData) {
-                window.dispatchEvent(new CustomEvent(eventName));
-              } else {
-                window.dispatchEvent(new CustomEvent(eventName, eventData));
-              }
-            }
-
-          };
+          π.events = π.events || {};
 
 
         /** PubSub.js 
@@ -297,11 +255,8 @@
                 } else if (Array.isArray(callback_args)) {
                   args = callback_args;
                 } else {
-                  args = [];
+                  args = [callback_args];
                 } 
-                if (args.length === undefined) {
-                  args = [args];
-                }
                 
                 var cache = subscriptions;
                 var stack = [];
@@ -378,7 +333,37 @@
           appreciated but not required: https://github.com/Groxx/PubSub
         */
 
-          PubSub(π.events, true);
+          PubSub(π.events, false);
+
+
+
+
+
+          // public functions
+          π.events.trigger = function(eventName, eventData){
+            var
+              eventObject = null,
+              eventName   = eventName   || false,
+              eventData   = eventData   || false;
+
+            if(!eventName){
+              return false;
+            }
+            if(!eventData) {
+              window.dispatchEvent(new CustomEvent(eventName));
+            } else {
+              window.dispatchEvent(new CustomEvent(eventName, eventData));
+            }
+          };
+
+
+        // set up aliases for the trigger function
+        π.events.emit           = π.events.trigger;
+        π.events.dispatch       = π.events.trigger;
+
+
+
+
 
           π.events._loaded = true;
 
@@ -432,6 +417,7 @@
 
 
 
+
     /** π.listen
      *
      * Listen to an address in the global namespace via EventSource/SSE
@@ -439,16 +425,54 @@
      * @param  {string}     address   Address in the pi namespace to listen to
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback for each message
-     * @return {void}
+     * @return EventSource
      */
 
 
     π.listen = function (address, callback, onerror) {
       var
-        source  = new EventSource('/pi/pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
+        source  = new EventSource(π.const.API_ROOT + 'pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
 
-      source.addEventListener('error',    onerror,  false);
-      source.addEventListener('message',  callback, false);
+      if(typeof onerror === "function") {
+        source.addEventListener('error',    onerror,  false);
+      }
+      if(typeof callback === "function") {
+        source.addEventListener('message',  callback, false);
+      }
+
+      return source;
+    };
+
+
+    /** π.readstream
+     *
+     * Listen to an address in the global namespace
+     * 
+     * @param  {string}     address   Address in the pi namespace to listen to
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   listener  Callback for stream data
+     * @return EventSource
+     */
+
+
+    π.readstream = function (address, listener, onerror) {
+      if(!π.session._connected) {
+        if(typeof onerror === "function") {
+          onerror.call(this, "Error: No session in readstream().");
+          return false;
+        }
+      }
+
+      if(typeof listener === "function") {
+        return π.session.addStreamListener(address, listener);
+      }
+      else {
+        if(typeof onerror === "function") {
+          onerror.call(this, "Error: No listener in readstream().");
+        }
+        return false;
+      }
+
     };
 
 
@@ -469,11 +493,11 @@
     
       if(eventaddress.substring(0,7)==='pi.app.') {
         // await named event locally
-        π.events.subscribe(eventaddress, callback);
+        return π.events.subscribe(eventaddress, callback);
       }
       else {
         // request a named event from the server
-        π._send("await", eventaddress, timeout, callback);
+        return π._send("await", eventaddress, timeout, callback);
       }
     };
 
@@ -514,7 +538,7 @@
 
 
 
-    /** π.send
+    /** π._send
      *
      * Handle app request for sending a message to an address in the pi namespace
      * Conform to pi packet specification
@@ -712,6 +736,7 @@
         }
       },
 
+
       stop : function(timerid) {
         var
           timers  = π.timer.timers,
@@ -743,14 +768,17 @@
         return result;
       },
 
+
       history : {
         
         log   : [],
+
 
         add : function (obj) {
           π.timer.history.log.push(obj);
           π.events.publish("pi.timer.on", ["add", obj]);
         },
+
 
         list  : function (callback){
           var
@@ -761,9 +789,10 @@
             if(callback) {
               callback.call(index, value);
             }
-            pi.log(value.id + ": " + value.time + "ms.");
+            pi.log("timer[" + value.id + "] : " + value.time + "ms.");
           });
         },
+
 
         clear : function () {
           var
