@@ -72,8 +72,8 @@
           var send = $("#form").formToJSON();
           $('#result').html('Sending: <br /><pre>' + send + '</pre>');
           $.ajax({
-            url: "http://www.kromaviews.no/pi/webservice/job/",
-            //type: "POST",
+            url: "/api/app/views/job/",
+            type: "POST",
             data: send,
             error: function(xhr, error) {
               $('#result').append( '<br />AJAX ERROR! <br />Status = ' + xhr.status + ' <br />Message = ' + error + ' <br />Response = ' + JSON.stringify(xhr)+'</div>' );

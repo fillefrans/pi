@@ -30,7 +30,7 @@
     define('PI_ROOT',           __DIR__ . "/../../");
     define('SRV_ROOT',          __DIR__ . "/../");
     define('PHP_ROOT',          dirname(__FILE__) . "/");
-    define('UTILITIES_DIR',     PHP_ROOT . 'utility/');
+    define('UTILITIES_DIR',     PHP_ROOT . 'util/');
 
     define('DATA_ROOT',         SRV_ROOT . "data/");
     define('FILE_ROOT',         SRV_ROOT . "data/files/");
@@ -73,9 +73,13 @@
 
     define('PI_PCL',     11);
     define('PI_MVRCK',   12);
+    define('PI_CACHE',   13);
 
     define('PI_TMP',     14);
     define('PI_DBG',     15);
 
+    define('PI_TEMP',   PI_TMP);
+    define('PI_DEBUG',  PI_DBG);
+    define('PI_SERVICE',  PI_SVC);
 
 ?>

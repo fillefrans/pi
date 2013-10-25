@@ -17,8 +17,7 @@
   // load global config settings for views
 
 
-  require_once("../../../../srv/pi.php");
-
+  require_once( __DIR__ . "/../../../../../srv/php/pi.php");
 
 
 
@@ -88,6 +87,7 @@
       $reply['OK']      = 0;
       $reply['message'] = 'Missing parameter: apikey->'.$request['apikey'];
       $debug[] = 'Missing parameter: apikey';
+      $debug[] = print_r($request, true);
       return false;
     }
     elseif(false===verifyApiKey($request['apikey'])){
@@ -176,7 +176,7 @@
     $debug[] = 'Successfully connected to Redis.';
   }
 
-  include UTILITIES_DIR."views.functions.php";
+  // include UTILITIES_DIR."views.functions.php";
 
   if (false!==($packedNumber = packNumber($request['phone']))) {
     $request['packedNumber']=$packedNumber;

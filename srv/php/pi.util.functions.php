@@ -44,7 +44,7 @@
     }
 
 
-    $query    = "INSERT INTO cache ($fields) 
+    $query    = "REPLACE INTO cache ($fields) 
                   VALUES('$values');";
     $debug[]   = 'Running query: ' . $query;
 
@@ -116,9 +116,8 @@
     }
 
 
-    // create a list of our values. The last 4 are optional, so check availability before adding to array
+    // create a list of our values. The last 4 are optional
     $values = implode(", ", array('idx'=> 'SHA1('.$request['phone'].')', $request['job'], is_null($cache_id) ? 'NULL' : $cache_id, isset($request['param1']) ? $request['param1'] : "NULL", isset($request['param2']) ? $request['param2'] : "NULL",isset($request['param3']) ? $request['param3'] : "NULL",isset($request['param4']) ? $request['param4'] : "NULL",)); 
-
 
     $query = "INSERT INTO reportlines (idx, report_id, cache_id, param1, param2, param3, param4) 
               VALUES($values);";

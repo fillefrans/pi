@@ -461,7 +461,7 @@
               throw new PiException("Error unsubscribing from '$address'", 1);
             }
           }
-          return $result;
+          return $subscribercount;
         }
 
 
