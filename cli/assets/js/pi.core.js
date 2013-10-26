@@ -40,13 +40,21 @@
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
     π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
 
-    π.const       = {};
 
+
+
+    π.const = {};
+
+    // some useful constants
     π.const.PI_ROOT     = "assets/js/";
     π.const.LIB_ROOT    = "../../assets/js/";
     π.const.API_ROOT    = "/api/";
     π.const.SRV_ROOT    = "../../../srv/";
     
+    π.const.DEFAULT_TIMEOUT = 30;
+
+
+
 
     //will keep an updated list over which modules are loaded
     π.loaded = {};
@@ -71,8 +79,6 @@
           */
 
 
-          var π = π  || {};
-
           π.core.callback = π.core.callback || {
 
             /**
@@ -95,7 +101,7 @@
             add : function (callback) {
 
               // check input
-              if(typeof callback !== "function") {
+              if(typeof callback != "function") {
                 pi.log("Error: Tried to add non-function as callback:", callback);
                 return false;
               }
@@ -117,9 +123,9 @@
                 item    = π.core.callback.__items[id],
                 result  = false;
 
-              if(item && (typeof item.callback === "function")) {        
+              if(item && (typeof item.callback == "function")) {        
 
-                pi.log("invoking callback " + id + " after " + ( (new Date().getTime()) - item.timestamp ) + "ms");
+                // pi.log("invoking callback " + id + " after " + ( (new Date().getTime()) - item.timestamp ) + "ms");
                 result = item.callback.call(this, data);
                 // clear callback item
                 item = null;
@@ -153,10 +159,6 @@
          *           @copyright 2011 by Steven Littiebrant
         **/
 
-
-          var π = π  || {};
-
-         
 
           π.events = π.events || {};
 
@@ -202,21 +204,21 @@
               passPath = false,
               bindTo = this;
               
-              if (typeof(uniqueName) === "string") {
+              if (typeof(uniqueName) == "string") {
                 unique = uniqueName;
-              } else if (typeof(alsoPassPath_or_unique) === "string") {
+              } else if (typeof(alsoPassPath_or_unique) == "string") {
                 unique = alsoPassPath_or_unique;
-              } else if (typeof(obj_or_alsoPassPath_or_unique) === "string") {
+              } else if (typeof(obj_or_alsoPassPath_or_unique) == "string") {
                 unique = obj_or_alsoPassPath_or_unique;
               }
 
-              if (typeof(alsoPassPath_or_unique) === "boolean") {
+              if (typeof(alsoPassPath_or_unique) == "boolean") {
                 passPath = alsoPassPath_or_unique;
-              } else if (typeof(obj_or_alsoPassPath_or_unique) === "boolean") {
+              } else if (typeof(obj_or_alsoPassPath_or_unique) == "boolean") {
                 passPath = obj_or_alsoPassPath_or_unique;
               }
               
-              if (typeof(obj_or_alsoPassPath_or_unique) === "object" || typeof(obj_or_alsoPassPath_or_unique) === "function") {
+              if (typeof(obj_or_alsoPassPath_or_unique) == "object" || typeof(obj_or_alsoPassPath_or_unique) == "function") {
                 bindTo = obj_or_alsoPassPath_or_unique;
               }
               
@@ -237,7 +239,7 @@
               // Recursively removes all instances of handler from the passed subscription chunk.
               var _deepUnsubscribe = function(cache, handler) {
                 for(sub in cache) {
-                  if(typeof(cache[sub]) !== "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
+                  if(typeof cache[sub] != "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
                   _deepUnsubscribe(cache[sub], handler);
                 }
                 _unsubscribe(cache, handler);
@@ -247,7 +249,8 @@
               // ie, "a.b.c" would call "c", then "b", then "a".
               // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
               bindTo.publish = function(sub, callback_args) {
-                var args=null;
+                var 
+                  args = null;
 
                 if (arguments.length > 2) {
                   // If passing args as a set of args instead of an array, grab all but the first.
@@ -258,8 +261,10 @@
                   args = [callback_args];
                 } 
                 
-                var cache = subscriptions;
-                var stack = [];
+                var 
+                  cache = subscriptions,
+                  stack = [];
+
                 sub = sub || "";
                 var s = sub.split(".");
                 if (passPath) args.push(s);
@@ -310,7 +315,7 @@
                     cache = cache[s[i]];
                   }
                 }
-                if (typeof(handler) === "boolean") {
+                if (typeof handler == "boolean") {
                   deep = handler;
                   handler = null;
                 }
@@ -340,29 +345,27 @@
 
 
           // public functions
-          π.events.trigger = function(eventName, eventData){
+          π.events.trigger = function(eventName, eventData, eventElem){
             var
-              eventObject = null,
+              eventElem   = eventElem   || window,
               eventName   = eventName   || false,
               eventData   = eventData   || false;
 
-            if(!eventName){
+            if(eventName===false){
               return false;
             }
-            if(!eventData) {
-              window.dispatchEvent(new CustomEvent(eventName));
+            if(eventData===false) {
+              eventElem.dispatchEvent(new CustomEvent(eventName));
             } else {
-              window.dispatchEvent(new CustomEvent(eventName, eventData));
+              eventElem.dispatchEvent(new CustomEvent(eventName, eventData));
             }
           };
 
 
-        // set up aliases for the trigger function
-        π.events.emit           = π.events.trigger;
-        π.events.dispatch       = π.events.trigger;
 
-
-
+          // set up aliases for the trigger function
+          π.events.emit           = π.events.trigger;
+          π.events.dispatch       = π.events.trigger;
 
 
           π.events._loaded = true;
@@ -387,7 +390,6 @@
 
 
     π.log = function(msg, obj) {
-
 
       if(!!obj){
         console.log(msg, obj);
@@ -430,14 +432,24 @@
 
 
     π.listen = function (address, callback, onerror) {
-      var
-        source  = new EventSource(π.const.API_ROOT + 'pi.io.sse.monitor.php' + ((address!='') ? '?address=' + encodeURI(address) : ''));
 
-      if(typeof onerror === "function") {
+        // early escapes
+        if(!!address) {
+          if(typeof callback != "function") {
+            return false;
+          }
+        } 
+        else {
+          return false;
+        }
+
+      var
+        source  = new EventSource( π.const.API_ROOT + 'pi.io.sse.monitor.php?address=' + encodeURI(address) );
+
+      source.addEventListener('message',  callback, false);
+
+      if(typeof onerror == "function") {
         source.addEventListener('error',    onerror,  false);
-      }
-      if(typeof callback === "function") {
-        source.addEventListener('message',  callback, false);
       }
 
       return source;
@@ -446,7 +458,7 @@
 
     /** π.readstream
      *
-     * Listen to an address in the global namespace
+     * Listen to a data stream in the global namespace
      * 
      * @param  {string}     address   Address in the pi namespace to listen to
      * @param  {Function}   onerror   Callback on error
@@ -457,17 +469,17 @@
 
     π.readstream = function (address, listener, onerror) {
       if(!π.session._connected) {
-        if(typeof onerror === "function") {
+        if(typeof onerror == "function") {
           onerror.call(this, "Error: No session in readstream().");
           return false;
         }
       }
 
-      if(typeof listener === "function") {
+      if(typeof listener == "function") {
         return π.session.addStreamListener(address, listener);
       }
       else {
-        if(typeof onerror === "function") {
+        if(typeof onerror == "function") {
           onerror.call(this, "Error: No listener in readstream().");
         }
         return false;
@@ -490,8 +502,15 @@
      */
 
     π.await = function(eventaddress, callback, timeout){
-    
-      if(eventaddress.substring(0,7)==='pi.app.') {
+      var
+        eventaddress  = eventaddress  || false,
+        timeout       = timeout       || π.const.DEFAULT_TIMEOUT;
+      
+      if( typeof eventaddress != "string" ) {
+        return false;
+      }
+
+      if( eventaddress.substring(0,7) == 'pi.app.' ) {
         // await named event locally
         return π.events.subscribe(eventaddress, callback);
       }
@@ -559,7 +578,7 @@
           data      : data
         };
 
-        if(typeof callback === "function") {
+        if(typeof callback == "function") {
           packet.callback = π.core.callback.add(callback);
         }
 
@@ -609,7 +628,7 @@
     π.require = function(module, async, defer, callback, onerror){
 
       if (π.loaded[module.replace(/\./g,'_')]) {
-        if(typeof callback==="function") {
+        if( typeof callback == "function" ) {
           callback.call(this);
         }
         return true;
@@ -694,7 +713,7 @@
           pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
         }
 
-        if(typeof ontick === "function") {
+        if( typeof ontick == "function" ) {
           tickid = setInterval(ontick, interval);
         }
 
@@ -724,7 +743,7 @@
           pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
         }
 
-        if(typeof ontick === "function") {
+        if(typeof ontick == "function") {
           tickid = setInterval(ontick, interval);
         }
 

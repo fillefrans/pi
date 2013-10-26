@@ -12,7 +12,7 @@
 
   define('REDIS_SOCK', '/var/data/redis/redis.sock');
 
-  $session = session_start();
+  // $session = session_start();
 
   header("Content-Type: text/event-stream; charset=utf-8");
   header('Cache-Control: no-cache'); 
@@ -79,6 +79,7 @@
       sendEvent("message", "subscribed to '$channel'");
     }
     catch (Exception $e) {
+      sendEvent("error", get_class($e) . ": " . $e->getMessage());
       $debug[] = get_class($e) . ": " . $e->getMessage();
     }
   }
@@ -109,7 +110,7 @@
 
     $redis = new Redis();
     try{ 
-      if(false===($redis->connect(REDIS_SOCK))){
+      if(false===($redis->pconnect(REDIS_SOCK))){
         sendEvent("error", 'Unable to connect to Redis.');
         return false;
       }
@@ -136,7 +137,7 @@ try {
 
   while (true) {
     // wait for messages from Redis
-    usleep(10000); 
+    usleep(100000);
   }
 
 }

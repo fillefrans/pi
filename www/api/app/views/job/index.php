@@ -39,6 +39,9 @@
    *
    */
   $redis = false;
+
+  $packet = array('address' => 'pi.data.app.views.job', 'data' => array());
+
   $request = json_decode(file_get_contents('php://input'), true);
   $reply = array('OK'=>0, 'message'=>"Ambiguous result: Script ran to the end without setting a reply.");
 
@@ -77,7 +80,7 @@
     //          3. we have a valid service key
     //          4. ?
 
-    global $reply, $debug;
+    global $reply, $debug, $packet;
 
     $reply['request'] = $request; //json_decode($rawrequest, true); 
 
@@ -103,6 +106,10 @@
       $debug[] = 'Missing parameter: job';
       return false;
     }
+    else {
+      $packet['address'] .= '.' . trim($request['job']);
+      $packet['data']['job'] = trim($request['job']);
+    }
 
     if ((!isset($request['phone'])) || (trim($request['phone']==""))) {
       // TODO: validate phone no.
@@ -123,8 +130,9 @@
    *  procedure
    */
   function publishJobItem() {
-    global $redis, $reply;
-    $redis->publish("pi.srv.job.test", $reply);
+    global $redis, $reply, $packet;
+
+    $redis->publish($packet['address'], json_encode($packet['data'], JSON_PRETTY_PRINT));
   }
 
 
@@ -133,8 +141,9 @@
    *  
    */
   function sendReply() {
-    global $reply, $redis, $debug;
-  //  publishJobItem();
+    // global $reply, $redis, $debug;
+    
+    publishJobItem();
     quit();
   }
 
@@ -192,6 +201,7 @@
         $debug[] = 'WARNING: Unable to retrieve cache_id from permanent cache.';
       }
       else{
+        $packet['data']['id'] = $cache_id;
         $debug[] = 'Retrieved cache_id from permanent cache: ' . $cache_id;
       }
       $timers['getCacheId'] = microtime(true)-$getstart;
@@ -236,6 +246,7 @@
       if (DEBUG) {
         $timers['DirektInfoWebService'] = microtime(true)-$addstart;
         $debug['ws_result'] = $row;
+        $packet['data']['row'] = json_encode($row);
       }
       // TODO: verify that return value from encode_result will be false if something went wrong
       $reply['OK']=1;
