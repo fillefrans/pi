@@ -347,18 +347,40 @@
           // public functions
           π.events.trigger = function(eventName, eventData, eventElem){
             var
-              eventElem   = eventElem   || window,
               eventName   = eventName   || false,
-              eventData   = eventData   || false;
+              eventData   = eventData   || false,
+              dispatcher  = null,
+              customEvt   = null;
 
-            if(eventName===false){
+            // early escape
+            if(eventName === false){
               return false;
             }
-            if(eventData===false) {
-              eventElem.dispatchEvent(new CustomEvent(eventName));
-            } else {
-              eventElem.dispatchEvent(new CustomEvent(eventName, eventData));
+
+
+            // are we handicapped ?
+            if(π.browser.ie9 === true) {
+              dispatcher  = eventElem || document.body;
+              customEvt   = document.createEvent("CustomEvent");
+              if (eventData) {
+                customEvt.initCustomEvent(eventName, false, false, eventData);
+              }
+              else {
+                customEvt.initCustomEvent(eventName, false, false);
+              }
+              dispatcher.dispatchEvent(customEvt);
+
             }
+            else {
+              // we are not handicapped
+              dispatcher  = eventElem || window;
+              if(eventData===false) {
+                dispatcher.dispatchEvent(new CustomEvent(eventName));
+              } else {
+                dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
+              }
+            }
+
           };
 
 

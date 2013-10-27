@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <script>
+    var 
+      π  = {
+        DEBUG : true,
+        __sessionstart : (new Date()).getTime(),
+        browser : {
+          ie9         : false,
+          websockets  : window.WebSocket || window.MozWebSocket || false,
+          webworkers  : window.WebWorker || false
+        }
+      },
+      A_COOL_MILLION = 1000000;
+  </script>
+
+<!--[if gte IE 9]>
+  <script type="text/javascript"> π.browser.ie9 = true; </script>
+<![endif]-->
+
+  <title>π demo</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  
+  <!-- the core CSS for pi -->
+  <link rel="stylesheet" href="../../assets/css/pi.core.css">
+
+  <!-- the core CSS for pcl (the pi component library) -->
+  <link rel="stylesheet" href="../../assets/css/pi.pcl.css">
+
+  <!-- the app CSS -->
+  <!-- <link href='http://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'> -->
+  <link rel="stylesheet" href="assets/css/pi.app.css">
+  <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
+  <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+</head>
+ 
+<body class="pi">
+
+
+  <!-- This is the demo's div -->
+
+  <div id="demo" class="pcl" data-name="pcl.table.xfilter" data-address="pi.srv.job.test">
+    <p style="display: block; margin-top: 144px">
+      Demo av SMS-avstemning. Redigér parameterne og klikk på "send nå"-knappen for å sende stemmer til serveren.
+    </p>
+
+    <div class="pcl flexbox ontop">
+      <div class="pcl loginbox">
+        <form>
+          <fieldset id="login">
+            <p>
+            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="alert(this);" onblur="alert('onblur : ' + this);">brukernavn</span> med <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord">passord</span>. <input type="button" id="sender" onclick="pi.user.login();" value=" logg inn > " />
+            </p>
+            <p id="loginReply">
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+
+
+    <div class="pcl component">
+
+      <div class="pcl component">
+        <form>
+          <fieldset id="settings">
+            <p>
+            Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
+            </p>
+            <p id="voteReply">
+            </p>
+          </fieldset>
+        </form>
+      </div>
+
+      <div class="pcl component">
+        <menu id="xmenu">
+          <command label="sortér etter fylke" onclick="alert('yessir!')"> 
+          <command label="sortér etter låt"   onclick="alert('yessiree, bob!')"> 
+        </menu>
+
+        <table id="xfilter_table" contextmenu="xmenu">
+          <thead id="xfilter_table_head"><th>SMS-avstemning</th></thead>
+          <tbody id="xfilter_table_body">
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <script>
+
+    var
+      isSending = false;
+
+
+      function randomMobilePhoneNumber() {
+        var
+          packednumber = Math.floor(Math.random() * 20000000);
+
+        if(packednumber<10000000) {
+          return Math.round(packednumber/10) + 40000000;
+        }
+        else {
+          return Math.round(packednumber/10) + 90000000;
+        }
+      }
+
+
+      function sendVotes() {
+        var
+          votes     = parseInt(document.getElementById("spanVotes").innerHTML),
+          minutes   = parseInt(document.getElementById("spanMinutes").innerHTML),
+          voteReply = null,
+          xhr       = null,
+          rate      = 0,
+          interval  = null,
+          count     = 0,
+          seconds   = 0,
+          address   = '/api/app/views/job/',
+          params    = {
+            job     : 2,
+            apikey  : "kroma"
+          };
+
+        if(!!window.voteInterval) {
+          stopVotes();
+          document.getElementById("spanMinutes").innerHTML = 5;
+          return false;
+        }
+
+
+        if( isNaN(votes) || isNaN(minutes) ) {
+          alert("error: votes = " + votes + ", minutes = " + minutes);
+          return false;
+        }
+
+        // calculate votes per second
+        seconds = minutes * 60;
+        rate    = votes/(seconds);
+
+        voteReply = document.getElementById("voteReply"); 
+
+
+        // pi.log("sending votes @ " + rate + " / sec");
+        voteReply.innerHTML = "sending " + votes + " votes @ " + rate + " / sec, (every " + (1/rate) + " secs)";
+
+        // pi.log("interval is " + (1000/rate) + " millisec");
+
+
+        document.getElementById("sender").value = "stopp";
+        // document.getElementById("sender").onclick = stopVotes;
+        document.getElementById("spanVotes").contenteditable = false;
+        document.getElementById("spanMinutes").contenteditable = false;
+
+
+        window.minuteInterval = setInterval( function() {
+            var
+              mins  = Math.floor(--seconds/60),
+              secs  = seconds % 60,
+              clock = "";
+
+            clock = mins + ":" + (secs < 10 ? "0" : "") + secs;
+            document.getElementById("spanMinutes").innerHTML = clock;
+          }, 1000);
+
+        window.voteInterval = setInterval( function() {
+
+            if( ++count > votes ) {
+
+              stopVotes();
+              document.getElementById("spanVotes").innerHTML = votes;
+              document.getElementById("spanMinutes").innerHTML = minutes;
+              voteReply.innerHTML = "";
+              // document.getElementById("spanVotes").contenteditable = true;
+              // document.getElementById("sender").value = "send nå";
+              // document.getElementById("sender").onclick = sendVotes;
+            }
+            else {
+              document.getElementById("spanVotes").innerHTML = votes-count;
+              params['phone']   = randomMobilePhoneNumber();
+              params['param1']  = Math.floor(Math.random() * 9);
+              
+              // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
+              voteReply.innerHTML = "sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params);
+
+              xhr = new XMLHttpRequest();
+
+              xhr.onload = function(e) { 
+                var 
+                  json = this.responseText || '{ error : "responseText is undefined or empty." }';
+
+                // pi.log("api replied : " + json);
+                
+                var
+                  data = JSON.parse(json),
+                  status = {};
+
+                  status['OK']      = data['OK'];
+                  status['message'] = data['message'];
+                  status['request'] = data['request'];
+
+                voteReply.innerHTML = "api replied : " + JSON.stringify(status);
+              };
+
+              xhr.onerror = console.log;
+              xhr.open("post", address, true);
+              xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+              xhr.send(JSON.stringify(params));
+            }
+          }, 1000/rate);
+
+        return interval;
+
+      }
+
+
+
+
+      function stopVotes() {
+
+        document.getElementById("spanVotes").contenteditable = true;
+        document.getElementById("sender").value = "send nå";
+        document.getElementById("sender").onclick = sendVotes;
+        document.getElementById("voteReply").innerHTML = "not sending";
+
+        clearInterval(window.voteInterval);
+        clearInterval(window.minuteInterval);
+        
+        window.voteInterval   = null;
+        window.minuteInterval = null;
+
+        return false;
+      }
+
+
+      var 
+        xdiv      = document.getElementById("demo"),
+        xtable    = document.getElementById("xfilter_table"),
+        xhead     = document.getElementById("xfilter_table_head"),
+        xbody     = document.getElementById("xfilter_table_body"),
+        xlistener = null,
+
+
+        xfilter = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+          __data      : [],
+
+          __onerror : function (err) {
+            pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
+          },
+
+          __init : function() {
+
+          },
+
+
+          _addRow : function (row) {
+            var
+              trow      = document.createElement('tr'),
+              fragment  = document.createDocumentFragment(),
+              cell      = null,
+              newrow    = JSON.parse(row['row']);
+
+            for( var idx in newrow ) {
+
+              if(idx=="idx") {
+                continue;
+              }
+              if(idx=="direktinfo_id") {
+                continue;
+              }
+
+              if(idx=="type" && newrow[idx]=="unknown") {
+                // continue;
+              }
+
+              cell = document.createElement('td');
+              cell.classList.add(idx);
+              trow.appendChild(cell);
+              cell.appendChild(document.createTextNode(idx + " : " + newrow[idx]));
+            }
+
+            fragment.appendChild(trow);
+
+            // add to DOM element
+            return xbody.appendChild(fragment);
+          },
+
+
+          onData : function (message) {
+            var
+              packet  = JSON.parse(message.data),
+              self    = pi.maverick.xfilter,
+              data    = null,
+              row     = {};
+
+            row['id'] = packet.message
+
+            self._addRow(packet);
+
+            pi.log("data: '" + JSON.stringify(packet) + "' (" + typeof(message) + ")");
+
+          },
+
+
+          run : function() {
+
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("xfilter"),
+            this.__tmp        = this.__tmp || {};
+
+            this.__tmp.address = 'pi.data.app.views.job.2';
+
+
+            this.eventsource  = pi.listen("pi.data.app.views.job.2", this.onData, this.__onerror);
+            this.eventsource.addEventListener("data", this.onData, false);
+
+            // set up a listener
+            // π.events.subscribe(this.__tmp.address, this.onData, this.__onerror);
+
+            // request data stream, return eventsource object from π.listen()
+            // this.xlistener = π.listen(this.__tmp.address, this.onData, this.__onerror);
+            return !!this.listener;
+            // return pi.readstream(this.__tmp.address, this.onData, this.__onerror);
+
+          }
+        };
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.maverick.xfilter = xfilter;
+          pi.maverick.xfilter.run();
+        }, false);
+
+
+    </script>
+
+  </div>
+
+  <!-- End of demo's div -->
+
+
+
+
+
+<!--   <div id="numberstation" class="pcl" data-name="pcl.debug.numberstation">
+    <script>
+
+      var 
+
+        numberstation = document.getElementById("numberstation"),
+        randomWalk = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+
+          __onerror : function (err) {
+            pi.log("Error in randomWalk: ", err);
+          },
+
+
+          onRandomWalk : function (message) {
+            var
+              randomNumber  = JSON.parse(message.data),
+              self          = pi.maverick.randomWalk;
+
+            if(self.element) {
+              self.element.innerHTML = "pi.service.numberstation.randomwalk : " + randomNumber;
+            }
+          },
+
+          run : function() {
+            // pi.log("starting randomWalk listener...");
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("randomwalk");
+            this.eventsource  = pi.listen("pi.service.numberstation.randomwalk", this.onRandomWalk, this.__onerror);
+            this.eventsource.addEventListener("data", this.onRandomWalk, false);
+            // pi.log("done.", this.eventsource);
+            // pi.log("onmessage:", this.eventsource.onmessage);
+          }
+        };
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.maverick.randomWalk = randomWalk;
+          pi.maverick.randomWalk.run();
+        }, false);
+
+
+    </script>
+    <div id="randomwalk"></div>
+
+  </div>
+ -->
+
+  <!--  bootstrap pi -->
+  <script src="../../assets/js/lib/crossfilter.js"></script>
+
+  <script src="../../assets/js/pi.core.js"></script>
+
+  <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
+  <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
+  <script src="assets/js/lib/raphael.min.js"></script>
+
+  <!--  bootstrap pcl 
+    <script src="../../assets/js/pi.pcl.js"></script>
+  -->
+
+</body>
+</html>
