@@ -131,7 +131,7 @@
         self = π.core.session;
 
       self.__handleError(error, self);
-      pi.log("onerror: " + event.data);
+      pi.log("onerror: " + error.data);
     },
 
 
@@ -276,9 +276,204 @@
   };
 
 
+π.core.session.pubsub = {
+
+
+      // private
+    __socket        : null,
+    __initialized   : false,
+
+    __server        : window.location.hostname,
+    __protocol      : 'ws://',
+    __port          : 8008,
+    __uri           : '',
+
+
+
+    __init : function (DEBUG) {
+      var 
+        host        = 'ws://' + this.__server + ':' + this.__port + this.__uri;
+
+      if(this.__initialized === true){
+        // something is not right
+        pi.log("error: __init() called twice ");
+        return false;
+      }
+      
+      this.__initialized = this.__startSession(host);
+      return this.__initialized;
+    },
+
+
+    __handleError  : function(msg, obj){
+
+      if(msg instanceof Object) {
+        msg = JSON.stringify(msg);
+      }
+
+      pi.log('error: ' + msg, obj);
+    },
+
+
+    __onmessage : function (event) {
+      var
+        packet   = JSON.parse(event.data);
+
+        pi.log("__onmessage in pubsub!");
+
+
+      // packet has a callback?
+      if( typeof packet.callback === "function" ) {
+        pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
+
+        // invoke callback, pass along packet
+        π.core.callback.call(packet.callback, packet);
+      }
+      // packet has an address?
+      else if(packet.address instanceof String) {
+        pi.log("publishing packet to '" + packet.address + "' : ", packet);
+
+        // publish to address
+        π.events.publish(packet.address, packet);
+      }
+      // packet has neither address or callback
+      else {
+        // orphan packet - no address or callback
+        pi.log("onmessage [" + typeof packet + "] : ", packet);
+      }
+    },
+
+    __onopen : function (event) {
+      var
+        self = π.core.session.pubsub;
+
+      self._connected = true;
+
+
+      self.send( { command : 'start'});
+
+      // π.events.trigger('pi.session.ready');
+
+      // // smallish hack, because we don't do login yet
+      // pi.events.trigger('pi.session.start');
+      
+      // pi.log("pi session started in " + π.timer.stop("pi.session") + "ms.");
+      // pi.log("pi bootstrapped in " + bootstraptime + "ms.");
+
+      // // lists all timers in console
+      // pi.timer.history.list();
+    },
+
+
+    __onerror : function (error) {
+      var
+        self = π.core.session.pubsub;
+
+      self.__handleError(error, self);
+      pi.log("onerror: " + JSON.stringify(error));
+    },
+
+
+    __onclose : function (event) {
+      var
+        self    = π.core.session.pubsub;
+
+      pi.log("onclose:", event);
+    },
+
+
+    __createSocket : function (host) {
+      try{
+        if (window.WebSocket){
+          return new WebSocket(host);
+        }
+        else if (window.MozWebSocket){
+          return new MozWebSocket(host);
+        }
+        else{
+          return false;
+        }
+      }
+      catch(ex) {
+        pi.log(ex.name + ": " + ex.message, ex);
+      }
+    },
+
+
+    __startSession : function (host) {
+      try {
+        pi.log('Connecting pubsub socket: ' + host);
+        if (false !== (this.__socket = this.__createSocket(host))) {
+
+          this.__socket.addEventListener('error',   this.__onerror);
+          this.__socket.addEventListener('open',    this.__onopen);
+          this.__socket.addEventListener('message', this.__onmessage);
+          this.__socket.addEventListener('close',   this.__onclose);
+          pi.log("pubsub socket created");
+          return true;
+        }
+        else {
+          pi.log("pubsub socket NOT created!");
+        }
+      }
+      catch (ex) {
+        pi.log(ex.name + ": " + ex.message, ex);
+        return false;
+      }
+    },
+
+    send : function (obj) {
+      var
+        self = π.core.session.pubsub;
+
+      try {
+        if(self.__socket && (self.__socket.readyState === 1) ){
+          self.__socket.send(JSON.stringify(obj));
+          return true;
+        }
+        else {
+          pi.log("Error: Socket not ready.");
+          pi.log("__socket.readyState: " + self.__socket.readyState);
+          return false;
+        }
+      }
+      catch (ex) {
+        pi.log(ex.name + ": " + ex.message, obj);
+        return false;
+      }
+    },
+
+
+    quit : function () {
+      var
+        self = π.core.session.pubsub;
+
+      pi.log('Closing pubsub session socket.');
+
+      self.__socket.close();
+      self.__socket = null;
+    },
+
+
+    start : function (DEBUG) {
+
+      if( !this.__init(DEBUG) ) {
+        pi.log('pubsub.__init() returned false, aborting...');
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+  };
+
+
+
   // Create pi.session as an alias for pi.core.session 
   π.session = π.core.session;
 
-  // do the thing
+  // do the things
   π.session._loaded = π.session.start();
+
+  π.session.pubsub.start();
 

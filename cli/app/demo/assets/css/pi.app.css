@@ -28,7 +28,7 @@
 
     background-image    : url('../../../../assets/img/views_logo.svg'), url('../img/NRK_logo.svg'), url('../img/bg.jpg');
     background-repeat   : no-repeat, no-repeat, repeat-y;
-    background-size     : 140px 35px, 298px 106px, 100% auto;
+    background-size     : 320px 56px, 298px 106px, 100% auto;
     background-position : right top, 14px 14px, center top;
   }
 

@@ -19,7 +19,7 @@
   <script type="text/javascript"> π.browser.ie9 = true; </script>
 <![endif]-->
 
-  <title>π demo</title>
+  <title>sms-demo</title>
 
   <meta charset="utf-8">
   <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -42,7 +42,7 @@
 </head>
  
 <body class="pi">
-
+.
 
   <!-- This is the demo's div -->
 
@@ -51,12 +51,12 @@
       Demo av SMS-avstemning. Redigér parameterne og klikk på "send nå"-knappen for å sende stemmer til serveren.
     </p>
 
-    <div class="pcl flexbox ontop">
+    <div id="loginflex" class="pcl flexbox ontop">
       <div class="pcl loginbox">
         <form>
           <fieldset id="login">
             <p>
-            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="alert(this);" onblur="alert('onblur : ' + this);">brukernavn</span> med <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord">passord</span>. <input type="button" id="sender" onclick="pi.user.login();" value=" logg inn > " />
+            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if(this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" >passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
             </p>
             <p id="loginReply">
             </p>
