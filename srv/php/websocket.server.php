@@ -110,6 +110,8 @@ class WebSocketServer implements WebSocketObserver {
         return $handler;
     }
 
+
+
     /**
      * Start the server
      */
@@ -146,19 +148,27 @@ class WebSocketServer implements WebSocketObserver {
                 gc_collect_cycles();
             }
 
-            //$this->debug("Blocking on socket_select()");
+            // $this->debug("Blocking on socket_select()");
             // Retreive sockets which are 'Changed'
             $changed = $this->getResources();
             $write = $this->getWriteStreams();
             $except = null;
+            $tv_sec = 0;
+            $tv_usec = 100000;
 
-            if (@stream_select($changed, $write, $except, NULL) === false) {
+
+
+            if (@stream_select($changed, $write, $except, $tv_sec, $tv_usec) === false) {
                 $this->say("Select failed!");
-                break;
+                foreach ($this->_observers as $o) {
+                    $o->onTick();
+                }
+                // usleep(10000);
+                continue;
             }
 
 
-            //$this->debug("Socket selected");
+            // $this->debug("Socket selected");
 
 
             foreach ($changed as $resource) {
@@ -198,6 +208,11 @@ class WebSocketServer implements WebSocketObserver {
 
             //$this->debug('Number of users connected: '.count($this->getConnections()));
             $this->purgeUsers();
+
+            foreach ($this->_observers as $o) {
+                $o->onTick();
+            }
+
         }
     }
 
@@ -277,7 +292,7 @@ class WebSocketServer implements WebSocketObserver {
      * @param IWebSocketMessage $msg
      */
     protected function dispatchMessage(IWebSocketConnection $user, IWebSocketMessage $msg) {
-        $this->debug("dispatchMessage");
+        // $this->debug("dispatchMessage");
 
         if (array_key_exists($this->_connections[$user], $this->uriHandlers)) {
             $this->uriHandlers[$this->_connections[$user]]->onMessage($user, $msg);
@@ -344,7 +359,7 @@ class WebSocketServer implements WebSocketObserver {
      * @param string $msg Message to output to the STDOUT
      */
     public function say($msg = "") {
-        echo date("Y-m-d H:i:s") . " | " . $msg . "\n";
+        echo date("H:i:s") . " | " . $msg . "\n";
     }
 
     public function onConnectionEstablished(WebSocketSocket $s) {

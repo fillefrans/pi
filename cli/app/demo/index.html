@@ -15,7 +15,7 @@
       A_COOL_MILLION = 1000000;
   </script>
 
-<!--[if gte IE 9]>
+<!--[if IE 9]>
   <script type="text/javascript"> π.browser.ie9 = true; </script>
 <![endif]-->
 
@@ -42,7 +42,6 @@
 </head>
  
 <body class="pi">
-.
 
   <!-- This is the demo's div -->
 
@@ -87,7 +86,7 @@
         </menu>
 
         <table id="xfilter_table" contextmenu="xmenu">
-          <thead id="xfilter_table_head"><th>SMS-avstemning</th></thead>
+          <thead id="xfilter_table_head"><tr><th>SMS-avstemning</th></tr></thead>
           <tbody id="xfilter_table_body">
           </tbody>
         </table>
@@ -106,10 +105,10 @@
           packednumber = Math.floor(Math.random() * 20000000);
 
         if(packednumber<10000000) {
-          return Math.round(packednumber/10) + 40000000;
+          return Math.round(packednumber/100) + 48000000;
         }
         else {
-          return Math.round(packednumber/10) + 90000000;
+          return Math.round(packednumber/100) + 90000000;
         }
       }
 
@@ -299,11 +298,20 @@
 
 
           onData : function (message) {
+
             var
-              packet  = JSON.parse(message.data),
+              packet  = null,
               self    = pi.maverick.xfilter,
               data    = null,
               row     = {};
+
+
+              try{
+                packet  = JSON.parse(message.data);
+              }
+              catch(e) {
+                pi.log('exception : ' + JSON.stringify(e), message);
+              }
 
             row['id'] = packet.message
 
@@ -322,18 +330,8 @@
 
             this.__tmp.address = 'pi.data.app.views.job.2';
 
-
-            this.eventsource  = pi.listen("pi.data.app.views.job.2", this.onData, this.__onerror);
-            this.eventsource.addEventListener("data", this.onData, false);
-
             // set up a listener
-            // π.events.subscribe(this.__tmp.address, this.onData, this.__onerror);
-
-            // request data stream, return eventsource object from π.listen()
-            // this.xlistener = π.listen(this.__tmp.address, this.onData, this.__onerror);
-            return !!this.listener;
-            // return pi.readstream(this.__tmp.address, this.onData, this.__onerror);
-
+            π.readstream(this.__tmp.address, this.onData, this.__onerror);
           }
         };
 
@@ -405,6 +403,10 @@
   </div>
  -->
 
+  <div id="views-map" class="pi pcl component map norway">
+  </div>
+
+
   <!--  bootstrap pi -->
   <script src="../../assets/js/lib/crossfilter.js"></script>
 
@@ -414,6 +416,7 @@
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
   <script src="assets/js/lib/raphael.min.js"></script>
 
+  <script src="assets/js/lib/raphael-map-norway.js"></script>
   <!--  bootstrap pcl 
     <script src="../../assets/js/pi.pcl.js"></script>
   -->

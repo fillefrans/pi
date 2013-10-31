@@ -43,12 +43,13 @@
 
 
 
+    define('A_COOL_MILLION',    1000000);
 
     define('TICKS_PER_SECOND',  10);
     define('UPDATE_FREQUENCY',  1);
     define('SECONDS_IN_A_DAY',  24*60*60);
 
-    define('A_COOL_MILLION',    1000000);
+    define('TICK_LENGTH',  1/TICKS_PER_SECOND);
 
 
     // Redis settings

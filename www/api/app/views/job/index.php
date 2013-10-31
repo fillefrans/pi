@@ -132,7 +132,10 @@
   function publishJobItem() {
     global $redis, $reply, $packet;
 
-    $redis->publish($packet['address'], json_encode($packet['data'], JSON_PRETTY_PRINT));
+    // $redis->publish($packet['address'], json_encode($packet['data'], JSON_PRETTY_PRINT));
+    $redis->select(PI_DATA);
+    $redis->rPush($packet['address'], json_encode($packet['data']));
+
   }
 
 
@@ -201,13 +204,13 @@
         $debug[] = 'WARNING: Unable to retrieve cache_id from permanent cache.';
       }
       else{
-        $packet['data']['id'] = $cache_id;
+        $packet['data']['cache_id'] = $cache_id;
         $debug[] = 'Retrieved cache_id from permanent cache: ' . $cache_id;
       }
       $timers['getCacheId'] = microtime(true)-$getstart;
 
       $debug[] = 'Adding to report.';
-      if (false===addToReport($request)) {
+      if (false===($report_id = addToReport($request))) {
         $reply['OK'] = 0;
         $reply['message'] = 'Unable to add number to report.';
         $debug[] = 'Unable to add number to report.';
@@ -216,6 +219,7 @@
       $reply['OK'] = 1;
       $reply['message'] = 'Number added to report: '. $request['phone'];
       $debug[] = $reply['message'];
+      $packet['data']['reportid'] = $report_id;
 
       if (DEBUG) {
         $timers['addToReport'] = microtime(true)-$addstart;
@@ -270,8 +274,9 @@
         $reply['OK']=1;
         $reply['message'] = 'Successfully added to permanent cache with id '.$cache_id;
         $debug[] = 'Added to permanent cache with id: '.$cache_id.".";
+        $packet['data']['cache_id'] = $cache_id;
       }
-      if (false===addToReport($request, $cache_id)) {
+      if (false===($report_id=addToReport($request, $cache_id))) {
         $reply['OK'] = 0;
         $reply['message'] = 'Unable to add number to report.';
         $debug[] = 'Unable to add number to report.';
@@ -280,12 +285,16 @@
         $reply['OK']=1;
         $reply['message'] = 'Successfully added to report, now in permanent cache with id '.$cache_id;
         $debug[] = 'TOTAL SUCCESS! Added to permanent cache AND to report no. '.$request['job'].".";
+        $packet['data']['reportid'] = $report_id;
       }
       sendReply();
     }
   }
   else { // $packedNumber === FALSE
+
+    //  here be bugs ..
     $debug[] = 'Number is NOT a Norwegian mobile no., not fast-cacheable : ' .$request['phone'];
+
     if (false===($cache_id=addToCache($row))) {
       //$reply['ws_response'] = $entry;
       $reply['OK']=0;
@@ -293,7 +302,10 @@
       $debug[] = 'ERROR! Unable to add entry to permanent cache.';
       sendReply();
     }
-    if (false===addToReport($request, $cache_id)) {
+    else {
+      $packet['data']['cache_id'] = $cache_id;
+    }
+    if (false===($report_id=addToReport($request, $cache_id))) {
       $reply['OK'] = 0;
       $reply['message'] = 'Unable to add number to report.';
       $debug[] = 'Unable to add number to report.';
@@ -302,6 +314,7 @@
       $reply['OK']=1;
       $reply['message'] = 'Successfully added to report, now in permanent cache with id '.$cache_id;
       $debug[] = 'TOTAL SUCCESS! Added to permanent cache AND added to report no. '.$request['job'].".";
+      $packet['data']['reportid'] = $report_id;
     }
     sendReply();
   }

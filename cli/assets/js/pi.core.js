@@ -359,21 +359,28 @@
 
 
             // are we handicapped ?
-            if(π.browser.ie9 === true) {
-              dispatcher  = eventElem || document.body;
-              customEvt   = document.createEvent("CustomEvent");
-              if (eventData) {
-                customEvt.initCustomEvent(eventName, false, false, eventData);
+            if(π.browser.isIe() === true) {
+              try {
+                dispatcher  = eventElem || document.body;
+                // pi.log('ie, dispatcher : ' + dispatcher, dispatcher);
+                customEvt   = document.createEvent("CustomEvent");
+                if (eventData) {
+                  customEvt.initCustomEvent(eventName, false, false, eventData);
+                }
+                else {
+                  customEvt.initCustomEvent(eventName, false, false, {});
+                }
+                dispatcher.dispatchEvent(customEvt);
               }
-              else {
-                customEvt.initCustomEvent(eventName, false, false);
+              catch(e) {
+                pi.log('Exception : ', e);
               }
-              dispatcher.dispatchEvent(customEvt);
 
             }
             else {
               // we are not handicapped
               dispatcher  = eventElem || window;
+
               if(eventData===false) {
                 dispatcher.dispatchEvent(new CustomEvent(eventName));
               } else {
@@ -396,6 +403,13 @@
     /*    end of core modules     */
 
 
+
+    π.browser = π.browser || {};
+
+    π.browser.isIe = function (v) {
+      r = RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i');
+      return r.test(navigator.userAgent);
+    };
 
 
 
@@ -498,7 +512,7 @@
       }
 
       if(typeof listener == "function") {
-        return π.session.addStreamListener(address, listener);
+        return π.session.addStreamListener(address, listener, onerror);
       }
       else {
         if(typeof onerror == "function") {
