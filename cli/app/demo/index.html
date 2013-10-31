@@ -254,6 +254,7 @@
           starttime   : null,
           element     : null,
           __data      : [],
+          crossfilter : null,
 
           __onerror : function (err) {
             pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
@@ -306,18 +307,46 @@
               row     = {};
 
 
-              try{
-                packet  = JSON.parse(message.data);
+              if(self.crossfilter === null) {
+                self.crossfilter = crossfilter(message);
               }
-              catch(e) {
-                pi.log('exception : ' + JSON.stringify(e), message);
+              else {
+                self.crossfilter.add(message);
               }
 
-            row['id'] = packet.message
+              // is it an array?
+              // (this line of code is from jQuery 1.3)
+              if(toString.call(message) === "[object Array]") {
+                for (var i = 0, count = message.length; i<count; i++) {
+                  try{
+                    packet  = JSON.parse(message[i].data);
+                  }
+                  catch(e) {
+                    pi.log('exception : ' + JSON.stringify(e), message[i]);
+                  }
 
-            self._addRow(packet);
+                  row['id'] = packet.message
 
-            pi.log("data: '" + JSON.stringify(packet) + "' (" + typeof(message) + ")");
+                  self._addRow(packet);
+
+                  pi.log("data: '" + JSON.stringify(packet) + "' (" + typeof(message) + ")");
+                }
+                pi.log('added ' + count + ' data rows from packet');
+              }
+              else {
+                try{
+                  packet  = JSON.parse(message.data);
+                }
+                catch(e) {
+                  pi.log('exception : ' + JSON.stringify(e), message);
+                }
+
+                row['id'] = packet.message
+
+                self._addRow(packet);
+
+                pi.log("data: '" + JSON.stringify(packet) + "' (" + typeof(message) + ")");
+              }
 
           },
 

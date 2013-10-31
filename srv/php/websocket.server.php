@@ -225,7 +225,7 @@ class WebSocketServer implements WebSocketObserver {
 
             $this->sockets->attach(new WebSocketSocket($this, $client));
 
-            $this->debug("Socket accepted");
+            // $this->debug("Socket accepted");
         } catch (Exception $e) {
             $this->say($e);
         }

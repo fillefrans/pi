@@ -71,8 +71,8 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * We are requiring HTML5, and using native functions wherever possible
 * Check out [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
 * Vector graphics is great for Retina displays.
-* GreenSock is an almost hilariously good animation library. And it's small. [GSAP](https://www.greensock.com/tag/tutorial/).
-* WebWorkers are awesome.
+* GreenSock is the best animation library. Because it's small, fast and flexible. [GSAP](https://www.greensock.com/tag/tutorial/).
+* WebWorkers allow for background processing.
 * For size and position, using perfect cubes (or multiples): 8, 64, 216, 512, makes it easier to stack components.
 
 * [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
@@ -81,8 +81,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 ####Client-side
 * Components should be self-contained.
 * The π.app and π.plugins namespaces are open to anyone.
-* Feel free to write a better xhr module :) 
-* Use CSS inheritance 
+* Use CSS classes and sub-classes
 * Use documentFragment when adding more than one node to the DOM at a time
 
 
@@ -95,7 +94,7 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 
 
 ##Documentation
-When we're at version 0.6 or thereabouts.
+When we're at version 0.6 or thereabouts. Read the code, read the comments.
 
 ---
 
@@ -124,10 +123,12 @@ When we're at version 0.6 or thereabouts.
 ###Not supported
 * Opera Mini
 * Android native browser has no WebSocket, and no Web Worker.
+* IE < 9
 
 
 ####Client Libraries
 * [GreenSock Animation Platform](http://greensock.com/)
+* [Crossfilter.js](http://square.github.io/crossfilter/)
 * [Raphaël - SVG library](http://raphaeljs.com/)
 
 
