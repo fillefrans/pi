@@ -33,6 +33,11 @@
     user        : null,
 
 
+    get connected() {
+      return (this.__socket.readyState == 1);
+    },
+
+
 
   /**
    * π.core.session.__onmessage

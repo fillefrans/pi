@@ -449,8 +449,39 @@
 
 
 
-    π.copy = function (obj) {
-      return JSON.parse(JSON.stringify(obj));
+    π.copy = function (obj, exceptions) {
+      var
+        obj         = obj         || false,
+        exceptions  = exceptions  || false,
+        newobj      = null;
+
+
+      if(typeof obj == "string") {
+        try {
+          obj = JSON.parse(obj);
+        }
+        catch(e) {
+          pi.log('Error in JSON.parse("' + obj + '")', e);
+          return null;
+        }
+      }
+
+      if(exceptions!==false) {
+        newobj = {};
+        for (var i in obj) {
+          if( (i % 1 === 0) ) {
+            // continue;
+          }
+          if(exceptions.indexOf(i)>-1) {
+            continue;
+          }
+          newobj[i] = obj[i];
+        }
+        return newobj;
+      }
+      else {
+        return JSON.parse(JSON.stringify(obj));
+      }
     };
 
 
@@ -606,7 +637,7 @@
      * @return {boolean}              Result if success, false if failure
      */
 
-    π._send = function(command, address, data, callback){
+    π._send = function(command, address, data, callback, onerror){
       var
         packet = {
           command   : command, 
@@ -618,16 +649,47 @@
           packet.callback = π.core.callback.add(callback);
         }
 
-        if(!!π.session._loaded) {
+        if(π.session.connected) {
           pi.log("Sending packet:", packet);
           // will return true or false
           return π.session.send(packet);
         }
         else {
-          pi.log("pi.session not loaded! Packet:", packet);
+          pi.log("pi.session not connected! Packet:", packet);
           return false;
         }
     };
+
+
+    /** π.readdata
+     *
+     * Read a remote data set (mysql, file)
+     * 
+     * @param  {string}     address       Data address in the pi namespace
+     * @param  {string}     filetype      The file extension
+     * @param  {Function}   callback      Callback for each return value available
+     * @return {boolean}                  File contents on success, false on failure
+     */
+
+    π.readdata = function(address, onresult, onerror){
+
+      var
+        parameters = { address: address };
+
+      if(typeof onresult != "function") {
+        pi.log("Error : onresult is not a function.");
+        if(typeof onerror == "function") {
+          onerror.call(this, "onresult is not a function.");
+        }
+        return false;
+      }
+    
+      // TBC
+      return π._send("data.list", address, parameters, onresult, onerror);
+    };
+
+
+
 
 
     /** π.readfile
@@ -643,10 +705,10 @@
     π.readfile = function(fileaddress, filetype, onresult){
 
       var
-        parameter = { fileaddress: fileaddress, filetype: filetype };
+        parameters = { fileaddress: fileaddress, filetype: filetype };
     
       // TBC
-      return π._send("file.read", address, parameter, onresult);
+      return π._send("file.read", address, parameters, onresult);
     };
 
 

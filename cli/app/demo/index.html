@@ -16,7 +16,7 @@
   </script>
 
 <!--[if IE 9]>
-  <script type="text/javascript"> π.browser.ie9 = true; </script>
+  <script> π.browser.ie9 = true; </script>
 <![endif]-->
 
   <title>sms-demo</title>
@@ -55,7 +55,7 @@
         <form>
           <fieldset id="login">
             <p>
-            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if(this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" >passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
+            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if(this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" type="password">passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
             </p>
             <p id="loginReply">
             </p>
@@ -270,10 +270,25 @@
               trow      = document.createElement('tr'),
               fragment  = document.createDocumentFragment(),
               cell      = null,
-              newrow    = JSON.parse(row['row']);
+              newrow    = null;
+
+
+            if(row && (row['row'])) {
+             newrow = JSON.parse(row['row']);
+            }
+            else {
+              pi.log("no row in _addRow() : " + row);
+              return false;
+            }
+
+
 
             for( var idx in newrow ) {
 
+              // skip isDeceased, isTMReserved, etc
+              if(idx.indexOf('is')===0) {
+                continue;
+              }
               if(idx=="idx") {
                 continue;
               }
@@ -301,23 +316,18 @@
           onData : function (message) {
 
             var
+              json    = false,
               packet  = null,
               self    = pi.maverick.xfilter,
               data    = null,
               row     = {};
 
 
-              if(self.crossfilter === null) {
-                self.crossfilter = crossfilter(message);
-              }
-              else {
-                self.crossfilter.add(message);
-              }
 
               // is it an array?
               // (this line of code is from jQuery 1.3)
               if(toString.call(message) === "[object Array]") {
-                for (var i = 0, count = message.length; i<count; i++) {
+                for (var i = 0, count = message.length; i < count; i++) {
                   try{
                     packet  = JSON.parse(message[i].data);
                   }
@@ -325,27 +335,57 @@
                     pi.log('exception : ' + JSON.stringify(e), message[i]);
                   }
 
-                  row['id'] = packet.message
+                  var
+                   datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
+                  if(datachunk) {
+                    self.crossfilter.add(datachunk);
+                  }
                   self._addRow(packet);
 
-                  pi.log("data: '" + JSON.stringify(packet) + "' (" + typeof(message) + ")");
                 }
                 pi.log('added ' + count + ' data rows from packet');
               }
               else {
-                try{
-                  packet  = JSON.parse(message.data);
+
+                if(!!message.data) {
+                  try{
+                    pi.log('parsing : ' + message.data);
+                    packet  = message.data;
+                    pi.log('packet.toString() : ' + packet.toString());
+
+                    if(packet.toString()=="[]") {
+                      pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
+                      return;
+                    }
+                    pi.log('packet : ' + JSON.stringify(packet));
+                    pi.log('packet is : ' + !!packet);
+                  }
+                  catch(e) {
+                    pi.log('skipping : ' + JSON.stringify(message),e);
+                    return;
+                    // pi.log('exception : ' + JSON.stringify(e), message);
+                  }
                 }
-                catch(e) {
-                  pi.log('exception : ' + JSON.stringify(e), message);
+                else {
+                  pi.log('also skipping : ' + JSON.stringify(message));
+                  return;
                 }
 
-                row['id'] = packet.message
+                var
+                 datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
-                self._addRow(packet);
+                if(datachunk) {
+                  self.crossfilter.add(datachunk);
+                }
+                if(packet) {
+                  self._addRow(packet);
+                }
+                else{
+                  pi.log("NOT adding row : " + typeof packet);
+                }
 
-                pi.log("data: '" + JSON.stringify(packet) + "' (" + typeof(message) + ")");
+                // pi.log("data: '" + JSON.stringify(datachunk) + "' (" + typeof(message) + ")");
               }
 
           },
@@ -356,8 +396,11 @@
             this.starttime    = new Date().getTime();
             this.element      = document.getElementById("xfilter"),
             this.__tmp        = this.__tmp || {};
+            this.crossfilter  = crossfilter();
 
             this.__tmp.address = 'pi.data.app.views.job.2';
+
+            π.readdata('pi.data.app.views.job.2', pi.log, this.__onerror);
 
             // set up a listener
             π.readstream(this.__tmp.address, this.onData, this.__onerror);

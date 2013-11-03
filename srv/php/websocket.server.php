@@ -385,7 +385,9 @@ class WebSocketServer implements WebSocketObserver {
             else
                 $this->dispatchMessage($connection, $msg);
         } catch (Exception $e) {
-            $this->say("Exception occurred while handling message:\r\n" . $e->getTraceAsString());
+            $this->say("Exception occurred while handling message:\n" 
+                       . get_class($e) . " : " . $e->getMessage() . "\n"
+                       . $e->getTraceAsString());
         }
     }
 
@@ -401,7 +403,10 @@ class WebSocketServer implements WebSocketObserver {
                 $this->_connections->detach($socket->getConnection());
             }
         } catch (Exception $e) {
-            $this->say("Exception occurred while handling message:\r\n" . $e->getTraceAsString());
+            $this->say("Exception occurred while handling message:\n" 
+                       . get_class($e) . " : " . $e->getMessage() . "\n"
+                       . $e->getTraceAsString());
+            // $this->say("Exception occurred while handling message:\r\n" . $e->getTraceAsString());
         }
 
 

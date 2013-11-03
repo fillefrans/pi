@@ -50,10 +50,10 @@
     protected function __init() {
 
       // open a data connection for redis 
-      print("Connecting to redis...");
+      // print("Connecting to redis...");
       if( false === ($this->redis = $this->connectToRedis())){
         throw new PiException("Unable to connect data client to redis on " . REDIS_SOCK, 1);
-        print("failed!\n");
+        print("Connecting to redis...failed!\n");
         return false;
       }
   
@@ -65,10 +65,10 @@
       // > other channels. The reply of the ...
       if( false === ($this->pubsub = $this->connectToRedis())){
         throw new PiException("Unable to connect pubsub client to redis on " . REDIS_SOCK, 1);
-        print("failed!\n");
+        print("Connecting to redis...failed!\n");
         return false;
       }
-      print("success!\n");
+      // print("success!\n");
       return true;
     }
 
