@@ -155,7 +155,6 @@
 
 
         document.getElementById("sender").value = "stopp";
-        // document.getElementById("sender").onclick = stopVotes;
         document.getElementById("spanVotes").contenteditable = false;
         document.getElementById("spanMinutes").contenteditable = false;
 
@@ -178,9 +177,6 @@
               document.getElementById("spanVotes").innerHTML = votes;
               document.getElementById("spanMinutes").innerHTML = minutes;
               voteReply.innerHTML = "";
-              // document.getElementById("spanVotes").contenteditable = true;
-              // document.getElementById("sender").value = "send nå";
-              // document.getElementById("sender").onclick = sendVotes;
             }
             else {
               document.getElementById("spanVotes").innerHTML = votes-count;
@@ -196,8 +192,6 @@
                 var 
                   json = this.responseText || '{ error : "responseText is undefined or empty." }';
 
-                // pi.log("api replied : " + json);
-                
                 var
                   data = JSON.parse(json),
                   status = {};
@@ -282,7 +276,6 @@
             }
 
 
-
             for( var idx in newrow ) {
 
               // skip isDeceased, isTMReserved, etc
@@ -323,10 +316,8 @@
               row     = {};
 
 
-
               // is it an array?
-              // (this line of code is from jQuery 1.3)
-              if(toString.call(message) === "[object Array]") {
+              if(pi.isArray(message)) {
                 for (var i = 0, count = message.length; i < count; i++) {
                   try{
                     packet  = JSON.parse(message[i].data);
@@ -336,7 +327,7 @@
                   }
 
                   var
-                   datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+                   datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
                   if(datachunk) {
                     self.crossfilter.add(datachunk);
@@ -350,15 +341,15 @@
 
                 if(!!message.data) {
                   try{
-                    pi.log('parsing : ' + message.data);
+                    pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
                     packet  = message.data;
-                    pi.log('packet.toString() : ' + packet.toString());
+                    // pi.log('packet.toString() : ' + packet.toString());
 
-                    if(packet.toString()=="[]") {
+                    if(packet.toString() == "[]") {
                       pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
                       return;
                     }
-                    pi.log('packet : ' + JSON.stringify(packet));
+                    // pi.log('packet : ' + JSON.stringify(packet));
                     pi.log('packet is : ' + !!packet);
                   }
                   catch(e) {
@@ -479,9 +470,9 @@
   </div>
 
 
-  <!--  bootstrap pi -->
   <script src="../../assets/js/lib/crossfilter.js"></script>
 
+  <!--  bootstrap pi -->
   <script src="../../assets/js/pi.core.js"></script>
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
@@ -489,6 +480,7 @@
   <script src="assets/js/lib/raphael.min.js"></script>
 
   <script src="assets/js/lib/raphael-map-norway.js"></script>
+
   <!--  bootstrap pcl 
     <script src="../../assets/js/pi.pcl.js"></script>
   -->

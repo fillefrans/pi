@@ -1,6 +1,8 @@
 
 /**
- *  Session object. This is where we have to debug the pants off of this library
+ * @module π.session
+ * 
+ * @description Session object. This is where we have to debug the pants off of this library
  *  This bit should be bulletproof
  *
  *  Basically, this is where our application runs. 
@@ -8,6 +10,8 @@
  * 
  *  We should implement a feedback mechanism for js errors
  *  That way we can monitor apps in the wild and pick up on problems quickly
+ *
+ * @author Johan Telstad, 2011-2014
  * 
  */
 
@@ -40,7 +44,7 @@
 
 
   /**
-   * π.core.session.__onmessage
+   * @function π.core.session.__onmessage
    * 
    * Handles incoming messages on the session WebSocket
    * By far the most important function in the session object

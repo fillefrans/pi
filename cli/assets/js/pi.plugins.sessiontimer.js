@@ -2,7 +2,7 @@
   var
 
     OPTIONS = {
-      eventSource   : 'assets/php/kroma.pubsub.listener.sse.php'
+      eventSource   : 'assets/php/kroma.pubsub.listener.sse.php',
       filterEvents  : true
     };
 
@@ -442,8 +442,6 @@
       source.addEventListener('message', onMessage, false);
      
     }
-
-
 
 
     // start

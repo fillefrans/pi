@@ -94,7 +94,7 @@
     __init : function (DEBUG) {
 
       var
-        self = π.util.math.trig,
+        self = π.util.math.trig;
 
 
       if(this.__initialized === true){
@@ -134,8 +134,6 @@
       pi.log("initialized trig unit in " + π.timer.stop("util.math.trig") + " ms.");
     }
   };
-
-
 
 
   π.util.math.trig.start();

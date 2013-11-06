@@ -74,7 +74,7 @@
       return false;
     }
 
-    try{
+    try {
       $redis->subscribe(array($channel), 'onMessage');
       sendEvent("message", "subscribed to '$channel'");
     }
@@ -106,18 +106,18 @@
 
 
 
-  function connectToRedis( $timeout = 5 ){
+  function connectToRedis( $timeout = 5 ) {
 
     $redis = new Redis();
-    try{ 
-      if(false===($redis->pconnect(REDIS_SOCK))){
+    try { 
+      if(false===($redis->pconnect(REDIS_SOCK))) {
         sendEvent("error", 'Unable to connect to Redis.');
         return false;
       }
       return $redis;
     }
-    catch(RedisException $e){
-      sendEvent("error", get_class($e) . ': ' . $e->getMessage() );
+    catch(RedisException $e) {
+      sendEvent("error", get_class($e) . ': ' . $e->getMessage());
       return false;
     }
   }
@@ -131,19 +131,14 @@
    *
    */
 
-try {
+  try {
 
-  subscribeToChannel($channel);
-
-  while (true) {
-    // wait for messages from Redis
-    usleep(100000);
+    subscribeToChannel($channel);
   }
+  catch(Exception $e) {
 
-}
-catch(Exception $e) {
-  sendEvent("error", get_class($e) . ': ' . $e->getMessage() );
-} 
+    sendEvent("error", get_class($e) . ': ' . $e->getMessage());
+  } 
 
 
 ?>
