@@ -43,6 +43,70 @@
  
 <body class="pi">
 
+
+
+  <div id="voteReport">
+    <button id="btnGetVoteReport">get report</button>
+  </div>
+
+  <script type="text/javascript">
+
+    function getVoteReport() {
+      var
+        voteReport = null,
+        xhr       = null,
+        count     = 0,
+        address   = '/api/pi.db.query.php',
+        params    = {
+          address : "pi.data.app.views.job.2",
+          job     : 2,
+          apikey  : "kroma"
+        };
+
+      pi.log('getVoteReport!');
+
+      voteReport = document.getElementById("voteReport"); 
+
+
+      xhr = new XMLHttpRequest();
+
+
+      xhr.onprogress = function(e) {
+        if (e.lengthComputable) {  
+          var percentComplete = e.loaded / e.total;
+          voteReport.innerHTML = "loading : " + e.loaded + " / " + e.total + " (" + Math.round(100*percentComplete) + ")";
+        }
+        else {
+          voteReport.innerHTML = "loading : " + e.loaded + " / " + e.total;
+        }
+      };
+
+
+      xhr.onload = function(e) { 
+        var 
+          json = this.responseText || '{ "error" : "responseText is undefined or empty." }';
+
+        var
+          data = JSON.parse(json);
+
+        pi.log("xhr response received");
+        voteReport.innerHTML = "api replied : " + json;
+      };
+
+      xhr.onerror = pi.log;
+      xhr.open("post", address, true);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+      pi.log("sending : " + JSON.stringify(params));
+      xhr.send(JSON.stringify(params));
+
+    }
+
+    document.getElementById('btnGetVoteReport').onclick = getVoteReport;
+
+
+  </script>
+
+
   <!-- This is the demo's div -->
 
   <div id="demo" class="pcl" data-name="pcl.table.xfilter" data-address="pi.srv.job.test">

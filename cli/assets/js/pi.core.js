@@ -425,7 +425,7 @@
 
     π.isArray = function(obj) {
       // borrowed from jQuery 1.3
-      return (toString.call(message) === "[object Array]");
+      return (toString.call(obj) === "[object Array]");
     }
 
 
