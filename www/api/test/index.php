@@ -14,14 +14,14 @@
   <div class="content">
     <h1></h1>
     <form id="form">
-      <label for="phone" >Phone:</label>
-      <input id="phone" type="tel" name="phone" placeholder="Phone No." />
+      <label for="address" >Address:</label>
+      <input id="address" type="tel" name="address" placeholder="pi.data.app.views.job.2" />
       <br />
       <label for="job" >Job No.:</label>
-      <input id="job" type="number" name="job" step="1" value="1" placeholder="Job no." />
+      <input id="job" type="number" name="job" step="1" value="1" placeholder="2" />
       <br />
       <label for="apikey" >API KEY:</label>
-      <input id="apikey" type="text" name="apikey" placeholder="API KEY" />  
+      <input id="apikey" type="text" name="apikey" placeholder="kroma" />  
       <br />
       <!--label for="debug" >Return debug information:</label>
       <input id="debug" type="checkbox" name="debug" value="off" checked="on" />
@@ -72,7 +72,7 @@
           var send = $("#form").formToJSON();
           $('#result').html('Sending: <br /><pre>' + send + '</pre>');
           $.ajax({
-            url: "/api/app/views/job/",
+            url: "/api/pi.db.query.php",
             type: "POST",
             data: send,
             error: function(xhr, error) {

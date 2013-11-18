@@ -13,7 +13,11 @@
      *
      */
 
-  session_start();
+  $request = json_decode(file_get_contents('php://input'), true);
+
+  error_reporting(E_ALL);
+
+  // session_start();
 
   // set output type and disallow caching
   header('Content-Type: application/json; charset=utf-8');
@@ -21,11 +25,9 @@
   header("Expires: Thu, 25 Feb 1971 00:00:00 GMT"); // Snart ørte-og-børti år siden
 
 
-  error_reporting(E_ALL);
 
   require_once "pi.api.config.php";
 
-  $request = json_decode(file_get_contents('php://input'), true);
 
 
   // collect parameters
@@ -37,7 +39,8 @@
 
 
   $reply = array(
-              'log'   => array(),
+              'request'   => $request,
+              'log'   => array("initialised."),
               'items' => array(),
               'info'  => array(
                             'format'  => $format, 
@@ -123,14 +126,19 @@
     $rows = $redis->lRange($address, 0, -1);
     $redis->close();
 
-    if($rows && (count($rows) > 0)) {
+    if(is_array($rows) && (count($rows) > 0)) {
       $rowcount = count($rows);
-      for($i = 0; $i < $rowcount; $i++) {
-        $result[] = igbinary_unserialize($rows[$i]);
+
+      if($rowcount === 1) {
+        return igbinary_unserialize($rows[0]);
       }
-    }
-    else {
-      $result = false;
+
+      for($i = 0; $i < $rowcount; $i++) {
+        $array = igbinary_unserialize($rows[$i]);
+        if(is_array($array)) {
+          $result = array_merge($result, $array);
+        }
+      }
     }
 
     return $result;
@@ -138,7 +146,7 @@
   }
 
 
-  function getFromDB($address, $offset) {
+  function getFromDB($address, $offset=0) {
 
     $APP_DB = array(
                 'host'      => 'localhost', 
@@ -167,7 +175,8 @@
         FROM cache 
         INNER JOIN reportlines
         ON cache.id = reportlines.cache_id
-        WHERE reportlines.report_id = 2
+        WHERE reportlines.report_id = 2 AND reportlines.id > $offset
+        ORDER BY reportlines.id ASC
         ;";
 
         // WHERE job = 2
@@ -178,13 +187,14 @@
       return false;
     }
     elseif($sqlresult->num_rows === 0) {
-      throw new Exception('WARNING! Query returned 0 rows.');
+      // throw new Exception('WARNING! Query returned 0 rows.');
       $cache_id = "NULL";
-      return 0;
+      return array();
     }
     else {
 
       while($row = $sqlresult->fetch_assoc()) {
+        unset($row['cache_id']);
         $rows[] = $row;
       }
 
@@ -212,6 +222,14 @@
 
   function getLastIndex(&$data) {
 
+    $lastIndex = count($data)-1;
+
+    if($lastIndex >= 0) {
+      if(isset($data[$lastIndex]['counter'])) {
+        return $data[$lastIndex]['counter'];
+      }
+    }
+    return 0;
   }
 
 
@@ -220,42 +238,45 @@
   }
 
 
+  $offset = 0;
+  $datacount = 0;
 
   $reply['items'] = getFromCache($address);
 
-  $datacount = count($reply['items']);
 
   if(is_array($reply['items']) && count($reply['items']) > 0) {
-    $offset = $reply['items'][count($reply['items'])-1]['counter'];
+    $offset = getLastIndex($reply['items']);
+    $datacount = count($reply['items']);
     $reply['log'][] = "Found something in cache at address '$address'";
     $reply['log'][] = "Offset is $offset, items returned: {$datacount}";
-
   }
   else {
     $reply['log'][] = "Nothing found in cache at address '$address'";
     $reply['items'] = array();
-    $offset = 0;
   }
+
+  // die(json_encode($reply));
 
 
   $dbresult = getFromDB($address, $offset);
 
+  $counter = 0;
 
   // if any new items from DB
-  if(count($dbresult)>0) {
+  if( (count($dbresult) > 0) && is_array($dbresult) ) {
     $counter = count($dbresult);
-    // add new items to reply
-    for($i = 0; $i < $counter; $i++) {
-      $reply['items'][] = $dbresult[$i];
-    }
+    $reply['items'] = array_merge($reply['items'], $dbresult);
   }
 
-  $reply['info']['count'] = $datacount + $counter;
+  $reply['info']['count'] = count($reply['items']);
   $reply['info']['cache_hits'] = $datacount;
   $reply['info']['cache_misses'] = $counter;
 
   $reply['log'][] = "DB returned {$counter} items which were added to cache";
 
-  print(json_encode($reply));
+  $output = json_encode($reply);
+  header("Content-Length: " . strlen($output));
+
+  print($output);
 
 ?>
