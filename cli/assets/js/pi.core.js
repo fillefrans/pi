@@ -1,9 +1,13 @@
   /**
    *
-   * π v0.4.0
+   * π v0.4.1
    *
-   * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
+   * @description 
+   * Pi is an html5-based client-server application platform
    *
+   * @author Johan Telstad, jt@enfield.no
+   * @copyright Johan Telstad, 2011-2014
+   * 
    */
 
 
@@ -15,30 +19,30 @@
 
 
     // These are the core modules
-    π.core        = π.core        || { _loaded: false, _ns: 'core' };
-    π.callback    = π.callback    || { _loaded: false, _ns: 'callback' };
-    π.session     = π.session     || { _loaded: false, _ns: 'session' };
-    π.events      = π.events      || { _loaded: false, _ns: 'events' };
-    π.tasks       = π.tasks       || { _loaded: false, _ns: 'tasks' };
-    π.timer       = π.timer       || { _loaded: false, _ns: 'timer' };
+    π.core        = π.core        || { _loaded: false, _ns: 'core'      };
+    π.callback    = π.callback    || { _loaded: false, _ns: 'callback'  };
+    π.session     = π.session     || { _loaded: false, _ns: 'session'   };
+    π.events      = π.events      || { _loaded: false, _ns: 'events'    };
+    π.tasks       = π.tasks       || { _loaded: false, _ns: 'tasks'     };
+    π.timer       = π.timer       || { _loaded: false, _ns: 'timer'     };
 
 
     // These are our built-in libraries
-    π.srv         = π.srv         || { _loaded: false, _ns: 'srv' };
-    π.app         = π.app         || { _loaded: false, _ns: 'app' };
-    π.pcl         = π.pcl         || { _loaded: false, _ns: 'pcl' };
-    π.system      = π.system      || { _loaded: false, _ns: 'system' };
-    π.debug       = π.debug       || { _loaded: false, _ns: 'debug' };
-    π.io          = π.io          || { _loaded: false, _ns: 'io' };
-    π.file        = π.file        || { _loaded: false, _ns: 'file' };
+    π.srv         = π.srv         || { _loaded: false, _ns: 'srv'       };
+    π.app         = π.app         || { _loaded: false, _ns: 'app'       };
+    π.pcl         = π.pcl         || { _loaded: false, _ns: 'pcl'       };
+    π.system      = π.system      || { _loaded: false, _ns: 'system'    };
+    π.debug       = π.debug       || { _loaded: false, _ns: 'debug'     };
+    π.io          = π.io          || { _loaded: false, _ns: 'io'        };
+    π.file        = π.file        || { _loaded: false, _ns: 'file'      };
 
 
 
     // These are for extending the platform
-    π.lib         = π.lib         || { _loaded: false, _ns: 'lib' };
-    π.util        = π.util        || { _loaded: false, _ns: 'util' };
-    π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins' };
-    π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick' };
+    π.lib         = π.lib         || { _loaded: false, _ns: 'lib'       };
+    π.util        = π.util        || { _loaded: false, _ns: 'util'      };
+    π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins'   };
+    π.maverick    = π.maverick    || { _loaded: false, _ns: 'maverick'  };
 
 
 
@@ -69,7 +73,8 @@
 
 
 
-        /**   π.core.callback
+        /**   
+         * core.callback
           *
           *   Store references to local callback functions
           *   Call remote procedure and create a listener for the result
@@ -81,7 +86,7 @@
 
           π.core.callback = π.core.callback || {
 
-            /**
+            /*
              * Manages callback handlers
              *
              * Issues replyaddresses, and invokes related
@@ -145,12 +150,13 @@
 
 
 
-        /**   π.events  
+        /**
+         *  π.events  
          *
-         *   This is where we optimize. Absolutely no blocking code allowed.
+         * This is where we optimize. Absolutely no blocking code allowed.
          *
-         *    This is the client side hub of our messaging system.
-         *    It will handle data/message passing, events, and pubsub. In a hurry.
+         * This is the client side hub of our messaging system.
+         * It will handle data/message passing, events, and pubsub. In a hurry.
          *
          * @author Johan Telstad, jt@enfield.no, 2011-2013
          *
@@ -163,7 +169,9 @@
           π.events = π.events || {};
 
 
-        /** PubSub.js 
+        /** 
+          PubSub.js
+         
           Copyright 2011 by Steven Littiebrant - changes and communication about use 
           appreciated but not required: https://github.com/Groxx/PubSub
 
@@ -204,21 +212,23 @@
               passPath = false,
               bindTo = this;
               
-              if (typeof(uniqueName) == "string") {
+              if( typeof uniqueName == "string" ) {
                 unique = uniqueName;
-              } else if (typeof(alsoPassPath_or_unique) == "string") {
+              } 
+              else if( typeof alsoPassPath_or_unique == "string" ) {
                 unique = alsoPassPath_or_unique;
-              } else if (typeof(obj_or_alsoPassPath_or_unique) == "string") {
+              } 
+              else if( typeof obj_or_alsoPassPath_or_unique == "string" ) {
                 unique = obj_or_alsoPassPath_or_unique;
               }
 
-              if (typeof(alsoPassPath_or_unique) == "boolean") {
+              if( typeof alsoPassPath_or_unique == "boolean" ) {
                 passPath = alsoPassPath_or_unique;
-              } else if (typeof(obj_or_alsoPassPath_or_unique) == "boolean") {
+              } else if(typeof obj_or_alsoPassPath_or_unique == "boolean") {
                 passPath = obj_or_alsoPassPath_or_unique;
               }
               
-              if (typeof(obj_or_alsoPassPath_or_unique) == "object" || typeof(obj_or_alsoPassPath_or_unique) == "function") {
+              if(typeof obj_or_alsoPassPath_or_unique == "object" || typeof obj_or_alsoPassPath_or_unique == "function") {
                 bindTo = obj_or_alsoPassPath_or_unique;
               }
               
@@ -345,15 +355,15 @@
 
 
           // public functions
-          π.events.trigger = function(eventName, eventData, eventElem){
+          π.events.trigger = function(eventName, eventData, eventElem) {
             var
               eventName   = eventName   || false,
-              eventData   = eventData   || false,
+              eventData   = eventData   || null,
               dispatcher  = null,
               customEvt   = null;
 
             // early escape
-            if(eventName === false){
+            if(eventName === false) {
               return false;
             }
 
@@ -362,7 +372,7 @@
             if(π.browser.isIe() === true) {
               try {
                 dispatcher  = eventElem || document.body;
-                // pi.log('ie, dispatcher : ' + dispatcher, dispatcher);
+                pi.log('ie, dispatcher : ' + dispatcher, dispatcher);
                 customEvt   = document.createEvent("CustomEvent");
                 if (eventData) {
                   customEvt.initCustomEvent(eventName, false, false, eventData);
@@ -413,9 +423,15 @@
 
 
 
+    π.isArray = function(obj) {
+      // borrowed from jQuery 1.3
+      return (toString.call(obj) === "[object Array]");
+    }
+
+
     π.debug = function(msg, obj) {
 
-      if(!!obj){
+      if(!!obj) {
         console.log(msg, obj);
       }
       else {
@@ -427,13 +443,29 @@
 
     π.log = function(msg, obj) {
 
-      if(!!obj){
+      if(!!obj) {
         console.log(msg, obj);
       }
       else {
         console.log(msg);
       }
     };
+
+
+    /**
+     *  Injects html source into the DOM
+     *  
+     *  @function π.inject 
+     *
+     * @param {string} src The source to inject
+     * 
+     * Optional
+     * @param {DomElement} elem An optional DomElement to use for injection. If
+     * this variable is not present, document.body will be used instead.
+     *
+     * @return {Boolean|DomElement} False on failure, or new DomElement reference on success
+     *  
+     */
 
 
     π.inject = function (src, elem) {
@@ -444,7 +476,7 @@
        
       container.innerHTML = src;
       fragment.appendChild(container);
-      element.appendChild(fragment);
+      return element.appendChild(fragment);
     };
 
 
@@ -487,14 +519,16 @@
 
 
 
-    /** π.listen
-     *
+    /** 
+     *  π.listen
      * Listen to an address in the global namespace via EventSource/SSE
+     * 
+     * @function π.listen
      * 
      * @param  {string}     address   Address in the pi namespace to listen to
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback for each message
-     * @return EventSource
+     * @return {Null|EventSource} New EventSource object on success, null on failure.
      */
 
 
@@ -523,14 +557,20 @@
     };
 
 
-    /** π.readstream
+
+
+    /** 
+     * π.readstream
      *
+     * @description 
      * Listen to a data stream in the global namespace
      * 
      * @param  {string}     address   Address in the pi namespace to listen to
-     * @param  {Function}   onerror   Callback on error
-     * @param  {Function}   listener  Callback for stream data
-     * @return EventSource
+     * @param  {function}   onerror   Callback on error
+     * @param  {function}   listener  Callback for stream data
+     * 
+     * @return {boolean}    Result of operation
+     * 
      */
 
 
@@ -557,18 +597,55 @@
 
 
 
-    /** π.await
+    /** 
+     *  π.readqueue
+     *  
+     * Receive a data queue from the global namespace
+     * 
+     * @function π.readqueue
+     * 
+     * @param  {string}     address   Address in the pi namespace to receive from
+     * @param  {Function}   onerror   Callback on error
+     * @param  {Function}   listener  Callback for data chunks
+     * 
+     * @return {Boolean}              Result of operation
+     */
+
+
+    π.readqueue = function (address, listener, onerror) {
+      if(!π.session._connected) {
+        if(typeof onerror == "function") {
+          onerror.call(this, "Error: No session in readqueue().");
+          return false;
+        }
+      }
+
+      if(typeof listener == "function") {
+        return π.session.addStreamListener(address, listener, onerror);
+      }
+      else {
+        if(typeof onerror == "function") {
+          onerror.call(this, "Error: No listener in readstream().");
+        }
+        return false;
+      }
+
+    };
+
+
+
+
+    /** 
+     * @function π.await
      *
-     * Wait for named event, then trigger a given callback
-     * If the event has not occurred within the given timeout, 
-     * try to read the value directly. 
      * 
      * @param  {string}     eventaddress  Address in the pi namespace to wait for
      * @param  {Function}   callback      Callback when return value available
      * @return {boolean}                  Should always return true
      */
 
-    π.await = function(eventaddress, callback, timeout){
+
+    π.await = function(eventaddress, callback, timeout) {
       var
         eventaddress  = eventaddress  || false,
         timeout       = timeout       || π.const.DEFAULT_TIMEOUT;
@@ -590,9 +667,12 @@
 
 
 
-    /** π.read
-     *
+    /** 
+     *  π.read
+     * 
      * Read a remote value
+     *
+     * @function π.read
      * 
      * @param  {string}     address   Address in the pi namespace to read from
      * @param  {Function}   onerror   Callback on error
@@ -600,14 +680,16 @@
      * @return {boolean}              Result if success, false if failure
      */
 
-    π.read = function(address, callback){
+
+    π.read = function(address, callback) {
     
       return π._send("read", address, null, callback || false);
     };
 
 
 
-    /** π.write
+    /** 
+     * @function π.write
      *
      * Write a value to a remote variable location
      * 
@@ -617,27 +699,35 @@
      * @return {boolean}              Old value if success, false if failure
      */
 
-    π.write = function(address, value, onresult){
+
+    π.write = function(address, value, onresult) {
 
       return π._send("write", address, value, onresult);
     };
 
 
 
-    /** π._send
-     *
+    /**
+     * π._send
+     *  
+     * @description 
      * Handle app request for sending a message to an address in the pi namespace
      * Conform to pi packet specification
-     *
      * 
+     * 
+     * @function π._send
+     *
      * @param  {string}     command   pi command to issue
      * @param  {string}     address   Address in the pi namespace to read from
      * @param  {object}     data      The data to send
      * @param  {Function}   callback  Callback when return value available
+     * 
      * @return {boolean}              Result if success, false if failure
+     * 
      */
 
-    π._send = function(command, address, data, callback, onerror){
+
+    π._send = function(command, address, data, callback, onerror) {
       var
         packet = {
           command   : command, 
@@ -661,17 +751,24 @@
     };
 
 
-    /** π.readdata
+
+    /** 
+     * π.readdata
      *
-     * Read a remote data set (mysql, file)
+     * @description Read a remote data set (mysql|file)
+     *
+     * @function π.readdata
      * 
      * @param  {string}     address       Data address in the pi namespace
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
+     * 
      * @return {boolean}                  File contents on success, false on failure
+     * 
      */
 
-    π.readdata = function(address, onresult, onerror){
+
+    π.readdata = function(address, onresult, onerror) {
 
       var
         parameters = { address: address };
@@ -690,11 +787,12 @@
 
 
 
-
-
-    /** π.readfile
+    /** 
+     * π.readfile
      *
-     * Read a remote (text) file
+     * @description Read a remote (text) file
+     * 
+     * @function π.readfile
      * 
      * @param  {string}     fileaddress   File address in the pi namespace
      * @param  {string}     filetype      The file extension
@@ -702,7 +800,8 @@
      * @return {boolean}                  File contents on success, false on failure
      */
 
-    π.readfile = function(fileaddress, filetype, onresult){
+
+    π.readfile = function(fileaddress, filetype, onresult) {
 
       var
         parameters = { fileaddress: fileaddress, filetype: filetype };
@@ -712,9 +811,13 @@
     };
 
 
-    /** π.require
+
+    /** 
+     * π.require
      *
-     * A simple dependency management system
+     * @description A simple dependency management system
+     * 
+     * @function π.require
      * 
      * @param  {string}     module    Name of the pi module to be loaded
      * @param  {boolean}    async     Load script asynchronously
@@ -723,7 +826,8 @@
      * @return {boolean}              True for success, false for failure
      */
 
-    π.require = function(module, async, defer, callback, onerror){
+
+    π.require = function(module, async, defer, callback, onerror) {
 
       if (π.loaded[module.replace(/\./g,'_')]) {
         if( typeof callback == "function" ) {
@@ -736,7 +840,6 @@
         cursor  = document.getElementsByTagName ("head")[0] || document.documentElement,
         path    = '../../assets/js/pi.',
         script  = document.createElement('script');
-
 
 
       script.async      = async || true;
@@ -782,10 +885,15 @@
 
 
 
-
     /*
       core support modules
     */
+
+    /**
+     * @class pi.timer, class that implements timers
+     * @description A class with timers in it
+     * @author Johan Telstad
+     */
 
 
     π.timer = {
@@ -861,7 +969,7 @@
           self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
 
         if(!self) {
-          π.events.publish("pi.timer.items." + timerid, "Warning: stopping non-existent timer \"" + timerid + "\". Results unpredictable.");
+          // π.events.publish("pi.timer.items." + timerid, "Warning: stopping non-existent timer \"" + timerid + "\". Results unpredictable.");
           pi.log("Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
           return false;
         }
@@ -893,11 +1001,11 @@
 
         add : function (obj) {
           π.timer.history.log.push(obj);
-          π.events.publish("pi.timer.on", ["add", obj]);
+          // π.events.publish("pi.timer.on", ["add", obj]);
         },
 
 
-        list  : function (callback){
+        list  : function (callback) {
           var
             log = π.timer.history.log;
 
@@ -918,7 +1026,7 @@
           π.events.publish("pi.timer.history.on", ["clear"]);
 
           // clear log array, this is actually the fastest way
-          while(log.pop()){
+          while(log.pop()) {
             // nop
           }
         }
@@ -934,11 +1042,13 @@
      *
      */
 
+
   π.require("core.session", false, false);
   π.require("core.tasks",   false, false);
 
   π.require("app", false, false);
   π.require("pcl", false, false);
+
 
   /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
   window.addEventListener('load', function(e) {
