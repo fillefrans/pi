@@ -87,11 +87,11 @@ viewsmapnorway03.attr({title:"Hedmark"});
 
 counties.push({
 	index: 1,
-	name: "Østfold",
+	title: "Østfold",
 	county: viewsmapnorway01});
 counties.push({
 	index: 2,
-	name: "Akershus",
+	title: "Akershus",
 	county: viewsmapnorway02});
 
 ///!!!Oslo
@@ -101,77 +101,78 @@ oslo.attr({'style': 'fill:#efe48a;stroke:#000000;stroke-width:2.41219997;stroke-
 //oslo.transform("m0.19424638,0,0,0.14697836,116.47105,335.32286");
 counties.push({
 	index: 3,
-	name: "Oslo",
+	title: "Oslo",
 	county: oslo});
 
 counties.push({
 	index: 3,
-	name: "Hedmark",
+	title: "Hedmark",
 	county: viewsmapnorway03});
 counties.push({
 	index: 4,
-	name: "Oppland",
+	title: "Oppland",
 	county: viewsmapnorway04});
 counties.push({
 	index: 5,
-	name: "Buskerud",
+	title: "Buskerud",
 	county: viewsmapnorway05});
 counties.push({
 	index: 6,
-	name: "Vestfold",
+	title: "Vestfold",
 	county: viewsmapnorway06});
 counties.push({
 	index: 7,
-	name: "Telemark",
+	title: "Telemark",
 	county: viewsmapnorway07});
 counties.push({
 	index: 8,
-	name: "Aust-Agder",
+	title: "Aust-Agder",
 	county: viewsmapnorway08});
 counties.push({
 	index: 9,
-	name: "Vest-Agder",
+	title: "Vest-Agder",
 	county: viewsmapnorway09});
 counties.push({
 	index: 10,
-	name: "Rogaland",
+	title: "Rogaland",
 	county: viewsmapnorway10});
 counties.push({
 	index: 11,
-	name: "Hordaland",
+	title: "Hordaland",
 	county: viewsmapnorway11});
+
 counties.push({
 	index: 12,
-	name: "Sogn of Fjordane",
+	title: "Sogn of Fjordane",
 	county: viewsmapnorway12});
 
 /* THERE IS NO COUNTY NO. 13 */
 counties.push({
 	index: 12,
-	name: "Sogn og Fjordane",
+	title: "Sogn og Fjordane",
 	county: viewsmapnorway12});
 
 viewsmapnorway13.attr({title:"Møre og Romsdal"});
 
 counties.push({
 	index: 13,
-	name: "Møre og Romsdal",
+	title: "Møre og Romsdal",
 	county: viewsmapnorway13});
 counties.push({
 	index: 14,
-	name: "Sør-Trøndelag",
+	title: "Sør-Trøndelag",
 	county: viewsmapnorway14});
 counties.push({
 	index: 15,
-	name: "Nord-Trøndelag",
+	title: "Nord-Trøndelag",
 	county: viewsmapnorway15});
 counties.push({
 	index: 16,
-	name: "Nordland",
+	title: "Nordland",
 	county: viewsmapnorway16});
 counties.push({
 	index: 17,
-	name: "Troms",
+	title: "Troms",
 	county: viewsmapnorway17});
 
 viewsmapnorway18.attr({title:"Finnmark"});
@@ -179,9 +180,17 @@ viewsmapnorway18.attr({title:"Finnmark"});
 
 counties.push({
 	index: 18,
-	name: "Finnmark",
+	title: "Finnmark",
 	county: viewsmapnorway18});
 
+counties.push({
+  index: 19,
+  title: "Svalbard",
+  county: viewsmapnorway17});
+
+counties.forEach(function(e, i, arr) {
+
+});
 
 var rsrGroups = [];
 	

@@ -481,6 +481,12 @@
 
 
 
+    π.clone = function (obj) {
+      return Object.create(obj);
+    };
+
+
+
     π.copy = function (obj, exceptions) {
       var
         obj         = obj         || false,

@@ -53,7 +53,9 @@
 
     function getVoteReport() {
       var
-        voteReport = null,
+        voteReport      = null,
+        reportProgress  = null,
+
         xhr       = null,
         count     = 0,
         address   = '/api/pi.db.query.php',
@@ -63,17 +65,14 @@
           apikey  : "kroma"
         };
 
-      pi.log('getVoteReport!');
-
       voteReport = document.getElementById("voteReport"); 
-
 
       xhr = new XMLHttpRequest();
 
       var formatSize = function(size) {
         var
-          s = " ",
-          d = ",";
+          s = ",",
+          d = ".";
 
         if(size < 1024) {
           return size + " bytes";
@@ -93,7 +92,13 @@
       xhr.onprogress = function(e) {
         if (e.lengthComputable) {  
           var percentComplete = e.loaded / e.total;
-          voteReport.innerHTML = "loading : " + e.loaded + " / " + e.total + " (" + Math.round(100*percentComplete) + ")";
+          if(reportProgress) {
+            reportProgress.value = percentComplete;
+            reportProgress.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          }
+          else {
+          voteReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          }
         }
         else {
           voteReport.innerHTML = "loading : " + formatSize(e.loaded);
@@ -109,13 +114,25 @@
           data = JSON.parse(json);
 
         pi.log("xhr response received");
-        voteReport.innerHTML = "api replied : " + json;
+        // voteReport.innerHTML = "api replied : " + json;
+        if(data['items']) {
+          // pi.log('adding ' + data['items'].length + " items");
+          pi.maverick.xfilter.add(data['items']);
+        }
+        else {
+          pi.log('found no items : ' + json);
+        }
+
       };
 
       xhr.onerror = pi.log;
       xhr.open("post", address, true);
       xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
-      pi.log("sending : " + JSON.stringify(params));
+      pi.log("posting : " + JSON.stringify(params));
+
+      reportProgress = document.createElement("progress");
+      reportProgress.value = 0;
+      voteReport.appendChild(reportProgress);
       xhr.send(JSON.stringify(params));
 
     }
@@ -133,7 +150,7 @@
       Demo av SMS-avstemning. Redigér parameterne og klikk på "send nå"-knappen for å sende stemmer til serveren.
     </p>
 
-    <div id="loginflex" class="pcl flexbox ontop">
+<!--     <div id="loginflex" class="pcl flexbox ontop">
       <div class="pcl loginbox">
         <form>
           <fieldset id="login">
@@ -146,7 +163,7 @@
         </form>
       </div>
     </div>
-
+ -->
 
     <div class="pcl component">
 
@@ -330,12 +347,14 @@
           eventsource : null,
           starttime   : null,
           element     : null,
-          __data      : [],
           crossfilter : null,
+          dimension   : [],
+
 
           __onerror : function (err) {
             pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
           },
+
 
           __init : function() {
 
@@ -351,7 +370,7 @@
 
 
             if(row && (row['row'])) {
-             newrow = JSON.parse(row['row']);
+              newrow = JSON.parse(row['row']);
             }
             else {
               pi.log("no row in _addRow() : " + row);
@@ -362,17 +381,17 @@
             for( var idx in newrow ) {
 
               // skip isDeceased, isTMReserved, etc
-              if(idx.indexOf('is')===0) {
+              if(idx.indexOf('is') === 0) {
                 continue;
               }
-              if(idx=="idx") {
+              if(idx == "idx") {
                 continue;
               }
-              if(idx=="direktinfo_id") {
+              if(idx == "direktinfo_id") {
                 continue;
               }
 
-              if(idx=="type" && newrow[idx]=="unknown") {
+              if(idx == "type" && newrow[idx] == "unknown") {
                 // continue;
               }
 
@@ -386,6 +405,39 @@
 
             // add to DOM element
             return xbody.appendChild(fragment);
+          },
+
+
+          add : function (obj) {
+
+            var
+              self    = pi.maverick.xfilter,
+              isArray = pi.isArray(obj),
+              result  = false;
+
+            if( isArray || typeof obj == "object" ) {
+              // pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
+              result = self.crossfilter.add(obj);
+              self.refresh();
+            }
+
+            return result;
+
+          },
+
+
+          refresh : function () {
+            var
+              self = pi.maverick.xfilter;
+
+            self.dimension.forEach(function(d) {
+              if( typeof d.refresh == "function" ) {
+                d.refresh();
+                // d.refresh.call(d);
+              }
+            });
+
+            return true;
           },
 
 
@@ -426,7 +478,7 @@
                   try{
                     pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
                     packet  = message.data;
-                    // pi.log('packet.toString() : ' + packet.toString());
+                    pi.log('packet.toString() : ' + packet.toString());
 
                     if(packet.toString() == "[]") {
                       pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
@@ -450,9 +502,11 @@
                  datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
                 if(datachunk) {
+                  pi.log("adding chunk : " + JSON.stringify(datachunk));
                   self.crossfilter.add(datachunk);
                 }
                 if(packet) {
+                  pi.log("adding packet : " + JSON.stringify(packet));
                   self._addRow(packet);
                 }
                 else{
@@ -465,12 +519,92 @@
           },
 
 
+          init : function () {
+            var
+              self  = this,
+              d     = { 
+                        title   : "sex",
+                        element : null,
+                        initialized : false,
+                        names       : {}
+                      },
+
+              p     = null;
+
+
+            d.refresh = function() {
+              if(this.initialized === false && typeof this.init == "function" ) {
+                this.init();
+              }
+
+              var
+                html = "",
+                names = this.names;
+
+              this.xd.group().top(Infinity).forEach(function(p,i) {
+                var
+                  line = "";
+                if(names["i"+p.key]) {
+                  line = names["i"+p.key] + " : " + p.value;
+                }
+                else {
+                  line = i + " -> " + p.key + " : " + p.value;
+                }
+                html +=  line + "\n";
+              });
+
+              this.element.innerHTML = '<pre>' + html + '</pre>';
+              pi.log("refreshing : " + this.title);
+            };
+
+
+            d.init = function() {
+              pi.log("initializing : " + this.title);
+              this.element = document.createElement("div");
+              this.element.innerHTML = "initialized : " + this.title;
+              document.body.appendChild(this.element);
+              this.initialized = true;
+            };
+
+
+            d.xd = self.crossfilter.dimension(function(p) {
+              return p.sex;
+            });
+
+            d.names = {'iU' : 'Ukjent', 'iM' : "Mann", 'iK' : "Kvinne"};
+            self.dimension.push(d);
+
+
+            d = pi.clone(d);
+
+            d.xd = self.crossfilter.dimension(function(p) {
+              return p.state;
+            });
+
+            d.title = 'state';
+
+            views.map.counties.forEach(function(e, i, arr){
+              d.names['i'+i] = e.title;
+            });
+
+            // d.names = {'i3': 'Oslo', 'i1': 'Østfold', 'i2' : 'Akershus', 'i4' : 'Hedmark', };
+
+
+            d.initialized = false;
+
+            self.dimension.push(d);
+
+          },
+
+
           run : function() {
 
             this.starttime    = new Date().getTime();
             this.element      = document.getElementById("xfilter"),
             this.__tmp        = this.__tmp || {};
             this.crossfilter  = crossfilter();
+
+            this.init();
 
             this.__tmp.address = 'pi.data.app.views.job.2';
 

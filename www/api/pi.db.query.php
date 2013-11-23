@@ -36,6 +36,7 @@
   $address  = isset($request['address']) ? $request['address']  : false;
   $token    = isset($request['token'])   ? $request['token']    : false;
   $job      = isset($request['job'])     ? $request['job']      : false;
+  $offset   = isset($request['offset'])  ? $request['offset']   : 0;
 
 
   $reply = array(
@@ -110,7 +111,7 @@
 
 
 
-  function getFromCache($address) {
+  function getFromCache( $address, $offset = 0 ) {
 
     $result = array();
 
@@ -175,7 +176,7 @@
         FROM cache 
         INNER JOIN reportlines
         ON cache.id = reportlines.cache_id
-        WHERE reportlines.report_id = 2 AND reportlines.id > $offset
+        WHERE cache.state IS NOT NULL AND reportlines.report_id = 2 AND reportlines.id > $offset
         ORDER BY reportlines.id ASC
         ;";
 
@@ -238,10 +239,9 @@
   }
 
 
-  $offset = 0;
   $datacount = 0;
 
-  $reply['items'] = getFromCache($address);
+  $reply['items'] = getFromCache($address, $offset);
 
 
   if(is_array($reply['items']) && count($reply['items']) > 0) {
