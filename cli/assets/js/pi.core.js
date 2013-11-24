@@ -1,6 +1,6 @@
   /**
    *
-   * π v0.4.1
+   * π v0.4.2
    *
    * @description 
    * Pi is an html5-based client-server application platform
@@ -47,15 +47,17 @@
 
 
 
-    π.const = {};
+    π.const = {
 
-    // some useful constants
-    π.const.PI_ROOT     = "assets/js/";
-    π.const.LIB_ROOT    = "../../assets/js/";
-    π.const.API_ROOT    = "/api/";
-    π.const.SRV_ROOT    = "../../../srv/";
-    
-    π.const.DEFAULT_TIMEOUT = 30;
+      // platform constants
+      PI_ROOT   : "assets/js/",
+      LIB_ROOT  : "../../assets/js/",
+      API_ROOT  : "/api/",
+      SRV_ROOT  : "../../../srv/",
+      
+      DEFAULT_TIMEOUT : 30
+    };
+
 
 
 
@@ -372,7 +374,7 @@
             if(π.browser.isIe() === true) {
               try {
                 dispatcher  = eventElem || document.body;
-                pi.log('ie, dispatcher : ' + dispatcher, dispatcher);
+                pi.log('isIe, dispatcher : ' + dispatcher, dispatcher);
                 customEvt   = document.createEvent("CustomEvent");
                 if (eventData) {
                   customEvt.initCustomEvent(eventName, false, false, eventData);
@@ -417,15 +419,18 @@
     π.browser = π.browser || {};
 
     π.browser.isIe = function (v) {
-      r = RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i');
-      return r.test(navigator.userAgent);
+      // var
+      //   r = RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i');
+
+      // return r.test(navigator.userAgent);
+      return RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i').test(navigator.userAgent);
     };
 
 
 
     π.isArray = function(obj) {
       // borrowed from jQuery 1.3
-      return (toString.call(obj) === "[object Array]");
+      return (toString.call(obj) == "[object Array]");
     }
 
 
@@ -481,6 +486,7 @@
 
 
 
+
     π.clone = function (obj) {
       return Object.create(obj);
     };
@@ -508,6 +514,7 @@
         newobj = {};
         for (var i in obj) {
           if( (i % 1 === 0) ) {
+            // skip numerical indices
             // continue;
           }
           if(exceptions.indexOf(i)>-1) {
@@ -593,7 +600,7 @@
       }
       else {
         if(typeof onerror == "function") {
-          onerror.call(this, "Error: No listener in readstream().");
+          onerror.call(this, "Error: Argument #2 is not a function in readstream().");
         }
         return false;
       }
@@ -687,7 +694,7 @@
      */
 
 
-    π.read = function(address, callback) {
+    π.read = function(address, callback, onerror) {
     
       return π._send("read", address, null, callback || false);
     };
@@ -706,9 +713,9 @@
      */
 
 
-    π.write = function(address, value, onresult) {
+    π.write = function(address, value, callback) {
 
-      return π._send("write", address, value, onresult);
+      return π._send("write", address, value, callback);
     };
 
 
@@ -769,26 +776,26 @@
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
      * 
-     * @return {boolean}                  File contents on success, false on failure
+     * @return {string|boolean}           Data set on success, false on failure
      * 
      */
 
 
-    π.readdata = function(address, onresult, onerror) {
+    π.readdata = function(address, callback, onerror) {
 
       var
         parameters = { address: address };
 
-      if(typeof onresult != "function") {
-        pi.log("Error : onresult is not a function.");
+      if(typeof callback != "function") {
+        pi.log("Error : callback is not a function in readdata().");
         if(typeof onerror == "function") {
-          onerror.call(this, "onresult is not a function.");
+          onerror.call(this, "callback is not a function in readdata().");
         }
         return false;
       }
     
       // TBC
-      return π._send("data.list", address, parameters, onresult, onerror);
+      return π._send("data.list", address, parameters, callback, onerror);
     };
 
 
@@ -803,17 +810,17 @@
      * @param  {string}     fileaddress   File address in the pi namespace
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
-     * @return {boolean}                  File contents on success, false on failure
+     * @return {string|boolean}                  File contents on success, false on failure
      */
 
 
-    π.readfile = function(fileaddress, filetype, onresult) {
+    π.readfile = function(fileaddress, filetype, callback) {
 
       var
         parameters = { fileaddress: fileaddress, filetype: filetype };
     
       // TBC
-      return π._send("file.read", address, parameters, onresult);
+      return π._send("file.read", address, parameters, callback);
     };
 
 
@@ -821,7 +828,7 @@
     /** 
      * π.require
      *
-     * @description A simple dependency management system
+     * @description Basic dependency management
      * 
      * @function π.require
      * 
@@ -896,8 +903,9 @@
     */
 
     /**
-     * @class pi.timer, class that implements timers
-     * @description A class with timers in it
+     * π.timer
+     * 
+     * @description Utility object for timing purposes
      * @author Johan Telstad
      */
 

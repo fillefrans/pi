@@ -249,7 +249,7 @@
 
 
         // pi.log("sending votes @ " + rate + " / sec");
-        voteReply.innerHTML = "sending " + votes + " votes @ " + rate + " / sec, (every " + (1/rate) + " secs)";
+        voteReply.innerHTML = "sending " + votes + " votes @ " + Math.round(100*rate)/100 + " / sec, (every " + (1/rate) + " secs)";
 
         // pi.log("interval is " + (1000/rate) + " millisec");
 
@@ -369,11 +369,12 @@
               newrow    = null;
 
 
-            if(row && (row['row'])) {
-              newrow = JSON.parse(row['row']);
+            if(!!row) {
+              newrow = row;
+              pi.log("new row : " + JSON.stringify(row));
             }
             else {
-              pi.log("no row in _addRow() : " + row);
+              pi.log("no row in _addRow() : " + JSON.stringify(row));
               return false;
             }
 
@@ -559,7 +560,7 @@
 
 
             d.init = function() {
-              pi.log("initializing : " + this.title);
+              // pi.log("initializing : " + this.title);
               this.element = document.createElement("div");
               this.element.innerHTML = "initialized : " + this.title;
               document.body.appendChild(this.element);
@@ -583,11 +584,10 @@
 
             d.title = 'state';
 
+            // get state names from array
             views.map.counties.forEach(function(e, i, arr){
               d.names['i'+i] = e.title;
             });
-
-            // d.names = {'i3': 'Oslo', 'i1': 'Østfold', 'i2' : 'Akershus', 'i4' : 'Hedmark', };
 
 
             d.initialized = false;
@@ -608,7 +608,7 @@
 
             this.__tmp.address = 'pi.data.app.views.job.2';
 
-            π.readdata('pi.data.app.views.job.2', pi.log, this.__onerror);
+            // π.readdata('pi.data.app.views.job.2', pi.log, this.__onerror);
 
             // set up a listener
             π.readstream(this.__tmp.address, this.onData, this.__onerror);
@@ -686,6 +686,8 @@
   <div id="views-map" class="pi pcl component map norway">
   </div>
 
+  <script src="assets/js/lib/raphael.min.js"></script>
+  <script src="assets/js/lib/raphael-map-norway.js"></script>
 
   <script src="../../assets/js/lib/crossfilter.js"></script>
 
@@ -694,9 +696,7 @@
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
-  <script src="assets/js/lib/raphael.min.js"></script>
 
-  <script src="assets/js/lib/raphael-map-norway.js"></script>
 
   <!--  bootstrap pcl 
     <script src="../../assets/js/pi.pcl.js"></script>
