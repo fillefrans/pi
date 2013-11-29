@@ -171,7 +171,7 @@
 
 
     $query = "SELECT 
-          cache.id, cache.zipCode, cache.sex, cache.county, cache.state, 
+          cache.id, cache.zipCode, cache.sex, cache.county, cache.state, cache.age,
           reportlines.cache_id, reportlines.param1, reportlines.id as counter
         FROM cache 
         INNER JOIN reportlines

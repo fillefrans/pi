@@ -113,7 +113,7 @@
         var
           data = JSON.parse(json);
 
-        pi.log("xhr response received");
+        // pi.log("xhr response received");
         // voteReport.innerHTML = "api replied : " + json;
         if(data['items']) {
           // pi.log('adding ' + data['items'].length + " items");
@@ -128,7 +128,7 @@
       xhr.onerror = pi.log;
       xhr.open("post", address, true);
       xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
-      pi.log("posting : " + JSON.stringify(params));
+      pi.log("xhr request : " + JSON.stringify(params));
 
       reportProgress = document.createElement("progress");
       reportProgress.value = 0;
@@ -179,7 +179,7 @@
         </form>
       </div>
 
-      <div class="pcl component">
+      <div id="votelist" class="pcl component">
         <menu id="xmenu">
           <command label="sortér etter fylke" onclick="alert('yessir!')"> 
           <command label="sortér etter låt"   onclick="alert('yessiree, bob!')"> 
@@ -190,6 +190,12 @@
           <tbody id="xfilter_table_body">
           </tbody>
         </table>
+      </div>
+
+      <div class="pcl component">
+        <div id="sex" class="report sex">
+
+        </div>
       </div>
 
     </div>
@@ -357,7 +363,11 @@
 
 
           __init : function() {
+            var
+              votelist = document.getElementById("votelist");
 
+            votelist.style.overflow = "hidden";
+            votelist.style.height   = "100px";
           },
 
 
@@ -371,7 +381,7 @@
 
             if(!!row) {
               newrow = row;
-              pi.log("new row : " + JSON.stringify(row));
+              // pi.log("new row : " + JSON.stringify(row));
             }
             else {
               pi.log("no row in _addRow() : " + JSON.stringify(row));
@@ -417,7 +427,7 @@
               result  = false;
 
             if( isArray || typeof obj == "object" ) {
-              // pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
+              pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
               result = self.crossfilter.add(obj);
               self.refresh();
             }
@@ -431,10 +441,13 @@
             var
               self = pi.maverick.xfilter;
 
-            self.dimension.forEach(function(d) {
-              if( typeof d.refresh == "function" ) {
-                d.refresh();
-                // d.refresh.call(d);
+            self.dimension.forEach(function(e, i, arr) {
+              if( typeof e.refresh == "function" ) {
+                var
+                  thisFunc = e.refresh;
+                // pi.log("calling refresh(), this : ", e);
+                // e.refresh();
+                thisFunc.call(e);
               }
             });
 
@@ -449,14 +462,17 @@
               packet  = null,
               self    = pi.maverick.xfilter,
               data    = null,
-              row     = {};
+              row     = {},
+              count   = 0,
+              records = [];
 
 
               // is it an array?
-              if(pi.isArray(message)) {
-                for (var i = 0, count = message.length; i < count; i++) {
+              if(pi.isArray(message.data)) {
+                for (var i = 0, count = message.data.length; i < count; i++) {
                   try{
-                    packet  = JSON.parse(message[i].data);
+                    packet  = message.data[i];
+                    // packet  = JSON.parse(message.data[i]);
                   }
                   catch(e) {
                     pi.log('exception : ' + JSON.stringify(e), message[i]);
@@ -466,12 +482,14 @@
                    datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
                   if(datachunk) {
-                    self.crossfilter.add(datachunk);
+                    records.push(datachunk);
                   }
-                  self._addRow(packet);
+                  self._addRow(datachunk);
 
                 }
-                pi.log('added ' + count + ' data rows from packet');
+                // pi.log('added ' + count + ' data rows from packet');
+                self.crossfilter.add(records);
+                self.refresh();
               }
               else {
 
@@ -504,16 +522,9 @@
 
                 if(datachunk) {
                   pi.log("adding chunk : " + JSON.stringify(datachunk));
-                  self.crossfilter.add(datachunk);
+                  self.crossfilter.add([datachunk]);
+                  self._addRow(datachunk);
                 }
-                if(packet) {
-                  pi.log("adding packet : " + JSON.stringify(packet));
-                  self._addRow(packet);
-                }
-                else{
-                  pi.log("NOT adding row : " + typeof packet);
-                }
-
                 // pi.log("data: '" + JSON.stringify(datachunk) + "' (" + typeof(message) + ")");
               }
 
@@ -527,14 +538,20 @@
                         title   : "sex",
                         element : null,
                         initialized : false,
-                        names       : {}
+                        names       : {},
+                        display     : "rank"
                       },
 
               p     = null;
 
 
+            /**
+             * common dimension functions
+             */
+
             d.refresh = function() {
               if(this.initialized === false && typeof this.init == "function" ) {
+                pi.log("initializing : " + this.title);
                 this.init();
               }
 
@@ -542,57 +559,109 @@
                 html = "",
                 names = this.names;
 
-              this.xd.group().top(Infinity).forEach(function(p,i) {
-                var
-                  line = "";
-                if(names["i"+p.key]) {
+              if(this.display == "rank") {
+                this.xd.group().top(Infinity).forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  // pi.log("this : ", this);
+                  if(names["i"+p.key]) {
+                    line = names["i"+p.key] + " : " + p.value;
+                    // pi.log("i"+p.key + " : " + p.value);
+                    html +=  line + "\n";
+                  }
+                });
+                // html += "Total : " + self.crossfilter.size();
+              }
+              else if(this.display == "group") {
+                // pi.log('grouping age');
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  names["i"+p.key] = p.key;
                   line = names["i"+p.key] + " : " + p.value;
-                }
-                else {
-                  line = i + " -> " + p.key + " : " + p.value;
-                }
-                html +=  line + "\n";
-              });
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line + "\n";
+                });
+                // html += "Total : " + self.crossfilter.size();
+              }
 
               this.element.innerHTML = '<pre>' + html + '</pre>';
-              pi.log("refreshing : " + this.title);
+              // pi.log("refreshing : " + this.title);
             };
-
 
             d.init = function() {
               // pi.log("initializing : " + this.title);
-              this.element = document.createElement("div");
-              this.element.innerHTML = "initialized : " + this.title;
-              document.body.appendChild(this.element);
+              this.element = document.getElementById(this.title) || false;
+              if(!this.element) {
+                this.element = document.createElement("div");
+                document.body.appendChild(this.element);
+              }
               this.initialized = true;
+              // this.element.innerHTML = "initialized : " + this.title;
             };
 
+            /**
+             * set up sex dimension
+             */
 
             d.xd = self.crossfilter.dimension(function(p) {
-              return p.sex;
+              return p.sex || "U";
             });
 
             d.names = {'iU' : 'Ukjent', 'iM' : "Mann", 'iK' : "Kvinne"};
+            d.title = "sex";
+            d.element = document.getElementById("sex");
             self.dimension.push(d);
 
 
-            d = pi.clone(d);
+            /**
+             * set up state dimension
+             */
 
-            d.xd = self.crossfilter.dimension(function(p) {
-              return p.state;
+            states = pi.clone(d);
+
+            states.xd = self.crossfilter.dimension(function(p) {
+              return p.state ? parseInt(p.state, 10) : 0;
             });
 
-            d.title = 'state';
+            states.title = 'state';
 
+            states.names = {};
             // get state names from array
             views.map.counties.forEach(function(e, i, arr){
-              d.names['i'+i] = e.title;
+              states.names['i'+i] = e.title;
             });
 
 
-            d.initialized = false;
+            states.initialized = false;
 
-            self.dimension.push(d);
+            self.dimension.push(states);
+
+
+            /**
+             * set up age dimension
+             */
+
+            age = pi.clone(d);
+
+            age.xd = self.crossfilter.dimension(function(p) {
+              return p.age || 0;
+            });
+
+            age.title = 'age';
+            age.display = 'group';
+            age.initialized = false;
+
+            age.names = {};
+
+            // for(var i = 0; i < 120; i++) {
+            //   age.names[i] = i;
+            // }
+
+            self.dimension.push(age);
+
 
           },
 
@@ -604,6 +673,10 @@
             this.__tmp        = this.__tmp || {};
             this.crossfilter  = crossfilter();
 
+            // private init
+            this.__init();
+
+            // public init
             this.init();
 
             this.__tmp.address = 'pi.data.app.views.job.2';
@@ -617,6 +690,7 @@
 
 
         window.addEventListener("pi.session.start", function() {
+          pi.log("pi.session.start!");
           pi.maverick.xfilter = xfilter;
           pi.maverick.xfilter.run();
         }, false);

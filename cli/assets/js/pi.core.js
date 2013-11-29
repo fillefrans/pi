@@ -361,7 +361,7 @@
             var
               eventName   = eventName   || false,
               eventData   = eventData   || null,
-              dispatcher  = null,
+              dispatcher  = eventElem   || window,
               customEvt   = null;
 
             // early escape
@@ -373,9 +373,7 @@
             // are we handicapped ?
             if(π.browser.isIe() === true) {
               try {
-                dispatcher  = eventElem || document.body;
-                pi.log('isIe, dispatcher : ' + dispatcher, dispatcher);
-                customEvt   = document.createEvent("CustomEvent");
+                customEvt = document.createEvent("CustomEvent");
                 if (eventData) {
                   customEvt.initCustomEvent(eventName, false, false, eventData);
                 }
@@ -391,9 +389,8 @@
             }
             else {
               // we are not handicapped
-              dispatcher  = eventElem || window;
 
-              if(eventData===false) {
+              if(eventData === false) {
                 dispatcher.dispatchEvent(new CustomEvent(eventName));
               } else {
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
@@ -405,8 +402,8 @@
 
 
           // set up aliases for the trigger function
-          π.events.emit           = π.events.trigger;
-          π.events.dispatch       = π.events.trigger;
+          π.events.emit     = π.events.trigger;
+          π.events.dispatch = π.events.trigger;
 
 
           π.events._loaded = true;
@@ -419,31 +416,14 @@
     π.browser = π.browser || {};
 
     π.browser.isIe = function (v) {
-      // var
-      //   r = RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i');
-
-      // return r.test(navigator.userAgent);
       return RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i').test(navigator.userAgent);
     };
 
 
 
     π.isArray = function(obj) {
-      // borrowed from jQuery 1.3
-      return (toString.call(obj) == "[object Array]");
+      return (Object.prototype.toString.call(obj) == "[object Array]");
     }
-
-
-    π.debug = function(msg, obj) {
-
-      if(!!obj) {
-        console.log(msg, obj);
-      }
-      else {
-        console.log(msg);
-      }
-
-    };
 
 
     π.log = function(msg, obj) {
@@ -492,6 +472,17 @@
     };
 
 
+    // the classic js create/clone method
+
+    // π.clone = function (obj) {
+    //   var
+    //     newobj = function(){};
+
+    //   newobj.prototype = obj;
+    //   return new newobj();
+    // };
+
+
 
     π.copy = function (obj, exceptions) {
       var
@@ -510,23 +501,21 @@
         }
       }
 
-      if(exceptions!==false) {
-        newobj = {};
-        for (var i in obj) {
-          if( (i % 1 === 0) ) {
-            // skip numerical indices
-            // continue;
-          }
+      newobj = {};
+      for (var i in obj) {
+        if( (i % 1 === 0) ) {
+          // skip numerical indices
+          // continue;
+        }
+        if(exceptions !== false) {
           if(exceptions.indexOf(i)>-1) {
             continue;
           }
-          newobj[i] = obj[i];
         }
-        return newobj;
+        newobj[i] = obj[i];
       }
-      else {
-        return JSON.parse(JSON.stringify(obj));
-      }
+      return newobj;
+
     };
 
 
