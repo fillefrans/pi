@@ -43,10 +43,8 @@
  
 <body class="pi">
 
-
-
   <div id="voteReport">
-    <button id="btnGetVoteReport">get report</button>
+    <!-- <button id="btnGetVoteReport">get report</button> -->
   </div>
 
   <script type="text/javascript">
@@ -94,14 +92,14 @@
           var percentComplete = e.loaded / e.total;
           if(reportProgress) {
             reportProgress.value = percentComplete;
-            reportProgress.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+            // reportProgress.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
           }
           else {
-          voteReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          // voteReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
           }
         }
         else {
-          voteReport.innerHTML = "loading : " + formatSize(e.loaded);
+          // voteReport.innerHTML = "loading : " + formatSize(e.loaded);
         }
       };
 
@@ -113,6 +111,9 @@
         var
           data = JSON.parse(json);
 
+        if(reportProgress) {
+          reportProgress.style.display = "none";
+        }
         // pi.log("xhr response received");
         // voteReport.innerHTML = "api replied : " + json;
         if(data['items']) {
@@ -132,12 +133,19 @@
 
       reportProgress = document.createElement("progress");
       reportProgress.value = 0;
+      reportProgress.style.width = "100%";
+      reportProgress.style.height = "100%";
+      // reportProgress.style.top = "0px";
+      // reportProgress.position = "fixed";
+      
+      voteReport.style.height = "4px";
       voteReport.appendChild(reportProgress);
+
       xhr.send(JSON.stringify(params));
 
     }
 
-    document.getElementById('btnGetVoteReport').onclick = getVoteReport;
+    // document.getElementById('btnGetVoteReport').onclick = getVoteReport;
 
 
   </script>
@@ -166,7 +174,6 @@
  -->
 
     <div class="pcl component">
-
       <div class="pcl component">
         <form>
           <fieldset id="settings">
@@ -180,9 +187,9 @@
       </div>
 
       <div id="votelist" class="pcl component">
-        <menu id="xmenu">
-          <command label="sortér etter fylke" onclick="alert('yessir!')"> 
-          <command label="sortér etter låt"   onclick="alert('yessiree, bob!')"> 
+        <menu id="xmenu" type="popup">
+          <!-- <li title="sortér etter fylke" label="sortér etter fylke" onclick="alert('yessir!')">sortér etter fylke</li> -->
+          <!-- <li title="sortér etter låt" label="sortér etter låt"   onclick="alert('yessiree, bob!')">sortér etter låt</li>  -->
         </menu>
 
         <table id="xfilter_table" contextmenu="xmenu">
@@ -368,6 +375,7 @@
 
             votelist.style.overflow = "hidden";
             votelist.style.height   = "100px";
+            votelist.style.display  = "none";
           },
 
 
@@ -388,6 +396,21 @@
               return false;
             }
 
+            if(newrow.state) {
+              var
+                thisState = views.map.counties[newrow.state];
+
+              if(thisState) {
+                var
+                  previousFill = thisState.county.attr("fill");
+
+                // pi.log(newrow.state + " : " + thisState, thisState);
+                thisState.county.attr("fill", "#d65a3f");
+
+                thisState.county.animate({fill : previousFill}, 1000, "easeOut");
+                // TweenMax.from(thisState, pi.const.TWEEN_TIME, {css: {fill : "#d65a3f"}});
+              }
+            }
 
             for( var idx in newrow ) {
 
@@ -467,67 +490,66 @@
               records = [];
 
 
-              // is it an array?
-              if(pi.isArray(message.data)) {
-                for (var i = 0, count = message.data.length; i < count; i++) {
-                  try{
-                    packet  = message.data[i];
-                    // packet  = JSON.parse(message.data[i]);
-                  }
-                  catch(e) {
-                    pi.log('exception : ' + JSON.stringify(e), message[i]);
-                  }
-
-                  var
-                   datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
-
-                  if(datachunk) {
-                    records.push(datachunk);
-                  }
-                  self._addRow(datachunk);
-
+            // is it an array?
+            if(pi.isArray(message.data)) {
+              for (var i = 0, count = message.data.length; i < count; i++) {
+                try{
+                  packet  = message.data[i];
+                  // packet  = JSON.parse(message.data[i]);
                 }
-                // pi.log('added ' + count + ' data rows from packet');
-                self.crossfilter.add(records);
-                self.refresh();
-              }
-              else {
-
-                if(!!message.data) {
-                  try{
-                    pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
-                    packet  = message.data;
-                    pi.log('packet.toString() : ' + packet.toString());
-
-                    if(packet.toString() == "[]") {
-                      pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
-                      return;
-                    }
-                    // pi.log('packet : ' + JSON.stringify(packet));
-                    pi.log('packet is : ' + !!packet);
-                  }
-                  catch(e) {
-                    pi.log('skipping : ' + JSON.stringify(message),e);
-                    return;
-                    // pi.log('exception : ' + JSON.stringify(e), message);
-                  }
-                }
-                else {
-                  pi.log('also skipping : ' + JSON.stringify(message));
-                  return;
+                catch(e) {
+                  pi.log('exception : ' + JSON.stringify(e), message[i]);
                 }
 
                 var
-                 datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+                 datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
                 if(datachunk) {
-                  pi.log("adding chunk : " + JSON.stringify(datachunk));
-                  self.crossfilter.add([datachunk]);
-                  self._addRow(datachunk);
+                  records.push(datachunk);
                 }
-                // pi.log("data: '" + JSON.stringify(datachunk) + "' (" + typeof(message) + ")");
+                self._addRow(datachunk);
+
+              }
+              // pi.log('added ' + count + ' data rows from packet');
+              self.crossfilter.add(records);
+              self.refresh();
+            }
+            else {
+
+              if(!!message.data) {
+                try{
+                  pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
+                  packet  = message.data;
+                  pi.log('packet.toString() : ' + packet.toString());
+
+                  if(packet.toString() == "[]") {
+                    pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
+                    return;
+                  }
+                  // pi.log('packet : ' + JSON.stringify(packet));
+                  pi.log('packet is : ' + !!packet);
+                }
+                catch(e) {
+                  pi.log('skipping : ' + JSON.stringify(message),e);
+                  return;
+                  // pi.log('exception : ' + JSON.stringify(e), message);
+                }
+              }
+              else {
+                pi.log('also skipping : ' + JSON.stringify(message));
+                return;
               }
 
+              var
+               datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+              if(datachunk) {
+                pi.log("adding chunk : " + JSON.stringify(datachunk));
+                self.crossfilter.add([datachunk]);
+                self._addRow(datachunk);
+              }
+              // pi.log("data: '" + JSON.stringify(datachunk) + "' (" + typeof(message) + ")");
+            }
           },
 
 
@@ -551,13 +573,14 @@
 
             d.refresh = function() {
               if(this.initialized === false && typeof this.init == "function" ) {
-                pi.log("initializing : " + this.title);
+                // pi.log("initializing : " + this.title);
                 this.init();
               }
 
               var
                 html = "",
-                names = this.names;
+                names = this.names,
+                params = {labels : [], values : []};
 
               if(this.display == "rank") {
                 this.xd.group().top(Infinity).forEach(function(p,i, arr) {
@@ -586,6 +609,25 @@
                 });
                 // html += "Total : " + self.crossfilter.size();
               }
+              else if(this.display == "donutchart") {
+                // pi.log('grouping age');
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if(names["i"+p.key]) {
+                    if (p.key !== "U") {
+                      params.labels.push(names["i"+p.key]);
+                      params.values.push(parseInt(p.value, 10));
+                    }
+                  }
+                });
+
+                pi.log("emitting :");
+                pi.events.trigger("pi.data.app.views.sex", params);
+                pi.log("done");
+
+              }
 
               this.element.innerHTML = '<pre>' + html + '</pre>';
               // pi.log("refreshing : " + this.title);
@@ -613,6 +655,7 @@
             d.names = {'iU' : 'Ukjent', 'iM' : "Mann", 'iK' : "Kvinne"};
             d.title = "sex";
             d.element = document.getElementById("sex");
+            d.display = "donutchart";
             self.dimension.push(d);
 
 
@@ -681,7 +724,7 @@
 
             this.__tmp.address = 'pi.data.app.views.job.2';
 
-            // π.readdata('pi.data.app.views.job.2', pi.log, this.__onerror);
+            getVoteReport();
 
             // set up a listener
             π.readstream(this.__tmp.address, this.onData, this.__onerror);
@@ -689,10 +732,72 @@
         };
 
 
+        var
+          sexchart = {
+            element   : null,
+            raphael   : null,
+            width     : 400,
+            height    : 400,
+            amounts   : [], 
+            names     : [],
+            totalsum  : 0,
+
+            __init : function(options) {
+              this.raphael = Raphael(this.element, this.width, this.height);
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self = pi.maverick.sexchart;
+
+              // parse data array
+              data.forEach(function(p,i, arr) {
+                // early escape
+                if(p.key == "U"){
+                  return;
+                }
+                var
+                  amount = parseInt(p.value, 10);
+                
+                self.amounts.push(amount);
+                self.totalsum += amount;
+
+                self.names.push({name: p.key, percentage: "%"});
+              }); // data.forEach
+      
+              // calculate percentages
+              self.names.forEach( function(p, idx, arr){
+                p.value.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
+              });
+
+            },
+
+            draw : function (data) {
+              this.raphael.donutChart(200, 200, 140, 70, this.amounts, this.names, "#fff");
+            },
+
+            run : function() {
+              this.__init();
+              pi.addEventListener("pi.data.app.views.sex", this.onData, this.onError);
+            }
+          };
+
+
         window.addEventListener("pi.session.start", function() {
           pi.log("pi.session.start!");
+          
           pi.maverick.xfilter = xfilter;
           pi.maverick.xfilter.run();
+          
+          pi.maverick.sexchart = sexchart;
+          pi.maverick.sexchart.run();
+
         }, false);
 
 
@@ -760,13 +865,23 @@
   <div id="views-map" class="pi pcl component map norway">
   </div>
 
-  <script src="assets/js/lib/raphael.min.js"></script>
+  <!--script src="assets/js/lib/raphael.min.js"></script-->
+  <script src="assets/js/lib/raphael.js"></script>
   <script src="assets/js/lib/raphael-map-norway.js"></script>
+
+  <!-- Cufon fonts for Raphael -->
+  <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
+  <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
 
   <script src="../../assets/js/lib/crossfilter.js"></script>
 
+
   <!--  bootstrap pi -->
   <script src="../../assets/js/pi.core.js"></script>
+
+  <!-- Our Raphael plugins -->
+  <script src="../../assets/js/pi.lib.raphael.donutchart.js"></script>
+  <script src="../../assets/js/pi.lib.raphael.donutgauge.js"></script>
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>

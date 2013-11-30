@@ -50,10 +50,11 @@
     π.const = {
 
       // platform constants
-      PI_ROOT   : "assets/js/",
-      LIB_ROOT  : "../../assets/js/",
-      API_ROOT  : "/api/",
-      SRV_ROOT  : "../../../srv/",
+      PI_ROOT     : "assets/js/",
+      LIB_ROOT    : "../../assets/js/",
+      API_ROOT    : "/api/",
+      SRV_ROOT    : "../../../srv/",
+      TWEEN_TIME  : 0.2,
       
       DEFAULT_TIMEOUT : 30
     };
@@ -420,6 +421,10 @@
     };
 
 
+    π.browser.isMobile = function(){
+      return /ip(hone|od|ad)|android|blackberry.*applewebkit|bb1\d.*mobile/i.test(navigator.userAgent);
+    }
+
 
     π.isArray = function(obj) {
       return (Object.prototype.toString.call(obj) == "[object Array]");
@@ -466,21 +471,17 @@
 
 
 
+    π.clone = function (obj){
+      var
+        clone = Object.create(Object.getPrototypeOf(obj)),
+        props = Object.getOwnPropertyNames(obj);
 
-    π.clone = function (obj) {
-      return Object.create(obj);
+      props.forEach(function(name){
+        Object.defineProperty(clone, name, Object.getOwnPropertyDescriptor(obj, name));
+      });
+
+      return clone;
     };
-
-
-    // the classic js create/clone method
-
-    // π.clone = function (obj) {
-    //   var
-    //     newobj = function(){};
-
-    //   newobj.prototype = obj;
-    //   return new newobj();
-    // };
 
 
 
@@ -929,8 +930,11 @@
 
         timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
 
-        if(events.publish) {
+        if(typeof events.publish == "function") {
           events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
+        }
+        if(typeof console.time == "function"){
+          console.time(id);
         }
       },
 
@@ -959,17 +963,22 @@
 
         timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
 
-        if(events.publish) {
-          events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
+        if(typeof events.publish == "function") {
+          events.publish("pi.timer." + timerid + ".tick", {event: "tick", data: timers[id]});
         }
       },
 
 
       stop : function(timerid) {
+
         var
           timers  = π.timer.timers,
           history = π.timer.history,
           self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
+
+        if(typeof console.timeEnd == "function"){
+          console.timeEnd(timerid);
+        }
 
         if(!self) {
           // π.events.publish("pi.timer.items." + timerid, "Warning: stopping non-existent timer \"" + timerid + "\". Results unpredictable.");
@@ -1001,7 +1010,6 @@
         
         log   : [],
 
-
         add : function (obj) {
           π.timer.history.log.push(obj);
           // π.events.publish("pi.timer.on", ["add", obj]);
@@ -1029,12 +1037,14 @@
           π.events.publish("pi.timer.history.on", ["clear"]);
 
           // clear log array, this is actually the fastest way
+          // NB! Array MUST NOT contain any falsy values, since that 
+          // would break the loop before the array is cleared
           while(log.pop()) {
             // nop
           }
         }
       } // end of history object
-    };
+    }; // end of timer module
 
 
 
