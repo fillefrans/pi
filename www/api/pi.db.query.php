@@ -71,7 +71,8 @@
       $newlength = $redis->rPush($address, igbinary_serialize($data));
     }
     else {
-      $newlength = $redis->rPush($address, igbinary_serialize([$data]));
+
+        // $newlength = $redis->rPush($address, igbinary_serialize([$data]));
     }
 
     $redis->close();
@@ -148,6 +149,7 @@
 
 
   function getFromDB($address, $offset=0) {
+    global $job;
 
     $APP_DB = array(
                 'host'      => 'localhost', 
@@ -171,15 +173,17 @@
 
 
     $query = "SELECT 
-          cache.id, cache.zipCode, cache.sex, cache.county, cache.state, cache.age,
+          cache.id, cache.zipCode, cache.sex, cache.county, cache.state, cache.age, cache.lifePhase,
           reportlines.cache_id, reportlines.param1, reportlines.id as counter
-        FROM cache 
-        INNER JOIN reportlines
+        FROM cache
+        RIGHT JOIN reportlines
         ON cache.id = reportlines.cache_id
-        WHERE cache.state IS NOT NULL AND reportlines.report_id = 2 AND reportlines.id > $offset
+        WHERE reportlines.report_id = $job AND reportlines.id > $offset
         ORDER BY reportlines.id ASC
         ;";
 
+        // cache.state IS NOT NULL AND 
+        // 
         // WHERE job = 2
         // WHERE reportlines.job = 2
 
@@ -190,7 +194,7 @@
     elseif($sqlresult->num_rows === 0) {
       // throw new Exception('WARNING! Query returned 0 rows.');
       $cache_id = "NULL";
-      return array();
+      return null;
     }
     else {
 

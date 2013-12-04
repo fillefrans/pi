@@ -431,6 +431,27 @@
     }
 
 
+    π.strpad = function(str, padto, padstr) {
+      var
+        padstr = padstr || "&nbsp;",
+        padto  = padto  || false,
+        count  = 0,
+        result = str;
+
+      count = padto - str.length;
+
+      if(count <= 0 || padto === false) {
+        return str;
+      }
+
+      for(;count--;) {
+        result = padstr + result;
+      }
+
+      return result;
+    };
+
+
     π.log = function(msg, obj) {
 
       if(!!obj) {

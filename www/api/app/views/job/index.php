@@ -63,6 +63,9 @@
 
 
 
+
+
+
   /**
    *  Function checkInput
    *
@@ -84,6 +87,10 @@
 
     $reply['request'] = $request; //json_decode($rawrequest, true); 
 
+
+    if(isset($request['param1'])) {
+      $packet['data']['param1'] = $request['param1'];
+    }
 
 
     if ((!isset($request['apikey'])) || (trim($request['apikey']==""))) {
@@ -122,6 +129,7 @@
     // remove any whitespace or tabs, then remove any leading "+" or zeroes in remaining string
     $request['phone'] = ltrim(str_replace(" ", "", $request['phone']),"+0");
 
+
     return true;
   }
 
@@ -130,7 +138,13 @@
    *  procedure
    */
   function publishJobItem() {
-    global $redis, $reply, $packet;
+    global $redis, $reply, $packet, $request;
+
+    // if(isset($packet['data']['row'])){
+    //   if(isset($request['param1'])) {
+    //     $packet['data']['row']['param1'] = $request['param1'];
+    //   }
+    // }
 
     // $redis->publish($packet['address'], json_encode($packet['data'], JSON_PRETTY_PRINT));
     $redis->select(PI_DATA);

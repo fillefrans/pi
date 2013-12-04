@@ -49,10 +49,26 @@
 
 
 
+
+.flex-container {
+    display         : inline-flex;
+    flex-direction  : row;
+    flex-wrap       : nowrap;
+    /*flex-flow       : row wrap;*/
+    justify-content : space-between;
+    align-content   : flex-start;
+    align-items     : center;
+    }
+
+
   .code {
-    font-family: monospace;
-    color: #f8f8f2;
+    font-family : monospace;
+    color       : #f8f8f2;
   }
+
+
+
+
 
 
 /* monokai, obviously */
@@ -69,7 +85,7 @@
 
   .tween {
     transition-property         : all;
-    transition-duration         : 0.1s;        
+    transition-duration         : 0.2s;
     transition-timing-function  : cubic-bezier(0,0,0.58,1);
   }
 

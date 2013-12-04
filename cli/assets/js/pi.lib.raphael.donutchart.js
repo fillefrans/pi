@@ -5,6 +5,7 @@ Raphael.fn.donutChart = function (cx, cy, r, rin, values, labels, stroke) {
       chart = this.set(),
       percentageText  = null,
       percentageLayer = null,
+      ontop = [],
       overlayR  = rin + Math.round((r-rin)/2),
       colors    = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'],
 
@@ -59,21 +60,23 @@ Raphael.fn.donutChart = function (cx, cy, r, rin, values, labels, stroke) {
           popangle  = angle + (angleplus / 2),
           color     = colors[j],
           ms        = 500,
-          delta     = 12,
+          delta     = 20,
           bcolor    = colors[j],
           
-          p   = sector(cx, cy, r, angle+90, angle + angleplus+90, {fill: "90-" + bcolor + "-" + color, stroke: stroke, "stroke-width": 2}),
-          txt = paper.print(cx - 15 + (r + delta) * Math.cos((-popangle-90) * rad), cy + (r + delta + 20) * Math.sin((-popangle-90) * rad), labels[j].name.toUpperCase(), paper.getFont("Ubuntu Condensed",400),18).attr({fill: bcolor, stroke:bcolor, "stroke-width" : 1});
+          p   = sector(cx, cy, r, angle+90, angle + angleplus+90, {fill: "90-" + bcolor + "-" + color, stroke: stroke, "stroke-width": 0}),
+          txt = paper.print(cx - 15 + (r + delta) * Math.cos((-popangle-15) * rad), cy + (r + delta) * Math.sin((-popangle-15) * rad), labels[j].name.toUpperCase(), paper.getFont("Ubuntu Condensed",400),18).attr({fill: bcolor, stroke:bcolor, "stroke-width" : 1});
           
           percentageText = paper.print(cx - 22 + (overlayR) * Math.cos((-popangle-90) * rad), cy + (overlayR) * Math.sin((-popangle-90) * rad), labels[j].percentage, paper.getFont("Passion One",400),30).attr({fill: "#fff", stroke: bcolor, "stroke-width": 0.6});
             //txt.stop().animate({opacity: 1}, ms, "elastic");
+          ontop.push(percentageText);
+          ontop.push(txt);
 
           p.mouseover(function () {
-              //p.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ms, "elastic");
-              //txt.stop().animate({opacity: 1}, ms, "elastic");
+              p.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ms, "elastic");
+              // txt.stop().animate({opacity: 1}, ms, "elastic");
           }).mouseout(function () {
-              //p.stop().animate({transform: ""}, ms, "elastic");
-              //txt.stop().animate({opacity: 0.5}, ms);
+              p.stop().animate({transform: ""}, ms, "elastic");
+              // txt.stop().animate({opacity: 0.5}, ms);
           });
 
           angle += angleplus;
@@ -82,9 +85,11 @@ Raphael.fn.donutChart = function (cx, cy, r, rin, values, labels, stroke) {
           start += .1;
       };
 
-    
 
-    for (var i = values.length;i--;) {
+    var
+      count = values.length;    
+
+    for (var i = count;i--;) {
       // calculate total items
       total += values[i];
     }
@@ -95,7 +100,13 @@ Raphael.fn.donutChart = function (cx, cy, r, rin, values, labels, stroke) {
 
     overlay(cx, cy, overlayR, 90,360+89,{opacity: 0.18, fill: "#000"});
 //    paper.circle(100,100,70).attr({opacity: 0.15, fill: "#000"})
-		//percentageText.toFront();					
+    
+    ontop.forEach(function(p){
+      if(typeof p.toFront == "function"){
+        p.toFront();
+      }
+    });
+
     return chart;
 };
 

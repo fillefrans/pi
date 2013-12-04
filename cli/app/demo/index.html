@@ -43,23 +43,26 @@
  
 <body class="pi">
 
+
+
   <div id="voteReport">
     <!-- <button id="btnGetVoteReport">get report</button> -->
   </div>
 
   <script type="text/javascript">
 
-    function getVoteReport() {
+    function getVoteReport(reportid) {
       var
         voteReport      = null,
         reportProgress  = null,
+        reportid = reportid || 2,
 
         xhr       = null,
         count     = 0,
         address   = '/api/pi.db.query.php',
         params    = {
-          address : "pi.data.app.views.job.2",
-          job     : 2,
+          address : "pi.data.app.views.job." + reportid,
+          job     : reportid,
           apikey  : "kroma"
         };
 
@@ -116,6 +119,12 @@
         }
         // pi.log("xhr response received");
         // voteReport.innerHTML = "api replied : " + json;
+        if(data['log']) {
+          pi.log("server log:");
+          data.log.forEach(function(p, i) {
+            pi.log(++i + " : " + p);
+          });
+        }
         if(data['items']) {
           // pi.log('adding ' + data['items'].length + " items");
           pi.maverick.xfilter.add(data['items']);
@@ -153,10 +162,7 @@
 
   <!-- This is the demo's div -->
 
-  <div id="demo" class="pcl" data-name="pcl.table.xfilter" data-address="pi.srv.job.test">
-    <p style="display: block; margin-top: 144px">
-      Demo av SMS-avstemning. Redigér parameterne og klikk på "send nå"-knappen for å sende stemmer til serveren.
-    </p>
+  <div id="demo" class="pcl" data-name="pcl.table.xfilter">
 
 <!--     <div id="loginflex" class="pcl flexbox ontop">
       <div class="pcl loginbox">
@@ -174,17 +180,24 @@
  -->
 
     <div class="pcl component">
-      <div class="pcl component">
-        <form>
-          <fieldset id="settings">
-            <p>
-            Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
-            </p>
-            <p id="voteReply">
-            </p>
-          </fieldset>
-        </form>
+      <div class="pcl component" style="left: 400px">
+        <p>
+        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
+        </p>
+        <p id="voteReply">
+          Demo av SMS-avstemning. Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
+        </p>
       </div>
+
+
+      <div id="visuals" class="pcl component flex-container">
+        <div id="views-map"></div>
+        <div id="sexchart"></div>
+        <div id="statechart"></div>
+        <div id="agechart"></div>
+        <div id="votechart">votes</div>
+      </div>
+
 
       <div id="votelist" class="pcl component">
         <menu id="xmenu" type="popup">
@@ -193,19 +206,34 @@
         </menu>
 
         <table id="xfilter_table" contextmenu="xmenu">
-          <thead id="xfilter_table_head"><tr><th>SMS-avstemning</th></tr></thead>
+          <thead id="xfilter_table_head"><tr><th></th></tr></thead>
           <tbody id="xfilter_table_body">
           </tbody>
         </table>
       </div>
-
-      <div class="pcl component">
-        <div id="sex" class="report sex">
-
-        </div>
-      </div>
-
     </div>
+
+    <!-- the age histogram -->
+    <style type="text/css">
+      .bar rect {
+      fill: white;
+      shape-rendering: crispEdges;
+      }
+
+      .bar text {
+        fill: red;
+      }
+
+      .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+    </style>
+
+    <div id="agechart">
+    </div>
+    
 
     <script>
 
@@ -230,6 +258,7 @@
         var
           votes     = parseInt(document.getElementById("spanVotes").innerHTML),
           minutes   = parseInt(document.getElementById("spanMinutes").innerHTML),
+          job       = parseInt(document.getElementById("spanJob").innerHTML),
           voteReply = null,
           xhr       = null,
           rate      = 0,
@@ -238,7 +267,7 @@
           seconds   = 0,
           address   = '/api/app/views/job/',
           params    = {
-            job     : 2,
+            job     : job,
             apikey  : "kroma"
           };
 
@@ -258,7 +287,9 @@
         seconds = minutes * 60;
         rate    = votes/(seconds);
 
-        voteReply = document.getElementById("voteReply"); 
+        voteReply = document.getElementById("voteReply");
+        // voteReport.style.color = "#ccc";
+        voteReply.style.color = "#ddd";
 
 
         // pi.log("sending votes @ " + rate + " / sec");
@@ -297,7 +328,7 @@
               params['param1']  = Math.floor(Math.random() * 9);
               
               // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
-              voteReply.innerHTML = "sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params);
+              voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
 
               xhr = new XMLHttpRequest();
 
@@ -559,6 +590,7 @@
               d     = { 
                         title   : "sex",
                         element : null,
+                        parent  : document.getElementById("visuals"),
                         initialized : false,
                         names       : {},
                         display     : "rank"
@@ -578,9 +610,11 @@
               }
 
               var
-                html = "",
+                html = "<p /><br /><br />",
                 names = this.names,
-                params = {labels : [], values : []};
+                params = {labels : [], values : []},
+                totalsum = 0;
+
 
               if(this.display == "rank") {
                 this.xd.group().top(Infinity).forEach(function(p,i, arr) {
@@ -589,15 +623,62 @@
 
                   // pi.log("this : ", this);
                   if(names["i"+p.key]) {
-                    line = names["i"+p.key] + " : " + p.value;
+
+                    totalsum += p.value;
+                    line = "<span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key];
                     // pi.log("i"+p.key + " : " + p.value);
-                    html +=  line + "\n";
+                    html +=  line + "<br />";
+                  }
+                  else{
+                    pi.log("no name : " + p.key + " -> " + p.value, names);
                   }
                 });
-                // html += "Total : " + self.crossfilter.size();
+                html += "sum : " + totalsum;
+                this.element.innerHTML = html;
               }
               else if(this.display == "group") {
-                // pi.log('grouping age');
+
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line  = "";
+
+                  names["i"+p.key] = p.key;
+                  totalsum += p.value;
+                  line = names["i"+p.key] + " : " + p.value;
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line + "<br />";
+                });
+                html += "sum : " + totalsum;
+                this.element.innerHTML = html;
+              }
+              else if(this.display == "donutchart") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if(names["i"+p.key]) {
+                    if (p.key !== "U") {
+                      if(p.key == "M") {
+                      // put men first, because that's the black coloured slice
+                        params.labels.unshift(names["i"+p.key]);
+                        params.values.unshift(parseInt(p.value, 10));
+                      }
+                      else {
+                        params.labels.push(names["i"+p.key]);
+                        params.values.push(parseInt(p.value, 10));
+                      }
+                    }
+                  }
+                });
+
+                // publish values, if any
+                if(params.values.length) {
+                  // pi.log("emitting :", params);
+                  pi.events.publish("pi.data.app.views.sex", params);
+                }
+
+              }
+              else if(this.display == "histogram") {
                 this.xd.group().all().forEach(function(p,i, arr) {
                   var
                     line = "";
@@ -605,40 +686,32 @@
                   names["i"+p.key] = p.key;
                   line = names["i"+p.key] + " : " + p.value;
                   // pi.log("i"+p.key + " : " + p.value);
-                  html +=  line + "\n";
-                });
-                // html += "Total : " + self.crossfilter.size();
-              }
-              else if(this.display == "donutchart") {
-                // pi.log('grouping age');
-                this.xd.group().all().forEach(function(p,i, arr) {
-                  var
-                    line = "";
+                  html +=  line + "<br />";
 
-                  if(names["i"+p.key]) {
-                    if (p.key !== "U") {
-                      params.labels.push(names["i"+p.key]);
-                      params.values.push(parseInt(p.value, 10));
-                    }
-                  }
+                  params.labels.push(parseInt(p.key, 10));
+                  params.values.push(parseInt(p.value, 10));
                 });
 
-                pi.log("emitting :");
-                pi.events.trigger("pi.data.app.views.sex", params);
-                pi.log("done");
-
+                // publish values, if any
+                if(params.values.length) {
+                  // pi.log("emitting : pi.data.app.views.age", params);
+                  pi.events.publish("pi.data.app.views.age", params);
+                }
+                else {
+                  pi.log("no values");
+                }
               }
-
-              this.element.innerHTML = '<pre>' + html + '</pre>';
-              // pi.log("refreshing : " + this.title);
             };
 
             d.init = function() {
               // pi.log("initializing : " + this.title);
-              this.element = document.getElementById(this.title) || false;
+              if(!this.element) {
+                this.element = document.getElementById(this.title) || false;
+              }
               if(!this.element) {
                 this.element = document.createElement("div");
-                document.body.appendChild(this.element);
+                this.parent.appendChild(this.element);
+                this.element.id = this.title;
               }
               this.initialized = true;
               // this.element.innerHTML = "initialized : " + this.title;
@@ -652,9 +725,9 @@
               return p.sex || "U";
             });
 
-            d.names = {'iU' : 'Ukjent', 'iM' : "Mann", 'iK' : "Kvinne"};
+            d.names = {'iU' : 'Ukjent', 'iM' : "Menn", 'iK' : "Kvinner"};
             d.title = "sex";
-            d.element = document.getElementById("sex");
+            d.element = document.getElementById("sexchart");
             d.display = "donutchart";
             self.dimension.push(d);
 
@@ -670,7 +743,9 @@
             });
 
             states.title = 'state';
+            states.display = "rank";
 
+            states.element = document.getElementById("statechart");
             states.names = {};
             // get state names from array
             views.map.counties.forEach(function(e, i, arr){
@@ -694,16 +769,71 @@
             });
 
             age.title = 'age';
-            age.display = 'group';
+            age.display = 'histogram';
+            age.element = document.getElementById("agechart");
             age.initialized = false;
 
             age.names = {};
 
-            // for(var i = 0; i < 120; i++) {
-            //   age.names[i] = i;
-            // }
-
             self.dimension.push(age);
+
+
+
+
+            /**
+             * set up vote dimension
+             */
+
+            votes = pi.clone(d);
+
+            votes.xd = self.crossfilter.dimension(function(p) {
+              return p.param1;
+            });
+
+
+            // self.crossfilter.filterFunction()
+
+            votes.title   = 'votes';
+            votes.display = 'rank';
+            votes.element = document.getElementById("votechart");
+            votes.initialized = false;
+
+            votes.names = {
+              'i0' : 'To små karer - "Paybacktime"',
+              'i1' : '2U - "Sinnsykt gal forelsket"',
+              'i2' : '@lek - "En stjerne skal jeg bli"',
+              'i3' : 'Malin - "Sommer og skolefri"',
+              'i4' : 'Ole Runar - "Fotball e supert"',
+              'i5' : 'Celine - "Bæstevænna"',
+              'i6' : 'The BlackSheeps - "Oro jaska, beana"',
+              'i7' : 'Jørgen - "Din egen vei"',
+              'i8' : 'Torstein - "Svikter aldri igjen"',
+              'i9' : 'Sval - "Trenger deg"',
+              'i10' : 'Marcus & Martinus - "To dråper vann"'
+            };
+
+            self.dimension.push(votes);
+
+
+
+            // /**
+            //  * set up female vote dimension
+            //  */
+
+            // femaleVotes = pi.clone(votes);
+
+            // femaleVotes.xd = self.crossfilter.dimension(function(p) {
+            //   return p.sex = "K";
+            // });
+
+
+            // femaleVotes.title   = 'femaleVotes';
+            // femaleVotes.display = 'rank';
+            // femaleVotes.element = null;
+            // femaleVotes.initialized = false;
+
+            // self.dimension.push(femaleVotes);
+
 
 
           },
@@ -711,20 +841,36 @@
 
           run : function() {
 
-            this.starttime    = new Date().getTime();
-            this.element      = document.getElementById("xfilter"),
-            this.__tmp        = this.__tmp || {};
-            this.crossfilter  = crossfilter();
-
             // private init
             this.__init();
 
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("xfilter"),
+            this.__tmp        = this.__tmp || {};
+
+
+            this.crossfilter  = crossfilter();
+
+            // this.dimensions   = {
+            //   byState : this.crossfilter.dimension( function(d) { return d.state;   }),
+            //   bySex   : this.crossfilter.dimension( function(d) { return d.sex;     }),
+            //   byAge   : this.crossfilter.dimension( function(d) { return d.age;     }),
+            //   byVote  : this.crossfilter.dimension( function(d) { return d.param1;  }),
+            //   byCity  : this.crossfilter.dimension( function(d) { return d.})
+            // };
+
+            // this.filters = {
+            //   north : null
+            // };
+
+
             // public init
             this.init();
+            this.reportid = 3;
 
-            this.__tmp.address = 'pi.data.app.views.job.2';
+            this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
 
-            getVoteReport();
+            getVoteReport(this.reportid);
 
             // set up a listener
             π.readstream(this.__tmp.address, this.onData, this.__onerror);
@@ -743,6 +889,9 @@
             totalsum  : 0,
 
             __init : function(options) {
+
+              this.element = document.getElementById("sexchart");
+
               this.raphael = Raphael(this.element, this.width, this.height);
 
             },
@@ -756,37 +905,141 @@
               var
                 self = pi.maverick.sexchart;
 
+              // pi.log("onData : ", data);
+
+              // clear data arrays
+              while(self.amounts.pop());
+              while(self.names.pop());
+              self.totalsum = 0;
+
               // parse data array
-              data.forEach(function(p,i, arr) {
-                // early escape
-                if(p.key == "U"){
-                  return;
-                }
+              data.values.forEach(function(p,i, arr) {
                 var
-                  amount = parseInt(p.value, 10);
+                  amount = parseInt(p, 10);
                 
+                // pi.log("adding amount : " + amount);
                 self.amounts.push(amount);
                 self.totalsum += amount;
 
-                self.names.push({name: p.key, percentage: "%"});
+                // pi.log("adding item : " + data.labels[i]);
+                self.names.push({name: data.labels[i], percentage: "%"});
               }); // data.forEach
       
               // calculate percentages
               self.names.forEach( function(p, idx, arr){
-                p.value.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
+                p.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
+                // pi.log("setting percentage : " + p.percentage);
               });
 
+              // pi.log("calling draw()");
+              self.draw();
             },
 
-            draw : function (data) {
-              this.raphael.donutChart(200, 200, 140, 70, this.amounts, this.names, "#fff");
+            draw : function () {
+              this.raphael.clear();
+              this.raphael.donutChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff");
             },
 
             run : function() {
               this.__init();
-              pi.addEventListener("pi.data.app.views.sex", this.onData, this.onError);
+              pi.events.subscribe("pi.data.app.views.sex", this.onData, this.onError);
             }
           };
+
+        var
+          agechart = {
+            element   : null,
+            width     : 400,
+            height    : 200,
+            values    : [], 
+            names     : [],
+            totalsum  : 0,
+
+            __init : function(options) {
+
+              this.element = document.getElementById("agechart");
+              // this.element = document.createElement("div");
+              // document.body.appendChild(this.element);
+              // this.raphael = Raphael(this.element, this.width, this.height);
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.agechart,
+                groupstops    = [12, 18, 25, 40, 65, 200],
+                currentgroup  = 0,
+                currentcount  = 0,
+                previousage   = 0;
+
+              var
+                values  = self.values,
+                names   = self.names;
+
+              // clear data arrays
+              while(values.pop());
+              while(names.pop());
+              self.totalsum = 0;
+
+
+              data.values.forEach(function(p, i, arr) {
+                var currentage = data.labels[i];
+
+
+                if(currentage==0)
+                  return; //continue
+
+                self.totalsum += p;
+                if(currentage < groupstops[currentgroup]) {
+                  currentcount += p;
+                  }
+                else {
+                  names.push(previousage + "-" + (groupstops[currentgroup] - 1));
+                  values.push(currentcount);
+                  currentcount = 0;
+                  currentgroup++;
+                  previousage = groupstops[currentgroup-1];
+                  }
+              });
+              // add the last group
+              names.push(groupstops[groupstops.length-2] + "+");
+              values.push(currentcount);
+
+              // values.forEach(function(p,i, arr) {
+              //   pi.log(names[i] + " : " + p + "(" + (100 * p/self.totalsum) + ")");
+              // }); 
+      
+              self.draw();
+            },
+
+            draw : function () {
+              var 
+                self = pi.maverick.agechart,
+                html = "";
+
+                if(!self.element) {
+                  pi.log("No element!");
+                }
+
+              // list data array
+              self.values.forEach(function(p,i, arr) {
+                html += self.names[i] + " : " + Math.round(10000 * p/self.totalsum)/100 + "% <br />";
+              });
+              self.element.innerHTML = html;
+
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.age", this.onData, this.onError);
+            }
+          };
+
 
 
         window.addEventListener("pi.session.start", function() {
@@ -794,9 +1047,12 @@
           
           pi.maverick.xfilter = xfilter;
           pi.maverick.xfilter.run();
-          
+
           pi.maverick.sexchart = sexchart;
           pi.maverick.sexchart.run();
+
+          pi.maverick.agechart = agechart;
+          pi.maverick.agechart.run();
 
         }, false);
 
@@ -862,11 +1118,9 @@
   </div>
  -->
 
-  <div id="views-map" class="pi pcl component map norway">
-  </div>
 
-  <!--script src="assets/js/lib/raphael.min.js"></script-->
-  <script src="assets/js/lib/raphael.js"></script>
+  <!--script src="../../assets/js/lib/raphael.min.js"></script-->
+  <script src="../../assets/js/lib/raphael.js"></script>
   <script src="assets/js/lib/raphael-map-norway.js"></script>
 
   <!-- Cufon fonts for Raphael -->
@@ -885,11 +1139,13 @@
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
-
+  
+  <!--script src="http://d3js.org/d3.v2.min.js?2.10.0"></script-->
 
   <!--  bootstrap pcl 
     <script src="../../assets/js/pi.pcl.js"></script>
   -->
+
 
 </body>
 </html>
