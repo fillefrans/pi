@@ -39,6 +39,111 @@
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
   <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
   <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+
+  <style type="text/css">
+
+    #visuals {
+      position  : absolute;
+      display   : block;
+      left      : 330px,
+      top       : 200px;
+      width     : 100%;
+      height    : auto;
+    }
+
+
+    #views-map-container {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #views-map {
+      position  : absolute;
+      display   : block;
+      left      : -144px; 
+      width     : 100%;
+      height    : auto;
+    }
+
+    #sexchart-container {
+      position  : absolute;
+      display   : block;
+      left      : 832px;
+      top       : 0px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #sexchart {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #statechart {
+      position  : absolute;
+      left      : 234px;
+      top       : 176px;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechartcontainer {
+      position  : absolute;
+      display   : inline-block;
+      left      : 600px;
+      top       : 300px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechartsvg {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechart {
+      position  : absolute;
+      display   : block;
+      left      : 216px;
+      top       : 64px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #votechart {
+      position  : absolute;
+      left: 400px;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+
+
+    .bar rect {
+    fill: white;
+    shape-rendering: crispEdges;
+    }
+
+    .bar text {
+      fill: red;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+
 </head>
  
 <body class="pi">
@@ -162,7 +267,7 @@
 
   <!-- This is the demo's div -->
 
-  <div id="demo" class="pcl" data-name="pcl.table.xfilter">
+  <div id="demo" data-name="pcl.table.xfilter">
 
 <!--     <div id="loginflex" class="pcl flexbox ontop">
       <div class="pcl loginbox">
@@ -179,27 +284,134 @@
     </div>
  -->
 
-    <div class="pcl component">
-      <div class="pcl component" style="left: 400px">
+    <div>
+      <div style="left: 400px">
         <p>
         Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
         </p>
         <p id="voteReply">
-          Demo av SMS-avstemning. Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
+          Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
         </p>
+        <input type="button" id="btn-clear-filters" onclick="clearFilters();" value="clear filters" />
+        <!-- <input type="button" id="btn-sex" onclick="showSex(this);" value="sort on sex" /> -->
       </div>
 
 
-      <div id="visuals" class="pcl component flex-container">
-        <div id="views-map"></div>
-        <div id="sexchart"></div>
-        <div id="statechart"></div>
-        <div id="agechart"></div>
-        <div id="votechart">votes</div>
+      <script type="text/javascript">
+
+        function showSettings(obj) {
+          var
+            testElement = document.getElementById("sexchart-container");
+
+          pi.log("element : ", obj);
+          testElement.classList.toggle("flipped");
+        }
+
+
+        function showSex(element, which) {
+          var
+            which = which || 'K',
+            self  = pi.maverick.xfilter;
+
+          self.dimension.forEach(function(p,i) {
+            if(p.title == "sex") {
+              alert("setting sex filter : " + which);
+              p.xd.filter(which);
+              return;
+            }
+          });
+
+          self.refresh();
+
+        }
+
+
+        function clearFilters() {
+          var
+            self      = pi.maverick.xfilter,
+            dimension = null;
+
+
+          self.dimension.forEach(function(p) {
+            pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+          self.refresh();
+        }
+
+
+
+
+
+        function applyFilter(filter, element) {
+          var
+            filter    = filter || null,
+            self      = pi.maverick.xfilter,
+            dimension = null,
+            element   = element || null;
+
+
+          if(!filter) {
+            return;
+          }
+          if(!(filter.key)) {
+            return;
+          }
+
+
+          if(!isNaN(parseInt(filter.value,10))) {
+            filter.value = parseInt(filter.value, 10);
+          }
+
+          self.dimension.forEach(function(p) {
+            if(filter.key == p.title) {
+              dimension = p.xd;
+              return;
+            }
+          });
+
+          if(dimension) {
+            // pi.log("applying filter value '"+ filter.value + "' to dimension '" + (filter.key) + '"', filter);
+            if(element) {
+              element.classList.toggle("selected");
+            }
+            dimension.filter(filter.value);
+          }
+          else {
+            pi.log("NOT applying filter value '"+ filter.value + "' to dimension '" + filter.key + '"', filter);
+          }
+
+          self.refresh();
+
+        }
+
+
+      </script>
+
+
+      <div id="visuals">
+          <div id="views-map-container">
+            <div id="views-map"></div>
+          </div>
+        
+          <div id="sexchart-container">
+            <div id="sexchart"></div>
+          </div>
+
+          <div id="statechart"></div>
+          <div id="agechartcontainer">
+            <div id="agechartsvg"></div>
+            <div id="agechart"></div>
+          </div>
+
+
+          <div id="votechart">votes</div>
+
       </div>
 
 
-      <div id="votelist" class="pcl component">
+      <div id="votelist">
         <menu id="xmenu" type="popup">
           <!-- <li title="sortér etter fylke" label="sortér etter fylke" onclick="alert('yessir!')">sortér etter fylke</li> -->
           <!-- <li title="sortér etter låt" label="sortér etter låt"   onclick="alert('yessiree, bob!')">sortér etter låt</li>  -->
@@ -213,27 +425,7 @@
       </div>
     </div>
 
-    <!-- the age histogram -->
-    <style type="text/css">
-      .bar rect {
-      fill: white;
-      shape-rendering: crispEdges;
-      }
 
-      .bar text {
-        fill: red;
-      }
-
-      .axis path, .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-      }
-    </style>
-
-    <div id="agechart">
-    </div>
-    
 
     <script>
 
@@ -433,12 +625,14 @@
 
               if(thisState) {
                 var
-                  previousFill = thisState.county.attr("fill");
+                  previousFill = thisState.county.attr("fill"),
+                  colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
 
-                // pi.log(newrow.state + " : " + thisState, thisState);
-                thisState.county.attr("fill", "#d65a3f");
+                
 
-                thisState.county.animate({fill : previousFill}, 1000, "easeOut");
+                thisState.county.attr("fill", colors[Math.floor(Math.random()*colors.length)]);
+
+                thisState.county.animate({fill : "#f8f2f2"}, 1000, "easeOut");
                 // TweenMax.from(thisState, pi.const.TWEEN_TIME, {css: {fill : "#d65a3f"}});
               }
             }
@@ -497,11 +691,13 @@
 
             self.dimension.forEach(function(e, i, arr) {
               if( typeof e.refresh == "function" ) {
-                var
-                  thisFunc = e.refresh;
-                // pi.log("calling refresh(), this : ", e);
-                // e.refresh();
-                thisFunc.call(e);
+                // // var
+                // //  thisFunc = e.refresh;
+
+                // because forEach messes with the scope
+                e.refresh.call(e);
+
+                // // thisFunc.call(e);
               }
             });
 
@@ -596,7 +792,7 @@
                         display     : "rank"
                       },
 
-              p     = null;
+              p       = null;
 
 
             /**
@@ -610,10 +806,12 @@
               }
 
               var
-                html = "<p /><br /><br />",
+                html = "",
                 names = this.names,
+                title = this.title,
                 params = {labels : [], values : []},
-                totalsum = 0;
+                totalsum = 0,
+                results = [];
 
 
               if(this.display == "rank") {
@@ -621,19 +819,32 @@
                   var
                     line = "";
 
+                  html = "<ul>";
+
                   // pi.log("this : ", this);
                   if(names["i"+p.key]) {
 
                     totalsum += p.value;
-                    line = "<span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key];
-                    // pi.log("i"+p.key + " : " + p.value);
-                    html +=  line + "<br />";
+                    results.push({ idx : p.key, key : names["i"+p.key], value : p.value});
+                    // line = "<li onclick='applyFilter({key: " + this.title + ", value : " +p.key+"});'><span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key] + '</li>';
+                    // // pi.log("i"+p.key + " : " + p.value);
+                    // html +=  line + "</ul>";
                   }
                   else{
-                    pi.log("no name : " + p.key + " -> " + p.value, names);
+                    // pi.log("no name : " + p.key + " -> " + p.value, names);
                   }
                 });
-                html += "sum : " + totalsum;
+
+                // var currentTitle = this.title;
+
+                // if(title == "votes") {
+                //   title = "param1";
+                // }
+
+                results.forEach(function(p) {
+                  html += "<li onclick='applyFilter({key: \""+title+"\", value : " +p.idx+"}, this);'><span style='float: left; width: 40px; text-align: right'>" + Math.round(1000*p.value/totalsum)/10 + "%</span>&nbsp;&nbsp;" + p.key + "</li>";
+                });
+                html += "</ul>";
                 this.element.innerHTML = html;
               }
               else if(this.display == "group") {
@@ -642,16 +853,22 @@
                   var
                     line  = "";
 
+                  html = "<ul>";
+
                   names["i"+p.key] = p.key;
                   totalsum += p.value;
                   line = names["i"+p.key] + " : " + p.value;
+
+                  // line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" + names["i"+p.key] + "</span>&nbsp;&nbsp;" + p.value + "</li>";
+
+
                   // pi.log("i"+p.key + " : " + p.value);
-                  html +=  line + "<br />";
+                  html +=  line;
                 });
-                html += "sum : " + totalsum;
-                this.element.innerHTML = html;
+                // html += "sum : " + totalsum;
+                this.element.innerHTML = html + "</ul>";
               }
-              else if(this.display == "donutchart") {
+              else if(this.display == "genderchart") {
                 this.xd.group().all().forEach(function(p,i, arr) {
                   var
                     line = "";
@@ -683,8 +900,15 @@
                   var
                     line = "";
 
+                  if(!p.key && (p.key !== 0)) {
+
+                    alert("p.key is " + p.key);
+                    return;
+                  }
                   names["i"+p.key] = p.key;
                   line = names["i"+p.key] + " : " + p.value;
+                  line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" +
+                  names["i"+p.key] + "</span>" + p.value + "</li>"
                   // pi.log("i"+p.key + " : " + p.value);
                   html +=  line + "<br />";
 
@@ -728,7 +952,11 @@
             d.names = {'iU' : 'Ukjent', 'iM' : "Menn", 'iK' : "Kvinner"};
             d.title = "sex";
             d.element = document.getElementById("sexchart");
-            d.display = "donutchart";
+            d.display = "genderchart";
+
+            d.element.style.width   = 400;
+            d.element.style.height  = 400;
+            // d.xd.filter('M');
             self.dimension.push(d);
 
 
@@ -774,6 +1002,8 @@
             age.initialized = false;
 
             age.names = {};
+
+
 
             self.dimension.push(age);
 
@@ -903,13 +1133,19 @@
 
             onData : function(data) {
               var
-                self = pi.maverick.sexchart;
+                self          = pi.maverick.sexchart,
+                previousData  = {
+                  names   : [],
+                  values  : []
+                },
+                tmpAmount = 0;
 
-              // pi.log("onData : ", data);
 
               // clear data arrays
               while(self.amounts.pop());
               while(self.names.pop());
+
+
               self.totalsum = 0;
 
               // parse data array
@@ -937,30 +1173,52 @@
 
             draw : function () {
               this.raphael.clear();
-              this.raphael.donutChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff");
+              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff");
             },
 
             run : function() {
               this.__init();
               pi.events.subscribe("pi.data.app.views.sex", this.onData, this.onError);
+              pi.events.subscribe("pi.app.views.sex.filter", applyFilter, this.onError);
             }
           };
 
         var
           agechart = {
             element   : null,
-            width     : 400,
-            height    : 200,
+            width     : 200,
+            height    : 384,
             values    : [], 
             names     : [],
             totalsum  : 0,
+            agevalues : [],
+            raphael   : null,
+            
+            chart         : null,
+            chartoptions  : {
+              range   : {},
+              width   : 224,
+              height  : 400,
+              bars    : {
+                width   : 200,
+                height  : 2
+              }
+            },
 
             __init : function(options) {
 
               this.element = document.getElementById("agechart");
               // this.element = document.createElement("div");
               // document.body.appendChild(this.element);
-              // this.raphael = Raphael(this.element, this.width, this.height);
+              
+              this.raphael = Raphael(document.getElementById("agechartsvg"), this.width, this.height);
+
+              // pi.log("size : " + this.width + "x" + this.height);
+              // prepare indexed array for individual age values
+              for(var i = 0; i < 128; i++) {
+                this.agevalues.push(0);
+              }
+
 
             },
 
@@ -972,27 +1230,47 @@
             onData : function(data) {
               var
                 self          = pi.maverick.agechart,
-                groupstops    = [12, 18, 25, 40, 65, 200],
+                groupstops    = [12, 18, 25, 40, 65, 128],
                 currentgroup  = 0,
                 currentcount  = 0,
+                age           = 0,
                 previousage   = 0;
 
               var
-                values  = self.values,
-                names   = self.names;
+                values    = self.values,
+                names     = self.names,
+                agevalues = self.agevalues;
+
 
               // clear data arrays
               while(values.pop());
               while(names.pop());
               self.totalsum = 0;
 
+              for(var i = 0; i < 128; i++) {
+                // clear histo array
+                agevalues[i]=0;
+              }
+
+              if(data.labels.length != data.values.length) {
+                alert("labels and values have different length!");
+                alert(data.labels.length +" and " +data.values.length);
+              }
+
 
               data.values.forEach(function(p, i, arr) {
                 var currentage = data.labels[i];
 
+                if(typeof currentage != "number") {
+                  alert("not number : " + typeof currentage);
+                  return;
+                }
 
                 if(currentage==0)
                   return; //continue
+
+                agevalues[currentage] = p;
+
 
                 self.totalsum += p;
                 if(currentage < groupstops[currentgroup]) {
@@ -1026,11 +1304,26 @@
                   pi.log("No element!");
                 }
 
+              if(self.chart === null) {
+                self.chart = self.raphael.ageChart(self.chartoptions, self.values, self.names);
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+              
+              pi.events.publish("pi.app.views.agechart.update", self.agevalues);
+
+
               // list data array
               self.values.forEach(function(p,i, arr) {
-                html += self.names[i] + " : " + Math.round(10000 * p/self.totalsum)/100 + "% <br />";
+                html += "<li><span style='float: left; width: 60px; text-align: center'>" + self.names[i] + "</span><span style='width: 144px; text-align: right'>" + Math.round(10000 * p/self.totalsum)/100 + "%</span></li>";
               });
-              self.element.innerHTML = html;
+              self.element.innerHTML = '<ul>' + html + '</ul>';
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
 
             },
 
@@ -1067,7 +1360,7 @@
 
 
 
-<!--   <div id="numberstation" class="pcl" data-name="pcl.debug.numberstation">
+<!--   <div id="numberstation" data-name="pcl.debug.numberstation">
     <script>
 
       var 
@@ -1123,7 +1416,7 @@
   <script src="../../assets/js/lib/raphael.js"></script>
   <script src="assets/js/lib/raphael-map-norway.js"></script>
 
-  <!-- Cufon fonts for Raphael -->
+  <!-- Cufon fonts for Raphaël -->
   <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
   <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
 
@@ -1133,12 +1426,16 @@
   <!--  bootstrap pi -->
   <script src="../../assets/js/pi.core.js"></script>
 
-  <!-- Our Raphael plugins -->
-  <script src="../../assets/js/pi.lib.raphael.donutchart.js"></script>
-  <script src="../../assets/js/pi.lib.raphael.donutgauge.js"></script>
+  <!-- Raphaël plugins -->
+  <script src="../../assets/js/pi.lib.raphael.genderchart.js"></script>
+  <script src="../../assets/js/pi.lib.raphael.agechart.js"></script>
+
+
 
   <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
   <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
+
+
   
   <!--script src="http://d3js.org/d3.v2.min.js?2.10.0"></script-->
 

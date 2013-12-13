@@ -1,6 +1,6 @@
   /**
    *
-   * π v0.3
+   * π v0.4.3
    *
    * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
    *

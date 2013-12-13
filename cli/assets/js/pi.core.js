@@ -1,6 +1,6 @@
   /**
    *
-   * π v0.4.2
+   * π v0.4.3
    *
    * @description 
    * Pi is an html5-based client-server application platform
@@ -266,12 +266,12 @@
                   args = null;
 
                 if (arguments.length > 2) {
+                  pi.log("grabbing arguments array");
                   // If passing args as a set of args instead of an array, grab all but the first.
-                  args = Array.prototype.slice.apply(arguments, [1]); 
-                } else if (Array.isArray(callback_args)) {
-                  args = callback_args;
+                  args = Array.prototype.slice.apply(arguments, [1]);
                 } else {
                   args = [callback_args];
+                  // pi.log("args is not an array : " + JSON.stringify(callback_args), callback_args);
                 } 
                 
                 var 

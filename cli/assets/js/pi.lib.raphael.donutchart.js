@@ -71,12 +71,24 @@ Raphael.fn.donutChart = function (cx, cy, r, rin, values, labels, stroke) {
           ontop.push(percentageText);
           ontop.push(txt);
 
+          var
+            clickFilterValues = ['M', 'K'];
+
           p.mouseover(function () {
-              p.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ms, "elastic");
+              // p.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ms, "elastic", function() {
+              // });
               // txt.stop().animate({opacity: 1}, ms, "elastic");
           }).mouseout(function () {
-              p.stop().animate({transform: ""}, ms, "elastic");
+              // p.stop().animate({transform: ""}, ms, "elastic", function() {
+              //   // if(typeof pi.events.publish == "function") {
+              //   //   pi.events.publish("pi.app.views.sex.filter", { key : "sex", value : null});
+              //   // }
+              // });
               // txt.stop().animate({opacity: 0.5}, ms);
+          }).click(function() {
+              if(typeof pi.events.publish == "function") {
+                pi.events.publish("pi.app.views.sex.filter", { key : "sex", value : clickFilterValues[j%2]});
+              }
           });
 
           angle += angleplus;
@@ -109,4 +121,3 @@ Raphael.fn.donutChart = function (cx, cy, r, rin, values, labels, stroke) {
 
     return chart;
 };
-
