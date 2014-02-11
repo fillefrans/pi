@@ -27,21 +27,23 @@
   $request['defaults'] = (isset($request['defaults']) && is_array($request['defaults'])) ? array_merge($DEFAULTS, $request['defaults']) : $DEFAULTS;
 
   // public function render ($contents = null, $showsource = false, $toString = false) {
-  $result = $template->render( $request['defaults'] , false, true);
+  $result = $template->render( $request['defaults'], false, true );
 
 
-  
-  $result .= "<pre style='text-align:left;max-width:70%;'>\n\nLOG:\n";
-  
-  foreach ($template->log as $key => $value) {
-    $result .= "$key : $value\n";
+  // if debug flag set in request
+  if( isset($request['debug']) && ($request['debug'] == true) ) {
+    $result .= "<pre style='text-align:left;max-width:70%;'>\n\nLOG:\n";
+    foreach ($template->log as $key => $value) {
+      $result .= "$key : $value\n";
+    }
+
+    unset($request['template']); // because it's unprintable
+    $result .= "\n\nREQUEST:\n". json_encode($request);
+
+    $result .= "\n\nTHE END.</pre>";
   }
 
-  
-  unset($request['template']); // because it's unprintable
-  $result .= "\n\nREQUEST:\n". json_encode($request);
 
-  $result .= "\n\nTHE END.</pre>";
   // error_log(json_encode($result, JSON_PRETTY_PRINT));
 
 
