@@ -1,0 +1,29 @@
+.code {
+  background-color: #272822;
+}
+
+.highlight {
+
+}
+
+.highlight.comment { color: #75715e; }
+.highlight.keyword { color: #f92672; }
+.highlight.default { color: #f8f8f2; }
+.highlight.htmlsrc { color: #f92672; }
+.highlight.string  { color: #e6db74; }
+
+
+div.behaviours.ease-out {
+  -webkit-transition: all 0.1s ease-out;
+     -moz-transition: all 0.1s ease-out;
+       -o-transition: all 0.1s ease-out;
+          transition: all 0.1s ease-out;
+}
+
+div.behaviours.ease-in {
+  -webkit-transition: all 0.1s ease-in;
+     -moz-transition: all 0.1s ease-in;
+       -o-transition: all 0.1s ease-in;
+          transition: all 0.1s ease-in;
+}
+

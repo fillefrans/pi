@@ -1,0 +1,61 @@
+
+
+
+/**
+ *  π3d 
+ *
+ *  3D elements and behaviours
+ *  3D transforms and transitions
+ *
+ */
+
+
+  .pi3d {
+/*    display           : block;
+    position          : relative;
+*/    
+    /*transform-origin  : center center;*/
+  }
+
+  .pi3d.card.flipped {
+    transform: rotateY( -180deg );
+    /*transform : perspective(400px) rotateY(-180deg);*/
+  }
+
+
+
+  .pi3d.card {
+    display             : block;
+    width               : 560px;
+    height              : 600px;
+    position            : relative;
+    backface-visibility : hidden;
+    transition          : transform 0.4s;
+    transition-timing-function  : cubic-bezier(0,0,0.58,1);
+    perspective         : 400px;
+    transform-style     : preserve-3d;
+    }
+
+
+  .pi3d.card.front {
+    width               : 100%;
+    height              : 100%;
+    display             : block;
+    position            : absolute;
+
+  }
+
+  .pi3d.card.front.flipped {
+    background-color    : rgba(40,38,32,0.4);
+  }
+
+
+  .pi3d.card.back {
+    background-color    : rgba(40,38,32,0.4);
+    width               : 100%;
+    height              : 100%;
+    display             : block;
+    position            : absolute;
+    transform           : rotateY(180deg);
+  }
+

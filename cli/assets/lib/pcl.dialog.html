@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+  <script>
+    var 
+      π  = {
+        DEBUG : true,
+        __sessionstart : (new Date()).getTime()
+      };
+  </script>
+
+  <title>π PCL component workspace</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  
+  <link rel="stylesheet" href="../../assets/css/pi.core.css">
+
+  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
+  <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+</head>
+ 
+<body class="pi">
+
+  <div id="login" class="pcl" data-name="pcl.dialogs.login">
+    <!--  set class "pcl" to mark as PCL component 
+          Then the PCL bootstrapper will load 
+          the component given in attribute "data-name" 
+          from corresponding files (html, css, js) 
+          in the /assets/pcl/ folder -->
+  </div>
+
+  <div id="debugger" class="pcl" data-name="pcl.debug.debugger">
+  </div>
+
+
+
+
+  <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
+  <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
+  <script src="assets/js/lib/raphael.min.js"></script>
+
+  <!--  bootstrap pi -->
+  <script src="../../assets/js/pi.core.js"></script>
+
+  <!--  bootstrap pcl -->
+  <script src="../../assets/js/pcl.core.js"></script>
+
+</body>
+</html>
