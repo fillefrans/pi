@@ -52,7 +52,8 @@
 
         protected function tick() {
 
-          $now = microtime(true);
+          $now  = microtime(true);
+          $time = time();
 
           $this->subscribercount = $this->pubsub->publish('pi.service.time.tick', null);
 
@@ -70,15 +71,15 @@
                 // whole minutes and seconds from the get-go:
                 // initialize the ticks variable to the number 
                 // of ticks since the previous whole minute
-                $this->ticks += (TICKS_PER_SECOND* (time() % 60)) + (round(TICKS_PER_SECOND*$now) % TICKS_PER_SECOND);
+                $this->ticks += (TICKS_PER_SECOND* ($time % 60)) + (round(TICKS_PER_SECOND*$now) % TICKS_PER_SECOND);
               }
               else {
                 $this->pubsub->publish('pi.service.time.each.minute', $now);
               }
 
               // emit an each.hour event every whole hour
-              if( (time() % 3600) === 0 ) {
-                if( ($this->ticks > 600) && ((time() % SECONDS_IN_A_DAY) === 0) ) {
+              if( ($time % 3600) === 0 ) {
+                if( ($this->ticks > 600) && (($time % SECONDS_IN_A_DAY) === 0) ) {
                   $this->quit("We have run until midnight, stopping.");
                 }
                 $this->pubsub->publish('pi.service.time.each.hour', $now);

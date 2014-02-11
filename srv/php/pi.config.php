@@ -41,12 +41,12 @@
     define('DATA_ROOT',         SRV_ROOT . "data/");
     define('FILE_ROOT',         SRV_ROOT . "data/files/");
     define('UPLOAD_ROOT',       SRV_ROOT . "data/upload/");
+    define('GZ_ROOT',           UPLOAD_ROOT . "gz/");
     define('TMP_ROOT',          SRV_ROOT . "data/tmp/");
     define('LOG_DIR',           SRV_ROOT . "data/logs/");
     define('WORKER_DIR',        PHP_ROOT . "workers/");
     define('WORKER_SPAWNER',    WORKER_DIR . 'pi.util.spawn.php');
     define('SESSION_SCRIPT',    PHP_ROOT . 'pi.session.php');
-
 
 
     define('A_COOL_MILLION',    1000000);

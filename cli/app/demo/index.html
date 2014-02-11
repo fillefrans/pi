@@ -119,9 +119,10 @@
 
     #votechart {
       position  : absolute;
-      left: 400px;
+      left      : 400px;
       display   : block;
-      width     : 100%;
+      width     : 432px;
+      overflow  : hidden;
       height    : auto;
     }
 
@@ -287,7 +288,7 @@
     <div>
       <div style="left: 400px">
         <p>
-        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
+        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">4</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
         </p>
         <p id="voteReply">
           Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
@@ -303,7 +304,7 @@
           var
             testElement = document.getElementById("sexchart-container");
 
-          pi.log("element : ", obj);
+//          pi.log("element : ", obj);
           testElement.classList.toggle("flipped");
         }
 
@@ -333,7 +334,7 @@
 
 
           self.dimension.forEach(function(p) {
-            pi.log("clearing : " + p.title);
+            // pi.log("clearing : " + p.title);
             p.xd.filter(null);
           });
 
@@ -352,21 +353,38 @@
             element   = element || null;
 
 
-          if(!filter) {
+
+          if(filter===null) {
             return;
           }
-          if(!(filter.key)) {
+          if(typeof filter.key == "undefined") {
             return;
           }
+
 
 
           if(!isNaN(parseInt(filter.value,10))) {
             filter.value = parseInt(filter.value, 10);
           }
 
+          var
+            elements = document.getElementsByClassName("selected");
+
+          for(var i = 0; i < elements.length; i++) {
+            elements[i].classList.remove("selected");
+          }
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+
           self.dimension.forEach(function(p) {
             if(filter.key == p.title) {
               dimension = p.xd;
+              pi.log("setting filter " + filter.value + " on dimension " + p.title);
+              p.__filter = filter.value;
               return;
             }
           });
@@ -374,6 +392,7 @@
           if(dimension) {
             // pi.log("applying filter value '"+ filter.value + "' to dimension '" + (filter.key) + '"', filter);
             if(element) {
+              pi.log("toggling class selected");
               element.classList.toggle("selected");
             }
             dimension.filter(filter.value);
@@ -382,7 +401,7 @@
             pi.log("NOT applying filter value '"+ filter.value + "' to dimension '" + filter.key + '"', filter);
           }
 
-          self.refresh();
+          self.refresh(filter);
 
         }
 
@@ -406,7 +425,7 @@
           </div>
 
 
-          <div id="votechart">votes</div>
+          <div id="votechart"></div>
 
       </div>
 
@@ -430,7 +449,8 @@
     <script>
 
     var
-      isSending = false;
+      isSending = false,
+      __monsterhack = [];
 
 
       function randomMobilePhoneNumber() {
@@ -462,6 +482,8 @@
             job     : job,
             apikey  : "kroma"
           };
+
+        clearFilters();
 
         if(!!window.voteInterval) {
           stopVotes();
@@ -518,6 +540,7 @@
               document.getElementById("spanVotes").innerHTML = votes-count;
               params['phone']   = randomMobilePhoneNumber();
               params['param1']  = Math.floor(Math.random() * 9);
+              __monsterhack.push(params['param1']);
               
               // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
               voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
@@ -685,7 +708,7 @@
           },
 
 
-          refresh : function () {
+          refresh : function (filter) {
             var
               self = pi.maverick.xfilter;
 
@@ -695,6 +718,12 @@
                 // //  thisFunc = e.refresh;
 
                 // because forEach messes with the scope
+                if(filter) {
+                  if(filter.key == e.title) {
+                    pi.log("skipping refresh of filtered dimension " + filter.key);
+                    return;
+                  }
+                }
                 e.refresh.call(e);
 
                 // // thisFunc.call(e);
@@ -732,6 +761,10 @@
                  datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
 
                 if(datachunk) {
+                  if(!datachunk['param1']) {
+                    datachunk['param1'] = __monsterhack.pop() || 1;
+                  }
+                  pi.log("adding datachunk voting for " + datachunk['param1'], datachunk);
                   records.push(datachunk);
                 }
                 self._addRow(datachunk);
@@ -1096,7 +1129,7 @@
 
             // public init
             this.init();
-            this.reportid = 3;
+            this.reportid = 4;
 
             this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
 
@@ -1117,6 +1150,7 @@
             amounts   : [], 
             names     : [],
             totalsum  : 0,
+            __filter  : false,
 
             __init : function(options) {
 
@@ -1172,8 +1206,9 @@
             },
 
             draw : function () {
+              // pi.log("filter is " + this.__filter);
               this.raphael.clear();
-              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff");
+              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff", this.__filter);
             },
 
             run : function() {
@@ -1194,6 +1229,8 @@
             agevalues : [],
             raphael   : null,
             
+            groupstops : [12, 18, 25, 40, 65, 128],
+
             chart         : null,
             chartoptions  : {
               range   : {},
@@ -1230,7 +1267,6 @@
             onData : function(data) {
               var
                 self          = pi.maverick.agechart,
-                groupstops    = [12, 18, 25, 40, 65, 128],
                 currentgroup  = 0,
                 currentcount  = 0,
                 age           = 0,
@@ -1239,8 +1275,8 @@
               var
                 values    = self.values,
                 names     = self.names,
-                agevalues = self.agevalues;
-
+                agevalues = self.agevalues,
+                groupstops = self.groupstops;
 
               // clear data arrays
               while(values.pop());
@@ -1298,7 +1334,9 @@
             draw : function () {
               var 
                 self = pi.maverick.agechart,
-                html = "";
+                html = "",
+                colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
 
                 if(!self.element) {
                   pi.log("No element!");
@@ -1316,10 +1354,12 @@
 
 
               // list data array
-              self.values.forEach(function(p,i, arr) {
-                html += "<li><span style='float: left; width: 60px; text-align: center'>" + self.names[i] + "</span><span style='width: 144px; text-align: right'>" + Math.round(10000 * p/self.totalsum)/100 + "%</span></li>";
+              self.groupstops.forEach(function(p,i, arr) {
+                html += "<li><span style='float: left; color:" + colors[i] + ";width: 60px; text-align: center'>" + self.names[i] + "</span><span style='color: #ccc;width: 144px; text-align: right'>&nbsp;</span></li>";
               });
-              self.element.innerHTML = '<ul>' + html + '</ul>';
+              if(self.element.innerHTML == "") {
+                self.element.innerHTML = '<p>ALDER</p><ul>' + html + '</ul>';
+              }
 
               // self.agevalues.forEach(function(p, i) {
               //   pi.log(i + " : " + p);

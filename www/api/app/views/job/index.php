@@ -40,12 +40,15 @@
    */
   $redis = false;
 
+  $request = json_decode(file_get_contents('php://input'), true);
+
   $packet = array('address' => 'pi.data.app.views.job', 'data' => array());
 
-  $request = json_decode(file_get_contents('php://input'), true);
   $reply = array('OK'=>0, 'message'=>"Ambiguous result: Script ran to the end without setting a reply.");
 
   $db = array('host'=>'localhost', 'port'=>3306, 'db'=>'views_externalservices_direktinfo', 'user'=>'views', 'password'=>'1234tsxx');
+
+  // $packet['data']['param1'] = $request['param1'];
 
   // set output type and disallow caching
   header('Content-Type: application/json; charset=utf-8');
@@ -147,6 +150,9 @@
     // }
 
     // $redis->publish($packet['address'], json_encode($packet['data'], JSON_PRETTY_PRINT));
+    
+    // $packet['data']['param'] = "1";
+    
     $redis->select(PI_DATA);
     $redis->rPush($packet['address'], json_encode($packet['data']));
 
@@ -280,7 +286,7 @@
       if (false===($cache_id=addToCache($row))) {
         //$reply['ws_response'] = $entry;
         $reply['OK']=0;
-        $reply['message'] = 'Unable to add entry to permanent cache: ' . $request['phone'];
+        $reply['message'] .= ' .. Unable to add entry to permanent cache: ' . $request['phone'];
         $debug[] = 'ERROR! Unable to add entry to permanent cache.';
         sendReply();
       }
@@ -312,7 +318,7 @@
     if (false===($cache_id=addToCache($row))) {
       //$reply['ws_response'] = $entry;
       $reply['OK']=0;
-      $reply['message'] = 'Unable to add entry to permanent cache.';
+      $reply['message'] .= ' .. Unable to add entry to permanent cache.';
       $debug[] = 'ERROR! Unable to add entry to permanent cache.';
       sendReply();
     }

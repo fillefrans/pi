@@ -5,8 +5,12 @@
    * @description 
    * Pi is an html5-based client-server application platform
    *
+   * This is the client part
+   *
    * @author Johan Telstad, jt@enfield.no
+   * 
    * @copyright Johan Telstad, 2011-2014
+   * @copyright Views AS, 2014
    * 
    */
 
@@ -18,7 +22,7 @@
   /*  ----  Our top level namespaces  ----  */
 
 
-    // These are the core modules
+    // The core modules
     π.core        = π.core        || { _loaded: false, _ns: 'core'      };
     π.callback    = π.callback    || { _loaded: false, _ns: 'callback'  };
     π.session     = π.session     || { _loaded: false, _ns: 'session'   };
@@ -27,7 +31,7 @@
     π.timer       = π.timer       || { _loaded: false, _ns: 'timer'     };
 
 
-    // These are our built-in libraries
+    // The built-in libraries
     π.srv         = π.srv         || { _loaded: false, _ns: 'srv'       };
     π.app         = π.app         || { _loaded: false, _ns: 'app'       };
     π.pcl         = π.pcl         || { _loaded: false, _ns: 'pcl'       };
@@ -38,7 +42,7 @@
 
 
 
-    // These are for extending the platform
+    // For extending the platform
     π.lib         = π.lib         || { _loaded: false, _ns: 'lib'       };
     π.util        = π.util        || { _loaded: false, _ns: 'util'      };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins'   };
@@ -46,20 +50,18 @@
 
 
 
-
     π.const = {
 
-      // platform constants
+      // paths
       PI_ROOT     : "assets/js/",
       LIB_ROOT    : "../../assets/js/",
       API_ROOT    : "/api/",
       SRV_ROOT    : "../../../srv/",
-      TWEEN_TIME  : 0.2,
-      
+
+      // platform constants
+      TWEEN_TIME      : 0.2,
       DEFAULT_TIMEOUT : 30
     };
-
-
 
 
 
@@ -69,7 +71,7 @@
 
     // create pi as an alias for π
     var 
-      pi  = π;
+      pi = π;
 
 
     /*    begin core modules     */
@@ -83,7 +85,6 @@
           *   Call remote procedure and create a listener for the result
           *   Invoke local callback when result arrives
           * 
-          *   @author Johan Telstad, jt@enfield.no, 2011-2013
           */
 
 
@@ -92,7 +93,7 @@
             /*
              * Manages callback handlers
              *
-             * Issues replyaddresses, and invokes related
+             * Issues reply addresses, and invokes related
              * callback when response is received from server
              * 
              */
@@ -360,9 +361,9 @@
           // public functions
           π.events.trigger = function(eventName, eventData, eventElem) {
             var
-              eventName   = eventName   || false,
-              eventData   = eventData   || null,
-              dispatcher  = eventElem   || window,
+              eventName   = eventName || false,
+              eventData   = eventData || null,
+              dispatcher  = eventElem || window,
               customEvt   = null;
 
             // early escape
@@ -660,6 +661,40 @@
 
 
     /** 
+     * @function π.on
+     *
+     * @description Pi shorthand function, wraps window.addEventListener
+     * 
+     */
+
+    π.on = function(eventaddress, callback, capture) {
+
+      // if object, attach all functions by name
+      if( typeof eventaddress === "object" ) {
+        var count = 0;
+        for (var func in eventaddress) {
+          if ( eventaddress.hasOwnProperty(func) && (typeof eventaddress[func] === "function") ) {
+            count++;
+            π.on(func, eventaddress[func], callback, capture || false);
+          }
+        }
+        return count;
+      }
+
+      if (eventaddress.indexOf('pi.') !== 0) {
+        eventaddress = "pi." + eventaddress;
+      }
+
+      return window.addEventListener(eventaddress, callback, capture);
+    };
+
+
+    // ALIAS
+
+    π.bind = pi.on;
+
+
+    /** 
      * @function π.await
      *
      * 
@@ -876,7 +911,7 @@
       script.module     = module;
       script.modname    = module.replace(/\./g,'_');
       script.callback   = callback  || false;
-      script.onerror    = onerror   || false;
+      script.onerror    = onerror   || π.log;
 
       pi.timer.start(module);
 
@@ -955,7 +990,7 @@
           events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
         }
         if(typeof console.time == "function"){
-          console.time(id);
+          /// console.time(id);
         }
       },
 
@@ -998,7 +1033,7 @@
           self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
 
         if(typeof console.timeEnd == "function"){
-          console.timeEnd(timerid);
+          /// console.timeEnd(timerid);
         }
 
         if(!self) {
@@ -1046,7 +1081,7 @@
             if(callback) {
               callback.call(index, value);
             }
-            pi.log("timer[" + value.id + "] : " + value.time + "ms.");
+            // pi.log("timer[" + value.id + "] : " + value.time + "ms.");
           });
         },
 

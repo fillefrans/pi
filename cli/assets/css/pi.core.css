@@ -92,7 +92,7 @@
     display         : flex;
     flex-direction  : row;
     flex-wrap       : nowrap;
-    /*flex-flow       : row wrap;*/
+    /*flex-flow       : row nowrap;*/
     justify-content : space-between;
     align-content   : flex-start;
     align-items     : center;
@@ -114,7 +114,7 @@
 
 
 
-/* monokai, obviously */
+  /* monokai */
   .pi.code.comment  { color: #75715e; }
   .pi.code.keyword  { color: #f92672; }
   .pi.code.default  { color: #f8f8f2; }
@@ -123,7 +123,7 @@
   .pi.code.string   { color: #e6db74; }
 
 
-  /*Transitions */
+  /* transitions */
 
 
   .pi.tween {

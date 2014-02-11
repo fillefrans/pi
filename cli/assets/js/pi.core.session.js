@@ -71,7 +71,6 @@
       }
       // packet has an address?
       else if(typeof packet.address == "string") {
-        // pi.log("publishing packet to '" + packet.address + "' : ", packet);
 
         // publish to address
         π.events.publish(packet.address, packet);
@@ -88,7 +87,6 @@
     // private
 
     __init : function (DEBUG) {
-      π.timer.start("session.init");
 
       var 
         host        = 'ws://' + this.__server + ':' + this.__port + this.__uri;
@@ -126,11 +124,7 @@
       // smallish hack, because we don't do login yet
       pi.events.trigger('pi.session.start');
       
-      pi.log("pi session started in " + π.timer.stop("pi.session") + "ms.");
-      pi.log("pi bootstrapped in " + bootstraptime + "ms.");
-
-      // lists all timers in console
-      pi.timer.history.list();
+      π.timer.stop("pi.session");
 
       self.addStreamListener('pi.session.1', function (data) {
         pi.log('stream chunk : ' + data, data);
@@ -182,6 +176,7 @@
           this.__socket.addEventListener('open',    this.__onopen);
           this.__socket.addEventListener('message', this.__onmessage);
           this.__socket.addEventListener('close',   this.__onclose);
+
           return true;
         }
       }
@@ -189,6 +184,9 @@
         pi.log(ex.name + ": " + ex.message, ex);
         return false;
       }
+
+      pi.events.trigger('pi.session.start');
+
     },
 
     // protected

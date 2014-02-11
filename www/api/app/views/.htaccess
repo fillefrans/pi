@@ -8,7 +8,4 @@
   php_value log_errors 1
 	php_value error_log /var/log/views/php_error.log
 
-  Action markdown /var/www/handlers/markdown/handler.php
-  AddHandler markdown .md
-
 </IfModule>

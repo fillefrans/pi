@@ -2,7 +2,12 @@
    *
    * π.dom
    *
-   * @author Johan Telstad, jt@enfield.no, 2011-2013
+   * DOM utilities for the Pi client
+   *
+   * @author Johan Telstad, jt@enfield.no, 2012-2014
+   *
+   * @copyright Johan Telstad, jt@enfield.no, 2012-2014
+   * @copyright Views AS, 2014
    *
    */
 
@@ -26,11 +31,15 @@
       
     },
 
-    beginUpdate() {
+    insertAfter : function (referenceNode, newNode) {
+      referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    },
+
+    beginUpdate : function () {
       // like Lazarus
     },
 
-    endUpdate() {
+    endUpdate : function () {
       // and again
 
     }

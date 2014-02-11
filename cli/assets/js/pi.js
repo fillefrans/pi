@@ -218,7 +218,7 @@
 
     /** π.require
      *
-     * A simple dependency management system
+     * A simple dependency management system for pi
      * 
      * @param  {string}     module    Name of the pi module to be loaded
      * @param  {boolean}    async     Load script asynchronously
@@ -279,7 +279,7 @@
 
     /** π.await
      *
-     * Wait for specified events, then invoke callback
+     * Wait for specified event, then invoke callback
      * 
      * @param  {Array}      events      Name(s) of the pi events to wait for
      * @param  {Function}   callback    Callback when all events have occurred

@@ -1,0 +1,342 @@
+<html lang="no">
+  <head>
+    <meta charset="utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600,700,600italic,700italic,200italic,300italic,400italic,900' rel='stylesheet' type='text/css'>
+
+    <!--script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+    <script>
+      WebFont.load({
+        google: {
+
+          families: ['Titillium Web', 'Droid Serif']
+        }
+      });
+    </script-->
+
+    <style type="text/css">
+
+      body {
+        font-family: 'Titillium Web', sans-serif;
+        color: #111;
+        margin : 32px;
+      }
+      
+      .simple-navigator {
+        text-align  : center;
+        width       : 100%;
+        margin      : 12px;
+      }
+
+      .simple-navigator ul {
+        display : inline;
+        list-style-type : none;
+      }
+
+      .simple-navigator li {
+        display           : inline;
+        padding-right     : 20px;
+      }
+
+
+      .site {
+        font-family : 'Titillium Web', sans-serif;
+        font-size   : 120%;
+        font-weight : 700;
+      }
+
+      .customer {
+        font-family : 'Titillium Web', sans-serif;
+        font-weight : 800;
+      }
+
+
+      #template-toolbar {
+        display   : block;
+        width     : 100%;
+        height    : 44px;
+        }
+
+      #template-browser {
+        float     : left;
+        text-align: left;
+        width     : auto;
+        height    : auto;
+        }
+
+      #template-browser ul {
+        list-style-type : none;
+        margin : 0 8px;
+        }
+
+
+      #template-browser li {
+
+        transition : background-color 0.6s cubic-bezier(0,0,0.58,1);
+      }
+
+
+      #template-browser li:hover {
+        background-color: #ddd;
+      }
+
+
+      .preview-container {
+        display     : table;
+        background-color: transparent;
+        float       : left; 
+        width       : 400px;
+        max-width   : 1800px;
+        min-width   : 100px;
+
+        height      : 100px;
+        max-height  : 1200px;
+        min-height  : 100px;
+
+        margin-right: 12px;
+        }
+
+
+      #template-preview {
+        display         : table-cell;
+        vertical-align  : middle;
+        text-align      : center;
+        }
+
+
+      #pi-console {
+        display     : block;
+        position    : fixed;
+        z-index     : 2; 
+        margin-top  : 50%;
+        margin-left : 50%;
+        background-color: #272822;
+        opacity     : 0.6;
+
+        color       : #f8f8f2;
+        width       : 640px;
+        min-width   : 100px;
+
+        height      : 360px;
+        min-height  : 100px;
+
+        padding: 12px;
+
+        pointer-events : none;
+        }
+
+
+      #template-editor {
+        /*display     : none;*/
+        float       : left; 
+        width       : 90%;
+
+        min-width   : 800px;
+        max-width   : 1800px;
+
+        height      : auto;
+        max-height  : 1200px;
+        min-height  : 100px;
+        margin-left : 16px; 
+        }
+
+    </style>
+  </head>
+
+  <body>
+
+    <div id="pi-app" class="pi app">
+
+      <div id="template-toolbar" class="pcl" data-source="template-toolbar">
+        <ul class="simple-navigator">
+          <li>load</li>
+          <li>filelist</li>
+        </ul>
+       </div>
+      <div id="template-browser">
+        BROWSER
+       </div>
+      <div class="preview-container">
+        <div id="template-preview">
+          PREVIEW
+         </div>
+       </div>
+      <div id="template-editor">
+        EDITOR
+       </div>
+
+    </div>
+    
+    <div id="pi-console" class="pcl" data-source="debug.pi.app"></div>
+
+    <script>
+
+
+
+      window.addEventListener("pi.session.start", function() {
+
+        pi.require("xhr", false, false, function(){
+          pi.xhr.json("assets/files/list.php", null, onUpdatedFileList, pi.log);
+        });
+
+        pi.events.subscribe("pi.app.loadfile", loadFile);
+
+
+        function onUpdatedPreview(html) {
+
+        }
+
+
+        function loadPreview(url) {
+          var
+            req = {};
+
+          pi.xhr.get(url, function(response) {
+            pi.app.preview.innerHTML = response;
+            pi.app.editor.getSession().setValue(response);
+          });
+
+        }
+
+
+        function loadFile(url) {
+          
+          pi.log("load : " + url);
+          pi.xhr.get(url, function(response) {
+            pi.app.preview.innerHTML = response;
+            pi.app.editor.getSession().setValue(response);
+          });
+        }
+
+
+        function onUpdatedFileList(obj) {
+          var
+            filebrowser = document.getElementById('template-browser'),
+            obj   = obj || null,
+            list  = "";
+
+          if(obj.items) {
+            for (var site in obj.items) {
+              list += "<span class='site'>" + site + "</span><br />";
+              for (var customer in obj.items[site]) {
+                list += "<span class='customer'>" + customer + "</span><br />";
+
+                list  += "<ul id='" + customer + "'>";
+                for (var format in obj.items[site][customer]) {
+                  var
+                    filename = "assets/files/" + customer.replace("-", "/") + "/" + format + ".html";
+                  list += "<li onclick='pi.events.publish(\"pi.app.loadfile\", \"" + filename + "\")'>" + format + "</li>";
+                }
+                list  += "</ul>";
+
+              }
+            }
+          }
+
+          if(filebrowser) {
+            filebrowser.innerHTML = list;
+          }
+
+          // pi.app.editor.getSession().setValue(JSON.stringify(obj));
+
+          return;
+        }
+
+
+        function onCommand(e) {
+          var
+            command = e.target.innerHTML;
+
+          switch (command) {
+            case "load" : 
+              pi.log("load");
+              break;
+            case "filelist" :
+              pi.xhr.json("assets/files/list.php", null, onUpdatedFileList, pi.log);
+              break;
+            default : 
+              alert("unhandled : " + command);
+          }
+        }
+
+
+        function init () {
+          var
+            item  = null,
+            items = null,
+            menu  = null,
+            menus = document.getElementsByClassName("simple-navigator");
+
+          if(menus && (menus.length > 0) ) {
+            for (var i = 0; i < menus.length; ++i) {
+              menu  = menus[i];
+              items = menu.getElementsByTagName("li");
+              if(items && (items.length > 0) ) {
+                for (var i = 0; i < items.length; ++i) {
+                  item = items[i];
+                  item.addEventListener("click", onCommand, true);
+                }
+              }
+            }
+          }
+
+          pi.app.preview = document.getElementById("template-preview");
+
+          pi.app.editor = ace.edit('template-editor');
+
+          pi.app.editor.setTheme("ace/theme/monokai");
+          // pi.app.editor.setTheme("ace/theme/chrome");
+          pi.app.editor.getSession().setMode("ace/mode/html");
+          pi.app.editor.getSession().setUseWrapMode(true);
+          pi.app.editor.getSession().setUseSoftTabs(true);
+          // pi.app.editor.setReadOnly(true);
+          // pi.app.editor.commands.bindKey("Tab", null);
+
+          pi.app.editor.setOptions({
+            maxLines        : Infinity,
+            showPrintMargin : false,
+            useSoftTabs     : true,
+            fontSize        : 16
+          });
+
+          return;
+        }
+
+
+        init();
+
+
+        pi.on('refresh', function () {
+          pi.log("on refresh");
+        }); 
+
+
+        window.addEventListener("keydown", function (e) {
+            if( π && e.keyCode === 116) {
+              e.preventDefault();
+              π.events.trigger("pi.refresh");
+              return false;
+            }
+          }, true);
+
+      }, false);
+
+
+    </script>
+
+    <!--  pi bootstrapper -->
+    <script src="../../assets/js/pi.core.js"></script>
+
+  <!--  ace code editor -->
+  <script src="/pi/assets/js/lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-47498362-1', 'kromaviews.no');
+    ga('send', 'pageview');
+
+  </script>
+  </body>
+</html>
