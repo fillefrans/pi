@@ -19,7 +19,6 @@
           onerror   : onerror
         };
 
-        pi.log("requesting json with xhr : " + url);
         
         xhr.onload = function() { 
           var
@@ -69,8 +68,6 @@
           callback  : callback,
           onerror   : onerror
         };
-
-        pi.log("posting json with xhr : " + url, obj);
         
         xhr.onload = function() { 
           if( typeof this.__pi.callback === "function" ) {
@@ -105,8 +102,6 @@
           callback  : callback,
           onerror   : onerror
         };
-
-        pi.log("requesting url with xhr : " + url);
         
         xhr.onload = function() { 
           var

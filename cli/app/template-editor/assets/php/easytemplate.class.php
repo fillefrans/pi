@@ -3,6 +3,8 @@
 
   class EasyTemplate {
 
+    
+
     private   $filename = "";
     private   $basename = "";
     private   $longname = "";
@@ -20,6 +22,7 @@
     // the raw template string
     public    $raw      = "";
 
+    public    $log      = [];
 
     public function __construct ($filename, $raw=null) {
 
@@ -36,19 +39,20 @@
 
 
       if (file_exists($this->jsonfile) && filesize($this->jsonfile) ) {
+        $this->defaults = json_decode(file_get_contents($this->jsonfile), true);
         $this->defaults[$this->longname] = json_decode(file_get_contents($this->jsonfile), true);
       }
       else {
         $this->jsonfile = "../../" . str_replace(basename($this->filename), "defaults.json", $this->filename);
-          print("checking: " . $this->jsonfile);
-
+  
         if (file_exists($this->jsonfile) && filesize($this->jsonfile) ) {
-          print("OK: " . $this->jsonfile);
+          $this->log[] = "OK: " . $this->jsonfile;
+          $this->defaults = json_decode(file_get_contents($this->jsonfile), true);
           $this->defaults[$this->longname] = json_decode(file_get_contents($this->jsonfile), true);
-          // print(json_encode($this->defaults));
+          // $this->log[] = "loaded defaults : " . json_encode($this->defaults);
         }
         else {
-          print("NOPE: " . $this->jsonfile);
+          $this->log[] = "NOPE: " . $this->jsonfile;
         }
       }
 
@@ -151,6 +155,14 @@
       $this->rendered = "";
 
       if($contents && is_array($contents)) {
+
+        foreach ($this->defaults as $key => $value) {
+          if(!isset($this->data[$key]) && (!is_numeric($key))) {
+            $this->data[$key] = $value;
+          }
+        }
+        // $contents = array_merge($this->defaults, $contents);
+
         foreach ($contents as $key => $value) {
           $this->data[$key] = $value;
         }
@@ -160,7 +172,8 @@
       $keys   = self::toRegex(array_keys($this->data));
       $values = array_values($this->data);
 
-      $this->rendered = preg_replace($keys, $values, $this->raw);
+      $this->rendered = @preg_replace($keys, $values, $this->raw);
+
 
       if($toString === true) {
         return $this->rendered;

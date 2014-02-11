@@ -24,12 +24,24 @@
   header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
   header("Expires: Thu, 25 Feb 1971 00:00:00 GMT"); // Snart ørte-og-børti år siden
 
-  $request['defaults'] = isset($request['defaults']) ? $request['defaults'] : $DEFAULTS;
-
-  $result = $template->render( $request['defaults'] , false, true);
+  $request['defaults'] = (isset($request['defaults']) && is_array($request['defaults'])) ? array_merge($DEFAULTS, $request['defaults']) : $DEFAULTS;
 
   // public function render ($contents = null, $showsource = false, $toString = false) {
-  $result .= "THE END.";
+  $result = $template->render( $request['defaults'] , false, true);
+
+
+  
+  $result .= "<pre style='text-align:left;max-width:70%;'>\n\nLOG:\n";
+  
+  foreach ($template->log as $key => $value) {
+    $result .= "$key : $value\n";
+  }
+
+  
+  unset($request['template']); // because it's unprintable
+  $result .= "\n\nREQUEST:\n". json_encode($request);
+
+  $result .= "\n\nTHE END.</pre>";
   // error_log(json_encode($result, JSON_PRETTY_PRINT));
 
 
