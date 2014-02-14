@@ -5,15 +5,15 @@
   <head>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" type="text/css" href="assets/fonts/titillium.css">
+    <!-- <link rel="stylesheet" type="text/css" href="assets/fonts/titillium.css"> -->
     <style type="text/css">
 
 
       body {
         margin      : 12px;
-        color       : #222;
-        background  : #eee;
-        font-family : 'titilliumregular', sans-serif;
+        color       : #272822;
+        background  : #f8f8f2;
+        font-family : sans-serif;
       }
 
 
@@ -97,8 +97,9 @@
           return;
         }
 
-        editableElements = document.querySelectorAll(".EAad div");
+        editableElements = document.querySelectorAll("div .EAad");
         if(editableElements.length>0) {
+          /// why are we doing this, again?
           curr_node = editableElements[0]; 
           removing = curr_node.hasAttribute('contenteditable') && curr_node.getAttribute('contenteditable');
         }
@@ -108,6 +109,7 @@
         for(var i = 0; i < editableElements.length; ++i) {
 
           // print the tag name of the node (DIV, SPAN, etc.)
+          /// because we're overwriting it here?
           curr_node = editableElements[i];
           console.log(curr_node.tagName);
 
@@ -172,7 +174,7 @@
             editor.getSession().setMode("ace/mode/html");
             editor.getSession().setUseWrapMode(true);
             // editor.getSession().setUseSoftTabs(true);
-            editor.setReadOnly(true);
+            // editor.setReadOnly(true);
             // editor.commands.bindKey("Tab", null);
             editor.getSession().setValue(currentElement.value + "\n");
           }

@@ -60,7 +60,7 @@
         float     : left;
         text-align: left;
         width     : auto;
-        height    : auto;
+        height    : 100%;
         }
 
       #template-browser ul {
@@ -101,9 +101,9 @@
         max-width   : 1800px;
         min-width   : 100px;
 
-        height      : 100px;
+        height      : 600px;
         max-height  : 1200px;
-        min-height  : 100px;
+        min-height  : 600px;
 
         margin-right: 12px;
         }
@@ -113,6 +113,7 @@
         display         : table-cell;
         vertical-align  : middle;
         text-align      : center;
+        transition : all 0.3s cubic-bezier(0,0,0.58,1);
         }
 
 
@@ -140,15 +141,15 @@
       #template-editor {
         /*display     : none;*/
         float       : left; 
-        width       : 90%;
+        width       : 100%;
 
-        min-width   : 800px;
+        min-width   : 1000px;
         max-width   : 1800px;
 
         height      : auto;
         max-height  : 1200px;
-        min-height  : 100px;
-        margin-left : 16px; 
+        min-height  : 600px;
+        margin-top  : 16px; 
         }
 
     </style>
@@ -169,17 +170,20 @@
 
         <div id="template-toolbar" class="pcl" data-source="template-toolbar">
           <ul class="simple-navigator">
+<!-- 
             <li>load</li>
             <li>filelist</li>
+ -->
+             <li id="filename"></li>
           </ul>
          </div>
         <div class="preview-container">
           <div id="template-preview">
             
            </div>
-         </div>
-        <div id="template-editor">
-          
+          <div id="template-editor">
+            
+           </div>
          </div>
       </div>
     </div>
@@ -201,37 +205,105 @@
 
         function onUpdatedPreview(html) {
 
-            pi.log("now in onUpdatedPreview()");
             pi.app.preview.innerHTML = html;
             pi.app.preview.style.display = 'block';
+            toggleEditMode();
+        }
+
+
+        function toggleEditMode (newmode) {
+          var
+            editableElements, curr_node, removing = false,
+            newmode = newmode || null;
+
+          // early escape
+          if (!'contentEditable' in document.body) {
+            return;
+          }
+
+          editableElements = document.querySelectorAll(".EAad div");
+
+          if(editableElements.length <= 0) {
+            return;
+          }
+
+          if(newmode !== null) {
+            removing = newmode;
+          }
+          else {
+            curr_node = editableElements[0]; 
+            removing = curr_node.hasAttribute('contenteditable') && curr_node.getAttribute('contenteditable');
+          }
+
+
+          // console.log("REMOVING : " + removing);
+
+          for(var i = 0; i < editableElements.length; ++i) {
+
+            // print the tag name of the node (DIV, SPAN, etc.)
+            curr_node = editableElements[i];
+
+            if(removing === true) {
+              // console.log("removing editable");
+              curr_node.removeAttribute('contenteditable');
+            }
+            else {
+              if (curr_node.innerHTML.indexOf("<img ") === -1) {
+                curr_node.setAttribute('contenteditable', "true");
+              }
+            }
+
+          }
 
         }
+
 
 
         function loadPreview(url) {
           var
             req = {};
 
-          pi.log("now in loadPreview()");
+          pi.log("in loadPreview()");
 
           req.filename = url || document.getElementById('filename').innerHTML;
           req.template = pi.app.editor.getSession().getValue();
 
-          pi.app.preview.style.display = 'none';
+          pi.log("req.filename : " + req.filename);
 
-
-
+          // pi.app.preview.style.display = 'none';
+          // pi.log("loading preview : " + req.filename);
           pi.xhr.post( "assets/files/file.php", req, onUpdatedPreview, pi.log);
-
         }
 
 
+        function refreshPreview(url) {
+          var
+            req = {};
+
+          pi.log("in refreshPreview()");
+
+          req.filename = url || document.getElementById('filename').innerHTML;
+          req.template = pi.app.editor.getSession().getValue();
+
+          pi.log("req.filename : " + req.filename);
+
+          // pi.app.preview.style.display = 'none';
+          // pi.log("loading preview : " + req.filename);
+          pi.xhr.post( "assets/files/file.php", req, onUpdatedPreview, pi.log);
+        }
+
+
+
         function loadFile(url) {
+          var
+            filenameSpan = document.getElementById("filename");
           
-          pi.log("load : " + url);
           pi.xhr.get(url, function(response) {
             // pi.app.preview.innerHTML = response;
-            pi.app.editor.getSession().setValue(response);
+            if(pi.app.editor) {
+              filenameSpan.innerHTML = url;
+              pi.app.editor.getSession().setValue(response);
+            }
             loadPreview(url);
           });
         }
@@ -327,6 +399,11 @@
             fontSize        : 16
           });
 
+        pi.on('refresh', function () {
+          refreshPreview();
+        }); 
+
+
           return;
         }
 
@@ -334,9 +411,6 @@
         init();
 
 
-        pi.on('refresh', function () {
-          loadPreview();
-        }); 
 
 
         window.addEventListener("keydown", function (e) {
