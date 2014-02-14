@@ -14,11 +14,8 @@
           callback  = callback  || null,
           onerror   = onerror   || π.log;
 
-        xhr.__pi = {
-          callback  : callback,
-          onerror   : onerror
-        };
-
+        xhr.callback  = callback;
+        xhr.onerror   = onerror;
         
         xhr.onload = function() { 
           var
@@ -36,19 +33,11 @@
             };
           }
 
-          if( typeof this.__pi.callback === "function" ) {
-            this.__pi.callback.call(this, json);
+          if( typeof this.callback === "function" ) {
+            this.callback.call(this, json);
           }
         };
 
-        xhr.onerror = function(error) { 
-          if( typeof this.__pi.onerror === "function" ) {
-            this.__pi.onerror.call(this);
-          }
-          else {
-            console.log(error);
-          }
-        };
 
         xhr.open("post", url, true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -64,23 +53,12 @@
           callback  = callback  || null,
           onerror   = onerror   || π.log;
 
-        xhr.__pi = {
-          callback  : callback,
-          onerror   : onerror
-        };
+        xhr.callback  = callback;
+        xhr.onerror   = onerror;
         
         xhr.onload = function() { 
-          if( typeof this.__pi.callback === "function" ) {
-            this.__pi.callback.call(this, this.responseText || '{ error : "no data." }');
-          }
-        };
-
-        xhr.onerror = function(error) { 
-          if( typeof this.__pi.onerror === "function" ) {
-            this.__pi.onerror.call(this);
-          }
-          else {
-            console.log(error);
+          if( typeof this.callback === "function" ) {
+            this.callback.call(this, this.responseText || '{ error : "no data." }');
           }
         };
 
@@ -98,26 +76,15 @@
           callback  = callback  || null,
           onerror   = onerror   || π.log;
 
-        xhr.__pi = {
-          callback  : callback,
-          onerror   : onerror
-        };
+        xhr.callback  = callback;
+        xhr.onerror   = onerror;
         
         xhr.onload = function() { 
           var
             response = this.responseText || '{ error : "no data." }';
 
-          if( typeof this.__pi.callback === "function" ) {
-            this.__pi.callback.call(this, response);
-          }
-        };
-
-        xhr.onerror = function(error) { 
-          if( typeof this.__pi.onerror === "function" ) {
-            this.__pi.onerror.call(this);
-          }
-          else {
-            console.log(error);
+          if( typeof this.callback === "function" ) {
+            this.callback.call(this, response);
           }
         };
 

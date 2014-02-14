@@ -193,6 +193,8 @@
 
 
 
+
+
       window.addEventListener("pi.session.start", function() {
 
         pi.require("xhr", false, false, function(){
@@ -398,13 +400,42 @@
             fontSize        : 16
           });
 
-        pi.on('refresh', function () {
-          refreshPreview();
-        }); 
+          pi.on('refresh', function () {
+            refreshPreview();
+          }); 
 
 
-          return;
-        }
+          window.onerror = function (e, file, line) {
+            var
+              xhr = new XMLHttpRequest(),
+              obj = {};
+
+            obj.error = e;
+            obj.file = file;
+            obj.line = line;
+            obj.timestamp = new Date().getTime();
+            obj.trace = printStackTrace();
+
+
+            xhr.onload = function() { 
+              if(window.console) {
+                console.log("logged error to server: " + e);
+              }
+            };
+
+            xhr.onerror = function() { 
+              if(window.console) {
+                console.log("XHR ERROR when logging to server");
+              }
+            };
+
+            xhr.open("post", pi.const.LOG_URL, true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+            return xhr.send(JSON.stringify(obj));
+          };
+
+        } // end function init()
 
 
         init();

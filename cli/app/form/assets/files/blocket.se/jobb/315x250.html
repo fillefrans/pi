@@ -1,0 +1,55 @@
+<div class="EAad" style="position:relative; cursor:pointer; background:#F8EDCD; color: #000; font: normal 13px arial,helvetica,clean,sans-serif; width:{adwidth}px; height:{adheight}px; overflow:hidden; word-wrap:break-word; padding:0;margin:0;text-align:center;">
+
+
+
+  <div style="background:#000; height:15px;margin:0;padding:0px 4px;font: bold 12px Helvetica, Arial, sans-serif; color: #fff; text-align:left">
+    LEDIGA JOBB
+  </div>
+  <!--  HEADER  -->
+
+
+  <div style="background:#fff; border-bottom: 1px solid #adaeae;height:174px; margin:10px;">
+
+    <div style="display:table; horizontal-align:center;height:108px;width:100%;">
+      <div style="display:table-cell;vertical-align:middle; min-width:32px;min-height:32px;">
+        <div style="display:block; margin: 0 auto;">
+          {shoutimage}
+        </div>
+      </div>
+    </div>
+
+    <div style="width:100%;font-size: 14px;text-decoration:underline;text-align:center;">{shouttitle}</div>
+
+    <div style="color: #c91517;font: bold 18px Tahoma,sans-serif;letter-spacing:-1px;text-align:center;">
+      <span id="EAad-blocket-jobb-315-250-days-left"></span>&nbsp;dagar kvar att söka
+    </div>
+  </div>
+
+  <script>
+    (function (dateStr) {
+      try{
+        var
+          du = new Date(dateStr),
+          d  = new Date().getTime();
+
+        document.getElementById("EAad-blocket-jobb-315-250-days-left").innerHTML = (1+Math.ceil((du.getTime() - d)/(1000*60*60*24)));
+      }
+      catch(e) {}
+      })('2014-03-29');
+
+  </script>
+
+  <!--  FOOTER  -->
+
+  <div style="height: 24px;margin:5px 20px;">
+    <a style="display:block;text-decoration:none;font:normal 11px Tahoma, sans-serif; float:left; text-align:left;padding:5px 20px;border-radius:4px;color:#fff;background-color:#4a75a2;">Fler lediga jobb</a>
+    <div style="float:right; text-align:right;margin-top:1px;">
+      <a href="http://jobb.blocket.se/" style="text-decoration:none">      
+        <img src="http://cdn.easy-ads.com/subscriber/images/blocket/blocket_logo2.png">
+      </a>
+    </div>
+  </div>
+
+
+
+</div>

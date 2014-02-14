@@ -1,6 +1,6 @@
   /**
    *
-   * π v0.4.3
+   * π v0.4.4
    *
    * @description 
    * Pi is an html5-based client-server application platform
@@ -58,6 +58,7 @@
       API_ROOT    : "/api/",
       SRV_ROOT    : "../../../srv/",
 
+      LOG_URL     : "/pi/log/",
       // platform constants
       TWEEN_TIME      : 0.2,
       DEFAULT_TIMEOUT : 30
