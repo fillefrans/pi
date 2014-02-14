@@ -1,19 +1,45 @@
 <?php
 
 
-define('DEBUG',         true);
+define('DEBUG', true);
+
+
+require_once( __DIR__ . "/../pi.php");
+
+error_reporting(E_ALL);
+
+
+
+define('GZIN',          GZ_ROOT);
 
 define('DATA_DIR',      'tracs/');
-define('INPUT_DIR',     DATA_DIR . 'gzin/');
 define('OUTPUT_DIR',    DATA_DIR . 'gzout');
 
 
 define('MAX_FILESIZE',  20480000);
 
+define('MAX_LINE_LENGTH', 1024);
+
+
+
 
 $data = array();
 
 $dictionary = array();
+
+
+function gzfile_get_contents($filename, $use_include_path = 0) { 
+    $file = gzopen($filename, 'rb', $use_include_path); 
+    $data = null;
+    if ($file) { 
+        $data = [];
+        while (!gzeof($file)) { 
+            $data[] = gzgets($file, MAX_LINE_LENGTH); 
+        } 
+        gzclose($file); 
+    } 
+    return $data; 
+} 
 
 
 
@@ -26,12 +52,42 @@ function addtodictionary($chunk) {
 
 
 function processdataline($line) {
-  $exploded = explode($line, ':', 2);
+  $sepPos = strpos($line, ":");
+  if($sepPos===false) {
+    return;
+  }
+  $sec = intval(trim(substr( $line, 0, $sepPos )), 10);
+  if(!$sec) {
+    return;
+  }
 
-  $sec=intval($exploded[0]);
+  $caption = trim(substr( $line, $sepPos+1 ));
 
-  $caption = (count($exploded) > 1) ? trim($exploded[1]) : '');
-  
+  $project = "";
+  $file = "";
+  $app = "";
+
+
+  $appPos = strpos($caption, ") - Sublime Text 2");
+
+  if($appPos) {
+    $app = "Sublime Text 2";
+    $caption = substr($caption, 0, $appPos);
+    $projPos = strrpos($caption, "(");
+
+    if($projPos > 5) {
+      $project = substr($caption, $projPos+1);
+      $caption = trim(substr($caption, 0, $projPos+1));
+      $file = trim($caption);
+    }
+    else {
+
+    }
+
+  print("project: $project >  time: ".$sec."s >  file: $file\n");
+  // print("app: $app >  project: $project >  time: ".$sec."s >  file: $file\n");
+  }
+
 
 
 }
@@ -41,12 +97,16 @@ function processdataline($line) {
 
 function processgzinfile($gzinfile) {
 
-  $contents = gzread(file_get_contents($gzinfile, false, null, -1, MAX_FILESIZE), MAX_FILESIZE);
 
-  foreach ($contents as $line) {
-    # code...
-    processdataline($line);
+  $contents = gzfile_get_contents($gzinfile);
 
+  if(is_array($contents)) {
+    foreach ($contents as $line) {
+      processdataline($line);
+    }
+  }
+  else {
+    print("not array : \n" . json_encode($contents, JSON_PRETTY_PRINT));
   }
 
 }
@@ -66,13 +126,10 @@ function processgzinfile($gzinfile) {
 // do the thing
 
 
-foreach (glob(INPUT_DIR '*.gz') as $gzinfile) {
+foreach (glob(GZIN . '*.gz') as $gzinfile) {
+  print("\nprocessing: $gzinfile");
   processgzinfile($gzinfile);
 }
-
-
-
-
 
 
 
