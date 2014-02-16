@@ -3,6 +3,18 @@
   require_once('template.class.php');
 
 
+  /**
+   *  TemplateList
+   *
+   * list templates in folder + subfolder
+   *
+   * render as json
+   *
+   * 
+   */
+
+
+
   class TemplateList {
 
     private   $rootfolder = "";
@@ -60,7 +72,7 @@
 
 
     private function debug ($str) {
-      $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". $str;
+      $this->log[] =  $str;
     }
 
     private function init () {
@@ -72,7 +84,7 @@
       $this->subfolders = glob($this->rootfolder . "/*", GLOB_ONLYDIR);
 
       if ( count($this->subfolders) === 0 ) {
-        $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "No folders found under root : " . $this->rootfolder;
+        $this->log[] =  "No folders found under root : " . $this->rootfolder;
         return false;
       }
 
@@ -80,17 +92,17 @@
 
       foreach ( $this->subfolders as $folder ) {
         if ($folder === "./assets") {
-          $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Skipping : $folder";
+          $this->log[] =  "Skipping : $folder";
           continue;
         }
 
         if (file_exists($folder."/defaults.json") && filesize($folder."/defaults.json")) {
-          $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Adding to defaults['" . TemplateList::folderToKey($folder) . "'] : $folder/defaults.json";
+          $this->log[] =  "Adding to defaults['" . TemplateList::folderToKey($folder) . "'] : $folder/defaults.json";
           $this->defaults[TemplateList::folderToKey($folder)] = json_decode(file_get_contents($folder."/defaults.json"), true);
         }
 
         // $key = TemplateList::folderToKey($folder);
-        $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Entering folder : $folder";
+        $this->log[] =  "Entering folder : $folder";
         $this->items[TemplateList::folderToKey($folder)] = TemplateList::readFolder($folder);
       }
 
@@ -102,7 +114,7 @@
 
     private function readFolder ($folder) {
 
-      $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Now in readfolder() : $folder";
+      $this->log[] =  "Now in readfolder() : $folder";
 
       $templates = array();
 
@@ -121,15 +133,15 @@
 
           if(is_dir($entrypath)) {
 
-            $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "found new subfolder : $entrypath";
+            $this->log[] =  "found new subfolder : $entrypath";
 
             if (file_exists($entrypath."/defaults.json") ) {
-              $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Found defaults.json in $entrypath/defaults.json";
-              $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Adding to defaults['" . TemplateList::folderToKey($entrypath) . "'] : $folder/defaults.json";
+              $this->log[] =  "Found defaults.json in $entrypath/defaults.json";
+              $this->log[] =  "Adding to defaults['" . TemplateList::folderToKey($entrypath) . "'] : $folder/defaults.json";
               $this->defaults[TemplateList::folderToKey($entrypath)] = json_decode(file_get_contents($entrypath."/defaults.json"), true);
             }
 
-            $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Entering subfolder : $entrypath";
+            $this->log[] =  "Entering subfolder : $entrypath";
             $templates[TemplateList::folderToKey($entrypath)] = $this->readFolder($entrypath);
             // foreach ($templategroup as $template) {
             //   print ("\ttemplate : " . $template . "\n");
@@ -144,7 +156,7 @@
 
             $entryname = "$folder/$name";
 
-            $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Found new template : $entryname";
+            $this->log[] =  "Found new template : $entryname";
             $templates[$name] = new Template($entrypath);
 
             // print ( "\t" . TemplateList::folderToKey($entryname) . "\t => " . $entrypath . "\n");
@@ -167,59 +179,109 @@
         closedir($handle);
       }
       else {
-        $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Error - Unable to open dir : $folder";
+        $this->log[] =  "Error - Unable to open dir : $folder";
       }
 
-      $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Sorting " . count($templates) . " entries";
+      $this->log[] =  "Sorting " . count($templates) . " entries";
       ksort($templates);
 
       if (count ($templates) <= 2 )
-        $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". htmlspecialchars(print_r(array_keys($templates), true));
+        $this->log[] =  htmlspecialchars(print_r(array_keys($templates), true));
 
       return $templates;
     }
 
 
 
+    public function toJSON () {
+
+      $content  = array();
+      $items    = array();
+
+      $this->log[] =  "Starting render loop";
+
+      foreach ($this->items as $site => $customers) {
+
+        $this->log[] =  "Processing site $site : " . count($customers) . " customers";
+        $items[$site] = array();
+
+        foreach ($customers as $customer => $formats) {
+          
+          if(is_array($formats)) {
+            $this->log[] =  "Processing customer $customer : " . count($formats) . " formats";
+
+            $items[$site][$customer] = array();
+
+            foreach ($formats as $format => $template) {
+              if($template instanceof Template) {
+                // $template->render($defaults, $showsource);
+                $items[$site][$customer][$format] =  array( 'filename' => $template->getFilename(), 'template' => base64_encode($template->raw));
+                // $items[$site][$customer][$format] =  base64_encode($template->raw);
+              }
+              else {
+                $this->log[] =  "Error - NOT A TEMPLATE : $format";
+              }
+            }
+          }
+          else {
+            if($formats instanceof Template) {
+              $this->log[] =  "Processing template from site dir (?) : ";
+
+              $items[$site][$customer] = array( 'filename' => $template->filename, 'template' => base64_encode($template->raw));
+              // $formats->render($defaults, $showsource);
+              // $template->showSource();
+            }
+            else {
+              $this->log[] =  "Error (in site dir ?) - NOT A TEMPLATE : $formats";
+            }
+          }
+        }
+      }
+
+
+      $content['items']     = $items;
+
+      $content['defaults']  = $this->defaults;
+      $content['log']       = $this->log;
+      $content['timers']    = $this->timers;
+
+      // $content['vardump'] = htmlspecialchars(print_r($content, true));
+
+      return json_encode($content, JSON_PRETTY_PRINT);
+
+
+    }
+
+
 
 
     public function render ($defaults = null, $showsource = false) {
 
-      $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Starting render loop";
+      $this->log[] =  "Starting render loop";
 
       foreach ($this->items as $site => $customers) {
 
-        $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Processing site $site : " . count($customers) . " customers";
+        $this->log[] =  "Processing site $site : " . count($customers) . " customers";
         print ("<p onclick='toggleVisible(\"$site\")'>$site</p><div id='$site' class='site'>\n");
 
         foreach ($customers as $customer => $formats) {
           print ("<p onclick='toggleVisible(\"$customer\")'>$customer</p><div id='$customer' class='customer'>\n");
 
           if(is_array($formats)) {
-            $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Processing customer $customer : " . count($formats) . " formats";
-
-            if ($customer === "blocket.se-jobb") {
-              $defaults = array(
-                "shoutimage"  => '<img style="max-width:180px; max-height:84px; border:0;" src="assets/images/canada-goose-logo-64.png" alt="" />',
-                "custom4"     => "assets/images/test.jpg", 
-                "shouttitle"  => "Ekonomiassistent",
-                "custom1"     => "Canada Goose",
-                "shouttext"   => "Canada Coose söker en ekonomiassistent som ska vara ansvarig för kund- och leverantörskontra"
-                );
-            }
+            $this->log[] =  "Processing customer $customer : " . count($formats) . " formats";
 
             foreach ($formats as $format => $template) {
               if($template instanceof Template) {
                 $template->render($defaults, $showsource);
               }
               else {
-                $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Error - NOT A TEMPLATE : $format";
+                $this->log[] =  "Error - NOT A TEMPLATE : $format";
               }
             }
           }
           else {
             if($formats instanceof Template) {
-              $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Processing template from site dir (?) : ";
+              $this->log[] =  "Processing template from site dir (?) : ";
 
 
               print("<p /><a name='$customer' href='#$customer'>$customer</a>\n");
@@ -227,7 +289,7 @@
               // $template->showSource();
             }
             else {
-              $this->log[] =  str_pad(":" . __LINE__, 4, " ", STR_PAD_LEFT) ."  ". "Error (in site dir ?) - NOT A TEMPLATE : $formats";
+              $this->log[] =  "Error (in site dir ?) - NOT A TEMPLATE : $formats";
             }
           }
           print ("</div>\n"); // closes the customer tag
@@ -235,19 +297,18 @@
         print ("</div>\n"); // closes the site tag
       }
 
-      print("<pre style='text-decoration:none;cursor:pointer;' onclick='showDebugInfo();'>debug info</pre>");
+      print("<pre></pre>\n");
 
+      print("<pre style='background : #272822'>\n\n\n    DEFAULTS\n\n");
+      print(json_encode($this->defaults, JSON_PRETTY_PRINT));
+      print("\n\n</pre>\n");
 
-      print("\n<pre class='debug' style='display:none;'>\n");
+      print("<pre>\n");
       foreach ($this->log as $lineno => $line) {
         print ("$line\n");
       }
 
-      print("<pre class='debug' style='display:none; background : #272822'>\n\n\n    DEFAULTS\n\n");
-      print(json_encode($this->defaults, JSON_PRETTY_PRINT));
-      print("\n\n</pre>\n");
-
-      print("\nTimers:\n\t");
+      print("\nTimers:\n");
 
       $this->showTimers();
       print("</pre>\n");

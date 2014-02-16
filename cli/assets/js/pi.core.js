@@ -465,6 +465,47 @@
     };
 
 
+    π.basename = function (filename, ext) {
+      var
+        filename = filename || null,
+        ext = ext || "",
+        token = "",
+        slashpos = -1;
+
+
+      if(filename.lastIndexOf("/") == filename.length-1) {
+
+      }
+
+      slashpos = filename.lastIndexOf("/");
+      if (slashpos > -1) {
+        token = filename.substring(slashpos+1);
+        pi.log("new token : " + token);
+      }
+      else {
+        token = filename;
+        pi.log("token : " + token);
+      }
+
+      if(ext && typeof ext === "string") {
+        var strlen = token.length;
+        if(token.lastIndexOf(ext) == (strlen - ext.length)) {
+          pi.log("That's our baby : " + token.lastIndexOf(ext));
+          token = token.substring(0, token.lastIndexOf(ext));
+        }
+        else{
+          pi.log("not our baby : " + token.lastIndexOf(ext));
+        }
+      }
+
+      pi.log("returning : " + token);
+      return token;
+
+    };
+
+
+
+
     π.logArray = function (array) {
       var
         i = array.length;
@@ -499,6 +540,74 @@
       }
     };
 
+
+
+    π.search = function (token, obj, where, exact, multiple) {
+      var
+        result    = null,
+        multiple  = multiple  || false,
+        token     = token     || null,
+        obj       = obj       || null,
+        exact     = exact     || 1, // 1 => match exactly, 0 => match any occurrence
+        where     = where     || 0; // 0 => search both keys and values, 1 => keys, 2 => values
+
+      if ( !obj || !token ) {
+        pi.log("no obj");
+        return false;
+      }
+
+      for (var item in obj) {
+
+        if(!obj.hasOwnProperty(item)) {
+          pi.log("skipping : " + item.substring(0, 64));
+          continue;
+        }
+
+        if (where === 1 || where === 0) {
+          if ( exact === 1 && item == token ) {
+            pi.log("exact: " + item.substring(0, 64));
+            return obj;
+          }
+          else if ( exact === 0 && item.indexOf(token) != -1) {
+            pi.log("yes: " + item.substring(0, 64));
+            return obj;
+          }
+          else {
+            // pi.log("no: " + item.substring(0, 64));
+            result = false;
+          }
+        }
+
+       if( typeof obj[item] == "object" ) {
+          result = π.search(token, obj[item], where, exact);
+        }
+        else{
+
+          if (where === 2 || where === 0) {
+
+            if ( exact == 1 && obj[item] == token ) {
+              pi.log("exact: " + obj[item].toString().substring(0, 64));
+              return obj;
+            }
+            else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
+              pi.log("yes: " + obj[item].toString().substring(0, 64));
+              return obj;
+            }
+            else {
+              // pi.log("no: " + obj[item].toString().substring(0, 64));
+              result = false;
+            }
+          }
+
+        }
+
+
+      } // for var item in obj
+
+
+      return result;
+
+    };
 
 
 

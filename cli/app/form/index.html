@@ -94,6 +94,7 @@
       #form-browser ul {
         list-style-type : none;
         margin : 0 8px;
+        cursor: default;
         }
 
 
@@ -238,13 +239,12 @@
 
         function onUpdatedPreview(html) {
           var
-            filenameSpan = document.getElementById('filename'),
             fragment = document.createDocumentFragment(),
-            divhandle = document.createElement("div"),
+            div     = document.createElement("div"),
             preview = pi.app.preview;
 
-            divhandle.innerHTML = html;
-            fragment.appendChild(divhandle);
+            div.innerHTML = html;
+            fragment.appendChild(div);
 
               // clear div
               while (preview.firstChild) {
@@ -342,20 +342,41 @@
 
           pi.app.templates = obj;
 
+          pi.events.subscribe('pi.app.loadfile', function (filename) {
+              var
+                filename = filename || null,
+                node = null;
+
+              pi.log("looking : " + filename);
+
+                if(!filename) { return };
+
+              var token = pi.basename(filename, ".html");
+
+              // π.search = function (token, obj, where, exact, multiple) {
+              if( null !== (node = pi.search(token, pi.app.templates, 1, 0, 1))) {
+                // found it
+                pi.log("found" + node, node);
+              }
+              else {
+                pi.log("not found : " + filename);
+              }
+              return node;
+          });
+
+
           if(obj.items) {
             for (var site in obj.items) {
               list += "<span class='site'>" + site + "</span><br />";
               for (var customer in obj.items[site]) {
                 list += "<span class='customer'>" + customer + "</span><br />";
-
-                list  += "<ul id='" + customer + "'>";
+                list += "<ul id='" + customer + "'>";
                 for (var format in obj.items[site][customer]) {
                   var
                     filename = "assets/files/" + customer.replace("-", "/") + "/" + format + ".html";
                   list += "<li onclick='pi.events.publish(\"pi.app.loadfile\", \"" + filename + "\")'>" + format + "</li>";
                 }
-                list  += "</ul>";
-
+                list += "</ul>";
               }
             }
           }
@@ -381,6 +402,7 @@
               pi.log("load");
               break;
             case "filelist" :
+              pi.log("filelist");
               pi.xhr.json("assets/files/list.php", null, onUpdatedFileList, pi.log);
               break;
             default : 
@@ -394,7 +416,7 @@
             item  = null,
             items = null,
             menu  = null,
-            menus = document.getElementsByClassName("simple-navigator");
+            menus = document.querySelectorAll(".simple-navigator");
 
           if(menus && (menus.length > 0) ) {
             for (var i = 0; i < menus.length; ++i) {
@@ -469,16 +491,22 @@
 
         init();
 
-
-
-
         window.addEventListener("keydown", function (e) {
-            if( π && e.keyCode === 116) {
-              e.preventDefault();
+          if ( !π ) return;
+
+          switch (e.keyCode) {
+            case 116 : {
+              // e.preventDefault();
               π.events.trigger("pi.refresh");
               return false;
             }
-          }, true);
+            case 122 : {
+              // e.preventDefault();
+              π.events.trigger("pi.fullscreen");
+              return false;
+            }
+          }
+        }, true);
 
       }, false);
 

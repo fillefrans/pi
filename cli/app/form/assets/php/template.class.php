@@ -1,16 +1,16 @@
 <?php
 
+  include("templatelist.class.php");
+
 
   class Template {
 
-    private   $filename = "";
+    public    $filename = "";
     private   $basename = "";
     private   $longname = "";
 
     private   $jsonfile = "";
 
-    // the raw template string
-    public    $raw      = "";
     private   $rendered = "";
     private   $data     = array();
 
@@ -19,6 +19,8 @@
     private   $width    = 0;
     private   $height   = 0;
 
+    // the raw template string
+    public    $raw      = "";
 
 
     public function __construct ($filename, $raw=null) {
@@ -30,7 +32,7 @@
 
 
       $this->filename = $filename;
-      $this->longname = str_replace(".html", "", TemplateList::folderToKey($filename));
+      $this->longname = str_replace(".html", "", self::folderToKey($filename));
       $this->jsonfile = str_replace(".html", ".json", $filename);
       $this->basename = basename($filename, ".html");
 
@@ -48,6 +50,26 @@
       }
 
       $this->init();
+
+    }
+
+
+    public function getFilename() {
+      return $this->filename;
+    }
+
+    public static function folderToKey ($folder) {
+      $result = "";
+      $charsToDelete = 0;
+
+      if ( strpos($folder, ".") === 0 ) {
+        $charsToDelete++;
+      }
+      if ( strpos($folder, "/") <= 1 ) {
+        $charsToDelete++;
+      }
+
+      return str_replace("/", "-", substr($folder, $charsToDelete));
 
     }
 
