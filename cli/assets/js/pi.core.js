@@ -50,7 +50,7 @@
 
 
 
-    π.const = {
+    π._const = π._const || {
 
       // paths
       PI_ROOT     : "assets/js/",
@@ -58,7 +58,7 @@
       API_ROOT    : "/api/",
       SRV_ROOT    : "../../../srv/",
 
-      LOG_URL     : "/pi/log/",
+      LOG_URL     : "/api/log/",
       // platform constants
       TWEEN_TIME      : 0.2,
       DEFAULT_TIMEOUT : 30
@@ -67,7 +67,7 @@
 
 
     //will keep an updated list over which modules are loaded
-    π.loaded = {};
+    π.loaded = π.loaded || {};
 
 
     // create pi as an alias for π
@@ -152,6 +152,8 @@
 
         π.callback = π.core.callback;
         π.callback._loaded = true;
+
+
 
 
 
@@ -368,7 +370,7 @@
               customEvt   = null;
 
             // early escape
-            if(eventName === false) {
+            if(!eventName) {
               return false;
             }
 
@@ -393,10 +395,10 @@
             else {
               // we are not handicapped
 
-              if(eventData === false) {
-                dispatcher.dispatchEvent(new CustomEvent(eventName));
-              } else {
+              if(eventData) {
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
+              } else {
+                dispatcher.dispatchEvent(new CustomEvent(eventName));
               }
             }
 
@@ -413,6 +415,9 @@
 
 
     /*    end of core modules     */
+
+
+
 
 
 
@@ -433,12 +438,13 @@
     }
 
 
-    π.strpad = function(str, padto, padstr) {
+    π.strPad = function(str, padto, padstr, padleft) {
       var
-        padstr = padstr || "&nbsp;",
-        padto  = padto  || false,
-        count  = 0,
-        result = str;
+        padstr  = padstr  || "&nbsp;",
+        padto   = padto   || false,
+        padleft = padleft || false, // default is to pad on the right
+        count   = 0,
+        result  = str;
 
       count = padto - str.length;
 
@@ -447,10 +453,31 @@
       }
 
       for(;count--;) {
-        result = padstr + result;
+        if(padleft) {
+          result = padstr + result;
+        }
+        else {
+          result += padstr;
+        }
       }
 
       return result;
+    };
+
+
+    π.logArray = function (array) {
+      var
+        i = array.length;
+
+      while(i--) {
+        // π.strPad = function(str, padto, padstr) {
+        pi.log(pi.strPad(i, 4, " ") + " : " + array[i]);
+      }
+    };
+
+
+    π.logObject = function (obj) {
+        pi.log("Object : ", obj);
     };
 
 
@@ -460,9 +487,79 @@
         console.log(msg, obj);
       }
       else {
-        console.log(msg);
+        if(π.isArray(msg)) {
+          pi.logArray(msg);
+        }
+        else if (typeof msg === "object") {
+          π.logObject(msg);
+        }
+        else {
+          console.log(msg);
+        }
       }
     };
+
+
+
+
+    /* DOM-related functions  */
+
+
+    π.isNode = function(obj){
+      /** Returns true if it is a DOM node  */
+      return (
+        typeof Node === "object" ? obj instanceof Node : 
+        obj && typeof obj === "object" && typeof obj.nodeType === "number" && typeof obj.nodeName==="string"
+      );
+    };
+
+
+    π.isElement = function(obj){
+      /** Returns true if it is a DOM element   */
+      return (
+        typeof HTMLElement === "object" ? obj instanceof HTMLElement : //DOM2
+        obj && typeof obj === "object" && obj !== null && obj.nodeType === 1 && typeof obj.nodeName==="string" 
+      );
+    };
+
+
+
+
+
+    /**
+     *  Dynamically polyfill missing features
+     *  
+     *  @function π.polyfill
+     *
+     * @param {string} feature The feature to polyfill
+     * 
+     * Optional
+     * @param {DomElement} elem An optional DomElement to use for injection. If
+     * this variable is not present, document.body will be used instead.
+     *
+     * @return {Boolean|DomElement} False on failure, or new DomElement reference on success
+     *  
+     */
+
+
+    π.polyfill = function (feature, elem) {
+      var 
+        feature = feature || null,
+        elem    = elem    || window;
+
+      if(feature in elem) {
+        return;
+      }
+
+      pi.require('polyfill.' + feature.toLowerCase());
+
+      return ;
+    };
+
+
+
+
+
 
 
     /**
@@ -486,11 +583,47 @@
         element   = elem || document.body,
         fragment  = document.createDocumentFragment(),
         container = document.createElement("div");
-       
+
       container.innerHTML = src;
       fragment.appendChild(container);
+
+      if( elem && (elem != document.body) ) {
+        π.clear(elem);
+      }
+
       return element.appendChild(fragment);
     };
+
+
+
+    /**
+     * π.clear 
+     *
+     * Removes any children from element
+     * @return {integer} Number of children removed
+     *
+     */
+
+    π.clear = function (elem) {
+      var 
+        element   = elem || null,
+        removed   = 0;
+
+      if(!π.isElement(elem)) {
+        return false;
+      }
+       
+      // clear element
+      while (elem.firstChild) {
+        elem.removeChild(elem.firstChild);
+        removed++;
+      }
+
+      return removed;
+    };
+
+
+
 
 
 
@@ -571,7 +704,7 @@
         }
 
       var
-        source  = new EventSource( π.const.API_ROOT + 'pi.io.sse.monitor.php?address=' + encodeURI(address) );
+        source  = new EventSource( π._const.API_ROOT + 'pi.io.sse.monitor.php?address=' + encodeURI(address) );
 
       source.addEventListener('message',  callback, false);
 
@@ -708,7 +841,7 @@
     π.await = function(eventaddress, callback, timeout) {
       var
         eventaddress  = eventaddress  || false,
-        timeout       = timeout       || π.const.DEFAULT_TIMEOUT;
+        timeout       = timeout       || π._const.DEFAULT_TIMEOUT;
       
       if( typeof eventaddress != "string" ) {
         return false;
@@ -800,7 +933,6 @@
         }
 
         if(π.session.connected) {
-          pi.log("Sending packet:", packet);
           // will return true or false
           return π.session.send(packet);
         }
@@ -889,12 +1021,17 @@
 
     π.require = function(module, async, defer, callback, onerror) {
 
-      if (π.loaded[module.replace(/\./g,'_')]) {
-        if( typeof callback == "function" ) {
-          callback.call(this);
-        }
-        return true;
-      }
+          // handle multiple modules given on the form "module1 module2 ..."
+          if(module.indexOf(" ") >=1) {
+            var modules = module.split(" ");
+            for (var i=0; i<modules.length; i++) { π.require(modules[i], async, defer, callback, onerror); }
+            return;
+          }
+          // already loaded => early escape
+          if (π.loaded[module.replace(/\./g,'_')]) {
+            if( typeof callback === "function" ) { callback.call(this); } 
+            return true;
+          }
 
       var 
         cursor  = document.getElementsByTagName ("head")[0] || document.documentElement,
@@ -902,44 +1039,25 @@
         script  = document.createElement('script');
 
 
-      script.async      = async || true;
-      script.defer      = defer || true;
-      script.src        = path + module + '.js';
-      script.self       = script;
+      script.async    = async || true;
+      script.defer    = defer || true;
+      script.src      = path + module + '.js';
 
-      // add some extra vars to the script object
-      // so we can reference them in the event handlers
-      script.module     = module;
-      script.modname    = module.replace(/\./g,'_');
-      script.callback   = callback  || false;
-      script.onerror    = onerror   || π.log;
+      script.modname  = module.replace(/\./g,'_');
+      script.callback = callback  || false;
+      script.onerror  = onerror   || π.log;
 
-      pi.timer.start(module);
+
+      π.timer.start(module);
 
       script.onload = function () {
-        var
-          loadtime = π.timer.stop(this.modname);
-
-        π.loaded[this.modname] = { time: (new Date()).getTime(), loadtime: loadtime };
-        if(this.callback) {
-          this.callback.call(this);
+        π.loaded[this.modname] = { time: (new Date()).getTime(), loadtime: π.timer.stop(this.modname) };
+        if(typeof this.callback === "function") {
+          this.callback.call(this, this.modname);
         }
       };
 
-      script.onerror = function (error) {
-        pi.log('error loading module: ' + this.module, error);
-        if(this.onerror) {
-          this.onerror.call(this, error);
-        }
-        else {
-          throw "Error loading required module '" + this.module + "' from " + this.src;
-        }
-      };
-
-      var
-        node = cursor.insertBefore(script, cursor.firstChild);
-      
-      return !!node; 
+      return !!cursor.insertBefore(script, cursor.firstChild); 
     };
 
 
@@ -1096,11 +1214,10 @@
           // clear log array, this is actually the fastest way
           // NB! Array MUST NOT contain any falsy values, since that 
           // would break the loop before the array is cleared
-          while(log.pop()) {
-            // nop
-          }
+          while (log.pop()) {};
         }
       } // end of history object
+
     }; // end of timer module
 
 
@@ -1113,11 +1230,20 @@
      */
 
 
+  /*    PHP aliases   */
+
+  π.str_pad   = π.strPad;
+  π.is_array  = π.isArray;
+
+
+
   π.require("core.session", false, false);
   π.require("core.tasks",   false, false);
 
   π.require("app", false, false);
   π.require("pcl", false, false);
+
+  pi.events.trigger('pi', new Date().getTime());
 
 
   /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */

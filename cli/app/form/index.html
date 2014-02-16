@@ -13,6 +13,31 @@
       });
     </script-->
 
+
+
+    <!--  ###  POLYFILLS   ###  -->
+
+      <!--[if eq IE 8]>
+        <script src="../../assets/js/polyfill/classList.js"></script>
+
+        <script type="text/javascript">
+
+          // Let the library know where WebSocketMain.swf is:
+          WEB_SOCKET_SWF_LOCATION = "../../assets/js/polyfill/WebSocketMain.swf";
+
+        </script>
+        <script type="text/javascript" src="../../assets/js/polyfill/swfobject.js"></script>
+        <script type="text/javascript" src="../../assets/js/polyfill/web_socket.js"></script>
+
+      <![endif]-->
+
+
+      <!--[if lte IE 7]>
+        <script src="../../assets/js/polyfill/ie7.js"></script>
+      <![endif]-->
+
+
+
     <script src="../../assets/js/lib/stacktrace.js"></script>
     <style type="text/css">
 
@@ -31,11 +56,13 @@
       .simple-navigator ul {
         display : inline;
         list-style-type : none;
+        cursor: default;
       }
 
       .simple-navigator li {
         display           : inline;
         padding-right     : 20px;
+        cursor: default;
       }
 
 
@@ -140,7 +167,7 @@
 
 
       #form-editor {
-        /*display     : none;*/
+        display     : none;
         float       : left; 
         width       : 100%;
 
@@ -159,6 +186,9 @@
   <body>
 
     <div id="pi-app" class="pi app">
+
+      <div id="overlay" class="overlay"></div>
+
 
       <div class="app-container">
 
@@ -195,7 +225,9 @@
 
 
 
-      window.addEventListener("pi.session.start", function() {
+      window.addEventListener("pi", function(data) {
+
+        pi.require("easyad");
 
         pi.require("xhr", false, false, function(){
           pi.xhr.json("assets/files/list.php", null, onUpdatedFileList, pi.log);
@@ -205,9 +237,25 @@
 
 
         function onUpdatedPreview(html) {
+          var
+            filenameSpan = document.getElementById('filename'),
+            fragment = document.createDocumentFragment(),
+            divhandle = document.createElement("div"),
+            preview = pi.app.preview;
 
-            pi.app.preview.innerHTML = html;
-            pi.app.preview.style.display = 'block';
+            divhandle.innerHTML = html;
+            fragment.appendChild(divhandle);
+
+              // clear div
+              while (preview.firstChild) {
+                preview.removeChild(preview.firstChild);
+              }
+
+            preview.appendChild(fragment);
+            preview.classList.remove('loading');
+
+
+            // make newly loaded preview editable
             toggleEditMode();
         }
 
@@ -237,8 +285,6 @@
           }
 
 
-          // console.log("REMOVING : " + removing);
-
           for(var i = 0; i < editableElements.length; ++i) {
 
             // print the tag name of the node (DIV, SPAN, etc.)
@@ -260,54 +306,32 @@
 
 
 
-        function loadPreview(url) {
-          var
-            req = {};
-
-          pi.log("in loadPreview()");
-
-          req.filename = url || document.getElementById('filename').innerHTML;
-          req.form = pi.app.editor.getSession().getValue();
-
-          pi.log("req.filename : " + req.filename);
-
-          // pi.app.preview.style.display = 'none';
-          // pi.log("loading preview : " + req.filename);
-          pi.xhr.post( "assets/files/file.php", req, onUpdatedPreview, pi.log);
-        }
-
-
-        function refreshPreview(url) {
-          var
-            req = {};
-
-          pi.log("in refreshPreview()");
-
-          req.filename = url || document.getElementById('filename').innerHTML;
-          req.form = pi.app.editor.getSession().getValue();
-
-          pi.log("req.filename : " + req.filename);
-
-          // pi.app.preview.style.display = 'none';
-          // pi.log("loading preview : " + req.filename);
-          pi.xhr.post( "assets/files/file.php", req, onUpdatedPreview, pi.log);
-        }
-
-
-
         function loadFile(url) {
           var
-            filenameSpan = document.getElementById("filename");
-          
-          pi.xhr.get(url, function(response) {
-            // pi.app.preview.innerHTML = response;
-            if(pi.app.editor) {
-              filenameSpan.innerHTML = url;
-              pi.app.editor.getSession().setValue(response);
-            }
-            loadPreview(url);
-          });
+            req = {};
+
+          req.filename = url || document.getElementById('filename').innerHTML;
+          // pi.app.preview.style.display = 'none';
+          // pi.log("loading preview : " + req.filename);
+          pi.xhr.post( "assets/files/render.php", req, onUpdatedPreview, pi.log);
         }
+
+
+
+
+        // function loadFile(url) {
+        //   var
+        //     filenameSpan = document.getElementById("filename");
+          
+        //   pi.xhr.get(url, function(response) {
+        //     // pi.app.preview.innerHTML = response;
+        //     if(pi.app.editor) {
+        //       filenameSpan.innerHTML = url;
+        //       pi.app.editor.getSession().setValue(response);
+        //     }
+        //     loadPreview(url);
+        //   });
+        // }
 
 
         function onUpdatedFileList(obj) {
@@ -315,6 +339,8 @@
             filebrowser = document.getElementById('form-browser'),
             obj   = obj || null,
             list  = "";
+
+          pi.app.templates = obj;
 
           if(obj.items) {
             for (var site in obj.items) {
@@ -335,7 +361,9 @@
           }
 
           if(filebrowser) {
-            filebrowser.innerHTML = list;
+            pi.clear(filebrowser);
+            pi.inject(list, filebrowser);
+            // filebrowser.innerHTML = list;
           }
 
           // pi.app.editor.getSession().setValue(JSON.stringify(obj));
@@ -383,24 +411,25 @@
 
           pi.app.preview = document.getElementById("form-preview");
 
-          pi.app.editor = ace.edit('form-editor');
+          // pi.app.editor = ace.edit('form-editor');
 
-          pi.app.editor.setTheme("ace/theme/monokai");
-          // pi.app.editor.setTheme("ace/theme/chrome");
-          pi.app.editor.getSession().setMode("ace/mode/html");
-          pi.app.editor.getSession().setUseWrapMode(true);
-          pi.app.editor.getSession().setUseSoftTabs(true);
-          // pi.app.editor.setReadOnly(true);
-          // pi.app.editor.commands.bindKey("Tab", null);
+          // pi.app.editor.setTheme("ace/theme/monokai");
+          // // pi.app.editor.setTheme("ace/theme/chrome");
+          // pi.app.editor.getSession().setMode("ace/mode/html");
+          // pi.app.editor.getSession().setUseWrapMode(true);
+          // pi.app.editor.getSession().setUseSoftTabs(true);
+          // // pi.app.editor.setReadOnly(true);
+          // // pi.app.editor.commands.bindKey("Tab", null);
 
-          pi.app.editor.setOptions({
-            maxLines        : Infinity,
-            showPrintMargin : false,
-            useSoftTabs     : true,
-            fontSize        : 16
-          });
+          // pi.app.editor.setOptions({
+          //   maxLines        : Infinity,
+          //   showPrintMargin : false,
+          //   useSoftTabs     : true,
+          //   fontSize        : 16
+          // });
 
           pi.on('refresh', function () {
+
             refreshPreview();
           }); 
 
@@ -429,7 +458,7 @@
               }
             };
 
-            xhr.open("post", pi.const.LOG_URL, true);
+            xhr.open("post", pi._const.LOG_URL, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
             return xhr.send(JSON.stringify(obj));
@@ -458,6 +487,8 @@
 
     <!--  pi bootstrapper -->
     <script src="../../assets/js/pi.core.js"></script>
+    <script src="../../assets/js/lib/gsap/TweenLite.min.js"></script>
+
 
   <!--  ace code editor -->
   <script src="/pi/assets/js/lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>

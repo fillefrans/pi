@@ -17,7 +17,7 @@
   $filename = isset($request["url"]) ? $request["url"] : $request["filename"];
 
 
-  $template = new EasyTemplate($filename, $request['template']);
+  $template = new EasyTemplate($filename, isset($request['template']) ? $request['template'] : null);
 
     // set output type and disallow caching
   header('Content-Type: application/json; charset=utf-8');
@@ -38,7 +38,7 @@
     }
 
     unset($request['template']); // because it's unprintable
-    $result .= "\n\nREQUEST:\n". json_encode($request);
+    // $result .= "\n\nREQUEST:\n". json_encode($request);
 
     $result .= "\n\nTHE END.</pre>";
   }
@@ -46,6 +46,9 @@
 
   // error_log(json_encode($result, JSON_PRETTY_PRINT));
 
+  if(strlen($result) === 0) {
+    $result = '{ error : "render() returned empty string"}';
+  }
 
   print($result);
 

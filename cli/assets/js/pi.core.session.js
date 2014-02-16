@@ -37,9 +37,9 @@
     user        : null,
 
 
-    get connected() {
-      return (this.__socket.readyState == 1);
-    },
+    // get connected() {
+    //   return (this.__socket.readyState == 1);
+    // },
 
 
 

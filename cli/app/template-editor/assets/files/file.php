@@ -17,7 +17,7 @@
   $filename = isset($request["url"]) ? $request["url"] : $request["filename"];
 
 
-  $template = new EasyTemplate($filename, $request['template']);
+  $template = new EasyTemplate($filename, isset($request['template']) ? $request['template'] : null);
 
     // set output type and disallow caching
   header('Content-Type: application/json; charset=utf-8');

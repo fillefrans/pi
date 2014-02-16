@@ -1,6 +1,9 @@
 <?php
 
 
+  class EasyTemplateException extends Exception {};
+
+
   class EasyTemplate {
 
     
@@ -28,11 +31,23 @@
 
 
       if($raw === null && !file_exists($filename)) {
-        return;
+        if(!file_exists( "../../../" . $filename)) {
+          if(!file_exists( "../../" . $filename)) {
+            throw new EasyTemplateException("file not found: $filename", 1);
+          }
+          else {
+            $this->filename = "../../" . $filename;
+          }
+        }
+        else {
+          $this->filename = "../../../" . $filename;
+        }
+      }
+      else {
+        $this->filename = $filename;
       }
 
 
-      $this->filename = $filename;
       $this->longname = str_replace(".html", "", self::folderToKey($filename));
       $this->jsonfile = str_replace(".html", ".json", $filename);
       $this->basename = basename($filename, ".html");
@@ -61,7 +76,7 @@
         $this->raw = $raw;
       }
       else {
-        $this->raw = file_get_contents($filename);
+        $this->raw = file_get_contents($this->filename);
       }
 
       $this->init();

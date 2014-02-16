@@ -32,11 +32,14 @@
   require_once(PHP_ROOT."pi.util.functions.php");
 
 
-
+  /**
+   * 
+   * 
+   */
 
   class Pi {
 
-
+    
     protected   $starttime  = null;
     protected   $redis      = null;
     protected   $pubsub     = null;

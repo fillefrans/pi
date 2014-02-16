@@ -11,7 +11,7 @@
       getModule : function (module, element) {
 
         var 
-          uri = π.const.SRV_ROOT + 'pi.util.file.highlight.php?file=',
+          uri = π._const.SRV_ROOT + 'pi.util.file.highlight.php?file=',
           xhr = new XMLHttpRequest(),
           el  = element || document.body;
         
@@ -48,7 +48,7 @@
         
         xhr.onload = function(e) { 
           var 
-            json = e.data || '{ error : "no data." }';
+            json = e.data || '{ error : "xhr: no data." }';
 
           if( typeof this.__pi.callback === "function" ) {
             this.__pi.callback.call(this, JSON.parse(json));

@@ -19,7 +19,7 @@
         
         xhr.onload = function() { 
           var
-            json = this.responseText || '{ error : "no data." }';
+            json = this.responseText || '{ error : "xhr: no data." }';
 
           try {
 
@@ -58,7 +58,7 @@
         
         xhr.onload = function() { 
           if( typeof this.callback === "function" ) {
-            this.callback.call(this, this.responseText || '{ error : "no data." }');
+            this.callback.call(this, this.responseText || '{ error : "xhr: no data." }');
           }
         };
 

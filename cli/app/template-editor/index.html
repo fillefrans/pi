@@ -19,6 +19,7 @@
         font-family: 'Titillium Web', sans-serif;
         color: #111;
         margin : 32px;
+        background: #f8f8f2;
       }
       
       .simple-navigator {
@@ -66,6 +67,7 @@
       #template-browser ul {
         list-style-type : none;
         margin : 0 8px;
+        cursor: default;
         }
 
 
@@ -80,28 +82,36 @@
       }
 
 
+      .loading {
+        background-image: url('assets/img/preloader_dark.gif');
+        background-position: center center;
+        background-repeat: no-repeat;
+        min-height: 160px;
+        min-width: 1024px;
+      }
+
+
       .app-container {
-        display     : table;
+        display     : block;
         background-color: transparent;
         width       : 100%;
 
         height      : 1280px;
         min-height  : 100px;
-
+  
         margin-right: 12px;
         }
 
 
 
       .preview-container {
-        display     : table;
+        display     : block;
         background-color: transparent;
         float       : left; 
-        width       : 400px;
+        width       : auto;
         max-width   : 1800px;
         min-width   : 100px;
 
-        height      : 600px;
         max-height  : 1200px;
         min-height  : 600px;
 
@@ -110,10 +120,9 @@
 
 
       #template-preview {
-        display         : table-cell;
+        display         : inline-block;
         vertical-align  : middle;
         text-align      : center;
-        transition : all 0.3s cubic-bezier(0,0,0.58,1);
         }
 
 
@@ -140,22 +149,45 @@
 
       #template-editor {
         /*display     : none;*/
-        float       : left; 
-        width       : 100%;
+/*        float       : left; 
+*/        width       : 100%;
 
-        min-width   : 1000px;
+        min-width   : 1024px;
         max-width   : 1800px;
 
         height      : auto;
-        max-height  : 1200px;
-        min-height  : 600px;
+        max-height  : 2048px;
+        min-height  : 64px;
         margin-top  : 16px; 
         }
+
+      .pi-overlay {
+        position: fixed;
+        top : 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+
+        z-index: 10;
+
+        background: transparent;
+        background-image: url('assets/img/loading.gif');
+        background-position: center center;
+        pointer-events : none;
+        cursor: wait;
+      }
+
+      #pi-overlay {
+        display: none;
+      }
+
 
     </style>
   </head>
 
   <body>
+    
+    <div id="pi-overlay" class="pi-overlay"></div>
 
     <div id="pi-app" class="pi app">
 
@@ -174,7 +206,7 @@
             <li>load</li>
             <li>filelist</li>
  -->
-             <li id="filename"></li>
+             <li id="filename" style="color:#aaa"></li>
           </ul>
          </div>
         <div class="preview-container">
@@ -204,9 +236,25 @@
 
 
         function onUpdatedPreview(html) {
+          var
+            filenameSpan = document.getElementById('filename'),
+            fragment = document.createDocumentFragment(),
+            divhandle = document.createElement("div"),
+            preview = pi.app.preview;
 
-            pi.app.preview.innerHTML = html;
-            pi.app.preview.style.display = 'block';
+            divhandle.innerHTML = html;
+            fragment.appendChild(divhandle);
+
+            // clear div
+            while (preview.firstChild) {
+              preview.removeChild(preview.firstChild);
+            }
+
+            preview.appendChild(fragment);
+
+            preview.classList.remove('loading');
+
+            // make newly loaded preview editable
             toggleEditMode();
         }
 
@@ -223,7 +271,7 @@
 
           editableElements = document.querySelectorAll(".EAad div");
 
-          if(editableElements.length <= 0) {
+          if(!editableElements.length) {
             return;
           }
 
@@ -232,45 +280,32 @@
           }
           else {
             curr_node = editableElements[0]; 
-            removing = curr_node.hasAttribute('contenteditable') && curr_node.getAttribute('contenteditable');
+            // removing = curr_node.hasAttribute('contenteditable') && curr_node.getAttribute('contenteditable');
           }
-
-
-          // console.log("REMOVING : " + removing);
 
           for(var i = 0; i < editableElements.length; ++i) {
-
-            // print the tag name of the node (DIV, SPAN, etc.)
             curr_node = editableElements[i];
-
-            if(removing === true) {
-              // console.log("removing editable");
-              curr_node.removeAttribute('contenteditable');
+            if (curr_node.innerHTML.indexOf("<img ") === -1) {
+              curr_node.setAttribute('contenteditable', "true");
+              curr_node.style.cursor = "text";
             }
-            else {
-              if (curr_node.innerHTML.indexOf("<img ") === -1) {
-                curr_node.setAttribute('contenteditable', "true");
-              }
-            }
-
           }
-
         }
 
 
 
         function loadPreview(url) {
           var
-            req = {};
+            req = {},
+            filenameSpan = document.getElementById('filename');
 
-          pi.log("in loadPreview()");
 
-          req.filename = url || document.getElementById('filename').innerHTML;
+          filenameSpan.innerHTML = url;
+
+          req.filename = url || filenameSpan.innerHTML;
+
           req.template = pi.app.editor.getSession().getValue();
 
-          pi.log("req.filename : " + req.filename);
-
-          // pi.app.preview.style.display = 'none';
           // pi.log("loading preview : " + req.filename);
           pi.xhr.post( "assets/files/file.php", req, onUpdatedPreview, pi.log);
         }
@@ -280,11 +315,8 @@
           var
             req = {};
 
-          pi.log("in refreshPreview()");
-
           req.filename = url || document.getElementById('filename').innerHTML;
           req.template = pi.app.editor.getSession().getValue();
-
           pi.log("req.filename : " + req.filename);
 
           // pi.app.preview.style.display = 'none';
@@ -296,12 +328,23 @@
 
         function loadFile(url) {
           var
-            filenameSpan = document.getElementById("filename");
+            filenameSpan  = document.getElementById("filename"),
+            preview = pi.app.preview;
+
+
+          // pi.app.preview.innerHTML = '';
+          while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+          }
+          preview.classList.add('loading');
+
+          // show preloader in preview div
+          // filenameSpan.classList.add('loading');
+          // pi.app.previewContainer.classList.add('loading');
           
           pi.xhr.get(url, function(response) {
             // pi.app.preview.innerHTML = response;
             if(pi.app.editor) {
-              filenameSpan.innerHTML = url;
               pi.app.editor.getSession().setValue(response);
             }
             loadPreview(url);
@@ -381,16 +424,19 @@
           }
 
           pi.app.preview = document.getElementById("template-preview");
+          pi.app.previewContainer = document.getElementById("preview-container");
+          pi.app.overlay = document.getElementById("pi-overlay");
 
           pi.app.editor = ace.edit('template-editor');
 
           pi.app.editor.setTheme("ace/theme/monokai");
           // pi.app.editor.setTheme("ace/theme/chrome");
+          // pi.app.editor.setTheme("ace/theme/xcode");
           pi.app.editor.getSession().setMode("ace/mode/html");
           pi.app.editor.getSession().setUseWrapMode(true);
           pi.app.editor.getSession().setUseSoftTabs(true);
           // pi.app.editor.setReadOnly(true);
-          // pi.app.editor.commands.bindKey("Tab", null);
+          pi.app.editor.commands.bindKey("Tab", null);
 
           pi.app.editor.setOptions({
             maxLines        : Infinity,
@@ -415,8 +461,8 @@
 
         window.addEventListener("keydown", function (e) {
             if( π && e.keyCode === 116) {
-              e.preventDefault();
               π.events.trigger("pi.refresh");
+              e.preventDefault();
               return false;
             }
           }, true);

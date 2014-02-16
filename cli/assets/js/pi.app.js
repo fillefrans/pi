@@ -23,7 +23,7 @@
           this[key] = pi.TMP[key]
         }
         pi.TMP = null;
-      },
+      }
     };
 
     π.app.__init();

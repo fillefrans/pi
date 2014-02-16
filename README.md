@@ -111,7 +111,7 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 * An extensible visual component library called pcl
 
 
-##Target Clients
+##Target browsers
 * WebKit + Firefox, all platforms
 * iOs >= 5.1
 * Android >= 4.0 (Except native browser)
@@ -146,7 +146,7 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 * [mod_spdy - Apache SPDY module](http://code.google.com/p/mod-spdy/) -> [browser support](http://caniuse.com/spdy/)
 * [Charles Web Debugging Proxy - Windows/Mac/Linux](http://www.charlesproxy.com/)
 * [Google Developers - Web Performance Best Practices](https://developers.google.com/speed/docs/best-practices/)
-* [CanIuse.com - HTML5 browser support by feature](http://caniuse.com)
+* [caniuse.com - HTML5 browser support by feature](http://caniuse.com)
 * [jsPerf — JavaScript performance playground](http://jsperf.com/)
 
 
@@ -157,7 +157,7 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 
 ###Speed and optimization:
 
-* Load CSS in <head>
+* Load CSS in head section, to improve rendering consistency
 * Files larger than 32KB (uncompressed) are never cached on many mobile devices
 * Avoid DOM manipulation
 * use documentFragment
@@ -166,7 +166,9 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 * localStorage can be used even for css and scripts
 
 
+
 ###New in HTML5:
+* [Transferable Objects](http://html5-demos.appspot.com/static/workers/transferables/index.html)
 * [The TIME tag](http://www.brucelawson.co.uk/2012/best-of-time/)
 
 
@@ -188,7 +190,7 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 
 ###Tricks & fixes
 * [Running multiple instances of Redis](http://chrislaskey.com/blog/342/running-multiple-redis-instances-on-the-same-server/)
-* [How to use git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
+* [why-arent-you-using-git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
 * [A fix for the iPhone ViewPort scale bug](http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/)
 
 
@@ -207,6 +209,8 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
     }
 
     div[i].appendChild(fragment);
+
+  - [DOM speed tips, documentFragment](http://stackoverflow.com/a/14049291)
 
 
 ###Browser support
@@ -232,8 +236,7 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
     - [synapse](http://synapse.ararat.cz/doku.php/start)
 
 
-####Useful snippets
-
+####[snippets]
 
 
 
