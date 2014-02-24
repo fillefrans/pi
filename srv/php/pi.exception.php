@@ -1,9 +1,9 @@
 <?php
 
 /**
- * π custom exception class
+ * Pi custom exception class
  * 
- * @author Johan Telstad, 2011-2013
+ * @author Johan Telstad, 2011-2014
  * 
  */
 
@@ -14,7 +14,7 @@ define('EMPTY_FILE',          3);
 define('UNKNOWN_ERROR',       9);
 
 
-class PiException extends Exception{}
+class PiException extends Exception {}
 
 
 ?>

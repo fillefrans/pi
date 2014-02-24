@@ -50,6 +50,7 @@
           $this->__init();
           // print("Running : " . basename(__FILE__, '.php') . "\n");
           $this->publish("Crontab running: " . basename(__FILE__));
+          passthru(  'php ' . __DIR__ . '/pi.tracs.incoming.php');
           // $this->quit();
         }
 

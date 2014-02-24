@@ -7,8 +7,6 @@
   }
 
 
-
-
   /**
    *  Pi base class
    *
@@ -17,33 +15,30 @@
    *  most other Pi classes need.
    *
    *
-   * @author 2011-2013 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@enfield.no>
    * 
    */
 
 
-
-
-  // load pi config
   require_once("pi.config.php");
 
-  // include utility classes and libraries
   require_once(PHP_ROOT."pi.exception.php");
   require_once(PHP_ROOT."pi.util.functions.php");
 
 
   /**
-   * 
+   * Pi base class 
    * 
    */
 
   class Pi {
 
-    
     protected   $starttime  = null;
     protected   $redis      = null;
     protected   $pubsub     = null;
     protected   $namespace  = 'pi';
+
+
 
     public function __construct() {
       $this->starttime = microtime(true);
@@ -53,10 +48,9 @@
     protected function __init() {
 
       // open a data connection for redis 
-      // print("Connecting to redis...");
       if( false === ($this->redis = $this->connectToRedis())){
         throw new PiException("Unable to connect data client to redis on " . REDIS_SOCK, 1);
-        print("Connecting to redis...failed!\n");
+        print("Connection to redis failed!\n");
         return false;
       }
   
@@ -68,10 +62,9 @@
       // > other channels. The reply of the ...
       if( false === ($this->pubsub = $this->connectToRedis())){
         throw new PiException("Unable to connect pubsub client to redis on " . REDIS_SOCK, 1);
-        print("Connecting to redis...failed!\n");
+        print("Connection to redis failed!\n");
         return false;
       }
-      // print("success!\n");
       return true;
     }
 
@@ -98,12 +91,10 @@
     }
 
 
-    public function connectToRedis( $db = PI_APP, $timeout = 5 ){
+    public function connectToRedis($db = PI_APP, $timeout = 5){
       $redis = new Redis();
-      try{ 
-        // use pconnect to open a persistent connection
-        // a persistent connection is not closed by the close() command
-        if(false===($redis->pconnect(REDIS_SOCK))){
+      try{
+        if(false===($redis->connect(REDIS_SOCK))){
           $debug[] = 'Unable to connect to Redis';
           return false;
         }
@@ -126,10 +117,10 @@
     }
 
 
-    protected function publish($address, $message=false) {
+    protected function publish($address, $message = false) {
 
       if($this->pubsub){
-        if($message===false) {
+        if($message === false) {
           // we were invoked with only one param, so we assume that's a message for default address
           $message = $address;
           $address = $this->address;
@@ -143,10 +134,9 @@
     }
 
 
-
     protected function subscribe($address, $callback=false) {
 
-      if($callback===false) {
+      if($callback === false) {
         // we were invoked without the callback param, which is not right
         throw new PiException("Pi->subscribe() was called without the callback parameter.", 1);
         return false;
@@ -158,7 +148,6 @@
         $this->say("We have no redis pubsub object in function publish()\n");
       }
     }
-
 
   }
 

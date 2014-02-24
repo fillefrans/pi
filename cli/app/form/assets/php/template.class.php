@@ -1,6 +1,6 @@
 <?php
 
-  include("templatelist.class.php");
+  // include("templatelist.class.php");
 
 
   class Template {
@@ -24,7 +24,6 @@
 
 
     public function __construct ($filename, $raw=null) {
-
 
       if($raw === null && !file_exists($filename)) {
         return;

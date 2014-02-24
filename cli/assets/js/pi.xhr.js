@@ -57,6 +57,18 @@
         xhr.onerror   = onerror;
         
         xhr.onload = function() { 
+          if(this.responseText.indexOf(".php</b> on line <b>") !== -1) {
+            pi.log("php error detected : ");
+            pi.log(this.responseText);
+            if( typeof this.onerror === "function" ) {
+              this.onerror.call(this, this.responseText);
+            }
+          }
+          else {
+            // pi.log("no php error detected : ");
+            // pi.log(this.responseText);
+          }
+
           if( typeof this.callback === "function" ) {
             this.callback.call(this, this.responseText || '{ error : "xhr: no data." }');
           }
@@ -82,6 +94,14 @@
         xhr.onload = function() { 
           var
             response = this.responseText || '{ error : "no data." }';
+
+          if(this.responseText.indexOf(".php</b> on line <b>") !== -1) {
+            pi.log("php error detected : ");
+            pi.log(this.responseText);
+            if( typeof this.onerror === "function" ) {
+              this.onerror.call(this, this.responseText);
+            }
+          }
 
           if( typeof this.callback === "function" ) {
             this.callback.call(this, response);

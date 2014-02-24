@@ -215,7 +215,7 @@
             foreach ($formats as $format => $template) {
               if($template instanceof Template) {
                 // $template->render($defaults, $showsource);
-                $items[$site][$customer][$format] =  array( 'filename' => $template->getFilename(), 'template' => base64_encode($template->raw));
+                $items[$site][$customer][$format] =  array( 'filename' => $template->getFilename(), 'template' => ($template->raw));
                 // $items[$site][$customer][$format] =  base64_encode($template->raw);
               }
               else {
@@ -227,7 +227,7 @@
             if($formats instanceof Template) {
               $this->log[] =  "Processing template from site dir (?) : ";
 
-              $items[$site][$customer] = array( 'filename' => $template->filename, 'template' => base64_encode($template->raw));
+              $items[$site][$customer] = array( 'filename' => $template->filename, 'template' => ($template->raw));
               // $formats->render($defaults, $showsource);
               // $template->showSource();
             }

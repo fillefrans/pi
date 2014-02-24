@@ -228,14 +228,14 @@
 
       window.addEventListener("pi", function(data) {
 
-        pi.require("easyad");
+        pi.require("easyad lib.base64");
 
         pi.require("xhr", false, false, function(){
           pi.xhr.json("assets/files/list.php", null, onUpdatedFileList, pi.log);
         });
 
-        pi.events.subscribe("pi.app.loadfile", loadFile);
-
+        // pi.events.subscribe("pi.app.loadfile", loadFile);
+        
 
         function onUpdatedPreview(html) {
           var
@@ -308,30 +308,32 @@
 
         function loadFile(url) {
           var
-            req = {};
+            req = {},
+            rendered = "",
+            cached = false,
+            data = pi.app.templates.defaults || [];
 
-          req.filename = url || document.getElementById('filename').innerHTML;
-          // pi.app.preview.style.display = 'none';
-          // pi.log("loading preview : " + req.filename);
-          pi.xhr.post( "assets/files/render.php", req, onUpdatedPreview, pi.log);
+          // // pi.log("onloadFile event");
+          // req.filename = url || document.getElementById('filename').innerHTML;
+
+          // data.shouttitle = data.shouttitle || "TITTEL";
+
+          // π.search = function (token, obj, where, exact, multiple) {
+          // cached = pi.search(req.filename, pi.app.templates.items);
+          // if(cached) {
+          //   pi.log("found template in memory");
+          //   rendered = pi.easyad.template.render((cached.template), data);
+          // }
+
+          // if(rendered) {
+          //   pi.inject(rendered, pi.app.preview);
+          // }
+          // else{
+          //   pi.log("resorting to AJAX : " + url);
+          //   pi.xhr.post( "assets/files/render.php", req, onUpdatedPreview, pi.log);
+          // }
+
         }
-
-
-
-
-        // function loadFile(url) {
-        //   var
-        //     filenameSpan = document.getElementById("filename");
-          
-        //   pi.xhr.get(url, function(response) {
-        //     // pi.app.preview.innerHTML = response;
-        //     if(pi.app.editor) {
-        //       filenameSpan.innerHTML = url;
-        //       pi.app.editor.getSession().setValue(response);
-        //     }
-        //     loadPreview(url);
-        //   });
-        // }
 
 
         function onUpdatedFileList(obj) {
@@ -347,21 +349,42 @@
                 filename = filename || null,
                 node = null;
 
-              pi.log("looking : " + filename);
-
                 if(!filename) { return };
 
+              // var token = filename;
               var token = pi.basename(filename, ".html");
 
               // π.search = function (token, obj, where, exact, multiple) {
-              if( null !== (node = pi.search(token, pi.app.templates, 1, 0, 1))) {
+              node = pi.search(token, pi.app.templates.items, 1, 0, 1);
+
+              if( node ) {
+                var data = pi.copy(pi.app.templates.defaults);
+                var size = token.split("x");
+                if(size.length==2) {
+                  data['adwidth'] = size[0];
+                  data['adheight'] = size[1];
+                }
+
+                for (var entry in data) {
+                  if(entry.indexOf("-") > -1) {
+                    for (var key in data[entry]) {
+                      if(typeof data[key] == "undefined"){
+                        data[key] = data[entry][key];
+                      }
+                    }
+                  data[entry] = null;
+                  }
+                }
+
                 // found it
-                pi.log("found" + node, node);
+                var rendered = pi.easyad.template.render((node.template), data);
+                pi.inject(rendered, pi.app.preview);
+                toggleEditMode();
               }
               else {
                 pi.log("not found : " + filename);
               }
-              return node;
+              return;
           });
 
 
@@ -374,7 +397,7 @@
                 for (var format in obj.items[site][customer]) {
                   var
                     filename = "assets/files/" + customer.replace("-", "/") + "/" + format + ".html";
-                  list += "<li onclick='pi.events.publish(\"pi.app.loadfile\", \"" + filename + "\")'>" + format + "</li>";
+                  list += "<li onmousedown='pi.events.publish(\"pi.app.loadfile\", \"" + filename + "\")'>" + format + "</li>";
                 }
                 list += "</ul>";
               }
@@ -456,35 +479,35 @@
           }); 
 
 
-          window.onerror = function (e, file, line) {
-            var
-              xhr = new XMLHttpRequest(),
-              obj = {};
+          // window.onerror = function (e, file, line) {
+          //   var
+          //     xhr = new XMLHttpRequest(),
+          //     obj = {};
 
-            obj.error = e;
-            obj.file = file;
-            obj.line = line;
-            obj.timestamp = new Date().getTime();
-            obj.trace = printStackTrace();
+          //   obj.error = e;
+          //   obj.file = file;
+          //   obj.line = line;
+          //   obj.timestamp = new Date().getTime();
+          //   obj.trace = printStackTrace();
 
 
-            xhr.onload = function() { 
-              if(window.console) {
-                console.log("logged error to server: " + e);
-              }
-            };
+          //   xhr.onload = function() { 
+          //     if(window.console) {
+          //       console.log("logged error to server: " + e);
+          //     }
+          //   };
 
-            xhr.onerror = function() { 
-              if(window.console) {
-                console.log("XHR ERROR when logging to server");
-              }
-            };
+          //   xhr.onerror = function() { 
+          //     if(window.console) {
+          //       console.log("XHR ERROR when logging to server");
+          //     }
+          //   };
 
-            xhr.open("post", pi._const.LOG_URL, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          //   xhr.open("post", pi._const.LOG_URL, true);
+          //   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
-            return xhr.send(JSON.stringify(obj));
-          };
+          //   return xhr.send(JSON.stringify(obj));
+          // };
 
         } // end function init()
 
@@ -509,7 +532,6 @@
         }, true);
 
       }, false);
-
 
     </script>
 
