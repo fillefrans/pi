@@ -12,11 +12,29 @@
 
           obj       = obj       || null,
           callback  = callback  || null,
-          onerror   = onerror   || π.log;
+          onerror   = onerror   || π.log,
+          isIe      = π.browser.isIe;
 
         xhr.callback  = callback;
         xhr.onerror   = onerror;
         
+
+        xhr.onreadystatechange = function () {
+          //  IE shit
+          if (this.readyState != 4) { return }
+
+          if(!isIe(8) && !isIe(7))  { return }
+
+          if(this.status != 200) {
+            this.onerror.call(this);
+          }
+          else {
+            this.onload.call(this);
+          }
+        };
+
+
+
         xhr.onload = function() { 
           var
             json = this.responseText || '{ error : "xhr: no data." }';
@@ -28,7 +46,7 @@
           }
           catch(e) {
             json = { 
-              error : "Pi Error : exception when parsing JSON string",
+              error : "Easy Error : exception when parsing JSON string",
               jsonSource : this.responseText
             };
           }
@@ -47,7 +65,8 @@
 
       post : function ( url, obj, callback, onerror ) {
         var
-          xhr = new XMLHttpRequest(),
+          xhr   = new XMLHttpRequest(),
+          isIe  = π.browser.isIe,
 
           obj       = obj       || null,
           callback  = callback  || null,
@@ -56,17 +75,32 @@
         xhr.callback  = callback;
         xhr.onerror   = onerror;
         
+        xhr.onreadystatechange = function () {
+          //  IE shit
+          if (this.readyState != 4) { return }
+
+          if(!isIe(8) && !isIe(7))  { return }
+
+          if(this.status != 200) {
+            this.onerror.call(this);
+          }
+          else {
+            this.onload.call(this);
+          }
+        };
+
+
         xhr.onload = function() { 
           if(this.responseText.indexOf(".php</b> on line <b>") !== -1) {
-            pi.log("php error detected : ");
-            pi.log(this.responseText);
+            π.log("php error detected : ");
+            π.log(this.responseText);
             if( typeof this.onerror === "function" ) {
               this.onerror.call(this, this.responseText);
             }
           }
           else {
-            // pi.log("no php error detected : ");
-            // pi.log(this.responseText);
+            // π.log("no php error detected : ");
+            // π.log(this.responseText);
           }
 
           if( typeof this.callback === "function" ) {
@@ -83,7 +117,8 @@
 
       get : function ( url, callback, onerror ) {
         var
-          xhr = new XMLHttpRequest(),
+          xhr   = new XMLHttpRequest(),
+          isIe  = π.browser.isIe,
 
           callback  = callback  || null,
           onerror   = onerror   || π.log;
@@ -91,13 +126,27 @@
         xhr.callback  = callback;
         xhr.onerror   = onerror;
         
+        xhr.onreadystatechange = function () {
+          //  IE shit
+          if (this.readyState != 4) { return }
+
+          if(!isIe(8) && !isIe(7))  { return }
+
+          if(this.status != 200) {
+            this.onerror.call(this);
+          }
+          else {
+            this.onload.call(this);
+          }
+        };
+
         xhr.onload = function() { 
           var
             response = this.responseText || '{ error : "no data." }';
 
           if(this.responseText.indexOf(".php</b> on line <b>") !== -1) {
-            pi.log("php error detected : ");
-            pi.log(this.responseText);
+            π.log("php error detected : ");
+            π.log(this.responseText);
             if( typeof this.onerror === "function" ) {
               this.onerror.call(this, this.responseText);
             }
@@ -117,3 +166,4 @@
     };
 
     π.xhr._loaded = true;
+
