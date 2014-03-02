@@ -73,10 +73,10 @@ Source: "C:\Windows\Fonts\OpenSans-Semibold_0.ttf"; DestDir: "{fonts}"; FontInst
 Source: "C:\Windows\Fonts\OpenSans-Semibold_1.ttf"; DestDir: "{fonts}"; FontInstall: "Open Sans Semibold"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
-Name: "{group}\Psmith"; Filename: "{app}\psmith.exe"; IconFilename: "{app}\psmith.exe"; IconIndex: 0
+Name: "{group}\Psmith"; Filename: "{app}\psmith.exe"; Flags: createonlyiffileexists preventpinning; IconFilename: "{app}\psmith.exe"
 
 ; run on startup
-Name: "{userstartup}\Psmith"; Filename: "{app}\psmith.exe"
+Name: "{userstartup}\Psmith"; Filename: "{app}\psmith.exe"; WorkingDir: "{app}"; Flags: createonlyiffileexists preventpinning; IconFilename: "{app}\psmith.exe"
 Name: "{group}\{cm:UninstallProgram, Psmith}"; Filename: "{uninstallexe}"
 
 [Run]
