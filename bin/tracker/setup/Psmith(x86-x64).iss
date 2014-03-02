@@ -41,8 +41,11 @@ AppContact=Johan Telstad
 UserInfoPage=False
 VersionInfoCompany=Views AS
 SetupIconFile=D:\work\TT\pi\cli\assets\ico\psmith-ico-48.ico
-AppendDefaultDirName=False
-DisableProgramGroupPage=yes
+DisableProgramGroupPage=auto
+AlwaysUsePersonalGroup=True
+AlwaysShowGroupOnReadyPage=True
+AlwaysShowDirOnReadyPage=True
+DefaultGroupName=Psmith
 
 [Files]
 ; The x64 binary
@@ -55,14 +58,6 @@ Source: "D:\work\TT\pi\bin\tracker\psmith32.exe"; DestDir: "{app}"; DestName: "p
 Source: "D:\work\TT\pi\bin\tracker\zlib1.dll"; DestDir: "{app}"
 
 ; Open source fonts
-Source: "C:\Windows\Fonts\Ubuntu-B.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Bold"
-Source: "C:\Windows\Fonts\Ubuntu-BI.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Bold Italic"
-Source: "C:\Windows\Fonts\Ubuntu-C.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Condensed"
-Source: "C:\Windows\Fonts\Ubuntu-L.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Light"
-Source: "C:\Windows\Fonts\Ubuntu-M.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Light Italic"
-Source: "C:\Windows\Fonts\Ubuntu-MI.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Medium Italic"
-Source: "C:\Windows\Fonts\Ubuntu-R.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu"
-Source: "C:\Windows\Fonts\UbuntuMono-B.ttf"; DestDir: "{fonts}"; Flags: onlyifdoesntexist uninsneveruninstall; FontInstall: "Ubuntu Italic"
 Source: "C:\Windows\Fonts\OpenSans-Bold_0.ttf"; DestDir: "{fonts}"; FontInstall: "Open Sans Bold Italic"; Flags: onlyifdoesntexist uninsneveruninstall
 Source: "C:\Windows\Fonts\OpenSans-Bold_1.ttf"; DestDir: "{fonts}"; FontInstall: "Open Sans Bold"; Flags: onlyifdoesntexist uninsneveruninstall
 Source: "C:\Windows\Fonts\OpenSans-CondBold.ttf"; DestDir: "{fonts}"; FontInstall: "Open Sans Condensed Bold"; Flags: onlyifdoesntexist uninsneveruninstall
@@ -86,14 +81,13 @@ Name: "{group}\{cm:UninstallProgram, Psmith}"; Filename: "{uninstallexe}"
 
 [Run]
 ; when install completed, start application
-Filename: "{app}\psmith.exe"; Flags: postinstall
+Filename: "{app}\psmith.exe"; Flags: postinstall nowait runascurrentuser
 
 [LangOptions]
-LanguageID=$0809
-DialogFontName=Ubuntu
-WelcomeFontName=Ubuntu Light
-TitleFontName=Ubuntu Condensed
-CopyrightFontName=Ubuntu
+DialogFontName=Open Sans
+WelcomeFontName=Open Sans Light
+TitleFontName=Open Sans Semibold
+CopyrightFontName=Open Sans Condensed Light
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
@@ -101,3 +95,30 @@ Type: filesandordirs; Name: "{app}"
 
 [INI]
 Filename: "{app}\Psmith.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://kromaviews.no/psmith/"
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "catalan"; MessagesFile: "compiler:Languages\Catalan.isl"
+Name: "corsican"; MessagesFile: "compiler:Languages\Corsican.isl"
+Name: "czech"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "danish"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "finnish"; MessagesFile: "compiler:Languages\Finnish.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "greek"; MessagesFile: "compiler:Languages\Greek.isl"
+Name: "hebrew"; MessagesFile: "compiler:Languages\Hebrew.isl"
+Name: "hungarian"; MessagesFile: "compiler:Languages\Hungarian.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "nepali"; MessagesFile: "compiler:Languages\Nepali.islu"
+Name: "norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "serbiancyrillic"; MessagesFile: "compiler:Languages\SerbianCyrillic.isl"
+Name: "serbianlatin"; MessagesFile: "compiler:Languages\SerbianLatin.isl"
+Name: "slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
