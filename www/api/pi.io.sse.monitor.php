@@ -11,8 +11,9 @@
 
 
   define('REDIS_SOCK', '/var/data/redis/redis.sock');
+  define('REDIS_PORT', 6379);
 
-  // $session = session_start();
+  $success = session_start();
 
   header("Content-Type: text/event-stream; charset=utf-8");
   header('Cache-Control: no-cache'); 

@@ -53,7 +53,7 @@
       }
     }
     else {
-      print("\nMySQL Error : " . $mysqli->error);
+      print(date("H:i:s", time()) . ": \nMySQL Error : " . $mysqli->error);
       sleep(1);
     }
 
@@ -87,7 +87,7 @@
         $result = $mysqli->query("INSERT INTO `tracs-processed` (id, gzfile) VALUES(NULL, '$infile');");
         if(false === $result) {
           $fileId = false;
-          print("\nMySQL error : " . $mysqli->error."\n");
+          print(date("H:i:s", time()) . ": \nMySQL error : " . $mysqli->error."\n");
           sleep(1);
         }
         else {
@@ -97,7 +97,7 @@
       }
     }
     else {
-      print("\nMySQL Error : " . $mysqli->error);
+      print(date("H:i:s", time()) . ": \nMySQL Error : " . $mysqli->error);
       sleep(1);
     }
 
@@ -127,7 +127,7 @@
         $result = $mysqli->query("INSERT INTO `tracs-files` (id, filename) VALUES(NULL, '$filename');");
         if(false === $result) {
           $fileId = false;
-          print("MySQL error : " . $mysqli->error);
+          print(date("H:i:s", time()) . ": MySQL error : " . $mysqli->error);
         }
         else {
           $fileId = $mysqli->insert_id;
@@ -136,7 +136,7 @@
       }
     }
     else {
-      print("\nMySQL Error : " . $mysqli->error);
+      print(date("H:i:s", time()) . ": \nMySQL Error : " . $mysqli->error);
       sleep(1);
     }
 
@@ -166,7 +166,7 @@
         $result = $mysqli->query("INSERT INTO `tracs-projects` (id, project) VALUES(NULL, '$project');");
         if(false === $result) {
           $projectId = false;
-          print("MySQL error : " . $mysqli->error);
+          print(date("H:i:s", time()) . ": MySQL error : " . $mysqli->error);
           sleep(1);
         }
         else {
@@ -176,7 +176,7 @@
   
     }
     else {
-      print("\nMySQL Error : " . $mysqli->error);
+      print(date("H:i:s", time()) . ": \nMySQL Error : " . $mysqli->error);
       sleep(1);
     }
 
@@ -200,7 +200,7 @@
       } 
     }
     catch(Exception $e) {
-      print(get_class($e) . " : " . $e->getMessage()."\n");
+      print(date("H:i:s", time()) . get_class($e) . " : " . $e->getMessage()."\n");
     }
 
     return $data; 
@@ -228,13 +228,13 @@
 
     $separatorPos = strpos($line, ":");
     if($separatorPos===false) {
-      print("skipping : " . $line."\n");
+      print(date("H:i:s", time()) . ": skipping : " . $line."\n");
       return;
     }
     $sec = intval(trim(substr( $line, 0, $separatorPos )), 10);
     if(!is_numeric($sec)) {
       // that's not a line from Psmith
-      print("skipping : " . $line."\n");
+      print(date("H:i:s", time()) . " : skipping : " . $line."\n");
       return;
     }
 
@@ -319,7 +319,7 @@
         $summary['SublimeText'][$project][$file]['sessions']++;
 
         if(is_null($project) || is_null($caption) || is_null($file)){
-          print("ONE ORE MORE NULLs : $project $caption $file\n");
+          print(date("H:i:s", time()) . " : ONE ORE MORE NULLs : $project $caption $file\n");
           sleep(5);
         }
 
@@ -339,7 +339,7 @@
 
 
         if(is_null($project) || is_null($key) || is_null($file)){
-          print("ONE ORE MORE NULLs : $project $key $file\n");
+          print(date("H:i:s", time()) . ": ONE ORE MORE NULLs : $project $key $file\n");
           sleep(5);
         }
 
@@ -403,7 +403,7 @@
   }
 
 
-  print("starting...\n\n");
+  print(date("H:i:s", time()) . ": starting...\n\n");
 
   // do the thing
 
@@ -432,7 +432,7 @@
   $count = count($infiles);
 
   if($count===0) {
-    exit("\nnothing to do ... bye.\n");
+    exit(date("H:i:s", time()) . ": nothing to do ... bye.\n");
   }
 
   foreach ( $infiles as $gzinfile) {
@@ -500,12 +500,12 @@
 
   $outfile = "tracs-report-{$reportstart}-{$reportend}.json";
 
-  print("\nsaving file : $outfile\n");
+  print(date("H:i:s", time()) . ": \nsaving file : $outfile\n");
 
   file_put_contents($outfile, json_encode($summary));
 
 
-  print("\nsaved report covering period " . date(DATE_RSS, $reportstart) . " to " . date(DATE_RSS, $reportend)."\n");
+  print(date("H:i:s", time()) . ": \nsaved report covering period " . date(DATE_RSS, $reportstart) . " to " . date(DATE_RSS, $reportend)."\n");
   
 
   $db_query = "";
@@ -534,24 +534,24 @@
   $querystart = microtime(true);
 
   $result = $mysqli->query($db_query);
-  print("finished in " . (microtime(true) - $querystart));
+  print(date("H:i:s", time()) . ": finished in " . (microtime(true) - $querystart));
 
 
 
   if($result === false) {
-    print("\nMySQL error : " . $mysqli->error);
+    print(date("H:i:s", time()) . ":\nMySQL error : " . $mysqli->error);
     sleep(1);
   }
   else {
-    print("\ncsv file imported, result : " . $result);
+    print(date("H:i:s", time()) . ": \ncsv file imported, result : " . $result);
   }
 
 
-  print("\ncleaning up files...\n");
+  print(date("H:i:s", time()) . ": \ncleaning up files...\n");
 
   foreach ($infiles as $infile) {
     if(addgzfile(basename($infile)) !== true) {
-      print("\rremoving : " . basename($infile));
+      print(date("H:i:s", time()) . ": \rremoving : " . basename($infile));
     }
   }
 
