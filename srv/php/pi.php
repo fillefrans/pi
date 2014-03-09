@@ -1,10 +1,18 @@
 <?
 
+  namespace Pi;
 
   // activate debugging everywhere
   if(!defined('DEBUG')){
     define('DEBUG', true);
   }
+
+
+  require_once("pi.config.php");
+
+  require_once(PHP_ROOT . "pi.exception.php");
+  require_once(PHP_ROOT . "pi.util.functions.php");
+
 
 
   /**
@@ -14,22 +22,15 @@
    *  includes config and code that 
    *  most other Pi classes need.
    *
+   * @category pi
+   * @package core
+   *
+   * @copyright 2011-2014 Views AS
    *
    * @author 2011-2014 Johan Telstad <jt@enfield.no>
    * 
    */
 
-
-  require_once("pi.config.php");
-
-  require_once(PHP_ROOT."pi.exception.php");
-  require_once(PHP_ROOT."pi.util.functions.php");
-
-
-  /**
-   * Pi base class 
-   * 
-   */
 
   class Pi {
 
@@ -68,8 +69,7 @@
       return true;
     }
 
-
-    public function exceptionToArray(&$e) {
+    public static function exceptionToArray(&$e) {
       return array(
                    'class'    => get_class($e),
                    'message'  => $e->getMessage(),
@@ -87,14 +87,14 @@
         $json = json_encode($e, JSON_PRETTY_PRINT) . "\n";
         file_put_contents(basename(__FILE__, '.php') . '.errorlog', $json, FILE_APPEND);
       }
-      $this->say("UNHANDLED " . get_class($e) . ": " . json_encode(exceptionToArray($e), JSON_PRETTY_PRINT));
+      $this->say("UNHANDLED " . get_class($e) . ": " . json_encode(self::exceptionToArray($e), JSON_PRETTY_PRINT));
     }
 
 
     public function connectToRedis($db = PI_APP, $timeout = 5){
-      $redis = new Redis();
-      try{
-        if(false===($redis->connect(REDIS_SOCK))){
+      $redis = new \Redis();
+      try {
+        if(false === ($redis->connect(REDIS_SOCK))){
           $debug[] = 'Unable to connect to Redis';
           return false;
         }
@@ -109,7 +109,7 @@
 
 
     public function say($msg="nothing to say"){
-      $msg_array  = array( 'message' => $msg, 'time' => time() );
+      $msg_array  = array('message' => $msg, 'time' => time());
 
       // publish debug info to our own address
       $this->publish($this->address, getFormattedTime() . ": " . $msg);

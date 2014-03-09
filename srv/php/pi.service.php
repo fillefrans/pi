@@ -1,5 +1,7 @@
 <?
 
+    namespace Pi;
+
     /**
      *  Pi Service base class
      *
@@ -7,17 +9,16 @@
      *  services will need.
      *
      *
-     * @author 2011-2013 Johan Telstad <jt@enfield.no>
+     * @author 2011-2014 Johan Telstad <jt@enfield.no>
      * 
      */
 
-    require_once('pi.php');
+    // require_once('pi.php');
+
+    use Pi;
 
 
-
-
-
-    class PiService extends Pi {
+    class Service extends Pi {
 
       private $name = 'service';
 

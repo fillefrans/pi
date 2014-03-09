@@ -1,7 +1,10 @@
 <?php
 
+  namespace Pi\Service;
+
+
     /**
-     * π.service.time
+     * Pi.Service.Time
      * 
      * The pi time service, a server that emits time signals 
      * which can be subscribed to by other services
@@ -12,10 +15,12 @@
      *
      */
 
-    require_once("pi.service.php");
+    // use Pi\Service;
+
+   require_once("pi.service.php");
 
 
-    class PiServiceTime extends PiService {
+    class Time extends Service {
 
         private   $debug            = false;
 
@@ -130,7 +135,7 @@
 
 
 
-  $time = new PiServiceTime();
+  $time = new Time();
 
   try {
     $time->run();
