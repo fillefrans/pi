@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <script>
+    var 
+      π  = {
+        DEBUG : true,
+        __sessionstart : (new Date()).getTime(),
+        browser : {
+          ie9         : false,
+          websockets  : window.WebSocket || window.MozWebSocket || false,
+          webworkers  : window.WebWorker || false
+        }
+      },
+      A_COOL_MILLION = 1000000;
+  </script>
+
+<!--[if IE 9]>
+  <script> π.browser.ie9 = true; </script>
+<![endif]-->
+
+  <title>sms-demo</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  
+  <!-- the core CSS for pi -->
+  <link rel="stylesheet" href="../../assets/css/pi.core.css">
+
+  <!-- the core CSS for pcl (the pi component library) -->
+  <link rel="stylesheet" href="../../assets/css/pi.pcl.css">
+
+  <!-- the app CSS -->
+  <!-- <link href='http://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'> -->
+  <link rel="stylesheet" href="assets/css/pi.app.css">
+  <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
+  <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+
+  <style type="text/css">
+
+    #visuals {
+      position  : absolute;
+      display   : block;
+      left      : 330px,
+      top       : 200px;
+      width     : 100%;
+      height    : auto;
+    }
+
+
+    #views-map-container {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #views-map {
+      position  : absolute;
+      display   : block;
+      left      : -144px; 
+      width     : 100%;
+      height    : auto;
+    }
+
+    #sexchart-container {
+      position  : absolute;
+      display   : block;
+      left      : 832px;
+      top       : 0px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #sexchart {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #statechart {
+      position  : absolute;
+      left      : 234px;
+      top       : 176px;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechartcontainer {
+      position  : absolute;
+      display   : inline-block;
+      left      : 600px;
+      top       : 300px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechartsvg {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechart {
+      position  : absolute;
+      display   : block;
+      left      : 216px;
+      top       : 64px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #votechart {
+      position  : absolute;
+      left      : 400px;
+      display   : block;
+      width     : 432px;
+      overflow  : hidden;
+      height    : auto;
+    }
+
+
+
+    .bar rect {
+    fill: white;
+    shape-rendering: crispEdges;
+    }
+
+    .bar text {
+      fill: red;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+
+</head>
+ 
+<body class="pi">
+
+
+
+  <div id="voteReport">
+    <!-- <button id="btnGetVoteReport">get report</button> -->
+  </div>
+
+  <script type="text/javascript">
+
+    function getVoteReport(reportid) {
+      var
+        voteReport      = null,
+        reportProgress  = null,
+        reportid = reportid || 2,
+
+        xhr       = null,
+        count     = 0,
+        address   = '/api/pi.db.query.php',
+        params    = {
+          address : "pi.data.app.views.job." + reportid,
+          job     : reportid,
+          apikey  : "kroma"
+        };
+
+      voteReport = document.getElementById("voteReport"); 
+
+      xhr = new XMLHttpRequest();
+
+      var formatSize = function(size) {
+        var
+          s = ",",
+          d = ".";
+
+        if(size < 1024) {
+          return size + " bytes";
+        }
+        if(size < 1024*1024) {
+          return "" + (+size >> 10) + " kb";
+        }
+        if(size < 1024*1024*1024) {
+          return "" + (+size >> 20) + d + ((size % (1024*1024))/(1024*1024))  + " mb";
+        }
+
+       return size + " bytes (loads)";
+
+      };
+
+
+      xhr.onprogress = function(e) {
+        if (e.lengthComputable) {  
+          var percentComplete = e.loaded / e.total;
+          if(reportProgress) {
+            reportProgress.value = percentComplete;
+            // reportProgress.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          }
+          else {
+          // voteReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          }
+        }
+        else {
+          // voteReport.innerHTML = "loading : " + formatSize(e.loaded);
+        }
+      };
+
+
+      xhr.onload = function(e) { 
+        var 
+          json = this.responseText || '{ "error" : "responseText is undefined or empty." }';
+
+        var
+          data = JSON.parse(json);
+
+        if(reportProgress) {
+          reportProgress.style.display = "none";
+        }
+        // pi.log("xhr response received");
+        // voteReport.innerHTML = "api replied : " + json;
+        if(data['log']) {
+          pi.log("server log:");
+          data.log.forEach(function(p, i) {
+            pi.log(++i + " : " + p);
+          });
+        }
+        if(data['items']) {
+          // pi.log('adding ' + data['items'].length + " items");
+          pi.maverick.xfilter.add(data['items']);
+        }
+        else {
+          pi.log('found no items : ' + json);
+        }
+
+      };
+
+      xhr.onerror = pi.log;
+      xhr.open("post", address, true);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+      pi.log("xhr request : " + JSON.stringify(params));
+
+      reportProgress = document.createElement("progress");
+      reportProgress.value = 0;
+      reportProgress.style.width = "100%";
+      reportProgress.style.height = "100%";
+      // reportProgress.style.top = "0px";
+      // reportProgress.position = "fixed";
+      
+      voteReport.style.height = "4px";
+      voteReport.appendChild(reportProgress);
+
+      xhr.send(JSON.stringify(params));
+
+    }
+
+    // document.getElementById('btnGetVoteReport').onclick = getVoteReport;
+
+
+  </script>
+
+
+  <!-- This is the demo's div -->
+
+  <div id="demo" data-name="pcl.table.xfilter">
+
+<!--     <div id="loginflex" class="pcl flexbox ontop">
+      <div class="pcl loginbox">
+        <form>
+          <fieldset id="login">
+            <p>
+            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if(this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" type="password">passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
+            </p>
+            <p id="loginReply">
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+ -->
+
+    <div>
+      <div style="left: 400px">
+        <p>
+        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">4</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
+        </p>
+        <p id="voteReply">
+          Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
+        </p>
+        <input type="button" id="btn-clear-filters" onclick="clearFilters();" value="clear filters" />
+        <!-- <input type="button" id="btn-sex" onclick="showSex(this);" value="sort on sex" /> -->
+      </div>
+
+
+      <script type="text/javascript">
+
+        function showSettings(obj) {
+          var
+            testElement = document.getElementById("sexchart-container");
+
+//          pi.log("element : ", obj);
+          testElement.classList.toggle("flipped");
+        }
+
+
+        function showSex(element, which) {
+          var
+            which = which || 'K',
+            self  = pi.maverick.xfilter;
+
+          self.dimension.forEach(function(p,i) {
+            if(p.title == "sex") {
+              alert("setting sex filter : " + which);
+              p.xd.filter(which);
+              return;
+            }
+          });
+
+          self.refresh();
+
+        }
+
+
+        function clearFilters() {
+          var
+            self      = pi.maverick.xfilter,
+            dimension = null;
+
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+          self.refresh();
+        }
+
+
+
+
+
+        function applyFilter(filter, element) {
+          var
+            filter    = filter || null,
+            self      = pi.maverick.xfilter,
+            dimension = null,
+            element   = element || null;
+
+
+
+          if(filter===null) {
+            return;
+          }
+          if(typeof filter.key == "undefined") {
+            return;
+          }
+
+
+
+          if(!isNaN(parseInt(filter.value,10))) {
+            filter.value = parseInt(filter.value, 10);
+          }
+
+          var
+            elements = document.getElementsByClassName("selected");
+
+          for(var i = 0; i < elements.length; i++) {
+            elements[i].classList.remove("selected");
+          }
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+
+          self.dimension.forEach(function(p) {
+            if(filter.key == p.title) {
+              dimension = p.xd;
+              pi.log("setting filter " + filter.value + " on dimension " + p.title);
+              p.__filter = filter.value;
+              return;
+            }
+          });
+
+          if(dimension) {
+            // pi.log("applying filter value '"+ filter.value + "' to dimension '" + (filter.key) + '"', filter);
+            if(element) {
+              pi.log("toggling class selected");
+              element.classList.toggle("selected");
+            }
+            dimension.filter(filter.value);
+          }
+          else {
+            pi.log("NOT applying filter value '"+ filter.value + "' to dimension '" + filter.key + '"', filter);
+          }
+
+          self.refresh(filter);
+
+        }
+
+
+      </script>
+
+
+      <div id="visuals">
+          <div id="views-map-container">
+            <div id="views-map"></div>
+          </div>
+        
+          <div id="sexchart-container">
+            <div id="sexchart"></div>
+          </div>
+
+          <div id="statechart"></div>
+          <div id="agechartcontainer">
+            <div id="agechartsvg"></div>
+            <div id="agechart"></div>
+          </div>
+
+
+          <div id="votechart"></div>
+
+      </div>
+
+
+      <div id="votelist">
+        <menu id="xmenu" type="popup">
+          <!-- <li title="sortér etter fylke" label="sortér etter fylke" onclick="alert('yessir!')">sortér etter fylke</li> -->
+          <!-- <li title="sortér etter låt" label="sortér etter låt"   onclick="alert('yessiree, bob!')">sortér etter låt</li>  -->
+        </menu>
+
+        <table id="xfilter_table" contextmenu="xmenu">
+          <thead id="xfilter_table_head"><tr><th></th></tr></thead>
+          <tbody id="xfilter_table_body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+    <script>
+
+    var
+      isSending = false,
+      __monsterhack = [];
+
+
+      function randomMobilePhoneNumber() {
+        var
+          packednumber = Math.floor(Math.random() * 20000000);
+
+        if(packednumber<10000000) {
+          return Math.round(packednumber/100) + 48000000;
+        }
+        else {
+          return Math.round(packednumber/100) + 90000000;
+        }
+      }
+
+
+      function sendVotes() {
+        var
+          votes     = parseInt(document.getElementById("spanVotes").innerHTML),
+          minutes   = parseInt(document.getElementById("spanMinutes").innerHTML),
+          job       = parseInt(document.getElementById("spanJob").innerHTML),
+          voteReply = null,
+          xhr       = null,
+          rate      = 0,
+          interval  = null,
+          count     = 0,
+          seconds   = 0,
+          address   = '/api/app/views/job/',
+          params    = {
+            job     : job,
+            apikey  : "kroma"
+          };
+
+        clearFilters();
+
+        if(!!window.voteInterval) {
+          stopVotes();
+          document.getElementById("spanMinutes").innerHTML = 5;
+          return false;
+        }
+
+
+        if( isNaN(votes) || isNaN(minutes) ) {
+          alert("error: votes = " + votes + ", minutes = " + minutes);
+          return false;
+        }
+
+        // calculate votes per second
+        seconds = minutes * 60;
+        rate    = votes/(seconds);
+
+        voteReply = document.getElementById("voteReply");
+        // voteReport.style.color = "#ccc";
+        voteReply.style.color = "#ddd";
+
+
+        // pi.log("sending votes @ " + rate + " / sec");
+        voteReply.innerHTML = "sending " + votes + " votes @ " + Math.round(100*rate)/100 + " / sec, (every " + (1/rate) + " secs)";
+
+        // pi.log("interval is " + (1000/rate) + " millisec");
+
+
+        document.getElementById("sender").value = "stopp";
+        document.getElementById("spanVotes").contenteditable = false;
+        document.getElementById("spanMinutes").contenteditable = false;
+
+
+        window.minuteInterval = setInterval( function() {
+            var
+              mins  = Math.floor(--seconds/60),
+              secs  = seconds % 60,
+              clock = "";
+
+            clock = mins + ":" + (secs < 10 ? "0" : "") + secs;
+            document.getElementById("spanMinutes").innerHTML = clock;
+          }, 1000);
+
+        window.voteInterval = setInterval( function() {
+
+            if( ++count > votes ) {
+
+              stopVotes();
+              document.getElementById("spanVotes").innerHTML = votes;
+              document.getElementById("spanMinutes").innerHTML = minutes;
+              voteReply.innerHTML = "";
+            }
+            else {
+              document.getElementById("spanVotes").innerHTML = votes-count;
+              params['phone']   = randomMobilePhoneNumber();
+              params['param1']  = Math.floor(Math.random() * 9);
+              __monsterhack.push(params['param1']);
+              
+              // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
+              voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
+
+              xhr = new XMLHttpRequest();
+
+              xhr.onload = function(e) { 
+                var 
+                  json = this.responseText || '{ error : "responseText is undefined or empty." }';
+
+                var
+                  data = JSON.parse(json),
+                  status = {};
+
+                  status['OK']      = data['OK'];
+                  status['message'] = data['message'];
+                  status['request'] = data['request'];
+
+                voteReply.innerHTML = "api replied : " + JSON.stringify(status);
+              };
+
+              xhr.onerror = console.log;
+              xhr.open("post", address, true);
+              xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+              xhr.send(JSON.stringify(params));
+            }
+          }, 1000/rate);
+
+        return interval;
+
+      }
+
+
+
+
+      function stopVotes() {
+
+        document.getElementById("spanVotes").contenteditable = true;
+        document.getElementById("sender").value = "send nå";
+        document.getElementById("sender").onclick = sendVotes;
+        document.getElementById("voteReply").innerHTML = "not sending";
+
+        clearInterval(window.voteInterval);
+        clearInterval(window.minuteInterval);
+        
+        window.voteInterval   = null;
+        window.minuteInterval = null;
+
+        return false;
+      }
+
+
+      var 
+        xdiv      = document.getElementById("demo"),
+        xtable    = document.getElementById("xfilter_table"),
+        xhead     = document.getElementById("xfilter_table_head"),
+        xbody     = document.getElementById("xfilter_table_body"),
+        xlistener = null,
+
+
+        xfilter = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+          crossfilter : null,
+          dimension   : [],
+
+
+          __onerror : function (err) {
+            pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
+          },
+
+
+          __init : function() {
+            var
+              votelist = document.getElementById("votelist");
+
+            votelist.style.overflow = "hidden";
+            votelist.style.height   = "100px";
+            votelist.style.display  = "none";
+          },
+
+
+          _addRow : function (row) {
+            var
+              trow      = document.createElement('tr'),
+              fragment  = document.createDocumentFragment(),
+              cell      = null,
+              newrow    = null;
+
+
+            if(!!row) {
+              newrow = row;
+              // pi.log("new row : " + JSON.stringify(row));
+            }
+            else {
+              pi.log("no row in _addRow() : " + JSON.stringify(row));
+              return false;
+            }
+
+            if(newrow.state) {
+              var
+                thisState = views.map.counties[newrow.state];
+
+              if(thisState) {
+                var
+                  previousFill = thisState.county.attr("fill"),
+                  colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
+                
+
+                thisState.county.attr("fill", colors[Math.floor(Math.random()*colors.length)]);
+
+                thisState.county.animate({fill : "#f8f2f2"}, 1000, "easeOut");
+                // TweenMax.from(thisState, pi._const.TWEEN_TIME, {css: {fill : "#d65a3f"}});
+              }
+            }
+
+            for( var idx in newrow ) {
+
+              // skip isDeceased, isTMReserved, etc
+              if(idx.indexOf('is') === 0) {
+                continue;
+              }
+              if(idx == "idx") {
+                continue;
+              }
+              if(idx == "direktinfo_id") {
+                continue;
+              }
+
+              if(idx == "type" && newrow[idx] == "unknown") {
+                // continue;
+              }
+
+              cell = document.createElement('td');
+              cell.classList.add(idx);
+              trow.appendChild(cell);
+              cell.appendChild(document.createTextNode(idx + " : " + newrow[idx]));
+            }
+
+            fragment.appendChild(trow);
+
+            // add to DOM element
+            return xbody.appendChild(fragment);
+          },
+
+
+          add : function (obj) {
+
+            var
+              self    = pi.maverick.xfilter,
+              isArray = pi.isArray(obj),
+              result  = false;
+
+            if( isArray || typeof obj == "object" ) {
+              pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
+              result = self.crossfilter.add(obj);
+              self.refresh();
+            }
+
+            return result;
+
+          },
+
+
+          refresh : function (filter) {
+            var
+              self = pi.maverick.xfilter;
+
+            self.dimension.forEach(function(e, i, arr) {
+              if( typeof e.refresh == "function" ) {
+                // // var
+                // //  thisFunc = e.refresh;
+
+                // because forEach messes with the scope
+                if(filter) {
+                  if(filter.key == e.title) {
+                    pi.log("skipping refresh of filtered dimension " + filter.key);
+                    return;
+                  }
+                }
+                e.refresh.call(e);
+
+                // // thisFunc.call(e);
+              }
+            });
+
+            return true;
+          },
+
+
+          onData : function (message) {
+
+            var
+              json    = false,
+              packet  = null,
+              self    = pi.maverick.xfilter,
+              data    = null,
+              row     = {},
+              count   = 0,
+              records = [];
+
+
+            // is it an array?
+            if(pi.isArray(message.data)) {
+              for (var i = 0, count = message.data.length; i < count; i++) {
+                try{
+                  packet  = message.data[i];
+                  // packet  = JSON.parse(message.data[i]);
+                }
+                catch(e) {
+                  pi.log('exception : ' + JSON.stringify(e), message[i]);
+                }
+
+                var
+                 datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+                if(datachunk) {
+                  if(!datachunk['param1']) {
+                    datachunk['param1'] = __monsterhack.pop() || 1;
+                  }
+                  pi.log("adding datachunk voting for " + datachunk['param1'], datachunk);
+                  records.push(datachunk);
+                }
+                self._addRow(datachunk);
+
+              }
+              // pi.log('added ' + count + ' data rows from packet');
+              self.crossfilter.add(records);
+              self.refresh();
+            }
+            else {
+
+              if(!!message.data) {
+                try{
+                  pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
+                  packet  = message.data;
+                  pi.log('packet.toString() : ' + packet.toString());
+
+                  if(packet.toString() == "[]") {
+                    pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
+                    return;
+                  }
+                  // pi.log('packet : ' + JSON.stringify(packet));
+                  pi.log('packet is : ' + !!packet);
+                }
+                catch(e) {
+                  pi.log('skipping : ' + JSON.stringify(message),e);
+                  return;
+                  // pi.log('exception : ' + JSON.stringify(e), message);
+                }
+              }
+              else {
+                pi.log('also skipping : ' + JSON.stringify(message));
+                return;
+              }
+
+              var
+               datachunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+              if(datachunk) {
+                pi.log("adding chunk : " + JSON.stringify(datachunk));
+                self.crossfilter.add([datachunk]);
+                self._addRow(datachunk);
+              }
+              // pi.log("data: '" + JSON.stringify(datachunk) + "' (" + typeof(message) + ")");
+            }
+          },
+
+
+          init : function () {
+            var
+              self  = this,
+              d     = { 
+                        title   : "sex",
+                        element : null,
+                        parent  : document.getElementById("visuals"),
+                        initialized : false,
+                        names       : {},
+                        display     : "rank"
+                      },
+
+              p       = null;
+
+
+            /**
+             * common dimension functions
+             */
+
+            d.refresh = function() {
+              if(this.initialized === false && typeof this.init == "function" ) {
+                // pi.log("initializing : " + this.title);
+                this.init();
+              }
+
+              var
+                html = "",
+                names = this.names,
+                title = this.title,
+                params = {labels : [], values : []},
+                totalsum = 0,
+                results = [];
+
+
+              if(this.display == "rank") {
+                this.xd.group().top(Infinity).forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  html = "<ul>";
+
+                  // pi.log("this : ", this);
+                  if(names["i"+p.key]) {
+
+                    totalsum += p.value;
+                    results.push({ idx : p.key, key : names["i"+p.key], value : p.value});
+                    // line = "<li onclick='applyFilter({key: " + this.title + ", value : " +p.key+"});'><span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key] + '</li>';
+                    // // pi.log("i"+p.key + " : " + p.value);
+                    // html +=  line + "</ul>";
+                  }
+                  else{
+                    // pi.log("no name : " + p.key + " -> " + p.value, names);
+                  }
+                });
+
+                // var currentTitle = this.title;
+
+                // if(title == "votes") {
+                //   title = "param1";
+                // }
+
+                results.forEach(function(p) {
+                  html += "<li onclick='applyFilter({key: \""+title+"\", value : " +p.idx+"}, this);'><span style='float: left; width: 40px; text-align: right'>" + Math.round(1000*p.value/totalsum)/10 + "%</span>&nbsp;&nbsp;" + p.key + "</li>";
+                });
+                html += "</ul>";
+                this.element.innerHTML = html;
+              }
+              else if(this.display == "group") {
+
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line  = "";
+
+                  html = "<ul>";
+
+                  names["i"+p.key] = p.key;
+                  totalsum += p.value;
+                  line = names["i"+p.key] + " : " + p.value;
+
+                  // line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" + names["i"+p.key] + "</span>&nbsp;&nbsp;" + p.value + "</li>";
+
+
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line;
+                });
+                // html += "sum : " + totalsum;
+                this.element.innerHTML = html + "</ul>";
+              }
+              else if(this.display == "genderchart") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if(names["i"+p.key]) {
+                    if (p.key !== "U") {
+                      if(p.key == "M") {
+                      // put men first, because that's the black coloured slice
+                        params.labels.unshift(names["i"+p.key]);
+                        params.values.unshift(parseInt(p.value, 10));
+                      }
+                      else {
+                        params.labels.push(names["i"+p.key]);
+                        params.values.push(parseInt(p.value, 10));
+                      }
+                    }
+                  }
+                });
+
+                // publish values, if any
+                if(params.values.length) {
+                  // pi.log("emitting :", params);
+                  pi.events.publish("pi.data.app.views.sex", params);
+                }
+
+              }
+              else if(this.display == "histogram") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if(!p.key && (p.key !== 0)) {
+
+                    alert("p.key is " + p.key);
+                    return;
+                  }
+                  names["i"+p.key] = p.key;
+                  line = names["i"+p.key] + " : " + p.value;
+                  line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" +
+                  names["i"+p.key] + "</span>" + p.value + "</li>"
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line + "<br />";
+
+                  params.labels.push(parseInt(p.key, 10));
+                  params.values.push(parseInt(p.value, 10));
+                });
+
+                // publish values, if any
+                if(params.values.length) {
+                  // pi.log("emitting : pi.data.app.views.age", params);
+                  pi.events.publish("pi.data.app.views.age", params);
+                }
+                else {
+                  pi.log("no values");
+                }
+              }
+            };
+
+            d.init = function() {
+              // pi.log("initializing : " + this.title);
+              if(!this.element) {
+                this.element = document.getElementById(this.title) || false;
+              }
+              if(!this.element) {
+                this.element = document.createElement("div");
+                this.parent.appendChild(this.element);
+                this.element.id = this.title;
+              }
+              this.initialized = true;
+              // this.element.innerHTML = "initialized : " + this.title;
+            };
+
+            /**
+             * set up sex dimension
+             */
+
+            d.xd = self.crossfilter.dimension(function(p) {
+              return p.sex || "U";
+            });
+
+            d.names = {'iU' : 'Ukjent', 'iM' : "Menn", 'iK' : "Kvinner"};
+            d.title = "sex";
+            d.element = document.getElementById("sexchart");
+            d.display = "genderchart";
+
+            d.element.style.width   = 400;
+            d.element.style.height  = 400;
+            // d.xd.filter('M');
+            self.dimension.push(d);
+
+
+            /**
+             * set up state dimension
+             */
+
+            states = pi.clone(d);
+
+            states.xd = self.crossfilter.dimension(function(p) {
+              return p.state ? parseInt(p.state, 10) : 0;
+            });
+
+            states.title = 'state';
+            states.display = "rank";
+
+            states.element = document.getElementById("statechart");
+            states.names = {};
+            // get state names from array
+            views.map.counties.forEach(function(e, i, arr){
+              states.names['i'+i] = e.title;
+            });
+
+
+            states.initialized = false;
+
+            self.dimension.push(states);
+
+
+            /**
+             * set up age dimension
+             */
+
+            age = pi.clone(d);
+
+            age.xd = self.crossfilter.dimension(function(p) {
+              return p.age || 0;
+            });
+
+            age.title = 'age';
+            age.display = 'histogram';
+            age.element = document.getElementById("agechart");
+            age.initialized = false;
+
+            age.names = {};
+
+
+
+            self.dimension.push(age);
+
+
+
+
+            /**
+             * set up vote dimension
+             */
+
+            votes = pi.clone(d);
+
+            votes.xd = self.crossfilter.dimension(function(p) {
+              return p.param1;
+            });
+
+
+            // self.crossfilter.filterFunction()
+
+            votes.title   = 'votes';
+            votes.display = 'rank';
+            votes.element = document.getElementById("votechart");
+            votes.initialized = false;
+
+            votes.names = {
+              'i0' : 'To små karer - "Paybacktime"',
+              'i1' : '2U - "Sinnsykt gal forelsket"',
+              'i2' : '@lek - "En stjerne skal jeg bli"',
+              'i3' : 'Malin - "Sommer og skolefri"',
+              'i4' : 'Ole Runar - "Fotball e supert"',
+              'i5' : 'Celine - "Bæstevænna"',
+              'i6' : 'The BlackSheeps - "Oro jaska, beana"',
+              'i7' : 'Jørgen - "Din egen vei"',
+              'i8' : 'Torstein - "Svikter aldri igjen"',
+              'i9' : 'Sval - "Trenger deg"',
+              'i10' : 'Marcus & Martinus - "To dråper vann"'
+            };
+
+            self.dimension.push(votes);
+
+
+
+            // /**
+            //  * set up female vote dimension
+            //  */
+
+            // femaleVotes = pi.clone(votes);
+
+            // femaleVotes.xd = self.crossfilter.dimension(function(p) {
+            //   return p.sex = "K";
+            // });
+
+
+            // femaleVotes.title   = 'femaleVotes';
+            // femaleVotes.display = 'rank';
+            // femaleVotes.element = null;
+            // femaleVotes.initialized = false;
+
+            // self.dimension.push(femaleVotes);
+
+
+
+          },
+
+
+          run : function() {
+
+            // private init
+            this.__init();
+
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("xfilter"),
+            this.__tmp        = this.__tmp || {};
+
+
+            this.crossfilter  = crossfilter();
+
+            // this.dimensions   = {
+            //   byState : this.crossfilter.dimension( function(d) { return d.state;   }),
+            //   bySex   : this.crossfilter.dimension( function(d) { return d.sex;     }),
+            //   byAge   : this.crossfilter.dimension( function(d) { return d.age;     }),
+            //   byVote  : this.crossfilter.dimension( function(d) { return d.param1;  }),
+            //   byCity  : this.crossfilter.dimension( function(d) { return d.})
+            // };
+
+            // this.filters = {
+            //   north : null
+            // };
+
+
+            // public init
+            this.init();
+            this.reportid = 4;
+
+            this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
+
+            getVoteReport(this.reportid);
+
+            // set up a listener
+            π.readstream(this.__tmp.address, this.onData, this.__onerror);
+          }
+        };
+
+
+        var
+          sexchart = {
+            element   : null,
+            raphael   : null,
+            width     : 400,
+            height    : 400,
+            amounts   : [], 
+            names     : [],
+            totalsum  : 0,
+            __filter  : false,
+
+            __init : function(options) {
+
+              this.element = document.getElementById("sexchart");
+
+              this.raphael = Raphael(this.element, this.width, this.height);
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.sexchart,
+                previousData  = {
+                  names   : [],
+                  values  : []
+                },
+                tmpAmount = 0;
+
+
+              // clear data arrays
+              while(self.amounts.pop());
+              while(self.names.pop());
+
+
+              self.totalsum = 0;
+
+              // parse data array
+              data.values.forEach(function(p,i, arr) {
+                var
+                  amount = parseInt(p, 10);
+                
+                // pi.log("adding amount : " + amount);
+                self.amounts.push(amount);
+                self.totalsum += amount;
+
+                // pi.log("adding item : " + data.labels[i]);
+                self.names.push({name: data.labels[i], percentage: "%"});
+              }); // data.forEach
+      
+              // calculate percentages
+              self.names.forEach( function(p, idx, arr){
+                p.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
+                // pi.log("setting percentage : " + p.percentage);
+              });
+
+              // pi.log("calling draw()");
+              self.draw();
+            },
+
+            draw : function () {
+              // pi.log("filter is " + this.__filter);
+              this.raphael.clear();
+              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff", this.__filter);
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.sex", this.onData, this.onError);
+              pi.events.subscribe("pi.app.views.sex.filter", applyFilter, this.onError);
+            }
+          };
+
+        var
+          agechart = {
+            element   : null,
+            width     : 200,
+            height    : 384,
+            values    : [], 
+            names     : [],
+            totalsum  : 0,
+            agevalues : [],
+            raphael   : null,
+            
+            groupstops : [12, 18, 25, 40, 65, 128],
+
+            chart         : null,
+            chartoptions  : {
+              range   : {},
+              width   : 224,
+              height  : 400,
+              bars    : {
+                width   : 200,
+                height  : 2
+              }
+            },
+
+            __init : function(options) {
+
+              this.element = document.getElementById("agechart");
+              // this.element = document.createElement("div");
+              // document.body.appendChild(this.element);
+              
+              this.raphael = Raphael(document.getElementById("agechartsvg"), this.width, this.height);
+
+              // pi.log("size : " + this.width + "x" + this.height);
+              // prepare indexed array for individual age values
+              for(var i = 0; i < 128; i++) {
+                this.agevalues.push(0);
+              }
+
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.agechart,
+                currentgroup  = 0,
+                currentcount  = 0,
+                age           = 0,
+                previousage   = 0;
+
+              var
+                values    = self.values,
+                names     = self.names,
+                agevalues = self.agevalues,
+                groupstops = self.groupstops;
+
+              // clear data arrays
+              while(values.pop());
+              while(names.pop());
+              self.totalsum = 0;
+
+              for(var i = 0; i < 128; i++) {
+                // clear histo array
+                agevalues[i]=0;
+              }
+
+              if(data.labels.length != data.values.length) {
+                alert("labels and values have different length!");
+                alert(data.labels.length +" and " +data.values.length);
+              }
+
+
+              data.values.forEach(function(p, i, arr) {
+                var currentage = data.labels[i];
+
+                if(typeof currentage != "number") {
+                  alert("not number : " + typeof currentage);
+                  return;
+                }
+
+                if(currentage==0)
+                  return; //continue
+
+                agevalues[currentage] = p;
+
+
+                self.totalsum += p;
+                if(currentage < groupstops[currentgroup]) {
+                  currentcount += p;
+                  }
+                else {
+                  names.push(previousage + "-" + (groupstops[currentgroup] - 1));
+                  values.push(currentcount);
+                  currentcount = 0;
+                  currentgroup++;
+                  previousage = groupstops[currentgroup-1];
+                  }
+              });
+              // add the last group
+              names.push(groupstops[groupstops.length-2] + "+");
+              values.push(currentcount);
+
+              // values.forEach(function(p,i, arr) {
+              //   pi.log(names[i] + " : " + p + "(" + (100 * p/self.totalsum) + ")");
+              // }); 
+      
+              self.draw();
+            },
+
+            draw : function () {
+              var 
+                self = pi.maverick.agechart,
+                html = "",
+                colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
+
+                if(!self.element) {
+                  pi.log("No element!");
+                }
+
+              if(self.chart === null) {
+                self.chart = self.raphael.ageChart(self.chartoptions, self.values, self.names);
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+              
+              pi.events.publish("pi.app.views.agechart.update", self.agevalues);
+
+
+              // list data array
+              self.groupstops.forEach(function(p,i, arr) {
+                html += "<li><span style='float: left; color:" + colors[i] + ";width: 60px; text-align: center'>" + self.names[i] + "</span><span style='color: #ccc;width: 144px; text-align: right'>&nbsp;</span></li>";
+              });
+              if(self.element.innerHTML == "") {
+                self.element.innerHTML = '<p>ALDER</p><ul>' + html + '</ul>';
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.age", this.onData, this.onError);
+            }
+          };
+
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.log("pi.session.start!");
+          
+          pi.maverick.xfilter = xfilter;
+          pi.maverick.xfilter.run();
+
+          pi.maverick.sexchart = sexchart;
+          pi.maverick.sexchart.run();
+
+          pi.maverick.agechart = agechart;
+          pi.maverick.agechart.run();
+
+        }, false);
+
+
+    </script>
+
+  </div>
+
+  <!-- End of demo's div -->
+
+
+
+
+
+<!--   <div id="numberstation" data-name="pcl.debug.numberstation">
+    <script>
+
+      var 
+
+        numberstation = document.getElementById("numberstation"),
+        randomWalk = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+
+          __onerror : function (err) {
+            pi.log("Error in randomWalk: ", err);
+          },
+
+
+          onRandomWalk : function (message) {
+            var
+              randomNumber  = JSON.parse(message.data),
+              self          = pi.maverick.randomWalk;
+
+            if(self.element) {
+              self.element.innerHTML = "pi.service.numberstation.randomwalk : " + randomNumber;
+            }
+          },
+
+          run : function() {
+            // pi.log("starting randomWalk listener...");
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("randomwalk");
+            this.eventsource  = pi.listen("pi.service.numberstation.randomwalk", this.onRandomWalk, this.__onerror);
+            this.eventsource.addEventListener("data", this.onRandomWalk, false);
+            // pi.log("done.", this.eventsource);
+            // pi.log("onmessage:", this.eventsource.onmessage);
+          }
+        };
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.maverick.randomWalk = randomWalk;
+          pi.maverick.randomWalk.run();
+        }, false);
+
+
+    </script>
+    <div id="randomwalk"></div>
+
+  </div>
+ -->
+
+
+  <!--script src="../../assets/js/lib/raphael.min.js"></script-->
+  <script src="../../assets/js/lib/raphael.js"></script>
+  <script src="assets/js/lib/raphael-map-norway.js"></script>
+
+  <!-- Cufon fonts for Raphaël -->
+  <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
+  <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
+
+  <script src="../../assets/js/lib/crossfilter.js"></script>
+
+
+  <!--  bootstrap pi -->
+  <script src="../../assets/js/pi.core.js"></script>
+
+  <!-- Raphaël plugins -->
+  <script src="../../assets/js/pi.lib.raphael.genderchart.js"></script>
+  <script src="../../assets/js/pi.lib.raphael.agechart.js"></script>
+
+
+
+  <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
+  <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
+
+
+  
+  <!--script src="http://d3js.org/d3.v2.min.js?2.10.0"></script-->
+
+  <!--  bootstrap pcl 
+    <script src="../../assets/js/pi.pcl.js"></script>
+  -->
+
+
+</body>
+</html>

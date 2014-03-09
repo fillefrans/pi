@@ -1,0 +1,37 @@
+.chart {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.1s;
+}
+
+.chart figure {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+
+.chart.front {
+  background: red;
+}
+
+
+.chart.back {
+  background: transparent;
+  transform: rotateY( 180deg );
+  transform: translateX( -100% ) rotateY( -180deg ) scaleX(1) scaleY (1);
+}
+
+
+.chart.flipped {
+  background : white;
+  transform: translateX( -100% ) rotateY( -180deg ) scaleX(0.25) scaleY (0.25);
+}
+
+
+.chart { transform-origin: right center; }
+
