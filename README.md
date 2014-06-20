@@ -1,5 +1,8 @@
 ##π
 
+Build status:
+<img src="https://www.codeship.io/projects/81f31f40-89fa-0131-e282-62e1c9d5c632/status">
+
 
 ####What is π?
 

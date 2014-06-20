@@ -16,5 +16,6 @@ define('UNKNOWN_ERROR',       9);
 
 class PiException extends Exception {}
 
+class DBException extends Exception {}
 
 ?>

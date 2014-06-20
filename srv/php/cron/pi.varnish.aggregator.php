@@ -16,7 +16,6 @@
 
   declare( ticks = 16 );
 
-
   $aggregator = null;
 
 
@@ -49,7 +48,7 @@
 
 
 
-  class PiVarnishAggregator extends Pi {
+  class VarnishAggregator extends Pi {
 
     // config
 
@@ -58,11 +57,10 @@
     private $outputdir = LOG_DIR;
     private $logfile   = "";
 
-    // in seconds
-    private $timetorun = 3600;  
+    /** @todo  Read time to run from command line  */
+    
+    private $timetorun = 3600;  // in seconds
 
-
-    // initialize variables
     private $linecounter	 = 0;
     private $eventcounter	 = 0;
     private $viewcounter	 = 0;
@@ -70,7 +68,6 @@
 
     private $objects	     = null;
     private $events 	     = null;
-
 
     private $currobjectid  = null;
     private $curreventtype = null;
@@ -114,11 +111,11 @@
     		$this->dataset["memused"]					= memory_get_usage();
     		$this->dataset["memmaxused"]			= memory_get_peak_usage();
     		$this->dataset["memmaxallocated"]	= memory_get_peak_usage(true);
-    		$this->dataset["stop"]						= time();
+    		$this->dataset["stop"]						= date("d.m H:i:s");
     		$this->objects["dataset"]					= $this->dataset;
 
 
-    		print( Date("His:\n"));
+    		print( Date("d.m H:i:s:\n"));
         print( "\tLines read:\t$this->linecounter\n" );
         print( "\tEvents read:\t$this->eventcounter\n" );
         print( "\tViews read:\t" . ( $this->viewcounter ) . "\n" );
@@ -210,7 +207,7 @@
               else{
                 } 
             
-              $elements         = count( $urlarray ) >> 1;
+              $elements = count( $urlarray ) >> 1;
               $this->currobjectid  = $urlarray[1];
               $this->curreventtype = $urlarray[0];
           
@@ -246,7 +243,7 @@
                   
                   // add to events array.
                   $this->events[] = $this->params;
-      //            unset( $params['objectid'] );
+                  // unset( $params['objectid'] );
                   }
                 else{
                   print("Invalid eventtype: $curreventtype\nurl: $line\n");
@@ -284,7 +281,6 @@
                 }
               else{
                 $this->viewcounter++;
-                //print ( "counting: $line\n" );
                 }
               foreach( $this->params as $key => $value ){
                 if( isset( $this->objects[$this->curreventtype][$this->currobjectid][$key][$value] )){
@@ -300,7 +296,7 @@
 
           //update screen
 
-          if( DEBUG ){ // every x event
+          if( DEBUG ){ 
 
             $memusage       = memory_get_usage();
             $gccycles       = gc_collect_cycles(); // force garbage collection
@@ -309,8 +305,7 @@
               $time  = strftime( "%T", (int) $timecomponents[0] ) . "." . substr( $timecomponents[1], 0, 3 );
               }
             echo "\r$time\tviews:".number_format( $this->viewcounter ) . "\tEvents:\t" . 
-            number_format( $this->eventcounter ) . "\tmem:\t$memusage\t$ip $this->curreventtype:$this->currobjectid". 
-            ( DEBUG ? "\n" : "" );
+            number_format( $this->eventcounter ) . "\tmem:\t$memusage\t$ip $this->curreventtype:$this->currobjectid"
             }
 
           unset( $this->currobjectid  );  
@@ -325,7 +320,7 @@
   }
 
 
-  $aggregator = new PiVarnishAggregator();
+  $aggregator = new VarnishAggregator();
 
   try {
     $aggregator->run();

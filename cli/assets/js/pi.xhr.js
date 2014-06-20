@@ -91,19 +91,19 @@
 
 
         xhr.onload = function() { 
-          if(this.responseText.indexOf(".php</b> on line <b>") !== -1) {
-            π.log("php error detected : ");
-            π.log(this.responseText);
-            if( typeof this.onerror === "function" ) {
+          if (this.responseText.indexOf(".php</b> on line <b>") !== -1) {
+            eV.log("php error detected : ");
+            eV.log(this.responseText);
+            if (typeof this.onerror == "function") {
               this.onerror.call(this, this.responseText);
             }
           }
           else {
-            // π.log("no php error detected : ");
-            // π.log(this.responseText);
+            // eV.log("no php error detected : ");
+            // eV.log(this.responseText);
           }
 
-          if( typeof this.callback === "function" ) {
+          if (typeof this.callback == "function") {
             this.callback.call(this, this.responseText || '{ error : "xhr: no data." }');
           }
         };

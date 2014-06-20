@@ -1,7 +1,5 @@
 <?
 
-    namespace Pi;
-
     /**
      *  Pi Service base class
      *
@@ -13,12 +11,10 @@
      * 
      */
 
-    // require_once('pi.php');
-
-    use Pi;
+    require_once('pi.php');
 
 
-    class Service extends Pi {
+    class PiService extends Pi {
 
       private $name = 'service';
 

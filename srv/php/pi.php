@@ -1,6 +1,5 @@
 <?
 
-  namespace Pi;
 
   // activate debugging everywhere
   if(!defined('DEBUG')){
@@ -8,11 +7,10 @@
   }
 
 
+  require_once("pi.exception.php");
   require_once("pi.config.php");
 
-  require_once(PHP_ROOT . "pi.exception.php");
-  require_once(PHP_ROOT . "pi.util.functions.php");
-
+  require_once("pi.util.functions.php");
 
 
   /**
@@ -92,7 +90,7 @@
 
 
     public function connectToRedis($db = PI_APP, $timeout = 5){
-      $redis = new \Redis();
+      $redis = new Redis();
       try {
         if(false === ($redis->connect(REDIS_SOCK))){
           $debug[] = 'Unable to connect to Redis';
@@ -129,7 +127,7 @@
         $this->pubsub->publish($address, $message);
       }
       else {
-        $this->say("We have no redis pubsub object in function publish()\n");
+        $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
       }
     }
 
@@ -138,14 +136,14 @@
 
       if($callback === false) {
         // we were invoked without the callback param, which is not right
-        throw new PiException("Pi->subscribe() was called without the callback parameter.", 1);
+        throw new PiException("Pi->".__FUNCTION__."() was called without the callback parameter.", 1);
         return false;
       }
       if($this->pubsub){
         $this->pubsub->subscribe($address, $callback);
       }
       else {
-        $this->say("We have no redis pubsub object in function publish()\n");
+        $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
       }
     }
 

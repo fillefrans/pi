@@ -1,4 +1,4 @@
-<?
+<?php
 
   /**
    *  Pi command line utility script

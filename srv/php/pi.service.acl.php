@@ -1,7 +1,9 @@
 <?php
 
+    namespace Pi;
+
     /**
-     * pi.service.acl
+     * @class pi.service.acl
      * 
      * The pi ACL service, a server that  
      * maintains an Access Control List and
@@ -10,7 +12,7 @@
      * 
      * This is part of the core of the pi server
      *
-     * @author Johan Telstad, jt@enfield.no, 2011-2013
+     * @author Johan Telstad, jt@enfield.no, 2011-2014
      *
      */
 
@@ -18,7 +20,7 @@
     require_once("pi.service.php");
 
 
-    class PiServiceACL extends PiService {
+    class ACL extends Service {
 
         private   $debug            = false;
 
@@ -34,16 +36,15 @@
 
 
         public function __construct() {
-          $this->address    = basename(__FILE__, '.php');
-          $this->name       = $this->address;
+          $this->address  = basename(__FILE__, '.php');
+          $this->name     = $this->address;
         }
 
 
 
-        private function quit($msg="Goodbye. No message.") {
+        private function quit($msg = "Goodbye. No message.") {
 
-          die($msg);
-
+          die($msg."\n");
         }
 
 
@@ -62,10 +63,10 @@
 
 
 
-  $admin = new PiServiceACL();
+  $acl = new ACL();
 
   try {
-    $admin->run();
+    $acl->run();
   }
   catch(Exception $e) {
     print(get_class($e) . ": " . $e->getMessage() . "\n");

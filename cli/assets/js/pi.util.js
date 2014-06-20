@@ -1,16 +1,15 @@
-/**
- *
- * π.util
- *
- * @author Johan Telstad, jt@enfield.no, 2011-2013
- *
- */
+  /**
+   *
+   * π.util
+   *
+   * @author Johan Telstad, jt@enfield.no, 2011-2014
+   *
+   */
 
 
   π.util = {
 
-    // was null initially
-    loaded : false,
+    _loaded : false,
 
 
     toArray : function(items){
@@ -63,4 +62,4 @@
 
 
 
-  π.util.loaded = true;
+  π.util._loaded = true;

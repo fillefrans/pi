@@ -1,13 +1,14 @@
 
-/**
- *  π.util.set
- *  
- *  Implements js-equivalent of logical sets
- *  with related functions to operate on them
- *  
- *  @author Johan Telstad, <jt@enfield.no>, 2011-2013
- * 
- */
+  /**
+   *  π.util.set
+   *  
+   *  Implements js-equivalent of logical sets
+   *  with related functions to operate on them
+   *
+   * 
+   *  @author Johan Telstad, <jt@enfield.no>, 2011-2014
+   *
+   */
 
 
 
@@ -49,7 +50,7 @@
         return false;
       }
 
-      if (set===false) {
+      if (set === false) {
         π.util.set.__items[set] = {};
         set = π.util.set.__items[set];
       }

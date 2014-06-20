@@ -1,5 +1,10 @@
 <?php
 
+  /**
+   * @package     pi
+   * @subpackage  tracs.incoming
+   */
+
 
   define('DEBUG', true);
   error_reporting(E_ALL);
@@ -8,7 +13,10 @@
 
   require_once( __DIR__ . "/../pi.php");
 
+//     define('UPLOAD_ROOT',       SRV_ROOT . "data/upload/");
+//     define('GZ_ROOT',           UPLOAD_ROOT . "gz/");
   define('GZIN',            GZ_ROOT);
+
   define('DATA_DIR',        'tracs/');
   define('OUTPUT_DIR',      DATA_DIR . 'gzout');
   define('MAX_FILESIZE',    20480000);
@@ -23,7 +31,7 @@
   $reportend = 0;
 
 
-  $db=array();
+  $db = array();
 
 
 
@@ -34,6 +42,16 @@
       printf("MySQL connect failed: %s\n", $mysqli->connect_error);
       exit();
   }
+
+
+  /* allow local infile */
+  if ($mysqli->options(MYSQLI_OPT_LOCAL_INFILE, true)) {
+      print("Option value set\n");
+  }
+  else {
+    die("Unable to set option MYSQLI_OPT_LOCAL_INFILE\n");
+  }
+
 
 
 
@@ -402,6 +420,7 @@
     return $totaltime;
   }
 
+  // die(GZIN. "\n");
 
   print(date("H:i:s", time()) . ": starting...\n\n");
 
@@ -517,10 +536,9 @@
 
   file_put_contents(basename($outfile, ".json") . ".csv", $db_infile);
 
-
   $db_filename = realpath(__DIR__) . "/" . basename($outfile, ".json") . ".csv";
 
-  $db_query = "LOAD DATA LOCAL INFILE '$db_filename' INTO TABLE `tracs-sublime` 
+  $db_query = "LOAD DATA INFILE '$db_filename' INTO TABLE `tracs-sublime` 
       FIELDS TERMINATED BY ','
       OPTIONALLY ENCLOSED BY '\"' 
       LINES TERMINATED BY '\n' 
@@ -533,20 +551,17 @@
 
   $querystart = microtime(true);
 
-  $result = $mysqli->query($db_query);
-  print(date("H:i:s", time()) . ": finished in " . (microtime(true) - $querystart));
-
-
-
-  if($result === false) {
-    print(date("H:i:s", time()) . ":\nMySQL error : " . $mysqli->error);
-    sleep(1);
+  try {
+    if (false === ($result = $mysqli->query($db_query))) {
+      throw new DBException($mysqli->errno . " : " . $mysqli->error, 1);
+    }
+    print(date("H:i:s", time()) . ": finished in " . (microtime(true) - $querystart));
   }
-  else {
-    print(date("H:i:s", time()) . ": \ncsv file imported, result : " . $result);
+  catch (DBException $e) {
+    die(date("H:i:s", time()) . ": " . get_class($e) . " -> " . $e->getMessage() . "\n");
   }
 
-
+  print(date("H:i:s", time()) . ": \ncsv file imported, result : " . $result);
   print(date("H:i:s", time()) . ": \ncleaning up files...\n");
 
   foreach ($infiles as $infile) {
@@ -556,8 +571,11 @@
   }
 
 
+
+  print("Closing db connection...");
+
   $mysqli->close();
 
-  print("\n");
+  print("done!\n");
 
 ?>
