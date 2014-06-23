@@ -1,16 +1,9 @@
 <?
 
-
-  // activate debugging everywhere
-  if(!defined('DEBUG')){
+  // activate debugging
+  if (!defined('DEBUG')) {
     define('DEBUG', true);
   }
-
-
-  require_once("pi.exception.php");
-  require_once("pi.config.php");
-
-  require_once("pi.util.functions.php");
 
 
   /**
@@ -30,6 +23,13 @@
    */
 
 
+  require_once("pi.exception.php");
+  require_once("pi.config.php");
+
+  require_once("pi.util.functions.php");
+
+
+
   class Pi {
 
     protected   $starttime  = null;
@@ -47,7 +47,7 @@
     protected function __init() {
 
       // open a data connection for redis 
-      if( false === ($this->redis = $this->connectToRedis())){
+      if (false === ($this->redis = $this->connectToRedis())) {
         throw new PiException("Unable to connect data client to redis on " . REDIS_SOCK, 1);
         print("Connection to redis failed!\n");
         return false;
@@ -59,7 +59,7 @@
       // > should not issue commands, although it can 
       // > subscribe and unsubscribe to and from 
       // > other channels. The reply of the ...
-      if( false === ($this->pubsub = $this->connectToRedis())){
+      if (false === ($this->pubsub = $this->connectToRedis())) {
         throw new PiException("Unable to connect pubsub client to redis on " . REDIS_SOCK, 1);
         print("Connection to redis failed!\n");
         return false;
@@ -81,7 +81,7 @@
 
 
     private function handleException(&$e) {
-      if(DEBUG) {
+      if (DEBUG) {
         $json = json_encode($e, JSON_PRETTY_PRINT) . "\n";
         file_put_contents(basename(__FILE__, '.php') . '.errorlog', $json, FILE_APPEND);
       }
@@ -89,42 +89,59 @@
     }
 
 
-    public function connectToRedis($db = PI_APP, $timeout = 5){
+    public function connectToRedis($db = PI_APP, $timeout = 5) {
       $redis = new Redis();
       try {
-        if(false === ($redis->connect(REDIS_SOCK))){
+        if (false === ($redis->connect(REDIS_SOCK))) {
           $debug[] = 'Unable to connect to Redis';
           return false;
         }
         $redis->select($db);
         return $redis;
       }
-      catch(RedisException $e){
+      catch (RedisException $e) {
         $this->handleException($e);
         return false;
       }
     }
 
 
-    public function say($msg="nothing to say"){
+    public function say($msg="nothing to say") {
       $msg_array  = array('message' => $msg, 'time' => time());
 
       // publish debug info to our own address
       $this->publish($this->address, getFormattedTime() . ": " . $msg);
-      print(getFormattedTime() . ": $msg\r\n");
+      print(getFormattedTime() . ": $msg\n");
     }
 
 
-    protected function publish($address, $message = false) {
 
-      if($this->pubsub){
-        if($message === false) {
+    protected function debug($address, $message = false) {
+
+      if ($this->pubsub) {
+        if ($message === false) {
           // we were invoked with only one param, so we assume that's a message for default address
           $message = $address;
           $address = $this->address;
         }
 
-        $this->pubsub->publish($address, $message);
+        $this->pubsub->publish('debug|' . $address, $message);
+      }
+      else {
+        $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
+      }
+    }
+
+    protected function log($address, $message = false) {
+
+      if ($this->pubsub) {
+        if ($message === false) {
+          // we were invoked with only one param, so we assume that's a message for default address
+          $message = $address;
+          $address = $this->address;
+        }
+
+        $this->pubsub->publish('log|' . $address, $message);
       }
       else {
         $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
@@ -132,14 +149,40 @@
     }
 
 
-    protected function subscribe($address, $callback=false) {
+    protected function publish($address, $json) {
+      if (is_array($json)) {
+        $json = json_encode($json);
+      }
 
-      if($callback === false) {
+      return $this->redis->rPush($address, $json);
+    }
+
+
+    // protected function publish($address, $message = false) {
+
+    //   if ($this->pubsub) {
+    //     if ($message === false) {
+    //       // we were invoked with only one param, so we assume that's a message for default address
+    //       $message = $address;
+    //       $address = $this->address;
+    //     }
+
+    //     $this->pubsub->publish($address, $message);
+    //   }
+    //   else {
+    //     $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
+    //   }
+    // }
+
+
+    protected function subscribe($address, $callback = false) {
+
+      if ($callback === false) {
         // we were invoked without the callback param, which is not right
         throw new PiException("Pi->".__FUNCTION__."() was called without the callback parameter.", 1);
         return false;
       }
-      if($this->pubsub){
+      if ($this->pubsub) {
         $this->pubsub->subscribe($address, $callback);
       }
       else {

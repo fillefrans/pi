@@ -9,7 +9,7 @@
      * 
      */
 
-
+    // make sure DEBUG is always defined
     if (!defined('DEBUG')) {
       define('DEBUG', false);
     }
@@ -28,7 +28,9 @@
     define('APP_VERSION',   'v0.2@');
 
     // mysql settings
-    define('PI_DB',  array('db' => 'pi', 'user' => 'pi', 'password' => '3.141592', 'host' => 'localhost', 'port' => 3306));
+    // define('PI_DB',  array('db' => 'pi', 'user' => 'pi', 'password' => '3.141592', 'host' => 'localhost', 'port' => 3306));
+
+    $PI_DB  = array('db' => 'pi', 'user' => 'pi', 'password' => '3.141592', 'host' => 'localhost', 'port' => 3306);
 
     // // mysql settings
     // define('APP_DB',  array('host'=>'localhost', 'port'=>3306, 'db'=>'views_externalservices_direktinfo', 'user'=>'views', 'password'=>'1234tsxx'));
@@ -60,8 +62,9 @@
     define('TICK_LENGTH',  1/TICKS_PER_SECOND);
 
 
-    // Redis settings
-    define('REDIS_SOCK', '/var/data/redis/redis.sock');
+    // Redis settings $redis->connect('127.0.0.1');
+    define('REDIS_SOCK', '127.0.0.1');
+    //define('REDIS_SOCK', '/tmp/redis.sock');
 
 
     // Redis database names and numbers

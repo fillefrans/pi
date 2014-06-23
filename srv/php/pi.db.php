@@ -32,7 +32,7 @@
         $this->mysqli = $mysqli;
       }
       else {
-        $this->mysqli = new MySQLi(PI_DB['host'], PI_DB['user'], PI_DB['password'], PI_DB['db'], PI_DB['port']);
+        $this->mysqli = new MySQLi($PI_DB['host'], $PI_DB['user'], $PI_DB['password'], $PI_DB['db'], $PI_DB['port']);
         if (!$this->mysqli instanceof MySQLi) {
           return null;
         }

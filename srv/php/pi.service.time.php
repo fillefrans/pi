@@ -1,8 +1,5 @@
 <?php
 
-  namespace Pi\Service;
-
-
     /**
      * Pi.Service.Time
      * 
@@ -15,12 +12,11 @@
      *
      */
 
-    // use Pi\Service;
 
    require_once("pi.service.php");
 
 
-    class Time extends Service {
+    class Time extends PiService {
 
         private   $debug            = false;
 

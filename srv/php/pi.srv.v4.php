@@ -27,21 +27,21 @@
       public $redis         = null;
 
 
-      public function __construct( &$redis = null,  $address = null, IWebSocketConnection $user = null) {
-        if($redis === null) {
+      public function __construct(&$redis = null,  $address = null, IWebSocketConnection $user = null) {
+        if ($redis === null) {
           throw new PiException("No redis object given to PiSubscription constructor", 1);
         }
         else {
           $this->redis = $redis;
         }
-        if($address === null) {
+        if ($address === null) {
           throw new PiException("No address given to PiSubscription constructor", 1);
         }
         else {
           $this->address = $address;
         }
 
-        if($user !== null) {
+        if ($user !== null) {
           $this->addSubscriber($user);
         }
         $this->active = (count($this->subscribers) > 0);
@@ -49,11 +49,11 @@
 
 
       public function removeSubscriber($userid = null) {
-        if($userid === null) {
+        if ($userid === null) {
           throw new PiException("null or no argument given to removeSubscriber()", 1);
         }
         else {
-          if(isset($this->subscribers[$userid])) {
+          if (isset($this->subscribers[$userid])) {
             unset($this->subscribers[$userid]);
           }
         }
@@ -74,8 +74,8 @@
         // clear list
         $this->redis->del($this->address);
 
-        if(is_array($list)) {
-          if(0 < ($count = count($list))) {
+        if (is_array($list)) {
+          if (0 < ($count = count($list))) {
             for($i = 0; $i < $count; $i++) {
               $messages[] = json_decode($list[$i], true);
             }
@@ -98,7 +98,7 @@
           // print('sending pubsub packet with ' . count($messages) . ' chunks to user ' . $userid . "\n");
           $user->sendMessage($packet);
         }
-        if(false===$this->redis->lRem($this->address, 0, count($messages))) {
+        if (false===$this->redis->lRem($this->address, 0, count($messages))) {
           throw new PiException("Error removing ".count($messages)." items from message queue '{$this->address}'");
         }
         else {
@@ -110,13 +110,13 @@
 
       public function addSubscriber(IWebSocketConnection $user = null) {
 
-        if($user === null) {
+        if ($user === null) {
           throw new PiException("null or no argument given to addSubscriber()", 1);
         }
         else {
           $userid = $user->getId();
 
-          if(!isset($this->subscribers[$userid])) {
+          if (!isset($this->subscribers[$userid])) {
             print("user $userid subscribed to {$this->address}\n");
             $this->subscribers[$userid] = $user;
           }
@@ -202,14 +202,14 @@
         }
 
 
-        protected function connectToRedis( $timeout = 5, $db = PI_APP, $tcp=false ) {
+        protected function connectToRedis($timeout = 5, $db = PI_APP, $tcp = false) {
 
           $redis = new Redis();
 
-          try{ 
+          try { 
 
-            if(false) {
-              if(false===($redis->pconnect('127.0.0.1', 6379, $timeout))) {
+            if (false) {
+              if (false === ($redis->pconnect('127.0.0.1', 6379, $timeout))) {
                 $this->say('unable to connect to redis on tcp');
                 return false;
               }
@@ -219,7 +219,7 @@
 
             }
             else {
-              if(false===($redis->pconnect(REDIS_SOCK))) {
+              if (false === ($redis->pconnect(REDIS_SOCK))) {
                 $this->say('unable to connect to redis on '.REDIS_SOCK);
                 return false;
               }
@@ -228,13 +228,19 @@
             $redis->select($db);
             return $redis;
           }
-          catch(RedisException $e) {
+          catch (RedisException $e) {
             $this->handleException($e);
             return false;
           }
 
         }
 
+
+
+        /**
+         * A heartbeat of the pi server. 
+         * @return void 
+         */
 
         public function onTick() {
 
@@ -243,11 +249,11 @@
           $ticktime = $tick - $this->previoustick;
           $this->previoustick = $tick;
 
-          if( $ticktime < TICK_LENGTH ) {
+          if ($ticktime < TICK_LENGTH) {
 
             // $this->say("short tick : $ticktime, which is " . floor(100* ($ticktime/TICK_LENGTH)) . " % of a regular tick (".TICK_LENGTH.")");
           }
-          elseif ( $ticktime > 2*TICK_LENGTH ) {
+          elseif ($ticktime > 2*TICK_LENGTH) {
             $this->say("long tick : $ticktime, which is " . floor(100* ($ticktime/TICK_LENGTH)) . " % of a regular tick (".TICK_LENGTH.")");
           }
 
@@ -260,7 +266,7 @@
 
           $userid = $user->getId();
 
-          if(isset($this->sessions[$userid])) {
+          if (isset($this->sessions[$userid])) {
             $this->unsubscribeAll($userid);
             unset($this->sessions[$userid]);
             $this->say('user ' . $userid . ' is already connected: ' . print_r($this->sessions[$userid], true));
@@ -275,14 +281,14 @@
 
 
         // param $message is a basic PHP type, or associative array -> ready for json_encode()
-        protected function sendMessage(IWebSocketConnection $user=null, $message=null) {
+        protected function sendMessage(IWebSocketConnection $user = null, $message = null) {
 
-          if($message === null) {
+          if ($message === null) {
             throw new PiException("message parameter is NULL in sendMessage()", 1);
             return false;
           }
 
-          if($user === null) {
+          if ($user === null) {
             throw new PiException("user is NULL in sendMessage()", 1);
             return false;
           }
@@ -293,15 +299,15 @@
 
         protected function reply(IWebSocketMessage $msg = null, IWebSocketConnection $user = null, $message = null) {
 
-          if($msg === null) {
+          if ($msg === null) {
             throw new PiException("msg parameter is NULL in reply()", 1);
           }
 
-          if($message === null) {
+          if ($message === null) {
             throw new PiException("message parameter is NULL in reply()", 1);
           }
 
-          if($user === null) {
+          if ($user === null) {
             throw new PiException("user is NULL in sendMessage()", 1);
           }
 
@@ -321,7 +327,7 @@
         // handle incoming requests from client
         // this function is pseudo-private: it has to be public because it's a Redis
         // Pubsub function, but it should still only be called from trusted code
-        public function onMessage( IWebSocketConnection $user, IWebSocketMessage $msg ) {
+        public function onMessage(IWebSocketConnection $user, IWebSocketMessage $msg) {
 
           // assume the worst
           $result   = false;
@@ -330,8 +336,8 @@
           $this->incoming++;
           $this->lastactivity = time();
 
-          if(!isset($message['command'])) {
-            if($message) {
+          if (!isset($message['command'])) {
+            if ($message) {
               $this->reply($msg, $user, "No command. 'command' should always be lowercase. Message was: ".$message);
             }
             // because IE is retarded, it sends blank messages every 30 secs
@@ -342,10 +348,10 @@
             return;
           }
 
-          // IF command CONTAINS '.' AND IF NOT command STARTS WITH '.'
+          // (IF command CONTAINS '.' AND IF NOT command STARTS WITH '.')
           // NB! Depends on non-strict comparison
-          // do not change if you do not understand
-          if(false != ($commandpos = strpos($message['command'], '.'))) {
+          // do not change if you do not understand above
+          if (false != ($commandpos = strpos($message['command'], '.'))) {
             // split at first '.' into $handler.$subcommand
             $handler    = substr($message['command'], 0, $commandpos);
             $subcommand = substr($message['command'], $commandpos+1);
@@ -399,8 +405,8 @@
             case 'subscribe':
               // $this->say("calling subscribe('{$message['address']}')...");
 
-              try{ $result = $this->subscribe($message['address'], $user);}
-              catch (Exception $e) { '$this->subscribe -> ' . $this->say( get_class($e) . " : " . $e->getMessage()); }
+              try { $result = $this->subscribe($message['address'], $user);}
+              catch (Exception $e) { '$this->subscribe -> ' . $this->say(get_class($e) . " : " . $e->getMessage()); }
               break;
             case 'unsubscribe':
               $result = $this->unsubscribe($message['address'], $user->getId()); 
@@ -426,7 +432,7 @@
             case 'lpushrpop':
             case 'rpushlpop':
               $result = $this->redisCommand($message);
-              if($result !== null) {
+              if ($result !== null) {
                 $this->reply($msg, $user, $result);
               }
               else {
@@ -447,7 +453,7 @@
               break;
           }
 
-          if($result !== null) {
+          if ($result !== null) {
             $response = $message;
             $response['data'] = $result;
             $this->say("sending response to \"{$message['address']}\": " . json_encode($response));
@@ -554,32 +560,32 @@
 
 
 
-        protected function publish( $address, $json ) {
+        protected function publish($address, $json) {
 
           return $this->redis->rPush($address, $json);
         }
 
 
-        protected function subscribe( $address, $user = null ) {
+        protected function subscribe($address, $user = null) {
 
           $result = false;
 
-          if(is_array($address)) {
+          if (is_array($address)) {
             $this->say("address is an array, needs to be string");
             throw new PiException("address is an array, needs to be string", 1);
             return false;
           }
 
-          if($address == "") {
+          if ($address == "") {
             $this->say("address is empty, needs to be non-empty");
             throw new PiException("address is empty, needs to be non-empty", 1);
             return false;
           }
 
 
-          if($user!==null) {
+          if ($user !== null) {
             // $this->say("Adding subscriber to '$address'");
-            if(isset($this->subscriptions[$address])) {
+            if (isset($this->subscriptions[$address])) {
               // $this->say("calling addSubscriber()");
               $result = $this->subscriptions[$address]->addSubscriber($user);
             }
@@ -602,17 +608,17 @@
         }
 
 
-        protected function unsubscribe( $address, $userid=null ) {
+        protected function unsubscribe($address, $userid = null) {
 
           $subscribercount = -1;
           
-          if($userid !== null) {
+          if ($userid !== null) {
 
-            if(isset($this->subscriptions[$address])) {
+            if (isset($this->subscriptions[$address])) {
 
               $subscribercount = $this->subscriptions[$address]->removeSubscriber($userid);
               $this->say("unsubscribed from '$address', remaining subscribers : $subscribercount");
-              if($subscribercount === 0) {
+              if ($subscribercount === 0) {
                 $this->say("removing internal subscription '$address', because we have no remaining subscribers.");
                 unset($this->subscriptions[$address]);
               }
@@ -634,7 +640,7 @@
 
         public function updateSubscriptions() {
 
-          if(count($this->subscriptions) === 0) {
+          if (count($this->subscriptions) === 0) {
             return true;
           }
           foreach ($this->subscriptions as $address => $subscription) {
@@ -672,11 +678,11 @@
 
         private function init() {
 
-          if( false === ($this->redis = $this->connectToRedis())) {
+          if (false === ($this->redis = $this->connectToRedis())) {
             throw new PiException("Unable to connect to redis on " . REDIS_SOCK, 1);
           }
 
-          if( false === ($this->pubsub = $this->connectToRedis())) {
+          if (false === ($this->pubsub = $this->connectToRedis())) {
             throw new PiException("Unable to connect pubsub to redis on " . REDIS_SOCK, 1);
           }
 
@@ -690,7 +696,7 @@
 
           // passthru('clear');
 
-          if($this->init()) {
+          if ($this->init()) {
             $this->say("\n".APP_PLATFORM." ".APP_VERSION." listening on ".$this->address);
             $this->running = true;
             $this->previoustick = microtime(true);
@@ -708,7 +714,7 @@
   try {
     $server->run();
   }
-  catch(Exception $e) {
-    print( get_class($e) . ": " . $e->getMessage() );
+  catch (Exception $e) {
+    print(get_class($e) . ": " . $e->getMessage() );
   }
 ?>

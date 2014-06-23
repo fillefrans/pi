@@ -7,7 +7,7 @@
    *
    *
    * @author 2011-2014 Johan Telstad <jt@enfield.no>
-   * 
+   * @todo Add in-script and Redis cache layer to permissions lookup
    */
 
 
@@ -26,11 +26,14 @@
 
 
     public function __construct() {
+      /** @todo Move this, connect to db on-demand */ 
       $this->db = new PiDB();
     }
 
 
     public function check ($permission, $userid, $group_id) {
+
+      /** @todo  Insert cache logic */
 
       // check user permissions first
       if (!$this->user_permissions($permission, $userid)) {
@@ -52,6 +55,7 @@
 
     private function user_permissions ($permission, $userid) {
       
+      /** @todo  Insert cache logic */
       $this->db->query("SELECT COUNT(*) AS count FROM user_permissions WHERE permission_name='$permission' AND user_id='$userid' ");
 
       $row = $this->db->fetch();
@@ -77,6 +81,8 @@
 
     private function group_permissions($permission, $group_id) {
       
+      /** @todo  Insert cache logic */
+
       $this->db->query("SELECT COUNT(*) AS count FROM group_permissions WHERE permission_name='$permission' AND group_id='$group_id' ");
 
       $row = $this->db->fetch();
