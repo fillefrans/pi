@@ -19,7 +19,7 @@
   <script> π.browser.ie9 = true; </script>
 <![endif]-->
 
-  <title>Views / running on π </title>
+  <title>sms-demo</title>
 
   <meta charset="utf-8">
   <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -150,6 +150,7 @@
 <body class="pi">
 
 
+
   <div id="voteReport">
     <!-- <button id="btnGetVoteReport">get report</button> -->
   </div>
@@ -190,7 +191,7 @@
           return "" + (+size >> 20) + d + ((size % (1024*1024))/(1024*1024))  + " mb";
         }
 
-       return size + " bytes";
+       return size + " bytes (loads)";
 
       };
 
@@ -492,7 +493,7 @@
 
 
         if( isNaN(votes) || isNaN(minutes) ) {
-          pi.log("error: votes = " + votes + ", minutes = " + minutes);
+          alert("error: votes = " + votes + ", minutes = " + minutes);
           return false;
         }
 
@@ -676,17 +677,15 @@
                 // continue;
               }
 
-              // build row
               cell = document.createElement('td');
               cell.classList.add(idx);
               trow.appendChild(cell);
               cell.appendChild(document.createTextNode(idx + " : " + newrow[idx]));
             }
 
-            // build documentFragment
             fragment.appendChild(trow);
 
-            // add documentFragment to DOM
+            // add to DOM element
             return xbody.appendChild(fragment);
           },
 
@@ -1274,10 +1273,10 @@
                 previousage   = 0;
 
               var
-                values      = self.values,
-                names       = self.names,
-                agevalues   = self.agevalues,
-                groupstops  = self.groupstops;
+                values    = self.values,
+                names     = self.names,
+                agevalues = self.agevalues,
+                groupstops = self.groupstops;
 
               // clear data arrays
               while(values.pop());
@@ -1286,7 +1285,7 @@
 
               for(var i = 0; i < 128; i++) {
                 // clear histo array
-                agevalues[i] = 0;
+                agevalues[i]=0;
               }
 
               if(data.labels.length != data.values.length) {
@@ -1455,12 +1454,11 @@
 
   <!--script src="../../assets/js/lib/raphael.min.js"></script-->
   <script src="../../assets/js/lib/raphael.js"></script>
+  <script src="assets/js/lib/raphael-map-norway.js"></script>
 
   <!-- Cufon fonts for Raphaël -->
   <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
   <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
-
-  <script src="assets/js/lib/raphael-map-norway.js"></script>
 
   <script src="../../assets/js/lib/crossfilter.js"></script>
 
