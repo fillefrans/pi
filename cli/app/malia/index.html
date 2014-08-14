@@ -19,7 +19,7 @@
   <script> π.browser.ie9 = true; </script>
 <![endif]-->
 
-  <title>sms-demo</title>
+  <title>Malia</title>
 
   <meta charset="utf-8">
   <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -129,8 +129,8 @@
 
 
     .bar rect {
-    fill: white;
-    shape-rendering: crispEdges;
+      fill: white;
+      shape-rendering: crispEdges;
     }
 
     .bar text {
@@ -150,19 +150,18 @@
 <body class="pi">
 
 
-
-  <div id="voteReport">
-    <!-- <button id="btnGetVoteReport">get report</button> -->
+  <div id="viewReport">
+    <!-- <button id="btnGetViewsReport">get report</button> -->
   </div>
 
   <script type="text/javascript">
 
-    function getVoteReport(reportid) {
+    function getViewsReport(reportid) {
       var
-        voteReport      = null,
+        viewReport      = null,
         reportProgress  = null,
-        reportid = reportid || 2,
 
+        reportid  = reportid || 6,
         xhr       = null,
         count     = 0,
         address   = '/api/pi.db.query.php',
@@ -172,7 +171,7 @@
           apikey  : "kroma"
         };
 
-      voteReport = document.getElementById("voteReport"); 
+      viewReport = document.getElementById("viewReport"); 
 
       xhr = new XMLHttpRequest();
 
@@ -191,7 +190,7 @@
           return "" + (+size >> 20) + d + ((size % (1024*1024))/(1024*1024))  + " mb";
         }
 
-       return size + " bytes (loads)";
+       return size + " bytes";
 
       };
 
@@ -204,11 +203,11 @@
             // reportProgress.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
           }
           else {
-          // voteReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          // viewReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
           }
         }
         else {
-          // voteReport.innerHTML = "loading : " + formatSize(e.loaded);
+          // viewReport.innerHTML = "loading : " + formatSize(e.loaded);
         }
       };
 
@@ -224,7 +223,7 @@
           reportProgress.style.display = "none";
         }
         // pi.log("xhr response received");
-        // voteReport.innerHTML = "api replied : " + json;
+        // viewReport.innerHTML = "api replied : " + json;
         if(data['log']) {
           pi.log("server log:");
           data.log.forEach(function(p, i) {
@@ -253,14 +252,14 @@
       // reportProgress.style.top = "0px";
       // reportProgress.position = "fixed";
       
-      voteReport.style.height = "4px";
-      voteReport.appendChild(reportProgress);
+      viewReport.style.height = "4px";
+      viewReport.appendChild(reportProgress);
 
       xhr.send(JSON.stringify(params));
 
     }
 
-    // document.getElementById('btnGetVoteReport').onclick = getVoteReport;
+    // document.getElementById('btnGetViewsReport').onclick = getViewsReport;
 
 
   </script>
@@ -286,13 +285,13 @@
  -->
 
     <div>
-      <div style="left: 400px">
-        <p>
-        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">4</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
+      <div style="width: 800px">
+        <!--p>
+        Send <span id="spanData" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">6</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> minutt(er). <input type="button" id="sender" onclick="sendData();" value="send nå" />
         </p>
         <p id="voteReply">
           Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
-        </p>
+        </p-->
         <input type="button" id="btn-clear-filters" onclick="clearFilters();" value="clear filters" />
         <!-- <input type="button" id="btn-sex" onclick="showSex(this);" value="sort on sex" /> -->
       </div>
@@ -354,7 +353,7 @@
 
 
 
-          if(filter===null) {
+          if(filter === null) {
             return;
           }
           if(typeof filter.key == "undefined") {
@@ -466,9 +465,9 @@
       }
 
 
-      function sendVotes() {
+      function sendData() {
         var
-          votes     = parseInt(document.getElementById("spanVotes").innerHTML),
+          votes     = parseInt(document.getElementById("spanData").innerHTML),
           minutes   = parseInt(document.getElementById("spanMinutes").innerHTML),
           job       = parseInt(document.getElementById("spanJob").innerHTML),
           voteReply = null,
@@ -481,12 +480,206 @@
           params    = {
             job     : job,
             apikey  : "kroma"
-          };
+          },
+          data = [
+                  { "phone": 4748005261, "date": "01-07-2014 07:52" }, 
+                  { "phone": 4798203372, "date": "01-07-2014 11:27" }, 
+                  { "phone": 4791248087, "date": "01-07-2014 12:50" }, 
+                  { "phone": 4741641157, "date": "01-07-2014 12:59" }, 
+                  { "phone": 4792455072, "date": "01-07-2014 13:46" }, 
+                  { "phone": 4741345265, "date": "01-07-2014 15:03" }, 
+                  { "phone": 4748342204, "date": "02-07-2014 10:37" }, 
+                  { "phone": 4790885287, "date": "02-07-2014 11:07" }, 
+                  { "phone": 4795775195, "date": "03-07-2014 12:17" }, 
+                  { "phone": 4791157470, "date": "03-07-2014 14:08" }, 
+                  { "phone": 4745292067, "date": "03-07-2014 14:11" }, 
+                  { "phone": 4797785877, "date": "03-07-2014 20:08" }, 
+                  { "phone": 4790508798, "date": "04-07-2014 11:53" }, 
+                  { "phone": 4798130713, "date": "04-07-2014 13:10" }, 
+                  { "phone": 4747676220, "date": "04-07-2014 13:19" }, 
+                  { "phone": 4745883426, "date": "04-07-2014 21:57" }, 
+                  { "phone": 4792216042, "date": "05-07-2014 06:53" }, 
+                  { "phone": 4741352459, "date": "05-07-2014 07:04" }, 
+                  { "phone": 4793222206, "date": "05-07-2014 09:19" }, 
+                  { "phone": 4795152026, "date": "05-07-2014 09:59" }, 
+                  { "phone": 4794037846, "date": "05-07-2014 11:02" }, 
+                  { "phone": 4746409901, "date": "05-07-2014 12:53" }, 
+                  { "phone": 4795792042, "date": "05-07-2014 23:04" }, 
+                  { "phone": 4793273461, "date": "06-07-2014 12:46" }, 
+                  { "phone": 4791320162, "date": "06-07-2014 14:16" }, 
+                  { "phone": 4792812086, "date": "06-07-2014 15:58" }, 
+                  { "phone": 4795246756, "date": "06-07-2014 18:47" }, 
+                  { "phone": 4790191377, "date": "06-07-2014 22:43" }, 
+                  { "phone": 4740622914, "date": "07-07-2014 11:43" }, 
+                  { "phone": 4792623519, "date": "07-07-2014 12:18" }, 
+                  { "phone": 4741665525, "date": "07-07-2014 13:20" }, 
+                  { "phone": 4748245833, "date": "07-07-2014 13:31" }, 
+                  { "phone": 4740454642, "date": "08-07-2014 09:22" }, 
+                  { "phone": 4792664034, "date": "08-07-2014 09:26" }, 
+                  { "phone": 4790828178, "date": "08-07-2014 11:11" }, 
+                  { "phone": 4790832023, "date": "08-07-2014 20:16" }, 
+                  { "phone": 4793009913, "date": "09-07-2014 06:25" }, 
+                  { "phone": 4790015340, "date": "09-07-2014 09:18" }, 
+                  { "phone": 4747670279, "date": "09-07-2014 22:11" }, 
+                  { "phone": 4740474170, "date": "10-07-2014 11:51" }, 
+                  { "phone": 4746675180, "date": "10-07-2014 12:00" }, 
+                  { "phone": 4795009402, "date": "10-07-2014 14:47" }, 
+                  { "phone": 4793660209, "date": "11-07-2014 20:22" }, 
+                  { "phone": 4793405783, "date": "11-07-2014 20:23" }, 
+                  { "phone": 4794817459, "date": "12-07-2014 07:22" }, 
+                  { "phone": 4795268475, "date": "12-07-2014 08:49" }, 
+                  { "phone": 4792065394, "date": "12-07-2014 10:02" }, 
+                  { "phone": 4741685677, "date": "12-07-2014 10:17" }, 
+                  { "phone": 4745466726, "date": "12-07-2014 20:59" }, 
+                  { "phone": 4746400425, "date": "13-07-2014 03:06" }, 
+                  { "phone": 4790871378, "date": "13-07-2014 09:09" }, 
+                  { "phone": 4795103377, "date": "13-07-2014 10:53" }, 
+                  { "phone": 4792411789, "date": "13-07-2014 20:52" }, 
+                  { "phone": 4793403286, "date": "14-07-2014 08:00" }, 
+                  { "phone": 4747611573, "date": "14-07-2014 09:41" }, 
+                  { "phone": 4790826199, "date": "14-07-2014 17:01" }, 
+                  { "phone": 4797969116, "date": "15-07-2014 15:44" }, 
+                  { "phone": 4791723769, "date": "15-07-2014 20:39" }, 
+                  { "phone": 4790661903, "date": "16-07-2014 07:50" }, 
+                  { "phone": 4795474331, "date": "16-07-2014 08:11" }, 
+                  { "phone": 4790794877, "date": "16-07-2014 09:06" }, 
+                  { "phone": 4791543035, "date": "16-07-2014 16:36" }, 
+                  { "phone": 4741931493, "date": "16-07-2014 18:42" }, 
+                  { "phone": 4791717783, "date": "17-07-2014 07:22" }, 
+                  { "phone": 4792222866, "date": "17-07-2014 10:21" }, 
+                  { "phone": 4795229818, "date": "17-07-2014 20:46" }, 
+                  { "phone": 4740079051, "date": "18-07-2014 10:39" }, 
+                  { "phone": 4790091390, "date": "18-07-2014 11:22" }, 
+                  { "phone": 4791341351, "date": "18-07-2014 12:55" }, 
+                  { "phone": 4793205811, "date": "18-07-2014 22:01" }, 
+                  { "phone": 4741332420, "date": "19-07-2014 10:38" }, 
+                  { "phone": 4797507422, "date": "20-07-2014 23:31" }, 
+                  { "phone": 4791564836, "date": "21-07-2014 05:53" }, 
+                  { "phone": 4799515121, "date": "21-07-2014 07:59" }, 
+                  { "phone": 4797674157, "date": "21-07-2014 08:51" }, 
+                  { "phone": 4796901957, "date": "21-07-2014 08:57" }, 
+                  { "phone": 4793437591, "date": "21-07-2014 10:05" }, 
+                  { "phone": 4740073908, "date": "21-07-2014 10:25" }, 
+                  { "phone": 4792881621, "date": "21-07-2014 10:47" }, 
+                  { "phone": 4799402116, "date": "21-07-2014 11:42" }, 
+                  { "phone": 4740069256, "date": "21-07-2014 12:48" }, 
+                  { "phone": 4746454296, "date": "21-07-2014 13:08" }, 
+                  { "phone": 4792441993, "date": "21-07-2014 13:45" }, 
+                  { "phone": 4790753706, "date": "21-07-2014 13:52" }, 
+                  { "phone": 4790695826, "date": "21-07-2014 13:59" }, 
+                  { "phone": 4799096350, "date": "21-07-2014 14:59" }, 
+                  { "phone": 4795758165, "date": "21-07-2014 15:04" }, 
+                  { "phone": 4799525394, "date": "21-07-2014 15:08" }, 
+                  { "phone": 4741521831, "date": "21-07-2014 15:15" }, 
+                  { "phone": 4799522695, "date": "21-07-2014 16:53" }, 
+                  { "phone": 4740610479, "date": "21-07-2014 16:55" }, 
+                  { "phone": 4790859103, "date": "21-07-2014 17:37" }, 
+                  { "phone": 4790617215, "date": "21-07-2014 18:56" }, 
+                  { "phone": 4745255080, "date": "21-07-2014 20:01" }, 
+                  { "phone": 4790529910, "date": "21-07-2014 20:02" }, 
+                  { "phone": 4741235482, "date": "22-07-2014 07:59" }, 
+                  { "phone": 4741280189, "date": "22-07-2014 08:27" }, 
+                  { "phone": 4794977883, "date": "22-07-2014 08:49" }, 
+                  { "phone": 4748172450, "date": "22-07-2014 09:33" }, 
+                  { "phone": 4797756683, "date": "22-07-2014 09:39" }, 
+                  { "phone": 4790084614, "date": "22-07-2014 09:51" }, 
+                  { "phone": 4790566388, "date": "22-07-2014 10:05" }, 
+                  { "phone": 4790547083, "date": "22-07-2014 10:27" }, 
+                  { "phone": 4791887838, "date": "22-07-2014 10:30" }, 
+                  { "phone": 4797120871, "date": "22-07-2014 12:25" }, 
+                  { "phone": 4792015232, "date": "22-07-2014 12:38" }, 
+                  { "phone": 4790974157, "date": "22-07-2014 13:10" }, 
+                  { "phone": 4790134585, "date": "22-07-2014 13:43" }, 
+                  { "phone": 4790171089, "date": "22-07-2014 18:37" }, 
+                  { "phone": 4746645181, "date": "22-07-2014 19:03" }, 
+                  { "phone": 4799609953, "date": "22-07-2014 20:57" }, 
+                  { "phone": 4793212740, "date": "23-07-2014 06:47" }, 
+                  { "phone": 4741505779, "date": "23-07-2014 07:24" }, 
+                  { "phone": 4791533205, "date": "23-07-2014 09:37" }, 
+                  { "phone": 4746895939, "date": "23-07-2014 09:46" }, 
+                  { "phone": 4740451621, "date": "23-07-2014 10:38" }, 
+                  { "phone": 4792033475, "date": "23-07-2014 11:52" }, 
+                  { "phone": 4790673190, "date": "23-07-2014 12:51" }, 
+                  { "phone": 4747028651, "date": "23-07-2014 13:24" }, 
+                  { "phone": 4790569013, "date": "23-07-2014 13:32" }, 
+                  { "phone": 4790551728, "date": "23-07-2014 14:27" }, 
+                  { "phone": 4790521708, "date": "23-07-2014 15:33" }, 
+                  { "phone": 4793061220, "date": "23-07-2014 21:27" }, 
+                  { "phone": 4790157691, "date": "23-07-2014 22:07" }, 
+                  { "phone": 4797183686, "date": "24-07-2014 06:18" }, 
+                  { "phone": 4745393206, "date": "24-07-2014 08:18" }, 
+                  { "phone": 4792265770, "date": "24-07-2014 10:22" }, 
+                  { "phone": 4797631459, "date": "24-07-2014 12:26" }, 
+                  { "phone": 4747457690, "date": "24-07-2014 12:54" }, 
+                  { "phone": 4746613929, "date": "24-07-2014 13:34" }, 
+                  { "phone": 4797122412, "date": "24-07-2014 14:05" }, 
+                  { "phone": 4792828327, "date": "24-07-2014 19:33" }, 
+                  { "phone": 4792444514, "date": "24-07-2014 19:57" }, 
+                  { "phone": 4791342729, "date": "24-07-2014 20:13" }, 
+                  { "phone": 4795720256, "date": "24-07-2014 21:56" }, 
+                  { "phone": 4792204149, "date": "24-07-2014 23:30" }, 
+                  { "phone": 4741258672, "date": "25-07-2014 04:31" }, 
+                  { "phone": 4748155712, "date": "25-07-2014 05:48" }, 
+                  { "phone": 4799553545, "date": "25-07-2014 06:29" }, 
+                  { "phone": 4746630224, "date": "25-07-2014 09:24" }, 
+                  { "phone": 4747288123, "date": "25-07-2014 11:00" }, 
+                  { "phone": 4795165060, "date": "25-07-2014 11:52" }, 
+                  { "phone": 4795967793, "date": "25-07-2014 18:12" }, 
+                  { "phone": 4798072986, "date": "25-07-2014 22:02" }, 
+                  { "phone": 4798258089, "date": "25-07-2014 23:41" }, 
+                  { "phone": 4790654579, "date": "26-07-2014 05:58" }, 
+                  { "phone": 4797985087, "date": "26-07-2014 09:38" }, 
+                  { "phone": 4791195374, "date": "26-07-2014 09:38" }, 
+                  { "phone": 4748173473, "date": "26-07-2014 10:43" }, 
+                  { "phone": 4792282035, "date": "26-07-2014 10:56" }, 
+                  { "phone": 4791766812, "date": "26-07-2014 11:26" }, 
+                  { "phone": 4793609956, "date": "26-07-2014 13:40" }, 
+                  { "phone": 4741088081, "date": "26-07-2014 17:59" }, 
+                  { "phone": 4797689295, "date": "27-07-2014 17:04" }, 
+                  { "phone": 4747173190, "date": "27-07-2014 17:35" }, 
+                  { "phone": 4790163671, "date": "27-07-2014 18:24" }, 
+                  { "phone": 4798430057, "date": "27-07-2014 19:02" }, 
+                  { "phone": 4790771068, "date": "28-07-2014 06:38" }, 
+                  { "phone": 4799779514, "date": "28-07-2014 09:38" }, 
+                  { "phone": 4793096772, "date": "28-07-2014 10:16" }, 
+                  { "phone": 4790141871, "date": "28-07-2014 10:18" }, 
+                  { "phone": 4791620043, "date": "28-07-2014 10:52" }, 
+                  { "phone": 4747643900, "date": "28-07-2014 12:04" }, 
+                  { "phone": 4791674076, "date": "28-07-2014 12:15" }, 
+                  { "phone": 4795495042, "date": "28-07-2014 12:32" }, 
+                  { "phone": 4741489063, "date": "28-07-2014 12:37" }, 
+                  { "phone": 4791861004, "date": "28-07-2014 13:10" }, 
+                  { "phone": 4795129225, "date": "28-07-2014 13:45" }, 
+                  { "phone": 4792038030, "date": "28-07-2014 13:57" }, 
+                  { "phone": 4790949777, "date": "28-07-2014 14:28" }, 
+                  { "phone": 4745255970, "date": "28-07-2014 15:00" }, 
+                  { "phone": 4794489422, "date": "29-07-2014 06:23" }, 
+                  { "phone": 4799389992, "date": "29-07-2014 10:19" }, 
+                  { "phone": 4793019237, "date": "29-07-2014 10:59" }, 
+                  { "phone": 4745202364, "date": "29-07-2014 12:01" }, 
+                  { "phone": 4797968666, "date": "29-07-2014 12:02" }, 
+                  { "phone": 4793891113, "date": "29-07-2014 13:24" }, 
+                  { "phone": 4741422809, "date": "29-07-2014 17:52" }, 
+                  { "phone": 4741302378, "date": "29-07-2014 18:31" }, 
+                  { "phone": 4793602518, "date": "29-07-2014 22:53" }, 
+                  { "phone": 4747023874, "date": "30-07-2014 05:55" }, 
+                  { "phone": 4799014224, "date": "30-07-2014 08:52" }, 
+                  { "phone": 4795169550, "date": "30-07-2014 11:35" }, 
+                  { "phone": 4792464285, "date": "30-07-2014 19:17" }, 
+                  { "phone": 4792060818, "date": "31-07-2014 05:24" }, 
+                  { "phone": 4746656673, "date": "31-07-2014 10:06" }, 
+                  { "phone": 4790586820, "date": "31-07-2014 10:12" }, 
+                  { "phone": 4790604320, "date": "31-07-2014 10:50" }, 
+                  { "phone": 4797009709, "date": "31-07-2014 12:42" }, 
+                  { "phone": 4747070047, "date": "31-07-2014 19:28" }
+                ];
+
+        votes = data.length;
 
         clearFilters();
 
         if(!!window.voteInterval) {
-          stopVotes();
+          stopData();
           document.getElementById("spanMinutes").innerHTML = 5;
           return false;
         }
@@ -502,7 +695,7 @@
         rate    = votes/(seconds);
 
         voteReply = document.getElementById("voteReply");
-        // voteReport.style.color = "#ccc";
+        // viewReport.style.color = "#ccc";
         voteReply.style.color = "#ddd";
 
 
@@ -513,7 +706,7 @@
 
 
         document.getElementById("sender").value = "stopp";
-        document.getElementById("spanVotes").contenteditable = false;
+        document.getElementById("spanData").contenteditable = false;
         document.getElementById("spanMinutes").contenteditable = false;
 
 
@@ -531,16 +724,15 @@
 
             if( ++count > votes ) {
 
-              stopVotes();
-              document.getElementById("spanVotes").innerHTML = votes;
+              stopData();
+              document.getElementById("spanData").innerHTML = votes;
               document.getElementById("spanMinutes").innerHTML = minutes;
               voteReply.innerHTML = "";
             }
             else {
-              document.getElementById("spanVotes").innerHTML = votes-count;
-              params['phone']   = randomMobilePhoneNumber();
-              params['param1']  = Math.floor(Math.random() * 9);
-              __monsterhack.push(params['param1']);
+              document.getElementById("spanData").innerHTML = votes-count;
+              params['phone']   = data[count-1].phone;
+              params['param1']  = data[count-1].date;
               
               // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
               voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
@@ -576,11 +768,11 @@
 
 
 
-      function stopVotes() {
+      function stopData() {
 
-        document.getElementById("spanVotes").contenteditable = true;
+        document.getElementById("spanData").contenteditable = true;
         document.getElementById("sender").value = "send nå";
-        document.getElementById("sender").onclick = sendVotes;
+        document.getElementById("sender").onclick = sendData;
         document.getElementById("voteReply").innerHTML = "not sending";
 
         clearInterval(window.voteInterval);
@@ -1042,60 +1234,23 @@
 
 
 
-
-            /**
-             * set up vote dimension
-             */
-
-            votes = pi.clone(d);
-
-            votes.xd = self.crossfilter.dimension(function(p) {
-              return p.param1;
-            });
-
-
-            // self.crossfilter.filterFunction()
-
-            votes.title   = 'votes';
-            votes.display = 'rank';
-            votes.element = document.getElementById("votechart");
-            votes.initialized = false;
-
-            votes.names = {
-              'i0' : 'To små karer - "Paybacktime"',
-              'i1' : '2U - "Sinnsykt gal forelsket"',
-              'i2' : '@lek - "En stjerne skal jeg bli"',
-              'i3' : 'Malin - "Sommer og skolefri"',
-              'i4' : 'Ole Runar - "Fotball e supert"',
-              'i5' : 'Celine - "Bæstevænna"',
-              'i6' : 'The BlackSheeps - "Oro jaska, beana"',
-              'i7' : 'Jørgen - "Din egen vei"',
-              'i8' : 'Torstein - "Svikter aldri igjen"',
-              'i9' : 'Sval - "Trenger deg"',
-              'i10' : 'Marcus & Martinus - "To dråper vann"'
-            };
-
-            self.dimension.push(votes);
-
-
-
             // /**
             //  * set up female vote dimension
             //  */
 
-            // femaleVotes = pi.clone(votes);
+            // femaleData = pi.clone(votes);
 
-            // femaleVotes.xd = self.crossfilter.dimension(function(p) {
+            // femaleData.xd = self.crossfilter.dimension(function(p) {
             //   return p.sex = "K";
             // });
 
 
-            // femaleVotes.title   = 'femaleVotes';
-            // femaleVotes.display = 'rank';
-            // femaleVotes.element = null;
-            // femaleVotes.initialized = false;
+            // femaleData.title   = 'femaleData';
+            // femaleData.display = 'rank';
+            // femaleData.element = null;
+            // femaleData.initialized = false;
 
-            // self.dimension.push(femaleVotes);
+            // self.dimension.push(femaleData);
 
 
 
@@ -1129,11 +1284,11 @@
 
             // public init
             this.init();
-            this.reportid = 4;
+            this.reportid = 6;
 
             this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
 
-            getVoteReport(this.reportid);
+            getViewsReport(this.reportid);
 
             // set up a listener
             π.readstream(this.__tmp.address, this.onData, this.__onerror);
@@ -1229,7 +1384,7 @@
             agevalues : [],
             raphael   : null,
             
-            groupstops : [12, 18, 25, 40, 65, 128],
+            groupstops : [12, 18, 25, 40, 65, 90],
 
             chart         : null,
             chartoptions  : {
@@ -1252,7 +1407,7 @@
 
               // pi.log("size : " + this.width + "x" + this.height);
               // prepare indexed array for individual age values
-              for(var i = 0; i < 128; i++) {
+              for(var i = 0; i < 90; i++) {
                 this.agevalues.push(0);
               }
 
@@ -1285,12 +1440,12 @@
 
               for(var i = 0; i < 128; i++) {
                 // clear histo array
-                agevalues[i]=0;
+                agevalues[i] = 0;
               }
 
               if(data.labels.length != data.values.length) {
                 alert("labels and values have different length!");
-                alert(data.labels.length +" and " +data.values.length);
+                alert(data.labels.length + " and " + data.values.length);
               }
 
 
@@ -1298,7 +1453,7 @@
                 var currentage = data.labels[i];
 
                 if(typeof currentage != "number") {
-                  alert("not number : " + typeof currentage);
+                  alert("not a number : " + typeof currentage);
                   return;
                 }
 
@@ -1396,60 +1551,6 @@
 
   <!-- End of demo's div -->
 
-
-
-
-
-<!--   <div id="numberstation" data-name="pcl.debug.numberstation">
-    <script>
-
-      var 
-
-        numberstation = document.getElementById("numberstation"),
-        randomWalk = {
-
-          eventsource : null,
-          starttime   : null,
-          element     : null,
-
-          __onerror : function (err) {
-            pi.log("Error in randomWalk: ", err);
-          },
-
-
-          onRandomWalk : function (message) {
-            var
-              randomNumber  = JSON.parse(message.data),
-              self          = pi.maverick.randomWalk;
-
-            if(self.element) {
-              self.element.innerHTML = "pi.service.numberstation.randomwalk : " + randomNumber;
-            }
-          },
-
-          run : function() {
-            // pi.log("starting randomWalk listener...");
-            this.starttime    = new Date().getTime();
-            this.element      = document.getElementById("randomwalk");
-            this.eventsource  = pi.listen("pi.service.numberstation.randomwalk", this.onRandomWalk, this.__onerror);
-            this.eventsource.addEventListener("data", this.onRandomWalk, false);
-            // pi.log("done.", this.eventsource);
-            // pi.log("onmessage:", this.eventsource.onmessage);
-          }
-        };
-
-
-        window.addEventListener("pi.session.start", function() {
-          pi.maverick.randomWalk = randomWalk;
-          pi.maverick.randomWalk.run();
-        }, false);
-
-
-    </script>
-    <div id="randomwalk"></div>
-
-  </div>
- -->
 
 
   <!--script src="../../assets/js/lib/raphael.min.js"></script-->
