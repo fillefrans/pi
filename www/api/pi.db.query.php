@@ -174,6 +174,7 @@
 
     $query = "SELECT 
           cache.id, cache.zipCode, cache.sex, cache.county, cache.state, cache.age, cache.lifePhase,
+          cache.residentialType, cache.CategoryConsumerStrength, cache.CategoryUrban, cache.HouseholdEstimatedIncome,
           reportlines.cache_id, reportlines.param1, reportlines.id as counter
         FROM cache
         RIGHT JOIN reportlines
@@ -245,7 +246,7 @@
 
   $datacount = 0;
 
-  $reply['items'] = getFromCache($address, $offset);
+  // $reply['items'] = getFromCache($address, $offset);
 
 
   if(is_array($reply['items']) && count($reply['items']) > 0) {
