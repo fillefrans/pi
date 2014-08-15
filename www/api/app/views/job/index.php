@@ -67,6 +67,20 @@
 
 
 
+  function toInt($param) {
+    global $debug;
+    if(is_numeric($param)) {
+      return (int) $param;
+    }
+    if(is_string($param)) {
+      $obj_date = DateTime::createFromFormat('d-m-Y H:i', $param);
+      // echo $obj_date->getTimestamp(); // prints 1330010280
+      $debug[] = "timestamp : " . $obj_date->getTimestamp();
+      return (int) $obj_date->getTimestamp();
+    }
+    else return $param;
+  }
+
 
 
   /**
@@ -92,6 +106,7 @@
 
 
     if(isset($request['param1'])) {
+      $request['param1'] = toInt($request['param1']);
       $packet['data']['param1'] = $request['param1'];
     }
 

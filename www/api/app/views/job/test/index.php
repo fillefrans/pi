@@ -23,6 +23,9 @@
       <label for="apikey" >API KEY:</label>
       <input id="apikey" type="text" name="apikey" placeholder="API KEY" />  
       <br />
+      <label for="param1" >param1:</label>
+      <input id="param1" type="text" name="param1" placeholder="param1" />  
+      <br />
       <!--label for="debug" >Return debug information:</label>
       <input id="debug" type="checkbox" name="debug" value="off" checked="on" />
       <br /-->
