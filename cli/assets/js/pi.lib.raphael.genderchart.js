@@ -104,9 +104,12 @@ Raphael.fn.genderChart = function (cx, cy, r, rin, values, labels, stroke, selec
           delta     = 20,
           bcolor    = colors[j],
           element   = elements.push([])-1,
+          posx      = 150 + (j * 53),
+          posy      = 44,
           
           p   = sector(cx, cy, r, angle+90, angle + angleplus+90, {fill: "90-" + bcolor + "-" + color, stroke: stroke, "stroke-width": 0}),
-          txt = paper.print(cx - 15 + (r + delta) * Math.cos((-popangle-15) * rad), cy + (r + delta) * Math.sin((-popangle-15) * rad), labels[j].name.toUpperCase(), paper.getFont("Ubuntu Condensed",400),18).attr({fill: bcolor, stroke:bcolor, "stroke-width" : 1});
+          // txt = paper.print(cx - 15 + (r + delta) * Math.cos((-popangle-15) * rad), cy + (r + delta) * Math.sin((-popangle-15) * rad), labels[j].name.toUpperCase(), paper.getFont("Ubuntu Condensed",400),18).attr({fill: bcolor, stroke:bcolor, "stroke-width" : 1});
+          txt = paper.print(posx, posy, labels[j].name.toUpperCase(), paper.getFont("Ubuntu Condensed",400),18).attr({fill: bcolor, stroke:bcolor, "stroke-width" : 1});
           
           percentageText = paper.print(cx - 22 + (overlayR) * Math.cos((-popangle-90) * rad), cy + (overlayR) * Math.sin((-popangle-90) * rad), labels[j].percentage, paper.getFont("Passion One",400),30).attr({fill: "#fff", stroke: bcolor, "stroke-width": 0.6});
             //txt.stop().animate({opacity: 1}, ms, "elastic");

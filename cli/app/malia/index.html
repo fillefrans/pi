@@ -95,7 +95,7 @@
     #agechartcontainer {
       position  : absolute;
       display   : inline-block;
-      left      : 600px;
+      left      : 550px;
       top       : 300px;
       width     : 100%;
       height    : auto;
@@ -111,8 +111,8 @@
     #agechart {
       position  : absolute;
       display   : block;
-      left      : 216px;
-      top       : 64px;
+      left      : 192px;
+      top       : 20px;
       width     : 100%;
       height    : auto;
     }
@@ -285,7 +285,7 @@
  -->
 
     <div>
-      <div style="width: 800px">
+      <div style="width: 600px">
         <!--p>
         Send <span id="spanData" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">6</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> minutt(er). <input type="button" id="sender" onclick="sendData();" value="send nå" />
         </p>
@@ -1513,7 +1513,7 @@
                 html += "<li><span style='float: left; color:" + colors[i] + ";width: 60px; text-align: center'>" + self.names[i] + "</span><span style='color: #ccc;width: 144px; text-align: right'>&nbsp;</span></li>";
               });
               if(self.element.innerHTML == "") {
-                self.element.innerHTML = '<p>ALDER</p><ul>' + html + '</ul>';
+                self.element.innerHTML = '<p style="text-align:left; margin-left: 44px;font-weight: 700;">ALDER</p><ul>' + html + '</ul>';
               }
 
               // self.agevalues.forEach(function(p, i) {

@@ -4,7 +4,7 @@ Raphael.fn.ageChart = function (options, values, labels, stroke) {
       chart = this.set(),
 
       min   = options.range.min || 0,
-      max   = options.range.max || 128,
+      max   = options.range.max || 100,
       range = max - min,
 
       margins = 2,
@@ -37,7 +37,7 @@ Raphael.fn.ageChart = function (options, values, labels, stroke) {
         // console.log(agevalues, agevalues);
         // pi.log("Update : " + typeof agevalues + " received (" + agevalues + "), test : " + typeof test + test, agevalues, test);
 
-        for(var i = 1; i < 128; i++) {
+        for(var i = 1; i < 100; i++) {
           if(agevalues[i] > thismax) {
             thismax = agevalues[i];
             // pi.log("new max : " + thismax);
@@ -63,9 +63,9 @@ Raphael.fn.ageChart = function (options, values, labels, stroke) {
           spacermark  = spacer+barh,
           colorindex  = 0,
           color       = "",
-          groupstops  = [12, 18, 25, 40, 65, 128];
+          groupstops  = [12, 18, 25, 40, 65, 100];
 
-          for(var i = 0; i < 128; i++) {
+          for(var i = 0; i < 100; i++) {
             // pi.log(zeromark + ", " + (i * spacermark) + ", " + barh + ", " + barh);
             color = colors[colorindex];
             if(i>=groupstops[colorindex]) {
