@@ -38,6 +38,14 @@
     background-position : right top, 14px 14px;
 */  }
 
+
+    h1 {
+        color: #168dd9;
+        font-weight: 700;
+        
+    }
+
+
     li.selected {
       font-weight   : 700;
       color         : white;
