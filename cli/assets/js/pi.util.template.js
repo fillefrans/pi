@@ -5,7 +5,7 @@
     π.util = π.util || {};
 
 
-    π.util.templates = {
+    π.util.template = {
 
       __items : [],
 
@@ -20,7 +20,7 @@
           template = null;
 
         if(typeof tp == "number") {
-          template = π.util.templates.__items[tp] || false;
+          template = π.util.template.__items[tp] || false;
           if(template === false) {
             return false;
           }
