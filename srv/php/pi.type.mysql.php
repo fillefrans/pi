@@ -19,64 +19,90 @@
     
 
 
+
+  /**
+   * pi.type.mysql
+   *
+   * PiType handler for MySQL
+   * Stores, reads, filters, updates PiType values in he Pi db
+   *
+   * @requires MySQLi
+   */
   class PiTypeMySQL extends PiType {
 
-    private   $name       = 'mysql';
-    private   $address    = null;
+    private     $mysqli = null;
+    private     $res    = null;
 
+    private   $name       = 'mysql';
     private   $channel    = null;
 
-    public function __construct($address, $value=null, $ttl=null) {
-      // call PiType class constructor (pass along arguments)
-      parent::__construct($address, $value, $ttl);
+    public function __construct() {
     }
 
 
 
 
     /**
-     * "Factory" of sorts, to create new instances of PiType descendants
-     * @param string $className Class name, e.g. : FileType, ImageType, DataType, etc
-     * @param Type $args      Arguments for the class constructor
+     * Constructor
+     * @param   MySQLi  $mysqli   Optional existing MySQLi instance
+     */
+    
+    public function __construct($address=null, $value=null, $ttl=null, MySQLi $mysqli = null) {
+      // call PiType class constructor (pass along arguments)
+      parent::__construct($address, $value, $ttl);
+      if ($mysqli instanceof MySQLi) {
+        $this->mysqli = $mysqli;
+      }
+      else {
+        $this->mysqli = new MySQLi($PI_DB['host'], $PI_DB['user'], $PI_DB['password'], $PI_DB['db'], $PI_DB['port']);
+        if (!$this->mysqli instanceof MySQLi) {
+          return null;
+        }
+      }
+
+      $this->_init();
+
+
+    }
+
+
+
+    protected function _init () {
+      // initialization code
+
+
+    }
+
+
+    /**
+     * Query MySQL database
+     * @param  string   $query  SQL query
+     * @return boolean          Boolean false on error, Array on success
      */
 
-    public static function New($className, $args) { 
-       if(class_exists($className) && is_subclass_of($className, 'PiType'))
-       { 
-          return new $className($args); 
-       } 
-    }  
-
-
-
-
-  }
-
-
-
-
-
-
-
-  class PersistentType extends PiType {
-
-    public function __construct($address, $object) {
-      parent::__construct($address, $object);
-      $this->db = new PiDB();
+    public function query ($query = "" ) {
+      $this->res = $this->mysqli->query($query);
+      return $this->res;
     }
 
-  }
 
+    /**
+     * Fetch result of previous query
+     * @return Array|boolean  Boolean false on error, result from fetch_assoc() on success 
+     */
 
-
-  class TransientType extends PiType {
-    public function __construct($address, $object, $ttl=null) {
-      parent::__construct($address, $object, $ttl);
-      $this->redis = new Redis();
+    public function fetch () {
+      if (!$this->res) {
+        return false;
+      }
+      return $this->res->fetch_assoc();
     }
 
-    public function 
+
   }
+
+
+
 
 
 

@@ -3,7 +3,7 @@
   /**
    *  Pi Type class
    *
-   *  Implements basic Types for the Pi namespace.
+   *  Defines and implements basic Types for the Pi namespace.
    *  ("Popt" = "Plain Old Pi Type")
    *  These types reflect the available data types in HTML5 and Redis
    *  It defines proper aliases for all basic types for JSON, MySQL, PHP, JavaScript
@@ -13,204 +13,212 @@
 
 
 
-  require_once('pi.php');
+  // require_once('pi.php');
   // require_once('pi.db.php');
 
+
+  class PiTypeException extends PiException {};
     
 
 
   class PiType {
 
     private   $name       = 'type';
-    private   $address    = null;
+    protected $type       = null;
+    protected $value      = null;
 
+
+    /*  TYPE DEFINITIONS  */
 
     // basic types
-    public static int $NULL     = null;
-    public static int $NAN      = NaN;
+    const NAN      = NaN;
 
-    public static int $STRING   = 1;
-    public static int $NUMBER   = 2;
+    const STR      = 1;
+    const NUMBER   = 2;
+
+
+    // floating point types
+    const FLOAT32  = 5;
+    const FLOAT64  = 6;
 
 
     // basic integer types
 
     // unsigned
-    public static int $UINT8    = 3;
-    public static int $UINT16   = 4;
-    public static int $UINT32   = 5;
-    public static int $UINT64   = 6;
+    const UINT8    = 9;
+    const UINT16   = 10;
+    const UINT32   = 11;
+    const UINT64   = 12;
+
 
     // signed
-    public static int $INT8    = 7;
-    public static int $INT16   = 8;
-    public static int $INT32   = 9;
-    public static int $INT64   = 10;
+    const INT8    = 17;
+    const INT16   = 18;
+    const INT32   = 19;
+    const INT64   = 20;
 
 
     // typed arrays, unsigned
-    public static int $UINT8ARRAY    = 11;
-    public static int $UINT16ARRAY   = 12;
-    public static int $UINT32ARRAY   = 13;
-    public static int $UINT64ARRAY   = 14;
+    const UINT8ARRAY    = 31;
+    const UINT16ARRAY   = 32;
+    const UINT32ARRAY   = 33;
+    const UINT64ARRAY   = 34;
 
     // typed arrays, signed
-    public static int $INT8ARRAY    = 15;
-    public static int $INT16ARRAY   = 16;
-    public static int $INT32ARRAY   = 17;
-    public static int $INT64ARRAY   = 18;
+    const INT8ARRAY    = 65;
+    const INT16ARRAY   = 66;
+    const INT32ARRAY   = 67;
+    const INT64ARRAY   = 68;
 
-
-    // floating point types
-    public static int $FLOAT32  = 19;
-    public static int $FLOAT64  = 20;
 
     // typed arrays, floating point values
-    public static int $FLOAT32ARRAY = 21;
-    public static int $FLOAT64ARRAY = 22;
+    const FLOAT32ARRAY = 7;
+    const FLOAT64ARRAY = 8;
 
 
 
     // complex types
-    public static int $RANGE    = 23;
-    public static int $ARRAY    = 24;
-    public static int $BYTEARRAY    = 25;
+    const RANGE    = 123;
+    const ARRAY    = 124;
+    const BYTEARRAY    = 125;
 
-    public static int $OBJECT    = 26;
-    
     // synonyms
-    public static int $STRUCT    = 27;
-    public static int $RECORD    = 27;
+    const STRUCT    = 127;
+    const RECORD    = 127;
 
 
 
     // higher order types
-    public static int $FILE   = 28;
-    public static int $IMAGE  = 29;
-    public static int $DATA   = 30;
-    public static int $TEL    = 31;
-    public static int $GEO    = 32;
-    public static int $EMAIL  = 33;
-    public static int $URL    = 34;
-
-
-    // internal types for Pi
+    const FILE   = 128;
+    const IMAGE  = 129;
+    const DATA   = 130;
+    const TEL    = 131;
+    const GEO    = 132;
+    const EMAIL  = 133;
+    const URL    = 134;
 
 
 
-    public static int $FORMAT   = 35;
-    public static int $CHANNEL  = 36;
-    public static int $ADDRESS  = 37;
+      // Pi internal types
+
+      const FORMAT   = 135;
+      const CHANNEL  = 136;
+      const ADDRESS  = 137;
+
+      const IGBINARY  = 240;
+      const BASE64    = 241;
 
 
-    public static int $USER  = 100;
-    public static int $USERGROUP  = 101;
-    public static int $PERMISSIONS  = 102;
-    public static int $TOKEN  = 103;
-    public static int $JSON  = 104;
-    public static int $MYSQL  = 105;
-    public static int $REDIS  = 106;
-    public static int $LIST  = 107;
+      // common internal object types
+      const USER        = 100;
+      const USERGROUP   = 101;
+      const PERMISSIONS = 102;
 
-    // PASCAL string, ZeroMQ-compatible fixed-length binary string
-    public static int $SHORTSTRING   = 108;
-
-    // ANSI string, C-compatible null-terminated binary string
-    public static int $ANSISTRING   = 109;
-
-    // UTF-8 string
-    public static int $UTF8   = 110;
+      const TOKEN = 103;
+      const JSON  = 104;
+      const MYSQL = 105;
+      const REDIS = 106;
+      const LIST  = 107;
 
 
+      // a UINT32
+      const IP     = 108;
+      const IPV4   = 108;
 
-    // channels
-    public static int $AUTH     = 38;
-    public static int $CHAT     = 39;
-    public static int $DEBUG    = 40;
-    public static int $WARNING  = 41;
-    public static int $ERROR    = 42;
-    public static int $LOG      = 43;
-    public static int $TYPE     = 44;
-    public static int $DB       = 45;
-    public static int $PING     = 46;
-    public static int $CTRL     = 47;
-    public static int $ADMIN    = 48;
-    public static int $SYS      = 49;
-    public static int $REGEX    = 50;
+      // a UINT32 QUAD ?
+      const IPV6     = 109;
 
 
-    public static int $PUSH    = 200;
+      // PASCAL string, ZeroMQ-compatible fixed-length binary string
+      const SHORTSTRING   = 110;
+
+      // ANSI string, C-compatible null-terminated binary string
+      const ANSISTRING   = 111;
+
+      // UTF-8 string
+      const UTF8   = 112;
 
 
 
     // date and time related types
-    public static int $WEEK = 51;
-    public static int $TIME = 52;
-    public static int $DATE = 53;
-    public static int $DATETIME = 54;
-    public static int $DATETIME_LOCAL = 55;
+    const WEEK = 51;
+    const TIME = 52;
+    const DATE = 53;
+    const DATETIME = 54;
+    const DATETIME_LOCAL = 55;
 
 
 
 
 
-    public function __construct($address, $object, $ttl=null) {
+    public function __construct($type = null) {
       // call Pi Base class constructor (takes no arguments)
-      parent::__construct();
+      // parent::__construct();
+
+      if (is_int($type)) {
+        $this->type = $type;
+      }
+
+    }
+
+
+    // Default getter and setter : override in Subclasses
+
+    public function get () {
+      return $this->value;
+    }
+
+    public function set ($value = null) {
+      $this->value = $value;
+    }
+
+    public function getset ($value = null) {
+      $previous = $this->value;
+      $this->value = $value;
+      return $previous;
     }
 
 
 
-
     /*
-      $object = PiType::New('PiType', $args);
-      $file   = PiType::New('FileType', $args);
-      $image  = PiType::New('ImageType', $args);
+      $object = PiType::New('Object', $args);
+      $file   = PiType::New('File', $args);
+      $image  = PiType::New('Image', $args);
       etc, etc
      */
 
     /**
      * "Factory" of sorts, to create new instances of PiType descendants
-     * @param string $className Class name, e.g. : FileType, ImageType, DataType, etc
+     * @param string $className Class name, e.g. : File, Image, Uint, Date, Week, etc
      * @param Type $args      Arguments for the class constructor
+     * @example
+     *       $object = PiType::New('Object', $args);
+     *       $file   = PiType::New('File', $args);
+     *       $uint   = PiType::New('Uint', $size);
+     *       $image  = PiType::New('Image', $args);
+     * 
      */
 
     public static function New($className, $args) { 
-       if(class_exists($className) && is_subclass_of($className, 'PiType'))
-       { 
-          return new $className($args); 
-       } 
+      if(!$className) {
+        throw new InvalidArgumentException("Invalid className : '$className'", 1);
+      }
+      if (!is_string($className)) {
+        throw new InvalidArgumentException("Expected className to be String, received : " . gettype($className), 1);
+      }
+
+      require_once('pi.type.' . strtolower($className) . '.php');
+      $className = 'PiType' . $className;
+
+      if(class_exists($className) && is_subclass_of($className, 'PiType')) { 
+        return new $className($args);
+      }
+      else {
+        throw new InvalidArgumentException("Class not found : $className", 1);
+      }
     }  
 
 
-
-
-  }
-
-
-
-
-
-
-
-  class PersistentType extends PiType {
-
-    public function __construct($address, $object) {
-      parent::__construct($address, $object);
-      $this->db = new PiDB();
-    }
-
-  }
-
-
-
-  class TransientType extends PiType {
-    public function __construct($address, $object, $ttl=null) {
-      parent::__construct($address, $object, $ttl);
-      $this->redis = new Redis();
-    }
-
-    public function 
   }
 
 
