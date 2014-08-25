@@ -17,6 +17,147 @@
   // require_once('pi.db.php');
 
 
+
+    // basic types
+    define('PI_NAN', NaN);
+
+    define('PI_NULL', null);
+    define('PI_DEFAULT', null);
+
+    define('PI_STR', 1);
+    define('PI_STRING', 1);
+    define('PI_NUMBER', 2);
+
+
+    // floating point types
+    define('PI_FLOAT32', 5);
+    define('PI_FLOAT64', 6);
+
+
+    // basic integer types
+
+    // unsigned
+    define('PI_UINT8',  9);
+    define('PI_UINT16', 10);
+    define('PI_UINT32', 11);
+    define('PI_UINT64', 12);
+
+
+    // signed
+    define('PI_INT8',   17);
+    define('PI_INT16',  18);
+    define('PI_INT32',  19);
+    define('PI_INT64',  20);
+
+
+    // typed arrays, unsigned
+    define('PI_UINT8ARRAY',   31);
+    define('PI_UINT16ARRAY',  32);
+    define('PI_UINT32ARRAY',  33);
+    define('PI_UINT64ARRAY',  34);
+
+    // typed arrays, signed
+    define('PI_INT8ARRAY',  65);
+    define('PI_INT16ARRAY', 66);
+    define('PI_INT32ARRAY', 67);
+    define('PI_INT64ARRAY', 68);
+
+
+    // typed arrays, floating point values
+    define('PI_FLOAT32ARRAY', 7);
+    define('PI_FLOAT64ARRAY', 8);
+
+
+
+    // complex types
+    define('PI_RANGE',      123);
+    define('PI_ARRAY',      124);
+    define('PI_BYTEARRAY',  125);
+
+    // synonyms
+    define('PI_STRUCT', 127);
+    define('PI_RECORD', 127);
+
+
+
+    // higher order types
+
+    define('PI_ID', PI_UINT64);
+
+    define('PI_FILE',   128);
+    define('PI_IMAGE',  129);
+    define('PI_DATA',   130);
+    define('PI_TEL',    131);
+    define('PI_GEO',    132);
+    define('PI_EMAIL',  133);
+    define('PI_URL',    134);
+
+
+
+      // Pi internal types
+
+      define('PI_FORMAT',   135);
+      define('PI_CHANNEL',  136);
+      define('PI_ADDRESS',  137);
+
+      define('PI_IGBINARY', 240);
+      define('PI_BASE64',   241);
+
+
+      // common internal object types
+      define('PI_USER',         100);
+      define('PI_USERGROUP',    101);
+      define('PI_PERMISSIONS',  102);
+
+      define('PI_TOKEN',  103);
+      define('PI_JSON',   104);
+      define('PI_MYSQL',  105);
+      define('PI_REDIS',  106);
+      define('PI_LIST',   107);
+
+
+      // a UINT32
+      define('PI_IP',   108);
+      define('PI_IPV4', 108);
+
+      // a UINT32 QUAD ?
+      define('PI_IPV6', 109);
+
+
+      // PASCAL string, ZeroMQ-compatible fixed-length binary string
+      define('PI_SHORTSTRING', 110);
+
+      // ANSI string, C-compatible null-terminated binary string
+      define('PI_ANSISTRING', 111);
+
+      // UTF-8 string
+      define('PI_UTF8', 112);
+
+
+
+    // date and time related types
+    define('PI_DAY',  50);
+    define('PI_WEEK', 51);
+    define('PI_TIME', 52);
+    define('PI_DATE', 53);
+
+    define('PI_DATETIME',       54);
+    define('PI_DATETIME_LOCAL', 55);
+
+    define('PI_TIMESTAMP', PI_DATETIME_LOCAL);
+    define('PI_DATE_UTC', PI_DATETIME_LOCAL);
+
+    define('PI_HOUR',   56);
+    define('PI_MINUTE', 57);
+    define('PI_SECOND', 58);
+
+    define('PI_UNIXTIME',   59);
+    define('PI_MILLITIME',  60);
+    define('PI_MICROTIME',  61);
+
+
+
+
   class PiTypeException extends PiException {};
     
 
@@ -31,121 +172,121 @@
     /*  TYPE DEFINITIONS  */
 
     // basic types
-    const NAN      = NaN;
+    const NAN      = PI_NAN;
 
-    const STR      = 1;
-    const NUMBER   = 2;
+    const STR      = PI_STR;
+    const NUMBER   = PI_NUMBER;
 
 
     // floating point types
-    const FLOAT32  = 5;
-    const FLOAT64  = 6;
+    const FLOAT32  = PI_FLOAT32;
+    const FLOAT64  = PI_FLOAT64;
 
 
     // basic integer types
 
     // unsigned
-    const UINT8    = 9;
-    const UINT16   = 10;
-    const UINT32   = 11;
-    const UINT64   = 12;
+    const UINT8    = PI_UINT8;
+    const UINT16   = PI_UINT16;
+    const UINT32   = PI_UINT32;
+    const UINT64   = PI_UINT64;
 
 
     // signed
-    const INT8    = 17;
-    const INT16   = 18;
-    const INT32   = 19;
-    const INT64   = 20;
+    const INT8    = PI_INT8;
+    const INT16   = PI_INT16;
+    const INT32   = PI_INT32;
+    const INT64   = PI_INT64;
 
 
     // typed arrays, unsigned
-    const UINT8ARRAY    = 31;
-    const UINT16ARRAY   = 32;
-    const UINT32ARRAY   = 33;
-    const UINT64ARRAY   = 34;
+    const UINT8ARRAY    = PI_UINT8ARRAY;
+    const UINT16ARRAY   = PI_UINT16ARRAY;
+    const UINT32ARRAY   = PI_UINT32ARRAY;
+    const UINT64ARRAY   = PI_UINT64ARRAY;
 
     // typed arrays, signed
-    const INT8ARRAY    = 65;
-    const INT16ARRAY   = 66;
-    const INT32ARRAY   = 67;
-    const INT64ARRAY   = 68;
+    const INT8ARRAY    = PI_INT8ARRAY;
+    const INT16ARRAY   = PI_INT16ARRAY;
+    const INT32ARRAY   = PI_INT32ARRAY;
+    const INT64ARRAY   = PI_INT64ARRAY;
 
 
     // typed arrays, floating point values
-    const FLOAT32ARRAY = 7;
-    const FLOAT64ARRAY = 8;
+    const FLOAT32ARRAY = PI_FLOAT32ARRAY;
+    const FLOAT64ARRAY = PI_FLOAT64ARRAY;
 
 
 
     // complex types
-    const RANGE    = 123;
-    const ARRAY    = 124;
-    const BYTEARRAY    = 125;
+    const RANGE    = PI_RANGE;
+    const ARRAY    = PI_ARRAY;
+    const BYTEARRAY    = PI_BYTEARRAY;
 
     // synonyms
-    const STRUCT    = 127;
-    const RECORD    = 127;
+    const STRUCT    = PI_STRUCT;
+    const RECORD    = PI_RECORD;
 
 
 
     // higher order types
-    const FILE   = 128;
-    const IMAGE  = 129;
-    const DATA   = 130;
-    const TEL    = 131;
-    const GEO    = 132;
-    const EMAIL  = 133;
-    const URL    = 134;
+    const FILE   = PI_FILE;
+    const IMAGE  = PI_IMAGE;
+    const DATA   = PI_DATA;
+    const TEL    = PI_TEL;
+    const GEO    = PI_GEO;
+    const EMAIL  = PI_EMAIL;
+    const URL    = PI_URL;
 
 
 
       // Pi internal types
 
-      const FORMAT   = 135;
-      const CHANNEL  = 136;
-      const ADDRESS  = 137;
+      const FORMAT   = PI_FORMAT;
+      const CHANNEL  = PI_CHANNEL;
+      const ADDRESS  = PI_ADDRESS;
 
-      const IGBINARY  = 240;
-      const BASE64    = 241;
+      const IGBINARY  = PI_IGBINARY;
+      const BASE64    = PI_BASE64;
 
 
       // common internal object types
-      const USER        = 100;
-      const USERGROUP   = 101;
-      const PERMISSIONS = 102;
+      const USER        = PI_USER;
+      const USERGROUP   = PI_USERGROUP;
+      const PERMISSIONS = PI_PERMISSIONS;
 
-      const TOKEN = 103;
-      const JSON  = 104;
-      const MYSQL = 105;
-      const REDIS = 106;
-      const LIST  = 107;
+      const TOKEN = PI_TOKEN;
+      const JSON  = PI_JSON;
+      const MYSQL = PI_MYSQL;
+      const REDIS = PI_REDIS;
+      const LIST  = PI_LIST;
 
 
       // a UINT32
-      const IP     = 108;
-      const IPV4   = 108;
+      const IP     = PI_IP;
+      const IPV4   = PI_IPV4;
 
       // a UINT32 QUAD ?
-      const IPV6     = 109;
+      const IPV6     = PI_IPV6;
 
 
       // PASCAL string, ZeroMQ-compatible fixed-length binary string
-      const SHORTSTRING   = 110;
+      const SHORTSTRING   = PI_SHORTSTRING;
 
       // ANSI string, C-compatible null-terminated binary string
-      const ANSISTRING   = 111;
+      const ANSISTRING   = PI_ANSISTRING;
 
       // UTF-8 string
-      const UTF8   = 112;
+      const UTF8   = PI_UTF8;
 
 
 
     // date and time related types
-    const WEEK = 51;
-    const TIME = 52;
-    const DATE = 53;
-    const DATETIME = 54;
-    const DATETIME_LOCAL = 55;
+    const WEEK = PI_WEEK;
+    const TIME = PI_TIME;
+    const DATE = PI_DATE;
+    const DATETIME = PI_DATETIME;
+    const DATETIME_LOCAL = PI_DATETIME_LOCAL;
 
 
 
@@ -216,7 +357,7 @@
       else {
         throw new InvalidArgumentException("Class not found : $className", 1);
       }
-    }  
+    }
 
 
   }
