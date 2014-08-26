@@ -10,7 +10,6 @@
 
 
   require_once('pi.type.php');
-  // require_once('pi.db.php');
 
 
   class PiTypeStructMember extends StdClass {
@@ -51,7 +50,7 @@
 
   class PiTypeStruct extends PiType {
 
-    private   $name = 'struct';
+    protected $name = 'struct';
     protected $type = PiType::STRUCT;
 
     protected $member = null;

@@ -10,12 +10,11 @@
 
 
   require_once('pi.type.php');
-  // require_once('pi.db.php');
 
 
   class PiTypeString extends PiType {
 
-    private   $name = 'string';
+    protected $name = 'string';
     protected $type = PiType::STRING;
 
     protected $length = null;

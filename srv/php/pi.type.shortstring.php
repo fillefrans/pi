@@ -1,8 +1,8 @@
 <?
 
   /**
-   *  Pi Type String class
-   *
+   *  Pi Type ShortString class
+   *  Pascal-style string, up to 255 chars
    *
    * @author 2011-2014 Johan Telstad <jt@enfield.no>
    */
@@ -10,12 +10,11 @@
 
 
   require_once('pi.type.php');
-  // require_once('pi.db.php');
 
 
   class PiTypeShortstring extends PiType {
 
-    private   $name = 'shortstring';
+    protected $name = 'shortstring';
     protected $type = PiType::SHORTSTRING;
 
     protected $length     = null;

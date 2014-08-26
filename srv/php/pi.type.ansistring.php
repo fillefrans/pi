@@ -15,7 +15,7 @@
 
   class PiTypeAnsistring extends PiType {
 
-    private   $name = 'ansistring';
+    protected $name = 'ansistring';
     protected $type = PiType::ANSISTRING;
 
     protected $length     = null;

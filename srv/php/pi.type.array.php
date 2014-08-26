@@ -32,7 +32,7 @@
 
   class PiTypeArray extends PiType {
 
-    private   $name = 'array';
+    protected $name = 'array';
     protected $type = PiType::ARRAY;
 
     protected $itemtype = null;

@@ -173,7 +173,7 @@
     private   $mysqli = null;
     private   $res    = null;
 
-    private   $name       = 'mysql';
+    protected $name       = 'mysql';
     private   $channel    = null;
 
     public function __construct() {

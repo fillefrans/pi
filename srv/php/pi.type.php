@@ -4,7 +4,6 @@
    *  Pi Type class
    *
    *  Defines and implements basic Types for the Pi namespace.
-   *  ("Popt" = "Plain Old Pi Type")
    *  These types reflect the available data types in HTML5 and Redis
    *  It defines proper aliases for all basic types for JSON, MySQL, PHP, JavaScript
    *
@@ -167,7 +166,7 @@
 
   class PiType {
 
-    private   $name     = 'type';
+    protected $name     = 'type';
 
     // Protected, can be accessed by descendants
     protected $value    = null;
@@ -333,7 +332,7 @@
     }
 
 
-    // Default getter and setter : override in Subclasses
+    // Use property overloading to decorate object instance in subclasses
 
     public function __set($name,$value){
       $this->str[$name] = $value;
@@ -358,9 +357,6 @@
       unset($this->str[$name]);
       echo "\$$name is unset <br/>";
     }
-
-
-
 
 
 

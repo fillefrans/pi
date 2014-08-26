@@ -2,8 +2,10 @@
  *
  * π.TYPE
  *
- * @description Implements typeary Plain Old Pi Object, and support functions
- *              Also provides utility memory handling functions and typeary memory operations
+ * Implements Pi Type Library in JS
+ * Also provides utility memory handling functions
+ * and some binary memory operations
+ *
  * @requires    HTML5, or typed array polyfill
  * @author Johan Telstad, jt@enfield.no, 2011-2014
  */
@@ -18,6 +20,7 @@
 
   π.TYPE.loaded = false,
 
+  // load the binary operations lib (DataView/HTML5 typed array stuff)
   π.require('bin');
 
 
@@ -38,7 +41,6 @@
   // π.bin.isBigEndian()
   // π.bin.isLittleEndian()
 
-  // π.TYPE.
 
 
     /*  TYPE DEFINITIONS  */
@@ -94,6 +96,10 @@
 
 
     // complex types
+
+    π.TYPE.SET        = 200;
+    π.TYPE.SORTEDSET  = 201;
+
     π.TYPE.RANGE = 123;
     π.TYPE.ARRAY = 124;
     π.TYPE.BYTEARRAY = 125;
@@ -235,6 +241,10 @@
 
 
     // complex types
+
+    π.TYPE.names[π.TYPE.SET]        = 'SET';
+    π.TYPE.names[π.TYPE.SORTEDSET]  = 'SORTEDSET';
+
     π.TYPE.names[π.TYPE.RANGE] = 'RANGE';
     π.TYPE.names[π.TYPE.ARRAY] = 'ARRAY';
     π.TYPE.names[π.TYPE.BYTEARRAY] = 'BYTEARRAY';
@@ -246,40 +256,40 @@
 
 
     // higher order types
-    π.TYPE.names[π.TYPE.FILE] = 'FILE';
-    π.TYPE.names[π.TYPE.IMAGE] = 'IMAGE';
-    π.TYPE.names[π.TYPE.DATA] = 'DATA';
-    π.TYPE.names[π.TYPE.TEL] = 'TEL';
-    π.TYPE.names[π.TYPE.GEO] = 'GEO';
-    π.TYPE.names[π.TYPE.EMAIL] = 'EMAIL';
-    π.TYPE.names[π.TYPE.URL] = 'URL';
+    π.TYPE.names[π.TYPE.FILE]   = 'FILE';
+    π.TYPE.names[π.TYPE.IMAGE]  = 'IMAGE';
+    π.TYPE.names[π.TYPE.DATA]   = 'DATA';
+    π.TYPE.names[π.TYPE.TEL]    = 'TEL';
+    π.TYPE.names[π.TYPE.GEO]    = 'GEO';
+    π.TYPE.names[π.TYPE.EMAIL]  = 'EMAIL';
+    π.TYPE.names[π.TYPE.URL]    = 'URL';
 
 
 
       // Pi internal types
 
-      π.TYPE.names[π.TYPE.FORMAT] = 'FORMAT';
-      π.TYPE.names[π.TYPE.CHANNEL] = 'CHANNEL';
-      π.TYPE.names[π.TYPE.ADDRESS] = 'ADDRESS';
+      π.TYPE.names[π.TYPE.FORMAT]   = 'FORMAT';
+      π.TYPE.names[π.TYPE.CHANNEL]  = 'CHANNEL';
+      π.TYPE.names[π.TYPE.ADDRESS]  = 'ADDRESS';
 
       π.TYPE.names[π.TYPE.IGBINARY] = 'IGBINARY';
-      π.TYPE.names[π.TYPE.BASE64] = 'BASE64';
+      π.TYPE.names[π.TYPE.BASE64]   = 'BASE64';
 
 
       // common internal object types
-      π.TYPE.names[π.TYPE.USER] = 'USER';
-      π.TYPE.names[π.TYPE.USERGROUP] = 'USERGROUP';
-      π.TYPE.names[π.TYPE.PERMISSIONS] = 'PERMISSIONS';
+      π.TYPE.names[π.TYPE.USER]         = 'USER';
+      π.TYPE.names[π.TYPE.USERGROUP]    = 'USERGROUP';
+      π.TYPE.names[π.TYPE.PERMISSIONS]  = 'PERMISSIONS';
 
-      π.TYPE.names[π.TYPE.TOKEN] = 'TOKEN';
-      π.TYPE.names[π.TYPE.JSON] = 'JSON';
-      π.TYPE.names[π.TYPE.MYSQL] = 'MYSQL';
-      π.TYPE.names[π.TYPE.REDIS] = 'REDIS';
-      π.TYPE.names[π.TYPE.LIST] = 'LIST';
+      π.TYPE.names[π.TYPE.TOKEN]  = 'TOKEN';
+      π.TYPE.names[π.TYPE.JSON]   = 'JSON';
+      π.TYPE.names[π.TYPE.MYSQL]  = 'MYSQL';
+      π.TYPE.names[π.TYPE.REDIS]  = 'REDIS';
+      π.TYPE.names[π.TYPE.LIST]   = 'LIST';
 
 
       // a UINT32
-      π.TYPE.names[π.TYPE.IP] = 'IP';
+      π.TYPE.names[π.TYPE.IP]   = 'IP';
       π.TYPE.names[π.TYPE.IPV4] = 'IPV4';
 
       // a UINT32 QUAD ?
@@ -287,10 +297,10 @@
 
 
       // PASCAL string, ZeroMQ-compatible fixed-length binary string
-      π.TYPE.names[π.TYPE.SHORTSTRING] = 'SHORTSTRING';
+      π.TYPE.names[π.TYPE.SHORTSTRING]  = 'SHORTSTRING';
 
       // ANSI string, C-compatible null-terminated binary string
-      π.TYPE.names[π.TYPE.ANSISTRING] = 'ANSISTRING';
+      π.TYPE.names[π.TYPE.ANSISTRING]   = 'ANSISTRING';
 
       // UTF-8 string
       π.TYPE.names[π.TYPE.UTF8] = 'UTF8';
@@ -298,20 +308,21 @@
 
 
     // date and time related types
-    π.TYPE.names[π.TYPE.DAY] = 'DAY';
+    π.TYPE.names[π.TYPE.DAY]  = 'DAY';
     π.TYPE.names[π.TYPE.WEEK] = 'WEEK';
     π.TYPE.names[π.TYPE.TIME] = 'TIME';
     π.TYPE.names[π.TYPE.DATE] = 'DATE';
-    π.TYPE.names[π.TYPE.DATETIME] = 'DATETIME';
+
+    π.TYPE.names[π.TYPE.DATETIME]       = 'DATETIME';
     π.TYPE.names[π.TYPE.DATETIME_LOCAL] = 'DATETIME_LOCAL';
 
-    π.TYPE.names[π.TYPE.UNIXTIME] = 'UNIXTIME';
-    π.TYPE.names[π.TYPE.MILLITIME] = 'MILLITIME';
-    π.TYPE.names[π.TYPE.MICROTIME] = 'MICROTIME';
+    π.TYPE.names[π.TYPE.UNIXTIME]   = 'UNIXTIME';
+    π.TYPE.names[π.TYPE.MILLITIME]  = 'MILLITIME';
+    π.TYPE.names[π.TYPE.MICROTIME]  = 'MICROTIME';
 
-    π.TYPE.names[π.TYPE.HOUR] = 'HOUR';
-    π.TYPE.names[π.TYPE.MINUTE] = 'MINUTE';
-    π.TYPE.names[π.TYPE.SECOND] = 'SECOND';
+    π.TYPE.names[π.TYPE.HOUR]       = 'HOUR';
+    π.TYPE.names[π.TYPE.MINUTE]     = 'MINUTE';
+    π.TYPE.names[π.TYPE.SECOND]     = 'SECOND';
 
 
 
@@ -360,10 +371,6 @@
         return null;
       }
     }
-
-
-
-
 
 
 

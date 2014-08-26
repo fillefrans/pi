@@ -18,7 +18,7 @@
 
   class PiACL {
 
-    private   $name       = 'acl';
+    protected $name       = 'acl';
     private   $userEmpty  = false;
 
 

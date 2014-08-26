@@ -10,12 +10,11 @@
 
 
   require_once('pi.type.php');
-  // require_once('pi.db.php');
 
 
   class PiTypeInt extends PiType {
 
-    private   $name = 'int';
+    protected $name = 'int';
     protected $type = null;
 
 
