@@ -170,8 +170,8 @@
    */
   class PiTypeMySQL extends PiType {
 
-    private     $mysqli = null;
-    private     $res    = null;
+    private   $mysqli = null;
+    private   $res    = null;
 
     private   $name       = 'mysql';
     private   $channel    = null;
@@ -183,10 +183,12 @@
 
 
     /**
-     * Constructor
-     * @param   MySQLi  $mysqli   Optional existing MySQLi instance
+     * 
+     * @param string  $address Optional adress in Pi namespace
+     * @param mixed   $value   Optional initial value
+     * @param int     $ttl     Optional Time-to-live in milliseconds
+     * @param MySQLi  $mysqli  Optional existing MySQLi instance
      */
-    
     public function __construct($address=null, $value=null, $ttl=null, MySQLi $mysqli = null) {
       // call PiType class constructor (pass along arguments)
       parent::__construct($address, $value, $ttl);
@@ -205,6 +207,22 @@
 
     }
 
+
+    public function read($address = null, $id=null, $type=null, $size = null, $offset = 0) {
+
+    }
+
+    public function write(PiType $piobject = null, $address = null, $id = null, $type = null, $size = null, $offset = 0) {
+      $mysqlobject = new PiTypeMySQL($piobject);
+    }
+
+    public function update(PiType $object = null, $address = null, $id = null, $type = null, $size = null, $offset = 0) {
+      
+    }
+
+    public function delete(PiType $object = null, $address = null, $id = null, $type = null, $size = null, $offset = 0) {
+      
+    }
 
 
     protected function _init () {

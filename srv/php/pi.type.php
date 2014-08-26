@@ -115,6 +115,9 @@
       define('PI_REDIS',  106);
       define('PI_LIST',   107);
 
+      define('PI_SET',        200);
+      define('PI_SORTEDSET',  201);
+
 
       // a UINT32
       define('PI_IP',   108);
@@ -164,10 +167,33 @@
 
   class PiType {
 
-    private   $name       = 'type';
-    protected $type       = null;
-    protected $value      = null;
+    private   $name     = 'type';
 
+    // Protected, can be accessed by descendants
+    protected $value    = null;
+
+    protected $TYPE     = null;
+    protected $DEFAULT  = null;
+    protected $SIGNED   = null;
+    protected $UNIQUE   = null;
+    protected $INDEX    = null;
+
+    // NOTNULL == required
+    protected $NOTNULL  = false;
+    protected $SIZE     = null;
+
+
+
+    /**
+     * Const, singleton values shared between all descendants
+     *
+     * @example
+     *   $float = PiType.New(PiType::FLOAT32);
+     *
+     *   if ($object->TYPE === PiType::TEL) {
+     *     // handle telephone numbers here
+     *   }
+     */
 
     /*  TYPE DEFINITIONS  */
 
@@ -219,6 +245,10 @@
 
 
     // complex types
+
+    const SET       =  PI_SET;
+    const SORTEDSET =  PI_SORTEDSET;
+
     const RANGE    = PI_RANGE;
     const ARRAY    = PI_ARRAY;
     const BYTEARRAY    = PI_BYTEARRAY;
@@ -297,7 +327,7 @@
       // parent::__construct();
 
       if (is_int($type)) {
-        $this->type = $type;
+        $this->TYPE = $type;
       }
 
     }
@@ -305,38 +335,49 @@
 
     // Default getter and setter : override in Subclasses
 
-    public function get () {
-      return $this->value;
-    }
-
-    public function set ($value = null) {
-      $this->value = $value;
-    }
-
-    public function getset ($value = null) {
-      $previous = $this->value;
-      $this->value = $value;
-      return $previous;
+    public function __set($name,$value){
+      $this->str[$name] = $value;
     }
 
 
+    public function __get($name){
+      echo "Overloaded Property name = " . $this->str[$name] . "<br/>";
+    }
 
-    /*
-      $object = PiType::New('Object', $args);
-      $file   = PiType::New('File', $args);
-      $image  = PiType::New('Image', $args);
-      etc, etc
-     */
+
+    public function __isset($name){
+      if(isset($this->str[$name])){
+        echo "Property \$$name is set.<br/>";   
+      } else {
+        echo "Property \$$name is not set.<br/>";
+      }
+    }
+
+
+    public function __unset($name){
+      unset($this->str[$name]);
+      echo "\$$name is unset <br/>";
+    }
+
+
+
+
+
 
     /**
      * "Factory" of sorts, to create new instances of PiType descendants
      * @param string $className Class name, e.g. : File, Image, Uint, Date, Week, etc
      * @param Type $args      Arguments for the class constructor
+     * 
+     * @return PiType Instance of class, if found
+     * 
      * @example
-     *       $object = PiType::New('Object', $args);
-     *       $file   = PiType::New('File', $args);
-     *       $uint   = PiType::New('Uint', $size);
-     *       $image  = PiType::New('Image', $args);
+     *       $object  = PiType::New('Object', $args);
+     *       $record  = PiType::New('Struct', $typedef);
+     *       $file    = PiType::New('File', $args);
+     *       $uint    = PiType::New('Uint', $size);
+     *       $image   = PiType::New('Image', $args);
+     *       $utc     = PiType::New('Timestamp'[, $UTC]);
      * 
      */
 
