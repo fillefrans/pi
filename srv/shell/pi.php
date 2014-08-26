@@ -1,5 +1,29 @@
-#!/usr/bin/php -q
 <?php
+
+  /**
+   * Pi Shell Script Bootstrapper
+   * - Changes working dir to pi/srv/shell
+   * - Maps switches to individual php files (e.g. "pi update phpmyadmin" => pi/srv/shell/pi.update.phpmyadmin.php)
+   * - Passes on arguments
+   * - Calls passthru()
+   * - Restores working dir
+   * 
+   * @package pi.shell
+   * @version 1.0
+   *
+   * @author Johan Telstad <jt@enfield.no>
+   *
+   * @copyright 2011-2014 Views AS
+   */
+
+
+  $DEBUG = false;
+
+
+  /*  DEBUG  */
+  if (!defined('PI_SHELL_DEBUG')) {
+    define('PI_SHELL_DEBUG', $DEBUG);
+  }
 
 
   // save current directory
@@ -9,50 +33,71 @@
   chdir(__DIR__);
 
 
-
   if ($argc >= 2) {
 
-    // if arg1 is verb/switch, there will be a file named $scriptfile
+    $argno  = 1;
+    $match  = null;
+    $script = null;
 
-    $argno = 1;
-    $match = null;
+    while ( 
 
-    $scriptfile = null;
+      (++$argno < $argc) 
 
-    while ( ($argno < $argc) || file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . $argv[$argno++] . '.php')) ) {
-      // $scriptfile = basename(__FILE__, '.php') . '.' . $argv[1] . '.php';
+      && (
+          file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $argno)) . '.sh')) 
+          ||
+          file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $argno)) . '.php')) 
+          )
+
+    ) {
       
-      print("Looking for : $scriptfile ...");
-      if (file_exists($scriptfile)) {
-        $match = $argno;
-        print(" found it!\n");
-      }
-      else {
-        print(" not found.\n");
+      $script = $scriptfile;
+      $match  = $argno+1;
+
+      if (PI_SHELL_DEBUG) {
+        print("Found : $script\n");
       }
     }
 
 
 
-    if (file_exists($scriptfile)) {
+    if (file_exists($script)) {
 
 
-      // this means arg1 is a verb, so slice off the verb,
-      // and pass along the rest of the parameters
+      if (PI_SHELL_DEBUG) {
+        print("It exists : $script\n");
+      }
 
       // the remaining command line parameters
-      $args = array_slice($argv, $argno);
+      $args = array_slice($argv, $match);
 
       $paramstr = implode(' ', $args);
 
-      $safecommandline = escapeshellcmd('php ' . escapeshellarg($scriptfile) . ' ' . $paramstr;
+      $type = pathinfo($script, PATHINFO_EXTENSION);
 
-      print("Calling : $safecommandline\n"));
+
+      if (PI_SHELL_DEBUG) {
+        print("The TYPE is : $type\n");
+      }
+
+
+      // prefer shell scripts (.sh) above php scripts (.php)
+      if ($type == 'php')  {
+        $safecommandline = escapeshellcmd('php ' . escapeshellarg($script) . ' ' . $paramstr);
+      }
+      else {
+        $safecommandline = escapeshellcmd(escapeshellarg('./'.$script) . ' ' . $paramstr);
+      }
+
+
+      if (PI_SHELL_DEBUG) {
+        print("Calling : $safecommandline\n");
+      }
 
       passthru($safecommandline);
     }
     else {
-      print("File does not exist : $scriptfile\n");
+      print("File does not exist : $script\n");
     }
   }
 
