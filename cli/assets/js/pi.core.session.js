@@ -44,23 +44,19 @@
 
 
   /**
-   * @function π.core.session.__onmessage
-   * 
    * Handles incoming messages on the session WebSocket
    * By far the most important function in the session object
    *
    * This is where we will spend a big part of our time.
    * There shouldn't be any blocking code in here at all
    * and no error checking, this function is only called by trusted code
-   * 
    */
-
     __onmessage : function (event) {
       var
         packet   = JSON.parse(event.data);
 
-      // publish all messages on local debug channel, for debugging
-      π.events.publish('debug.pi.session', packet);
+      // publish all incoming messages on local debug channel, for debugging
+      π.events.publish('debug|pi.session.onmessage', packet);
 
       // packet has a callback?
       if( typeof packet.callback === "function" ) {
@@ -208,9 +204,9 @@
       var
         self = π.core.session,
         commandpacket = { 
-          command: "subscribe",
+          command : "subscribe",
           address : address,
-          data : address
+          data    : address
         };
 
       // create the listener
