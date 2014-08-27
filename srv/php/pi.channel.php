@@ -35,7 +35,6 @@
     define('PIC_CTRL',     10);
     define('PIC_ADMIN',    11);
     define('PIC_SYS',      12);
-    define('PIC_REGEX',    13);
 
     // push channel
     define('PIC_PUSH',     14);
@@ -45,10 +44,10 @@
 
 
   class PiChannelException extends PiException {};
-    
 
 
-  class PiChannel extends Pi {
+
+  class PiChannel extends Pi implements JSONSerializable {
 
     protected $name     = 'channel';
     private   $value    = null;
@@ -71,7 +70,6 @@
     const CTRL    = PIC_CTRL;
     const ADMIN   = PIC_ADMIN;
     const SYS     = PIC_SYS;
-    const REGEX   = PIC_REGEX;
 
     const PUSH    = PIC_PUSH;
     const ZMQ     = PIC_ZMQ;
@@ -90,12 +88,27 @@
       if (is_int($ttl)) {
         $this->$ttl = (int) $ttl;
       }
-      if (is_int($type)) {
-        $this->$TYPE = (int) ($type & 15);
+      if (is_int($id)) {
+        $this->$id = (int) ($id & 15);
       }
 
     }
 
+
+
+    /**
+     * List the addresses in this channel
+     * @param  String   $address
+     * 
+     * @return {Array|NULL|bool}    Array on success, 
+     *                              Boolean FALSE on error,
+     *                              NULL if not found.
+     */
+    public function list ($address = null, $filter = null) {
+      if ($address === null) {
+        
+      }
+    }
 
 
     public function send($data = null, $address = null, PiType $type = null, $ttl = null) {
@@ -134,8 +147,7 @@
        { 
           return new $className($args);
        } 
-    }  
-
+    }
 
   }
 

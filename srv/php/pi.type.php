@@ -3,6 +3,8 @@
   /**
    *  Pi Type class
    *
+   *  The Root class of the Pi Type Library
+   *  
    *  Defines and implements basic Types for the Pi namespace.
    *  These types reflect the available data types in HTML5 and Redis
    *  It defines proper aliases for all basic types for JSON, MySQL, PHP, JavaScript
@@ -12,16 +14,11 @@
 
 
 
-  // require_once('pi.php');
-  // require_once('pi.db.php');
-
-
-
     // basic types
-    define('PI_NAN', NaN);
+    define('PI_NAN', 254);
 
-    define('PI_NULL', null);
-    define('PI_DEFAULT', null);
+    define('PI_NULL', 255);
+    define('PI_DEFAULT', PI_NULL);
 
     define('PI_STR', 1);
     define('PI_STRING', 1);
@@ -81,7 +78,7 @@
 
     // higher order types
 
-    define('PI_ID', PI_UINT64);
+    define('PI_ID', PI_UINT32);
 
     define('PI_FILE',   128);
     define('PI_IMAGE',  129);
@@ -161,15 +158,17 @@
 
 
   class PiTypeException extends PiException {};
-    
 
 
-  class PiType {
+
+  class PiType implements JsonSerializable {
 
     protected $name     = 'type';
 
     // Protected, can be accessed by descendants
     protected $value    = null;
+
+    protected $property = null;
 
     protected $TYPE     = null;
     protected $DEFAULT  = null;
@@ -188,9 +187,18 @@
      *
      * @example
      *   $float = PiType.New(PiType::FLOAT32);
+     *   $float = PiType.New(PI_FLOAT32);
      *
-     *   if ($object->TYPE === PiType::TEL) {
-     *     // handle telephone numbers here
+     *   switch ($object->TYPE) {
+     *     case PiType::TEL :
+     *       // handle telephone numbers 
+     *       break;
+     *     case PI_OBJECT:
+     *       // handle Pi Objects
+     *     break;
+     *     default : {
+     *       // handle the default case
+     *     }
      *   }
      */
 
@@ -296,7 +304,7 @@
       const IPV4   = PI_IPV4;
 
       // a UINT32 QUAD ?
-      const IPV6     = PI_IPV6;
+      const IPV6   = PI_IPV6;
 
 
       // PASCAL string, ZeroMQ-compatible fixed-length binary string
@@ -332,20 +340,28 @@
     }
 
 
+    // The JSONSerializable interface's only method,
+    // called when encoded with json_encode
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    }
+
+
     // Use property overloading to decorate object instance in subclasses
 
-    public function __set($name,$value){
-      $this->str[$name] = $value;
+    public function __set($name, $value){
+      $this->property[$name] = $value;
     }
 
 
     public function __get($name){
-      echo "Overloaded Property name = " . $this->str[$name] . "<br/>";
+      echo "Overloaded Property name = " . $this->property[$name] . "<br/>";
     }
 
 
     public function __isset($name){
-      if(isset($this->str[$name])){
+      if(isset($this->property[$name])){
         echo "Property \$$name is set.<br/>";   
       } else {
         echo "Property \$$name is not set.<br/>";
@@ -354,7 +370,7 @@
 
 
     public function __unset($name){
-      unset($this->str[$name]);
+      unset($this->property[$name]);
       echo "\$$name is unset <br/>";
     }
 

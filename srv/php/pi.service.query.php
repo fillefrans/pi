@@ -38,7 +38,7 @@
 
         public function __construct() {
           $this->address        = basename(__FILE__, '.php');
-          $this->commandaddress = "ctrl." . $this->address;
+          $this->commandaddress = "ctrl|" . $this->address;
           $this->name       = $this->address;
         }
 

@@ -7,6 +7,8 @@
     require_once('pi.exception.php');
     require_once('pi.util.functions.php');
 
+    require_once('pi.type.php');
+
   	require_once('websocket.server.php');
 
 

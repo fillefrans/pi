@@ -132,15 +132,15 @@
 
 
       // common internal object types
-      π.TYPE.USER = 100;
-      π.TYPE.USERGROUP = 101;
+      π.TYPE.USER   = 100;
+      π.TYPE.GROUP  = 101;
       π.TYPE.PERMISSIONS = 102;
 
-      π.TYPE.TOKEN = 103;
-      π.TYPE.JSON = 104;
-      π.TYPE.MYSQL = 105;
-      π.TYPE.REDIS = 106;
-      π.TYPE.LIST = 107;
+      π.TYPE.TOKEN  = 103;
+      π.TYPE.JSON   = 104;
+      π.TYPE.MYSQL  = 105;
+      π.TYPE.REDIS  = 106;
+      π.TYPE.LIST   = 107;
 
 
       // a UINT32

@@ -99,14 +99,14 @@
       define('MYSQL_CHANNEL',  'PI_CHANNEL');
       define('MYSQL_ADDRESS',  'PI_ADDRESS');
 
-      define('MYSQL_IGBINARY', 'PI_IGBINARY');
-      define('MYSQL_BASE64',   'PI_BASE64');
+      define('MYSQL_IGBINARY', 'VARBINARY');
+      define('MYSQL_BASE64',   'VARCHAR');
 
 
       // common internal object types
       define('MYSQL_USER',         'PI_USER');
       define('MYSQL_USERGROUP',    'PI_USERGROUP');
-      define('MYSQL_PERMISSIONS',  'PI_PERMISSIONS');
+      define('MYSQL_PERMISSIONS',  'BIT(12)');
 
       define('MYSQL_TOKEN',  'PI_TOKEN');
       define('MYSQL_JSON',   'PI_JSON');
@@ -156,7 +156,7 @@
     define('MYSQL_MILLITIME',  'BIGINT');
     define('MYSQL_MICROTIME',  'DOUBLE');
 
-    
+
 
 
 
@@ -174,13 +174,11 @@
     private   $res    = null;
 
     protected $name       = 'mysql';
-    private   $channel    = null;
-
-    public function __construct() {
-    }
+    private   $channel    = PI_DB;
 
 
-
+    // CREATE, ADD, ALTER, DROP
+    // SELECT, INSERT, UPDATE, DELETE
 
     /**
      * 
@@ -204,13 +202,14 @@
 
       $this->_init();
 
-
     }
+
 
 
     public function read($address = null, $id=null, $type=null, $size = null, $offset = 0) {
 
     }
+
 
     public function write(PiType $piobject = null, $address = null, $id = null, $type = null, $size = null, $offset = 0) {
       $mysqlobject = new PiTypeMySQL($piobject);

@@ -1,8 +1,7 @@
   /**
    *
-   * π v0.4.4
+   * π v0.4.5
    *
-   * @description 
    * Pi is an html5-based client-server application platform
    *
    * This is the client part
@@ -1141,6 +1140,40 @@
           return false;
         }
     };
+
+
+
+    /** 
+     * π.readlist
+     *
+     * @description List contents of remote address
+     *
+     * @param  {string}     address       [channel[:id]|]address
+     * @param  {string}     filetype      The file extension
+     * @param  {Function}   callback      Callback for each return value available
+     * 
+     * @return {string|boolean}           Data set on success, false on failure
+     * 
+     */
+
+
+    π.readlist = function(address, callback, onerror) {
+
+      var
+        parameters = { address: address };
+
+      if(typeof callback != "function") {
+        pi.log("Error : callback is not a function in readlist().");
+        if(typeof onerror == "function") {
+          onerror.call(this, "callback is not a function in readlist().");
+        }
+        return false;
+      }
+    
+      // TBC
+      return π._send("list", address, parameters, callback, onerror);
+    };
+
 
 
 
