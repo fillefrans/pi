@@ -20,8 +20,24 @@
     protected $length     = null;
     protected $maxlength  = null;
 
-    public function __construct($maxlength = 255, $value = '') {
+    /**
+     * Pi Type ShortString constructor
+     * 
+     * @param string  $value     [description]
+     * @param integer $maxlength [description]
+     *
+     * @throws RangeException If maxlength is outside of range 0-255
+     * @throws InvalidArgumentException   If not called by on of the following signatures:
+     *                                    (int length), (string value), (string value, int maxlength[0-255])
+     * @throws InvalidArgumentException   If 
+     */
+    public function __construct($value = '', $maxlength = 255) {
       if (!is_string($value)) {
+        if (is_int($value)) {
+          if ($value > 255 || $value < 0) {
+            throw new RangeException("Expected value to be String, received : " . gettype($value), 1);
+          }
+        }
         throw new InvalidArgumentException("Expected value to be String, received : " . gettype($value), 1);
       }
 

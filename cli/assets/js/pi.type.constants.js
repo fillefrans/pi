@@ -1,9 +1,8 @@
 /**
  *
- * π.TYPE
+ * π.TYPE.constants
  *
- * @description Defines Pi Type Library, and support functions
- * @requires    HTML5, or typed array polyfill
+ * @description Defines Pi Type Library constants, and support functions
  * 
  * @author Johan Telstad, jt@enfield.no, 2011-2014
  */

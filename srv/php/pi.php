@@ -106,7 +106,7 @@
     }
 
 
-    public function say($msg="nothing to say") {
+    public function say($msg="ping") {
       $msg_array  = array('message' => $msg, 'time' => time());
 
       // publish debug info to our own address

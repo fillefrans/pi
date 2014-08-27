@@ -48,12 +48,14 @@
     
 
 
-  class PiChannel {
+  class PiChannel extends Pi {
 
     protected $name     = 'channel';
     private   $value    = null;
-    protected $type     = null;
+    protected $address  = null;
+    protected $TYPE     = null;
     protected $ttl      = null;
+    protected $id       = null;
 
 
     // channels
@@ -75,44 +77,41 @@
     const ZMQ     = PIC_ZMQ;
 
 
-    public function __construct($address = null, $type = null, $ttl = null) {
+    public function __construct($id = null, PiType $type = null, $address = null, $ttl = null) {
 
-      if ($address === null) {
-        throw new InvalidArgumentException("Invalid address : null", 1);
-      }
-      if (!is_string($address)) {
+      if ($address && !is_string($address)) {
         throw new InvalidArgumentException("Expected address to be String, received : " . gettype($address), 1);
       }
 
       // call Pi Base class constructor (takes no arguments)
       parent::__construct();
 
+      $this->address = $address;
       if (is_int($ttl)) {
         $this->$ttl = (int) $ttl;
       }
-
-      if ($type === null) {
-        // no particular type
-        return;
-      }
-
-      switch ($type) {
-        case PI_UINT8;
-        case PI_UINT16;
-        case PI_UINT32;
-        case PI_UINT64;
-
-          break;
-        
-        default:
-          // object
-          break;
+      if (is_int($type)) {
+        $this->$TYPE = (int) ($type & 15);
       }
 
     }
 
 
 
+    public function send($data = null, $address = null, PiType $type = null, $ttl = null) {
+      if ($data === null) {
+        throw new InvalidArgumentException("data cannot be null", 1);
+      }
+      if ($address === null) {
+        // broadcast
+        $this->redis->rPush($this->channel . $this->address, $data);
+      }
+    }
+
+
+    public function receive($data = null, $address = null, $type = null, $ttl = null) {
+      
+    }
 
 
 
