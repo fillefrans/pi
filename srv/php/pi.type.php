@@ -168,18 +168,22 @@
     // Protected, can be accessed by descendants
     protected $value    = null;
 
-    protected $property = null;
-
     protected $TYPE     = null;
     protected $DEFAULT  = null;
+
+    protected $STRING   = null;
+    protected $BINARY   = null;
+    protected $FLOAT    = null;
+    protected $INT      = null;
     protected $SIGNED   = null;
+    protected $BITS     = null;
+    protected $SIZE     = null;
     protected $UNIQUE   = null;
     protected $INDEX    = null;
+    protected $MULTIPLE = null;
 
     // NOTNULL == required
     protected $NOTNULL  = false;
-    protected $SIZE     = null;
-
 
 
     /**

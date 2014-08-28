@@ -17,7 +17,7 @@
    */
 
 
-  $DEBUG = false;
+  $DEBUG = true;
 
 
   /*  DEBUG  */
@@ -32,53 +32,45 @@
   // run within containing directory
   chdir(__DIR__);
 
+  $matches = array();
 
   if ($argc >= 2) {
 
-    $argno  = 1;
-    $match  = null;
-    $script = null;
 
-    while ( 
 
-      (++$argno < $argc) 
-
-      && (
-          file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $argno)) . '.sh')) 
-          ||
-          file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $argno)) . '.php')) 
-          )
-
-    ) {
-      
-      $script = $scriptfile;
-      $match  = $argno+1;
-
+    for ($i = 1; $i < $argc; $i++) {
+      $scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $i)) . '.php';
       if (PI_SHELL_DEBUG) {
-        print("Found : $script\n");
+        // print("looking : $scriptfile\n");
+        if (file_exists($scriptfile)) {
+          array_push($matches, $scriptfile);
+          $match = $i+1;
+          // print("found : $scriptfile\n\n");
+        }
       }
+
+      $scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $i)) . '.sh';
+      if (PI_SHELL_DEBUG) {
+        // print("looking : $scriptfile\n");
+        if (file_exists($scriptfile)) {
+          array_push($matches, $scriptfile);
+          // print("found : $scriptfile\n\n");
+          $match = $i+1;
+        }
+      }
+
     }
 
 
+    if ($matches) {
 
-    if (file_exists($script)) {
+      $script = array_pop($matches);
 
-
-      if (PI_SHELL_DEBUG) {
-        print("It exists : $script\n");
-      }
-
-      // the remaining command line parameters
       $args = array_slice($argv, $match);
 
       $paramstr = implode(' ', $args);
 
       $type = pathinfo($script, PATHINFO_EXTENSION);
-
-
-      if (PI_SHELL_DEBUG) {
-        print("The TYPE is : $type\n");
-      }
 
 
       // prefer shell scripts (.sh) above php scripts (.php)
@@ -90,16 +82,88 @@
       }
 
 
-      if (PI_SHELL_DEBUG) {
-        print("Calling : $safecommandline\n");
-      }
+      // if (PI_SHELL_DEBUG) {
+      //   print("Calling : $safecommandline\n");
+      // }
 
       passthru($safecommandline);
+
     }
+
+
+    // $argno  = 1;
+    // $match  = null;
+    // $script = null;
+
+    // while ( 
+
+    //   (++$argno < $argc) 
+
+    //   && (
+    //       file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $argno)) . '.sh')) 
+    //       ||
+    //       file_exists( ($scriptfile = basename(__FILE__, '.php') . '.' . implode('.', array_slice($argv, 1, $argno)) . '.php')) 
+    //       )
+
+    // ) {
+      
+    //   $script = $scriptfile;
+    //   $match  = $argno+1;
+
+    //   if (PI_SHELL_DEBUG) {
+    //     print("Found : $script\n");
+    //   }
+    // }
+
+
+    // if (PI_SHELL_DEBUG) {
+    //   var_dump($argv);
+    // }
+
+
+    // if (file_exists($script)) {
+
+
+    //   if (PI_SHELL_DEBUG) {
+    //     print("It exists : $script\n");
+    //   }
+
+    //   // the remaining command line parameters
+    //   $args = array_slice($argv, $match);
+
+    //   $paramstr = implode(' ', $args);
+
+    //   $type = pathinfo($script, PATHINFO_EXTENSION);
+
+
+    //   if (PI_SHELL_DEBUG) {
+    //     print("The TYPE is : $type\n");
+    //   }
+
+
+    //   // prefer shell scripts (.sh) above php scripts (.php)
+    //   if ($type == 'php')  {
+    //     $safecommandline = escapeshellcmd('php ' . escapeshellarg($script) . ' ' . $paramstr);
+    //   }
+    //   else {
+    //     $safecommandline = escapeshellcmd(escapeshellarg('./'.$script) . ' ' . $paramstr);
+    //   }
+
+
+    //   if (PI_SHELL_DEBUG) {
+    //     print("Calling : $safecommandline\n");
+    //   }
+
+    //   passthru($safecommandline);
+    // }
+    // else {
+    //   print("File does not exist : $script\n");
+    // }
+
+  }
     else {
       print("File does not exist : $script\n");
     }
-  }
 
 
   // restore current directory
