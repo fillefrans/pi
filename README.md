@@ -116,7 +116,7 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 
 ##Documentation
-    you're looking at it, for the time being
+    this is it, afraid so
 
 ---
 ##Philosophy
