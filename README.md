@@ -5,18 +5,18 @@
 
 Pi is a distributed application platform for HTML5
 
-- fast
-- efficient
-- extensible
-- flexible
-- scalable
-- provides a communication network between all parts of the namespace
-- only available in HTML5 compatible browsers
-- real time
-- namespaced
+    - fast
+    - efficient
+    - extensible
+    - flexible
+    - scalable
+    - provides a communication network between all parts of the namespace
+    - only available in HTML5 compatible browsers
+    - real time
+    - namespaced
 
 
-The central concepts in pi are : **channel**, **address**, **object** and **type**
+Central concepts : **channel**, **address**, **object** and **type**
 
 #####ADDRESS
 ---
@@ -32,7 +32,6 @@ The central concepts in pi are : **channel**, **address**, **object** and **type
 
         "db|pi.user.8739"
         "zmq:9001|pi.service.myzmqservice"
-
 
 
 ####BUILT-IN CHANNELS
@@ -55,7 +54,7 @@ The central concepts in pi are : **channel**, **address**, **object** and **type
     15 : ZMQ
 
 
-####EXTERNAL ADDRESS 
+####EXTERNAL ADDRESSES 
 ---
     "db|pi.user.8739@pi.viewshq.no:8080/api/pi.io.db.php"
     "zmq:9001|pi.service.myzmqservice@zmq.myservice.com:7800/services/zmq/myzmq/"
@@ -63,7 +62,6 @@ The central concepts in pi are : **channel**, **address**, **object** and **type
 
 
 Pi is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
-
 
 
 
@@ -84,28 +82,24 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
     the (local or global) network at that point in time
 
 
-    which needs explaining, yes
-
-
-####
-Pi could not exist without Redis, in-memory database with persistence to disk. 
+    which needs explaining, yes yes
 
 
 
-###Inspirations
+
+###Inspired
 * [Salvatore Sanfilippo](http://antirez.com/), creator of [Redis](http://redis.io)
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
-* the unix toolchain
+* unix toolchain
 
+
+*Pi could not exist without Redis, in-memory database with persistence to disk.*
 
 
 ####General
-* We are requiring HTML5, using native functions wherever possible
-* WebWorkers allow for background processing.
-* GreenSock [GSAP](https://www.greensock.com/tag/tutorial/).
-* Leaflet [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
+* We require HTML5, using native functions wherever possible
+* should prob. use WebWorkers, and do background processing
 
-* [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
 
 
 ####Client-side
@@ -209,6 +203,7 @@ Pi could not exist without Redis, in-memory database with persistence to disk.
 
 ###Tricks
 * [Running multiple instances of Redis](http://chrislaskey.com/blog/342/running-multiple-redis-instances-on-the-same-server/)
+* [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/)
 
 
 ###Snippets
