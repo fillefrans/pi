@@ -31,24 +31,26 @@ CHANNEL
     "db|pi.user.8739"
     "zmq:9001|pi.service.myzmqservice"
 
-- there are 15 pre-defined channels in Pi
+- Pi has 15 pre-defined channels:
 
-    - 0 : BASE
-    - 1 : AUTH
-    - 2 : CHAT
-    - 3 : DEBUG
-    - 4 : WARNING
-    - 5 : ERROR
-    - 6 : LOG
-    - 7 : TYPE
-    - 8 : DB
-    - 9 : PING
-    - 10 : CTRL
-    - 11 : ADMIN
-    - 12 : SYS
+---
 
-    - 14 : PUSH
-    - 15 : ZMQ
+     0 : BASE
+     1 : AUTH
+     2 : CHAT
+     3 : DEBUG
+     4 : WARNING
+     5 : ERROR
+     6 : LOG
+     7 : TYPE
+     8 : DB
+     9 : PING
+    10 : CTRL
+    11 : ADMIN
+    12 : SYS
+
+    14 : PUSH
+    15 : ZMQ
 
 
 - external addresses look like: 
@@ -63,7 +65,7 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 about pi
 
-    a minuscule platform with majuscule impact
+    * - a minuscule platform with majuscule impact*
 
     scales and connects biologically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes and time scales)
 
