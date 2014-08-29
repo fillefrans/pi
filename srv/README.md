@@ -1,7 +1,7 @@
 ##π server
 
 
-###Server setup
+###Setup
 
 ####Varnish
 default.vcl
