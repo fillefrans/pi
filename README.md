@@ -138,9 +138,9 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 
 ###Not supported
-    Opera Mini
-    Android native browser has no WebSocket, and no Web Worker.
-    IE < 9
+    - Opera Mini
+    - Android native browser has no WebSocket, and no Web Worker.
+    - IE < 9
 
 
 ####Client Libraries
