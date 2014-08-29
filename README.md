@@ -48,12 +48,11 @@ Central concepts : **channel**, **address**, **object** and **type**
     10 : ctrl
     11 : admin
     12 : sys
-
     14 : push
     15 : zmq
 
 
-####EXTERNAL ADDRESSES 
+####EXTERNAL ADDRESS
 ---
     "db|pi.user.8739@pi.viewshq.no:8080/api/pi.io.db.php"
     "zmq:9001|pi.service.myzmqservice@zmq.myservice.com:7800/services/zmq/myzmq/"
@@ -64,10 +63,10 @@ Central concepts : **channel**, **address**, **object** and **type**
     - serializable as SQL, JSON, igbinary
 
 
-####Object
+####OBJECT
     - serializable collection of TYPE instances
-    - may be nested, wethinks
-    - but not yet
+    - may be nested
+    - not yet, though
 
 
 Pi is inspired by flow-based programming and the old-school linux toolchain, 
@@ -76,9 +75,9 @@ where specialized agents can be configured into flexible chains of processing.
 
 
 ####**ABOUT**
-*platform minuscule, impact majuscule*
+*somewhere between the minuscule and the majuscule*
 
-    scales dynamically, as hardware allows
+    scale dynamically, as hardware allows
 
     work in parallel and sequentially simultaneously 
     (and in real-time) in all connected parts - sending only 
@@ -92,7 +91,7 @@ where specialized agents can be configured into flexible chains of processing.
     the (local or global) network at that point in time
 
 
-    which needs explaining, yes yes
+    which needs explanation, yes
 
 
 
@@ -137,11 +136,12 @@ where specialized agents can be configured into flexible chains of processing.
 
 
 ##Target browsers
-- WebKit + Firefox, all platforms
+- WebKit + Firefox
 - iOs >= 5.1
 - Android >= 4.0 (Except native browser)
-- IE 10 on Windows 7/Windows Phone 8
-- In effect, any modern browser with WebSocket support
+- IE 10
+- IE 9, when not impossible
+- any modern browser with WebSocket support
 
 
 
