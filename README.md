@@ -120,20 +120,20 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 ---
 ##Philosophy
-    Optimize for devices
-    Optimize server/cache setup
-    Background processing where sensible and possible
-    Modular loading of resources
-    Cross-browser, within reason
-    Cross-device support, again within reason
+- Optimize for devices
+- Optimize server/cache setup
+- Background processing where sensible and possible
+- Modular loading of resources
+- Cross-browser, within reason
+- Cross-device support, again within reason
 
 
 ##Target browsers
-    WebKit + Firefox, all platforms
-    iOs >= 5.1
-    Android >= 4.0 (Except native browser)
-    IE 10 on Windows 7/Windows Phone 8
-    In effect, any modern browser with WebSocket support
+- WebKit + Firefox, all platforms
+- iOs >= 5.1
+- Android >= 4.0 (Except native browser)
+- IE 10 on Windows 7/Windows Phone 8
+- In effect, any modern browser with WebSocket support
 
 
 
