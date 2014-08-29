@@ -63,7 +63,7 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 about pi
 
-* - a minuscule platform with majuscule impact*
+*a minuscule platform with majuscule impact*
 
     scales and connects biologically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes and time scales)
 
