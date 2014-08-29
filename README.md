@@ -1,35 +1,63 @@
 ##π
 
 
-####What is π?
+####Que?
 
 pi is a distributed application platform for HTML5
 
-The short version is:
-
-- π is fast
+- fast
+- efficient
 - extensible
 - flexible
-- heavily optimized for mobile devices
-- has a namespace
+- scalable
 - provides a communication network between all parts of the namespace
-- requires an HTML5-compatible browser. 
+- only available in HTML5-compatible browsers
+- real-time
+- namespaced
 
 
-The central concept in π is the shared namespace across the client and server. 
+The central concepts in pi are : channel, address, object and type
 
-Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, etc
+ADDRESS
+- an address is a path in the pi namespace: 
+    "pi.user.8739"
+    "pi.service.time.tick"
+    "pi.app"
 
-As an example: a server script may be invoked by a user session in an app. The app 
-can then subscribe to a dedicated channel where the server script publishes progress events. 
+CHANNEL
+- a channel is a filter that allows separation of traffic to the same address
 
-Another example: two apps may define a common namespace for exchanging messages and events.
+- a channel and an address are given together in the following style: 
+    "db|pi.user.8739"
+    "zmq:9001|pi.service.myzmqservice"
+
+- there are 15 pre-defined channels in Pi
+
+    - 0 : BASE
+    - 1 : AUTH
+    - 2 : CHAT
+    - 3 : DEBUG
+    - 4 : WARNING
+    - 5 : ERROR
+    - 6 : LOG
+    - 7 : TYPE
+    - 8 : DB
+    - 9 : PING
+    - 10 : CTRL
+    - 11 : ADMIN
+    - 12 : SYS
+
+    - 14 : PUSH
+    - 15 : ZMQ
 
 
-π is a bare-bones but extensible set of best practices and libraries that serves as a platform for developing real-time distributes web apps/components/services/sites, with a modular architecture and a built-in dependency system with on-demand loading and preloading. 
+- external addresses look like: 
+    "db|pi.user.8739@pi.viewshq.no:8080/api/pi.io.db.php"
+    "zmq:9001|pi.service.myzmqservice@zmq.myservice.com:7800/services/zmq/myzmq/"
 
 
-π is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
+
+Pi is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
 
 
 
