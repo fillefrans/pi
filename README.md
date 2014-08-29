@@ -29,10 +29,9 @@ The central concepts in pi are : **channel**, **address**, **object** and **type
 ---
     - a channel is a filter that allows separation of traffic to the same address
     - a channel and an address are given together in the following style: 
-    ---
+
         "db|pi.user.8739"
         "zmq:9001|pi.service.myzmqservice"
-    ---
 
 
 
@@ -67,9 +66,9 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 
 
-*a minuscule platform with majuscule impact*
 
-#####about pi
+####**about pi**
+*a minuscule platform with majuscule impact*
 
     scales and connects itself automagically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes)
 
