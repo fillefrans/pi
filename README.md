@@ -1,9 +1,6 @@
 ##π
 
-
-####Que?
-
-Pi is a distributed application platform for HTML5
+a distributed application platform for HTML5
 
     - fast
     - efficient
@@ -36,22 +33,22 @@ Central concepts : **channel**, **address**, **object** and **type**
 
 ####BUILT-IN CHANNELS
 ---
-     0 : BASE
-     1 : AUTH
-     2 : CHAT
-     3 : DEBUG
-     4 : WARNING
-     5 : ERROR
-     6 : LOG
-     7 : TYPE
-     8 : DB
-     9 : PING
-    10 : CTRL
-    11 : ADMIN
-    12 : SYS
+     0 : base
+     1 : auth
+     2 : chat
+     3 : debug
+     4 : warning
+     5 : error
+     6 : log
+     7 : type
+     8 : db
+     9 : ping
+    10 : ctrl
+    11 : admin
+    12 : sys
 
-    14 : PUSH
-    15 : ZMQ
+    14 : push
+    15 : zmq
 
 
 ####EXTERNAL ADDRESSES 
@@ -60,12 +57,17 @@ Central concepts : **channel**, **address**, **object** and **type**
     "zmq:9001|pi.service.myzmqservice@zmq.myservice.com:7800/services/zmq/myzmq/"
 
 
+####TYPE
+    - built-in type library for all basic types, html5 types
+    - serializable as SQL, JSON, igbinary
 
-Pi is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
+
+Pi is inspired by flow-based programming and the old-school linux toolchain, 
+where specialized agents can be configured into flexible chains of processing.
 
 
 
-####**about pi**
+####**ABOUT**
 *minuscule platform with a majuscule impact*
 
     scales dynamically, as hardware allows
@@ -82,7 +84,7 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
     the (local or global) network at that point in time
 
 
-    which needs explaining, yes yes
+    which need explaining, yes yes
 
 
 
