@@ -18,7 +18,7 @@ Pi is a distributed application platform for HTML5
 
 The central concepts in pi are : **channel**, **address**, **object** and **type**
 
-###ADDRESS
+#####ADDRESS
 an address is a path in the pi namespace:
 ---
     "pi.user.8739"
@@ -26,7 +26,7 @@ an address is a path in the pi namespace:
     "pi.app"
 ---
 
-###CHANNEL
+####CHANNEL
 ---
 -a channel is a filter that allows separation of traffic to the same address
 
@@ -66,9 +66,9 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 
 
-#####about pi
-
 *a minuscule platform with majuscule impact*
+
+#####about pi
 
     scales and connects itself automagically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes)
 
