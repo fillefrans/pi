@@ -64,6 +64,11 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 #####about pi
 
 *a minuscule platform with majuscule impact*
+<<<<<<< HEAD
+=======
+
+    scales and connects biologically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes and time scales)
+>>>>>>> 0ef7dd247aa92e8a8b9d8ed3857b5f8e5de1edee
 
     scales and connects itself automagically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes)
 
