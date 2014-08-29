@@ -68,24 +68,29 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 
 ####**about pi**
-*a minuscule platform with majuscule impact*
+*minuscule platform with a majuscule impact*
 
-    scales and connects itself automagically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes)
+    scales and connects itself (can self-replicate, self-organise, 
+        and keep timing across processes)
 
-    allows us to work in parallell and sequentially at the same time, and do it real-time for all of
-    the connected parts, and send only the changes made elsewhere to each individual part, while
+    Allows us to work in parallell and sequentially at the same time, 
+    and do it real-time for all of the connected parts, and send only 
+    the changes made elsewhere to each individual part, while
     receiving only changes made in return
 
-    separating above/below in the namespace and equating to before/after, allows us to
-    collapse the changes into their sum at each tick (on any level), and efficiently update the state 
-    of the dataset that represents the (local or global) network at that point
+    separating above/below in the namespace and equating to 
+    before/after, allows us to collapse the changes into 
+    their sum at each tick (on any level), and efficiently 
+    update the state of the dataset that represents 
+    the (local or global) network at that point in time
 
-    that means we can reliably combine stored data with live data as they come in, since
-    we know how many ticks there were between the state of the dataset received from db, and
+    this means we can reliably combine stored data with live 
+    data as they come in, since we know how many ticks there 
+    are between the state of the dataset received from db, and
     the tick at which we started receiving data
 
-    then we can discard the duplicates from the overlap and start receiving only changes 
-    to the dataset, which is more efficient
+    then, discard the duplicates from the overlap and start 
+    receiving only changes to the dataset, which is more efficient
 
 
 
