@@ -27,12 +27,12 @@ The central concepts in pi are : **channel**, **address**, **object** and **type
 
 ####CHANNEL
 ---
--a channel is a filter that allows separation of traffic to the same address
--a channel and an address are given together in the following style: 
----
-    "db|pi.user.8739"
-    "zmq:9001|pi.service.myzmqservice"
----
+    - a channel is a filter that allows separation of traffic to the same address
+    - a channel and an address are given together in the following style: 
+    ---
+        "db|pi.user.8739"
+        "zmq:9001|pi.service.myzmqservice"
+    ---
 
 
 
