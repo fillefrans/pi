@@ -25,7 +25,9 @@ Central concepts : **channel**, **address**, **object** and **type**
 ####CHANNEL
 ---
     - a channel is a filter that allows separation of traffic to the same address
-    - a channel and an address are given together in the following style: 
+    - a channel may have an attached variable value
+    - a "|" separates the channel from the address
+    - a channel and address are given together in the following style: 
 
         "db|pi.user.8739"
         "zmq:9001|pi.service.myzmqservice"
@@ -62,17 +64,23 @@ Central concepts : **channel**, **address**, **object** and **type**
     - serializable as SQL, JSON, igbinary
 
 
+####Object
+    - serializable collection of TYPE instances
+    - may be nested, wethinks
+    - but not yet
+
+
 Pi is inspired by flow-based programming and the old-school linux toolchain, 
 where specialized agents can be configured into flexible chains of processing.
 
 
 
 ####**ABOUT**
-*minuscule platform with a majuscule impact*
+*platform minuscule, impact majuscule*
 
     scales dynamically, as hardware allows
 
-    Allows us to work in parallel and sequentially simultaneously 
+    work in parallel and sequentially simultaneously 
     (and in real-time) in all connected parts - sending only 
     the changes made elsewhere to each individual part, while
     receiving only changes made in return
@@ -84,7 +92,7 @@ where specialized agents can be configured into flexible chains of processing.
     the (local or global) network at that point in time
 
 
-    which need explaining, yes yes
+    which needs explaining, yes yes
 
 
 
@@ -94,8 +102,6 @@ where specialized agents can be configured into flexible chains of processing.
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
 * unix toolchain
 
-
-*Pi could not exist without Redis, in-memory database with persistence to disk.*
 
 
 ####General
@@ -118,7 +124,7 @@ where specialized agents can be configured into flexible chains of processing.
 
 
 ##Documentation
-    this is it, afraid so
+    this, for now
 
 ---
 ##Philosophy
@@ -154,7 +160,7 @@ where specialized agents can be configured into flexible chains of processing.
 * [ApnsPHP: Apple Push Notification & Feedback Provider](https://github.com/duccio/ApnsPHP)
 
 
-###Miscellaneous
+###MISC
 * [why-arent-you-using-git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
 * [git-flow - A collection of Git extensions to provide high-level repository operations for Vincent Driessen's branching model](https://github.com/nvie/gitflow)
 * [git-flow cheat sheet](http://danielkummer.github.io/git-flow-cheatsheet/)
@@ -162,11 +168,6 @@ where specialized agents can be configured into flexible chains of processing.
 * [Charles Web Debugging Proxy - Windows/Mac/Linux](http://www.charlesproxy.com/)
 * [caniuse.com - HTML5 browser support by feature](http://caniuse.com)
 * [jsPerf — JavaScript performance playground](http://jsperf.com/)
-
-
-### Other
-* [Push Notification Plugin for iOS and Android](https://github.com/phonegap-build/PushPlugin)
-
 
 
 ###Speed and optimization guidelines:
