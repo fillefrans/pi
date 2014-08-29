@@ -1,36 +1,22 @@
 ##π
 
-Build status:
-<img src="https://www.codeship.io/projects/81f31f40-89fa-0131-e282-62e1c9d5c632/status">
-
 
 ####What is π?
 
-First and foremost, it is a tool for building single-page web and mobile apps/platforms.
+pi is a distributed application platform for HTML5
 
 The short version is:
 
-- π is pretty fast
+- π is fast
 - extensible
-- very flexible
-- is heavily optimized for mobile devices
-- uses mostly messaging instead of callbacks
-- uses websockets instead of XHR
-- uses namespaces 
-- uses background processing to avoid blocking the user thread
-- does not rely on other libraries
-- is designed to work optimally with Varnish and Redis
+- flexible
+- heavily optimized for mobile devices
+- has a namespace
 - provides a communication network between all parts of the namespace
 - requires an HTML5-compatible browser. 
 
 
 The central concept in π is the shared namespace across the client and server. 
-
-There are in fact two namespaces: one namespace organizes objects and components in the web app.
-The other namespace is an addressing namespace that allows message passing between arbitrary parts of the entire system of users, apps and services. 
-
-Over this messaging system, an app can also communicate with another app or even a specific user session in another app.
-
 
 Any part of the namespace may interact with any other part: server, app, user, module, plugin, component, etc
 
@@ -40,24 +26,14 @@ can then subscribe to a dedicated channel where the server script publishes prog
 Another example: two apps may define a common namespace for exchanging messages and events.
 
 
-Any server software can access the PHP session information for any client, since it is stored in Redis.
-
-Components can be loaded into apps on the fly, or queued for preloading. Scripts and CSS can be injected into the DOM in three ways:
-   1. By adding a script-src tag to the DOM (good for using browser cache)
-   2. Loaded over XHR, injected into the DOM 
-   3. Loaded over WebSocket, injected into the DOM
-
-For 2. and 3., it is possible to store documents and snippets in HTML5's localStorage
-
-
-π is a bare-bones but extensible set of libraries that serves as a platform for developing real-time client-server web apps/components/sites, with a modular architecture and a built-in dependency system using synchronous or asynchronous on-demand loading and preloading. 
+π is a bare-bones but extensible set of best practices and libraries that serves as a platform for developing real-time distributes web apps/components/services/sites, with a modular architecture and a built-in dependency system with on-demand loading and preloading. 
 
 
 π is inspired by flow-based programming and the old-school linux toolchain, where specialized, highly optimized agents can be configured into flexible chains of processing.
 
 
 
-pi unique qualities
+about pi
 
     a minuscule platform with majuscule impact
 
@@ -91,8 +67,6 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 
 ###Inspirations
 * [Salvatore Sanfilippo](http://antirez.com/), creator of [Redis](http://redis.io)
-* The [GreenSock Animation Platform](http://greensock.com)
-* Higgins' PubSub
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
 * the unix toolchain
 
@@ -100,19 +74,15 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 
 ####General
 * We are requiring HTML5, and using native functions wherever possible
-* Check out [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
-* Vector graphics is great for Retina displays.
-* GreenSock is the best animation library. Because it's small, fast and flexible. [GSAP](https://www.greensock.com/tag/tutorial/).
 * WebWorkers allow for background processing.
-* For size and position, using perfect cubes (or multiples): 8, 64, 216, 512, makes it easier to stack components.
+* GreenSock [GSAP](https://www.greensock.com/tag/tutorial/).
+* Leaflet [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
 
 * [CSS injection of SVG](http://www.somerandomdude.com/2012/08/12/svg-css-injection/) might be something to look at
 
 
 ####Client-side
 * Components should be self-contained.
-* The π.app and π.plugins namespaces are open to anyone.
-* Use CSS classes and sub-classes
 * Use documentFragment when adding more than one node to the DOM at a time
 
 
@@ -121,25 +91,22 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 * Replace the PHP serializer with [igbinary](https://github.com/igbinary/igbinary).
 * Compile Redis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
 * Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient, as Redis is very pointer-intensive
-* Use Redis for PHP session storage and application shared memory.
+* Possible to use Redis for PHP session storage and application shared memory.
 
 
 ##Documentation
-When we're at version 0.6 or thereabouts. Read the code, read the comments.
+You're reading it, as things stand
 
 ---
 
 
-##Aims
-* Optimized for devices
-* Optimized server/cache setup
-* Background processing where sensible
+##Philosophy
+* Optimize for devices
+* Optimize server/cache setup
+* Background processing where sensible and possible
 * Modular loading of resources
 * Cross-browser, within reason
 * Cross-device support, again within reason
-* If possible, generic access to a subset of native device resources from JavaScript, such as accelerometer, camera, geolocation
-* A plugin system
-* An extensible visual component library called pcl
 
 
 ##Target browsers
@@ -158,7 +125,6 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 
 
 ####Client Libraries
-* [GreenSock Animation Platform](http://greensock.com/)
 * [Crossfilter.js](http://square.github.io/crossfilter/)
 * [Raphaël - SVG library](http://raphaeljs.com/)
 
@@ -167,38 +133,35 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 * [ApnsPHP: Apple Push Notification & Feedback Provider](https://github.com/duccio/ApnsPHP)
 
 
-###Tools
+###Miscellaneous
+* [why-arent-you-using-git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
 * [git-flow - A collection of Git extensions to provide high-level repository operations for Vincent Driessen's branching model](https://github.com/nvie/gitflow)
 * [git-flow cheat sheet](http://danielkummer.github.io/git-flow-cheatsheet/)
-* [USB Remote debugging with Chrome Developer Tools](https://developers.google.com/chrome-developer-tools/docs/remote-debugging#remote-debugging)
-* [LiveReload - Chrome extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=en)
 * [Google PageSpeed](https://developers.google.com/speed/pagespeed/)
-* [mod_pagespeed - Apache module for automatic mobile optimization](https://developers.google.com/speed/pagespeed/mod)
-* [mod_spdy - Apache SPDY module](http://code.google.com/p/mod-spdy/) -> [browser support](http://caniuse.com/spdy/)
 * [Charles Web Debugging Proxy - Windows/Mac/Linux](http://www.charlesproxy.com/)
-* [Google Developers - Web Performance Best Practices](https://developers.google.com/speed/docs/best-practices/)
 * [caniuse.com - HTML5 browser support by feature](http://caniuse.com)
 * [jsPerf — JavaScript performance playground](http://jsperf.com/)
 
 
-### Extras
+### Other
 * [Push Notification Plugin for iOS and Android](https://github.com/phonegap-build/PushPlugin)
-* [howler.js - Modern Web Audio Javascript Library](http://goldfirestudios.com/blog/104/howler.js-Modern-Web-Audio-Javascript-Library)
 
 
-###Speed and optimization:
+
+###Speed and optimization guidelines:
 
 * Load CSS in head section, to improve rendering consistency
 * Files larger than 32KB (uncompressed) are never cached on many mobile devices
-* Avoid DOM manipulation
+* Avoid DOM manipulation wherever possible
+* use requestAnimationFrame
 * use documentFragment
 * use getClientBoundingRect
 * use WebWorkers
-* localStorage can be used even for css and scripts
+* localStorage can probably be used even for css and scripts
 
 
 
-###New in HTML5:
+###HTML5:
 * [Transferable Objects](http://html5-demos.appspot.com/static/workers/transferables/index.html)
 * [The TIME tag](http://www.brucelawson.co.uk/2012/best-of-time/)
 
@@ -213,16 +176,14 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 
 
 
-###Testing & debugging
+###Debug
 * [Airline on-time performance dataset](http://stat-computing.org/dataexpo/2009/)
 * [Using the Android Emulator](http://developer.android.com/tools/devices/emulator.html)
 * [Viewport resizer - Responsive design bookmarklet](http://lab.maltewassermann.com/viewport-resizer/)
 
 
-###Tricks & fixes
+###Tricks
 * [Running multiple instances of Redis](http://chrislaskey.com/blog/342/running-multiple-redis-instances-on-the-same-server/)
-* [why-arent-you-using-git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)
-* [A fix for the iPhone ViewPort scale bug](http://www.blog.highub.com/mobile-2/a-fix-for-iphone-viewport-scale-bug/)
 
 
 ###Snippets
@@ -252,29 +213,24 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
 
 ##Technologies
 
-* HTML5 native functions
-* WebSockets
-* WebWorkers
+* HTML5:  WebSockets, WebWorkers, native array functions (each, some, filter, typedarray, etc)
 * [Varnish](http://varnish-cache.org)
-* Apache
+* [Redis](http://redis.io)
 * PHP
     - [phpredis](https://github.com/nicolasff/phpredis‎) 
     - [igbinary](https://github.com/igbinary/igbinary) 
-    - [phpws](http://code.google.com/p/phpws/)
-* [Redis](http://redis.io)
-* Free Pascal
-    - [Bauglir2 WebSocket library](http://code.google.com/p/bauglir-websocket/)
-    - [synapse](http://synapse.ararat.cz/doku.php/start)
+    - [phpws](https://github.com/Devristo/phpws/)
+
+
 
 
 ####[snippets]
 
 
-
     /* CSS inheritance from class to id */
 
-    div.someBaseDiv,
-    #someInhertedDiv
+    div.parentDiv,
+    #childDiv
     {
         margin-top:3px;
         margin-left:auto;
@@ -282,10 +238,10 @@ When we're at version 0.6 or thereabouts. Read the code, read the comments.
         margin-bottom:0px;
     }
 
-    /*  This will tell your #someInhertedDiv to apply the same styles as div.someBaseDiv has. 
-        Then you extend this set of styles with more  specific to your #someInhertedDiv:
+    /*  This will tell your #childDiv to apply the same styles as div.parentDiv has. 
+        Then you extend this set of styles with more  specific to your #childDiv:
     */
-    #someInhertedDiv
+    #childDiv
     {
         background-image:url("customBackground.gif");
         background-repeat:no-repeat;

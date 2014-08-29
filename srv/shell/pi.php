@@ -26,6 +26,8 @@
   }
 
 
+  require_once '../php/lib/colors.php';
+
   // save current directory
   $origlocation = getcwd();
 
