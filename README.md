@@ -90,7 +90,7 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 
 
 ####Kudos
-Pi could not exist without Redis, an in-memory database with persistence to disk. 
+Pi could not exist without Redis, in-memory database with persistence to disk. 
 
 
 
@@ -127,8 +127,6 @@ Pi could not exist without Redis, an in-memory database with persistence to disk
 You're reading it, as things stand
 
 ---
-
-
 ##Philosophy
 * Optimize for devices
 * Optimize server/cache setup
