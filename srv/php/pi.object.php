@@ -27,7 +27,7 @@
 
 
 
-  require_once('pi.type.php');
+  require_once('pi.type.struct.php');
 
 
   /*
@@ -44,34 +44,31 @@
 
 
 
-  class PiObject extends PiType {
+  class PiObject extends PiTypeStruct {
 
     protected   $name         = 'piobject';
-    protected   $TYPE         = PI_OBJECT;
-    protected   $SIZE         = 0;
-    protected   $address      = null;
-    protected   $channel      = null;
-    protected   $id           = null;
-    protected   $islink       = null;
-    protected   $linkaddress  = null;
-    protected   $ttl          = null;
-    protected   $nonnull      = null;
-    protected   $signed       = null;
-    protected   $properties   = null;
-    protected   $created      = null;
-    protected   $updated      = null;
+
+    // protected   $TYPE = PI_STRUCT;
 
 
 
     public function __construct($address=null, $type=null, $ttl = null, $required = null) {
-      // call PiType class constructor (pass along arguments)
+
+      if ($type === null && is_int($address)) {
+        $type = $address;
+        $address = null;
+        $this->TYPE = $type;
+      }
+
+      // call PiTypeStruct class constructor (pass along arguments)
       parent::__construct($address, $type, $ttl);
 
-      $this->nonnull = (bool) $required;
+      // $this->nonnull = (bool) $required;
 
       // sets channel and address from full address given in constructor
       $this->parseAddress($address);
     }
+
 
 
 
@@ -168,9 +165,9 @@
 
 
     /*
-      $object = PiObject::New('PiObject', $args);
-      $file   = PiObject::New('FileObject', $args);
-      $image  = PiObject::New('ImageObject', $args);
+      $object = PiObject::Create('PiObject', $args);
+      $file   = PiObject::Create('FileObject', $args);
+      $image  = PiObject::Create('ImageObject', $args);
       etc, etc
      */
 
@@ -180,7 +177,7 @@
      * @param Object $args      Arguments for the class constructor
      */
 
-    public static function New($className, $args) { 
+    public static function Create($className, $args) { 
        if(class_exists($className) && is_subclass_of($className, 'PiObject'))
        { 
           return new $className($args); 
@@ -188,31 +185,6 @@
     }  
 
 
-
-  }
-
-
-
-
-
-
-
-  class PersistentObject extends PiObject {
-
-    public function __construct($address, $object) {
-      parent::__construct($address, $object);
-      $this->db = new PiDB();
-    }
-
-  }
-
-
-
-  class TransientObject extends PiObject {
-    public function __construct($address, $object, $ttl=null) {
-      parent::__construct($address, $object, $ttl);
-      $this->redis = new Redis();
-    }
 
   }
 

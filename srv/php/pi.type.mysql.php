@@ -17,7 +17,7 @@
   // require_once('pi.db.php');
 
 
-    define('MYSQL_ID', 'PI_ID');
+    define('MYSQL_ID', 'INT(4) UNSIGNED');
 
 
     define('MYSQL_NAN', 'PI_NAN');
@@ -39,17 +39,17 @@
     // basic integer types
 
     // unsigned
-    define('MYSQL_UINT8',  'UNSIGNED TINYINT');
-    define('MYSQL_UINT16', 'UNSIGNED SMALLINT');
-    define('MYSQL_UINT32', 'UNSIGNED INT');
-    define('MYSQL_UINT64', 'UNSIGNED BIGINT');
+    define('MYSQL_UINT8',  'TINYINT(1) UNSIGNED');
+    define('MYSQL_UINT16', 'SMALLINT(2) UNSIGNED');
+    define('MYSQL_UINT32', 'INT(4) UNSIGNED');
+    define('MYSQL_UINT64', 'BIGINT(8) UNSIGNED');
 
 
     // signed
-    define('MYSQL_INT8',   'TINYINT');
-    define('MYSQL_INT16',  'SMALLINT');
-    define('MYSQL_INT32',  'INT');
-    define('MYSQL_INT64',  'BIGINT');
+    define('MYSQL_INT8',   'TINYINT(1)');
+    define('MYSQL_INT16',  'SMALLINT(2)');
+    define('MYSQL_INT32',  'INT(4)');
+    define('MYSQL_INT64',  'BIGINT(8)');
 
 
     // typed arrays, unsigned
@@ -83,13 +83,13 @@
 
 
     // higher order types
-    define('MYSQL_FILE',   'BIGINT');
-    define('MYSQL_IMAGE',  'BIGINT');
+    define('MYSQL_FILE',   MYSQL_ID);
+    define('MYSQL_IMAGE',  MYSQL_ID);
     define('MYSQL_DATA',   'PI_DATA');
-    define('MYSQL_TEL',    'VARCHAR');
-    define('MYSQL_GEO',    'PI_GEO');
-    define('MYSQL_EMAIL',  'PI_EMAIL');
-    define('MYSQL_URL',    'PI_URL');
+    define('MYSQL_TEL',    'VARCHAR(31)');
+    define('MYSQL_GEO',    'POINT');
+    define('MYSQL_EMAIL',  'VARCHAR(127)');
+    define('MYSQL_URL',    'VARCHAR(767)');
 
 
 
@@ -104,19 +104,19 @@
 
 
       // common internal object types
-      define('MYSQL_USER',         'PI_USER');
-      define('MYSQL_USERGROUP',    'PI_USERGROUP');
+      define('MYSQL_USER',         MYSQL_ID);
+      define('MYSQL_USERGROUP',    MYSQL_ID);
       define('MYSQL_PERMISSIONS',  'BIT(12)');
 
       define('MYSQL_TOKEN',  'PI_TOKEN');
-      define('MYSQL_JSON',   'PI_JSON');
+      define('MYSQL_JSON',   'TEXT');
       define('MYSQL_MYSQL',  'PI_MYSQL');
       define('MYSQL_REDIS',  'PI_REDIS');
       define('MYSQL_LIST',   'PI_LIST');
 
 
       // a UINT32
-      define('MYSQL_IP',   'UNSIGNED INT');
+      define('MYSQL_IP',   'INT(4) UNSIGNED');
       define('MYSQL_IPV4', MYSQL_IP);
 
       // a UINT32 QUAD ?
@@ -148,12 +148,12 @@
 
 
 
-    define('MYSQL_HOUR',   'UNSIGNED TINYINT(1)');
-    define('MYSQL_MINUTE', 'UNSIGNED TINYINT(1)');
-    define('MYSQL_SECOND', 'UNSIGNED TINYINT(1)');
+    define('MYSQL_HOUR',   'TINYINT(1) UNSIGNED');
+    define('MYSQL_MINUTE', 'TINYINT(1) UNSIGNED');
+    define('MYSQL_SECOND', 'TINYINT(1) UNSIGNED');
 
-    define('MYSQL_UNIXTIME',   'INT');
-    define('MYSQL_MILLITIME',  'BIGINT');
+    define('MYSQL_UNIXTIME',   'INT(4)');
+    define('MYSQL_MILLITIME',  'BIGINT(8)');
     define('MYSQL_MICROTIME',  'DOUBLE');
 
 

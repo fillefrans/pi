@@ -25,7 +25,7 @@
 
     define('APP_NAME',      'Pi Server');
     define('APP_PLATFORM',  'Pi Server/WebSocket');
-    define('APP_VERSION',   'v0.2@');
+    define('APP_VERSION',   'v0.4.5 Beta');
 
     // mysql settings
 
@@ -64,32 +64,6 @@
     //define('REDIS_SOCK', '/tmp/redis.sock');
 
 
-    // Redis database names and numbers
-    define('PI_APP',      0);
-    define('PI_CORE',     1);
-
-    // PHP is using one db for session storage
-    define('PHP_SESSION', 2);
-
-    define('PI_SESSION',  3);
-    define('PI_DATA',     4);
-    define('PI_CALLBACK', 5);
-    define('PI_FILES',    6);
-    define('PI_SVC',      7);
-    define('PI_DB',       8);
-    define('PI_USERS',    9);
-    define('PI_TASKS',   10);
-
-    define('PI_PCL',     11);
-    define('PI_MVRCK',   12);
-    define('PI_CACHE',   13);
-
-    define('PI_TMP',     14);
-    define('PI_DBG',     15);
-
-    define('PI_TEMP',   PI_TMP);
-    define('PI_DEBUG',  PI_DBG);
-    define('PI_SERVICE',  PI_SVC);
 
 
 

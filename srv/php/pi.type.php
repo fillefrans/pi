@@ -13,6 +13,9 @@
    */
 
 
+  require_once("pi.exception.php");
+
+
 
     // basic types
     define('PI_NAN', 254);
@@ -72,7 +75,8 @@
 
     // synonyms
     define('PI_STRUCT', 127);
-    define('PI_RECORD', 127);
+    define('PI_RECORD', PI_STRUCT);
+    define('PI_OBJECT', PI_STRUCT);
 
 
 
@@ -163,7 +167,7 @@
 
   class PiType implements JsonSerializable {
 
-    protected $name     = 'type';
+    protected $name     = 'typE';
 
     // Protected, can be accessed by descendants
     protected $value    = null;
@@ -260,9 +264,9 @@
     const SET       =  PI_SET;
     const SORTEDSET =  PI_SORTEDSET;
 
-    const RANGE    = PI_RANGE;
-    const ARRAY    = PI_ARRAY;
-    const BYTEARRAY    = PI_BYTEARRAY;
+    const RANGE       = PI_RANGE;
+    const PIARRAY     = PI_ARRAY;
+    const BYTEARRAY   = PI_BYTEARRAY;
 
     // synonyms
     const STRUCT    = PI_STRUCT;
@@ -296,11 +300,11 @@
       const USERGROUP   = PI_USERGROUP;
       const PERMISSIONS = PI_PERMISSIONS;
 
-      const TOKEN = PI_TOKEN;
-      const JSON  = PI_JSON;
-      const MYSQL = PI_MYSQL;
-      const REDIS = PI_REDIS;
-      const LIST  = PI_LIST;
+      const TOKEN   = PI_TOKEN;
+      const JSON    = PI_JSON;
+      const MYSQL   = PI_MYSQL;
+      const REDIS   = PI_REDIS;
+      const PILIST  = PI_LIST;
 
 
       // a UINT32
@@ -333,13 +337,49 @@
 
 
 
-    public function __construct($type = null) {
+    public function __construct($type = null, $length = null) {
       // call Pi Base class constructor (takes no arguments)
       // parent::__construct();
 
-      if (is_int($type)) {
-        $this->TYPE = $type;
+      if ($type === null) {
+        echo "typE is NULL in constructor, setting to " . PI_NULL . "\n";
+        $this->TYPE = PI_NULL;
+        return;
       }
+
+      // if (is_string($type)) {
+      //   $this->TYPE = PI_STR;
+      //   return;
+      // }
+
+      // if (is_int($type)) {
+      //   $this->TYPE = PI_NUMBER;
+      //   return;
+      // }
+
+      if ($type instanceof PiType) {
+        $this->TYPE = $type->TYPE;
+        return;
+      }
+
+      if (is_int($length)) {
+        // echo "setting SIZE to : $length\n";
+        $this->SIZE = $length;
+        // echo "type is $type \n";
+      }
+
+      if (is_int($type) && $type <= 255) {
+        $this->TYPE = $type;
+        // echo "return, type is $type, SIZE is {$this->SIZE} \n";
+        return;
+      }
+
+      // make sure we always have a type that is non-null
+      if ($this->TYPE === null) {
+        echo "TYPE is NULL in constructor, setting to " . PI_NULL . "\n";
+        $this->TYPE = PI_NULL;
+      }
+
 
     }
 
@@ -352,31 +392,39 @@
     }
 
 
-    // Use property overloading to decorate object instance in subclasses
+    // // Use property overloading to decorate object instance in subclasses
 
-    public function __set($name, $value){
-      $this->property[$name] = $value;
-    }
-
-
-    public function __get($name){
-      echo "Overloaded Property name = " . $this->property[$name] . "<br/>";
-    }
-
-
-    public function __isset($name){
-      if(isset($this->property[$name])){
-        echo "Property \$$name is set.<br/>";   
-      } else {
-        echo "Property \$$name is not set.<br/>";
-      }
-    }
+    // public function __set($name, $value = null){
+    //   echo "Setting overloaded property '$name' to '$value'\n";
+    //   if ($value === null) {
+    //     $this->value = $name;
+    //   }
+    //   else {
+    //     $this->members[$name] = $value;
+    //   }
+    // }
 
 
-    public function __unset($name){
-      unset($this->property[$name]);
-      echo "\$$name is unset <br/>";
-    }
+    // public function __get($name){
+    //   echo "Overloaded Property '$name' = " . $this->members[$name] . "\n";
+    //   var_dump($this->members);
+    //   return $this->members[$name];
+    // }
+
+
+    // public function __isset($name){
+    //   if(isset($this->property[$name])){
+    //     echo "Property \$$name is set.<br/>";   
+    //   } else {
+    //     echo "Property \$$name is not set.<br/>";
+    //   }
+    // }
+
+
+    // public function __unset($name){
+    //   unset($this->property[$name]);
+    //   echo "\$$name is unset <br/>";
+    // }
 
 
 
@@ -397,7 +445,7 @@
      * 
      */
 
-    public static function New($className, $args) { 
+    public static function Create($className, $args) { 
       if(!$className) {
         throw new InvalidArgumentException("Invalid className : '$className'", 1);
       }

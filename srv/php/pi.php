@@ -67,6 +67,27 @@
       return true;
     }
 
+
+    public static function isPlural($word = null) {
+      if (is_string($word)) {
+        $word = strtolower($word);
+        if (1 < ($length = (strlen($word)))) {
+          if ($word[$length-1] === "s") {
+            if ($word[$length-2] === "s") {
+              return false;
+            }
+            elseif ($word[$length-2] === "e") {
+              return true;
+            }
+          }
+        }
+      }
+      elseif (is_int($word)) {
+        // get both 1 and -1
+        return abs($word) !== 1;
+      }
+    }
+
     public static function exceptionToArray(&$e) {
       return array(
                    'class'    => get_class($e),

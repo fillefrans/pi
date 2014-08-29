@@ -1,5 +1,18 @@
 <?php
 
+
+  /**
+   * @package Pi Web Socket Server
+   *
+   * @author Johan Telstad <jt@enfield.no>
+   *
+   * @uses PHP Web Socket Server <phpws>
+   * @version 0.5.0
+   */
+
+
+
+
     define('DEBUG', true);
 
 
@@ -204,7 +217,7 @@
         }
 
 
-        protected function connectToRedis($timeout = 5, $db = PI_APP, $tcp = false) {
+        protected function connectToRedis($timeout = 5, $db = 0, $tcp = false) {
 
           $redis = new Redis();
 
@@ -240,7 +253,7 @@
 
 
         /**
-         * A heartbeat of the pi server. 
+         * A heartbeat of the pi websocket server. 
          * @return void 
          */
 
@@ -533,6 +546,8 @@
         // returns basic type or associative array -> ready for json_encode()
 
         private function dataCommand($message) {
+
+          // hva er dette for noe fjas
 
           $result = false;
 

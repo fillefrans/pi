@@ -17,7 +17,7 @@
     protected $name   = null;
     protected $value  = null;
 
-    public function __construct($name = null, $value = null) {
+    public function __construct($name = null, PiType $value = null) {
       if (!is_string($name)) {
         throw new InvalidArgumentException("Expected name to be String, received : " . gettype($name), 1);
       }
@@ -33,48 +33,60 @@
   }
 
 
-
-  class PiTypeStructDefinition extends StdClass {
-    
-    protected $member = null;
-
-    public function __construct($definition = null) {
-    }
-
-    public function parse($definition = null) {
-
-    }
-
-  }
-
-
   class PiTypeStruct extends PiType {
 
     protected $name = 'struct';
-    protected $type = PiType::STRUCT;
+    protected $TYPE = PiType::STRUCT;
 
-    protected $member = null;
+    protected $members = array();
+    protected $property = array();
     protected $length = null;
     protected $value  = array('struct' => array('definition' => array(), 'items' => array()));
 
     // protected $definition  = $value['struct']['definition'];
 
 
-    public function __construct($value = null) {
+    // for et rot
+
+    public function __construct($value = null, $length = null) {
       if (is_string($value)) {
-
+        echo "value is a STRING : $value)\n";
       }
 
-      if (!$value instanceof PiTypeStructDefinition) {
-        throw new InvalidArgumentException("Expected value to be PiTypeStructDefinition, received : " . gettype($value), 1);
+      if (is_int($length)) {
+        // echo "setting SIZE to : $length\n";
+        // $this->SIZE = $length;
       }
 
-      $this->set($value);
+      // $this->write($value);
 
       // call PiType class constructor (pass along arguments)
-      parent::__construct($this->type);
+      // echo "calling parent constructor({$this->TYPE})\n";
+      parent::__construct($this->TYPE);
+      // call PiType class constructor (pass along arguments)
+      // echo "type is now  : {$this->TYPE}\n";
+
     }
 
+
+
+    public function add ($name = null, PiType $type, $size = null) {
+      if (isset($this->members[$name])) {
+        throw new InvalidArgumentException("Property name already exists in add(\"{$type->name}\")", 1);
+      }
+
+      if (is_int($size)) {
+        // echo basename(__FILE__) . " : setting SIZE to $size\n";
+        $type->SIZE = $size;
+      }
+
+      $this->members[$name] = $type;
+
+      // echo basename(__FILE__) . " : SIZE = {$this->members[$name]->SIZE}\n";
+
+      // return new length of members array
+      return count($this->members);
+    }
 
     public function toString () {
       return $this->value;
@@ -93,11 +105,11 @@
     }
 
 
-    public function get () {
+    public function read () {
       return $this->value;
     }
 
-    public function set (PiTypeStructDefinition $value = null) {
+    public function write (PiTypeStructDefinition $value = null) {
       $this->value = $value;
     }
 
