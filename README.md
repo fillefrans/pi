@@ -70,31 +70,23 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 ####**about pi**
 *minuscule platform with a majuscule impact*
 
-    scales and connects itself (can self-replicate, self-organise, 
-        and keep timing across processes)
+    scales dynamically, as hardware allows
 
-    Allows us to work in parallell and sequentially at the same time, 
-    and do it real-time for all of the connected parts, and send only 
+    Allows us to work in parallel and sequentially simultaneously 
+    (and in real-time) in all connected parts - sending only 
     the changes made elsewhere to each individual part, while
     receiving only changes made in return
 
-    separating above/below in the namespace and equating to 
-    before/after, allows us to collapse the changes into 
-    their sum at each tick (on any level), and efficiently 
-    update the state of the dataset that represents 
+    separating above/below in the namespace, and equating to 
+    before/after, allows us to collapse the changes into
+    their sum at each tick (on any level), and efficiently
+    update the state of the dataset that represents
     the (local or global) network at that point in time
 
-    this means we can reliably combine stored data with live 
-    data as they come in, since we know how many ticks there 
-    are between the state of the dataset received from db, and
-    the tick at which we started receiving data
-
-    then, discard the duplicates from the overlap and start 
-    receiving only changes to the dataset, which is more efficient
+    which needs explaining, yes
 
 
-
-####Kudos
+####
 Pi could not exist without Redis, in-memory database with persistence to disk. 
 
 
@@ -107,7 +99,7 @@ Pi could not exist without Redis, in-memory database with persistence to disk.
 
 
 ####General
-* We are requiring HTML5, and using native functions wherever possible
+* We are requiring HTML5, using native functions wherever possible
 * WebWorkers allow for background processing.
 * GreenSock [GSAP](https://www.greensock.com/tag/tutorial/).
 * Leaflet [Leaflet](http://leafletjs.com/) as a replacement for Google Maps.
@@ -129,31 +121,31 @@ Pi could not exist without Redis, in-memory database with persistence to disk.
 
 
 ##Documentation
-You're reading it, as things stand
+    you're looking at it, for the time being
 
 ---
 ##Philosophy
-* Optimize for devices
-* Optimize server/cache setup
-* Background processing where sensible and possible
-* Modular loading of resources
-* Cross-browser, within reason
-* Cross-device support, again within reason
+    Optimize for devices
+    Optimize server/cache setup
+    Background processing where sensible and possible
+    Modular loading of resources
+    Cross-browser, within reason
+    Cross-device support, again within reason
 
 
 ##Target browsers
-* WebKit + Firefox, all platforms
-* iOs >= 5.1
-* Android >= 4.0 (Except native browser)
-* IE 10 on Windows 7/Windows Phone 8
-* In effect, any modern browser with WebSocket support
+    WebKit + Firefox, all platforms
+    iOs >= 5.1
+    Android >= 4.0 (Except native browser)
+    IE 10 on Windows 7/Windows Phone 8
+    In effect, any modern browser with WebSocket support
 
 
 
 ###Not supported
-* Opera Mini
-* Android native browser has no WebSocket, and no Web Worker.
-* IE < 9
+    Opera Mini
+    Android native browser has no WebSocket, and no Web Worker.
+    IE < 9
 
 
 ####Client Libraries
