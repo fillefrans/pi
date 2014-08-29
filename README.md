@@ -19,7 +19,6 @@ Pi is a distributed application platform for HTML5
 The central concepts in pi are : **channel**, **address**, **object** and **type**
 
 #####ADDRESS
-an address is a path in the pi namespace:
 ---
     "pi.user.8739"
     "pi.service.time.tick"
@@ -29,13 +28,13 @@ an address is a path in the pi namespace:
 ####CHANNEL
 ---
 -a channel is a filter that allows separation of traffic to the same address
-
 -a channel and an address are given together in the following style: 
----
     "db|pi.user.8739"
     "zmq:9001|pi.service.myzmqservice"
 
-Pi has 15 pre-defined channels:
+
+
+####BUILT-IN CHANNELS
 ---
      0 : BASE
      1 : AUTH
@@ -55,7 +54,7 @@ Pi has 15 pre-defined channels:
     15 : ZMQ
 
 
-external addresses look like: 
+####EXTERNAL ADDRESS 
 ---
     "db|pi.user.8739@pi.viewshq.no:8080/api/pi.io.db.php"
     "zmq:9001|pi.service.myzmqservice@zmq.myservice.com:7800/services/zmq/myzmq/"
