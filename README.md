@@ -16,19 +16,19 @@ Pi is a distributed application platform for HTML5
 - namespaced
 
 
-The central concepts in pi are : channel, address, object and type
+The central concepts in pi are : **channel**, **address**, **object** and **type**
 
-ADDRESS
-*an address is a path in the pi namespace:*
+####ADDRESS
+an address is a path in the pi namespace:
 ---
     "pi.user.8739"
     "pi.service.time.tick"
     "pi.app"
 
-CHANNEL
-a channel is a filter that allows separation of traffic to the same address
+####CHANNEL
+- a channel is a filter that allows separation of traffic to the same address
 
-a channel and an address are given together in the following style: 
+- a channel and an address are given together in the following style: 
 ---
     "db|pi.user.8739"
     "zmq:9001|pi.service.myzmqservice"
