@@ -86,9 +86,7 @@ where specialized agents can be configured into flexible chains of processing.
 
     separating above/below in the namespace, and equating to 
     before/after, allows us to collapse the changes into
-    their sum at each tick (on any level), and efficiently
-    update the state of the dataset that represents
-    the (local or global) network at that point in time
+    their sum at each tick (between adjoining orders of magnitude)
 
 
     which needs explanation, yes
@@ -98,19 +96,14 @@ where specialized agents can be configured into flexible chains of processing.
 
 ###Inspired
 * [Salvatore Sanfilippo](http://antirez.com/), creator of [Redis](http://redis.io)
-* J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipædia](http://en.wikipedia.org/wiki/Flow-based_programming)
 * unix toolchain
+* J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipedia](http://en.wikipedia.org/wiki/Flow-based_programming)
 
 
 
 ####General
 * We require HTML5, using native functions wherever possible
 * should prob. use WebWorkers, and do background processing
-
-
-
-####Client-side
-* Components should be self-contained.
 * Use documentFragment when adding more than one node to the DOM at a time
 
 
