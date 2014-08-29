@@ -3,7 +3,7 @@
 
 ####Que?
 
-pi is a distributed application platform for HTML5
+Pi is a distributed application platform for HTML5
 
 - fast
 - efficient
@@ -20,6 +20,7 @@ The central concepts in pi are : channel, address, object and type
 
 ADDRESS
 - an address is a path in the pi namespace: 
+---
     "pi.user.8739"
     "pi.service.time.tick"
     "pi.app"
@@ -28,11 +29,12 @@ CHANNEL
 - a channel is a filter that allows separation of traffic to the same address
 
 - a channel and an address are given together in the following style: 
+---
     "db|pi.user.8739"
     "zmq:9001|pi.service.myzmqservice"
 
 - Pi has 15 pre-defined channels:
-
+---
      0 : BASE
      1 : AUTH
      2 : CHAT
@@ -64,11 +66,6 @@ Pi is inspired by flow-based programming and the old-school linux toolchain, whe
 #####about pi
 
 *a minuscule platform with majuscule impact*
-<<<<<<< HEAD
-=======
-
-    scales and connects biologically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes and time scales)
->>>>>>> 0ef7dd247aa92e8a8b9d8ed3857b5f8e5de1edee
 
     scales and connects itself automagically (self-replication, self-organization, self-containment, data chaining, waste data, timing across & within processes)
 
