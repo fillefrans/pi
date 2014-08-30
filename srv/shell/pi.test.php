@@ -75,6 +75,9 @@
     }
  
 
-  echo mysql_encode($testObject);
+
+  // echo mysql_encode($testObject);
+
+  var_dump(posix_uname());
 
 ?>

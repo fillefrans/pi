@@ -39,7 +39,6 @@
     protected $TYPE = PiType::STRUCT;
 
     protected $members = array();
-    protected $property = array();
     protected $length = null;
     protected $value  = array('struct' => array('definition' => array(), 'items' => array()));
 
@@ -58,34 +57,81 @@
         // $this->SIZE = $length;
       }
 
-      // $this->write($value);
-
-      // call PiType class constructor (pass along arguments)
-      // echo "calling parent constructor({$this->TYPE})\n";
+      // call PiType class constructor (pass along type)
       parent::__construct($this->TYPE);
-      // call PiType class constructor (pass along arguments)
       // echo "type is now  : {$this->TYPE}\n";
 
     }
 
 
 
+    /*    PROPERTY OVERLOADING   */
+
+    // Provides property overloading to subclasses
+
+    /**
+     * property setter
+     * @param string $name  Property name
+     * @param PiType $value Property value
+     */
+    public function __set($name, PiType $value = null){
+      echo "Setting overloaded property '$name'\n";
+      if ($value === null) {
+        $this->value = $name;
+      }
+      else {
+        $this->members[$name] = $value;
+        $this->length = count($this->members);
+      }
+    }
+
+    /**
+     * property getter
+     * @param  string $name Property name
+     * @return PiType       The property value
+     */
+    public function __get($name){
+      echo "Overloaded Property '$name' = " . $this->members[$name] . "\n";
+      // var_dump($this->members);
+      return $this->members[$name];
+    }
+
+    public function __isset($name){
+      if(isset($this->members[$name])){
+        echo "Property \$$name is set.\n";   
+      } else {
+        echo "Property \$$name is not set.\n";
+      }
+      return isset($this->members[$name]) && isset($this->value);
+    }
+
+    public function __unset($name){
+      unset($this->members[$name]);
+      $this->length = count($this->members);
+      echo "\$$name is unset\n";
+    }
+
+
+    // posix_getgroups(oid)
+
+
     public function add ($name = null, PiType $type, $size = null) {
+      if(!$name) {
+        return false;
+      }
       if (isset($this->members[$name])) {
         throw new InvalidArgumentException("Property name already exists in add(\"{$type->name}\")", 1);
       }
 
       if (is_int($size)) {
-        // echo basename(__FILE__) . " : setting SIZE to $size\n";
         $type->SIZE = $size;
       }
 
       $this->members[$name] = $type;
-
-      // echo basename(__FILE__) . " : SIZE = {$this->members[$name]->SIZE}\n";
+      $this->length = count($this->members);
 
       // return new length of members array
-      return count($this->members);
+      return $this->length;
     }
 
     public function toString () {

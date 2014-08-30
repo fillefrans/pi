@@ -82,7 +82,9 @@
 
     // higher order types
 
-    define('PI_ID', PI_UINT32);
+    define('PI_SELF',   163); //mark of pi
+
+    define('PI_ID',     PI_UINT32);
 
     define('PI_FILE',   128);
     define('PI_IMAGE',  129);
