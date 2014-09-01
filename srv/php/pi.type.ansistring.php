@@ -1,7 +1,7 @@
 <?
 
   /**
-   *  Pi Type String class
+   *  Pi Type AnsiString class
    *
    *
    * @author 2011-2014 Johan Telstad <jt@enfield.no>

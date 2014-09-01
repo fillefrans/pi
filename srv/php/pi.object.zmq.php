@@ -101,7 +101,7 @@
 
       $this->created = time();
       $this->updated = $this->created;
-      $this->nonnull = (bool) $required;
+      $this->NOTNULL = (bool) $required;
 
       // sets channel and address from full address given in constructor
       if ($address && is_string($address)) {

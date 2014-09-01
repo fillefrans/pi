@@ -47,37 +47,85 @@
 
   // echo "mysql_encode() : \n";
 
-    // Create new Colors class
-    $colors = new Colors();
+    // // Create new Colors class
+    // $colors = new Colors();
  
-    // Get Foreground Colors
-    $fgs = $colors->getForegroundColors();
-    // Get Background Colors
-    $bgs = $colors->getBackgroundColors();
+    // // Get Foreground Colors
+    // $fgs = $colors->getForegroundColors();
+    // // Get Background Colors
+    // $bgs = $colors->getBackgroundColors();
  
-    // Loop through all foreground and background colors
-    $count = count($fgs);
-    for ($i = 0; $i < $count; $i++) {
-      echo $colors->getColoredString("Test Foreground colors", $fgs[$i]) . "\t";
-      if (isset($bgs[$i])) {
-        echo $colors->getColoredString("Test Background colors", null, $bgs[$i]);
-      }
-      echo "\n";
-    }
-    echo "\n";
+    // // Loop through all foreground and background colors
+    // $count = count($fgs);
+    // for ($i = 0; $i < $count; $i++) {
+    //   echo $colors->getColoredString("Test Foreground colors", $fgs[$i]) . "\t";
+    //   if (isset($bgs[$i])) {
+    //     echo $colors->getColoredString("Test Background colors", null, $bgs[$i]);
+    //   }
+    //   echo "\n";
+    // }
+    // echo "\n";
  
-    // Loop through all foreground and background colors
-    foreach ($fgs as $fg) {
-      foreach ($bgs as $bg) {
-        echo $colors->getColoredString("Test Colors", $fg, $bg) . "\t";
-      }
-      echo "\n";
-    }
+    // // Loop through all foreground and background colors
+    // foreach ($fgs as $fg) {
+    //   foreach ($bgs as $bg) {
+    //     echo $colors->getColoredString("Test Colors", $fg, $bg) . "\t";
+    //   }
+    //   echo "\n";
+    // }
  
 
 
   // echo mysql_encode($testObject);
 
-  var_dump(posix_uname());
+  // echo json_encode($testObject, JSON_PRETTY_PRINT);
+  // var_dump(posix_getpwnam("kroma"));
+
+  // var_dump(posix_getrlimit());
+ 
+  // var_dump(posix_times());
+  // var_dump(posix_uname());
+
+
+  require_once("../php/pi.type.permissions.php");
+
+  $permissions = new PiTypePermissions(0755);
+
+  $permissions->setAll(0755);
+
+  // echo json_encode($permissions, JSON_PRETTY_PRINT);
+
+  require_once("../php/pi.type.user.php");
+
+  // $user = new PiUser("1");
+
+  $cache = new PiCache();
+
+  $user = $cache->read("pi.user.1");
+
+  print("it's a " . get_class($user));
+  echo json_encode($user, JSON_PRETTY_PRINT);
+
+  if ($user === false) {
+    $user = new PiUser();
+    $cache->write("pi.user.1", $user);
+  }
+
+
+  require_once("../php/pi.type.address.php");
+
+  $address = new PiTypeAddress("db:mysql|pi.user.34@viewshq.no");
+
+
+  print("it's a " . get_class($address));
+  echo json_encode($address, JSON_PRETTY_PRINT);
+
+
+  require_once("../php/pi.type.array.php");
+
+  $arr = new PiTypeArray();
+  print("it's a " . get_class($arr));
+  echo json_encode($arr, JSON_PRETTY_PRINT);
+
 
 ?>

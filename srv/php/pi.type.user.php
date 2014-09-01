@@ -53,7 +53,10 @@
       if (is_int($value)) {
         $this->loadFromInt($value);
       }
-      if (is_string($value)) {
+      elseif (is_numeric($value)) {
+        $this->loadFromInt((int) $value);
+      }
+      elseif (is_string($value)) {
         $this->loadFromString($value);
       }
 
@@ -71,6 +74,23 @@
      * @return bool           Success or failure of load operation
      */
     public function loadFromInt ($id = -1) {
+      print("loadFromInt\n");
+
+      // if (false === ($result = $this->redis->get("pi.user.$id"))) {
+      //   print("not found\n");
+      // }
+
+      // if (false === ($result = $pi->redis->get("pi.user.$id"))) {
+      //   print("not found\n");
+      // }
+      // else {
+      //   print("found : " . json_encode($result, JSON_PRETTY_PRINT));
+      // }
+
+
+      print("instanceof Pi : " . ($this instanceof Pi) ."\n");
+      print("instanceof PiType : " . ($this instanceof PiType) ."\n");
+      print("instanceof PiTypeStruct : " . ($this instanceof PiTypeStruct) ."\n");
 
     }
 
@@ -80,6 +100,7 @@
      * @return bool             Success or failure of load operation
      */
     public function loadFromString ($name = "") {
+      print("loadFromString\n");
 
     }
 
@@ -104,27 +125,6 @@
       }
     }
 
-
-
-    public function read () {
-      return $this->value;
-    }
-
-    public function write (PiTypeStructDefinition $value = null) {
-      $this->value = $value;
-    }
-
-    public function getset ($value = null) {
-      $previous = $this->value;
-      if(is_string($value)) {
-        $this->length = strlen($value);
-      }
-      else {
-        $this->length = null;
-      }
-      $this->value = $value;
-      return $previous;
-    }
 
   }
 

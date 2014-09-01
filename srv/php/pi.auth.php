@@ -77,8 +77,8 @@
 
 
     function jsonSerialize() {
-        $auth = array();
-        return $auth;
+        // $auth = array();
+        return get_object_vars($this);
     }
 
 
@@ -105,6 +105,12 @@
       return true;
     }
 
+
+    public static function hasAccess () {
+      
+    }
+
+    
 
     public static function isPlural($word = null) {
       if (is_string($word)) {
@@ -201,48 +207,6 @@
         }
 
         $this->pubsub->publish('log|' . $address, $message);
-      }
-      else {
-        $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
-      }
-    }
-
-
-    protected function publish($address, $json) {
-      if (is_array($json)) {
-        $json = json_encode($json);
-      }
-
-      return $this->redis->rPush($address, $json);
-    }
-
-
-    // protected function publish($address, $message = false) {
-
-    //   if ($this->pubsub) {
-    //     if ($message === false) {
-    //       // we were invoked with only one param, so we assume that's a message for default address
-    //       $message = $address;
-    //       $address = $this->address;
-    //     }
-
-    //     $this->pubsub->publish($address, $message);
-    //   }
-    //   else {
-    //     $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");
-    //   }
-    // }
-
-
-    protected function subscribe($address, $callback = false) {
-
-      if ($callback === false) {
-        // we were invoked without the callback param, which is not right
-        throw new PiException("Pi->".__FUNCTION__."() was called without the callback parameter.", 1);
-        return false;
-      }
-      if ($this->pubsub) {
-        $this->pubsub->subscribe($address, $callback);
       }
       else {
         $this->say("We have no redis pubsub object in function ".__FUNCTION__."()\n");

@@ -58,11 +58,7 @@
 
     public function __construct($value = 0, $ttl = null) {
 
-      if ($size && is_int($size)) {
-        $this->SIZE = $size;
-      }
-
-      if (is_bool($value)) {
+      if ( is_int($value) && (($value & 07777) == $value) ) {
         $this->value = $value;
       }
 
@@ -72,7 +68,7 @@
 
 
     public function setAll($value) {
-      $this->value = $value & 07777; // mask is to prevent overflow of internal value
+      $this->value = $value & 07777; // mask is to prevent overflow of internal 12-bit value
     }
 
     /**
@@ -134,16 +130,16 @@
     }
 
     /**
-     * Get the sticky flag
-     * @return bool Whether the sticky bit is set or not
+     * Get the setuid flag
+     * @return bool Whether the setuid bit is set or not
      */
     public function getSetUID() {
       return $this->value & POSIX_SETUID; 
     }
 
     /**
-     * Get the sticky flag
-     * @return bool Whether the sticky bit is set or not
+     * Get the setgid flag
+     * @return bool Whether the setgid bit is set or not
      */
     public function getSetGID() {
       return $this->value & POSIX_SETGID; 
@@ -223,17 +219,11 @@
     }
 
     public function get () {
-      return (bool) $this->value;
+      return $this->value & 07777;
     }
 
     public function set ($value = false) {
-      $this->value = (bool) $value;
-    }
-
-    public function getset ($value = null) {
-      $previous = $this->value;
-      $this->value = (bool) $value;
-      return (bool) $previous;
+      $this->value = ($value & 07777);
     }
 
   }

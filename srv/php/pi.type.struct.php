@@ -10,6 +10,7 @@
 
 
   require_once('pi.type.php');
+  require_once('pi.cache.php');
 
 
   class PiTypeStructMember extends StdClass {
@@ -49,7 +50,7 @@
 
     public function __construct($value = null, $length = null) {
       if (is_string($value)) {
-        echo "value is a STRING : $value)\n";
+        // echo "value is a STRING : $value\n";
       }
 
       if (is_int($length)) {
@@ -74,14 +75,20 @@
      * @param string $name  Property name
      * @param PiType $value Property value
      */
-    public function __set($name, PiType $value = null){
-      echo "Setting overloaded property '$name'\n";
+    public function __set($name, $value = null){
       if ($value === null) {
+        echo "Setting property value to '$name'\n";
         $this->value = $name;
       }
-      else {
+      elseif ($name && is_string($name)) {
+        
+        echo "Setting overloaded property '$name' to ".gettype($value)."($value)\n";
         $this->members[$name] = $value;
         $this->length = count($this->members);
+      }
+      else {
+        throw new InvalidArgumentException("wrong type", 1);
+        
       }
     }
 
@@ -91,6 +98,9 @@
      * @return PiType       The property value
      */
     public function __get($name){
+      if (!isset($this->members[$name])) {
+        print("reading non-existing property '$name'\n");
+      }
       echo "Overloaded Property '$name' = " . $this->members[$name] . "\n";
       // var_dump($this->members);
       return $this->members[$name];

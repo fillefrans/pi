@@ -54,6 +54,7 @@
 
     protected $permissions  = new PiTypePermissions();
 
+    protected $value = 0;
 
     public function __construct($value = 0, $ttl = null, $size = 0) {
 
@@ -80,16 +81,16 @@
     }
 
 
-    $file = 'some_file';
+    // $file = 'some_file';
 
-    if (posix_access($file, POSIX_R_OK | POSIX_W_OK)) {
-        echo 'The file is readable and writable!';
+    // if (posix_access($file, POSIX_R_OK | POSIX_W_OK)) {
+    //     echo 'The file is readable and writable!';
 
-    } else {
-        $error = posix_get_last_error();
+    // } else {
+    //     $error = posix_get_last_error();
 
-        echo "Error $error: " . posix_strerror($error);
-    }
+    //     echo "Error $error: " . posix_strerror($error);
+    // }
 
 
 
@@ -153,16 +154,16 @@
     }
 
     /**
-     * Get the sticky flag
-     * @return bool Whether the sticky bit is set or not
+     * Get the setuid flag
+     * @return bool Whether the setuid bit is set or not
      */
     public function getSetUID() {
       return $this->value & POSIX_SETUID; 
     }
 
     /**
-     * Get the sticky flag
-     * @return bool Whether the sticky bit is set or not
+     * Get the setgid flag
+     * @return bool Whether the setgid bit is set or not
      */
     public function getSetGID() {
       return $this->value & POSIX_SETGID; 
