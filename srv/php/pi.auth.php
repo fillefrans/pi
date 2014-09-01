@@ -90,18 +90,6 @@
         print("Connection to redis failed!\n");
         return false;
       }
-  
-      // open a separate connection for pubsub
-      // from the redis docs:
-      // > A client subscribed to one or more channels 
-      // > should not issue commands, although it can 
-      // > subscribe and unsubscribe to and from 
-      // > other channels. The reply of the ...
-      if (false === ($this->pubsub = $this->connectToRedis())) {
-        throw new PiException("Unable to connect pubsub client to redis on " . REDIS_SOCK, 1);
-        print("Connection to redis failed!\n");
-        return false;
-      }
       return true;
     }
 

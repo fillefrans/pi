@@ -16,9 +16,9 @@ make && sudo make install
 
 3. Install Redis
 
-wget http://download.redis.io/releases/redis-2.8.3.tar.gz
-tar xzf redis-2.8.3.tar.gz
-cd redis-2.8.3
+wget http://download.redis.io/releases/redis-2.8.13.tar.gz
+tar xzf redis-2.8.13.tar.gz
+cd redis-2.8.13
 
 sudo make install
 

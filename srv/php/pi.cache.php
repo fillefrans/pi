@@ -9,7 +9,7 @@
   /**
    *  Pi Cache class
    *
-   *  provides redis cache 
+   *  provides redis cache with 
    *
    * @category pi
    * @package cache
@@ -69,6 +69,8 @@
           // "pi.user.[987234,234234,234].group";
 
           // "file:kjhskdfjhsf | pi.user.876876234.client";
+
+          // "file:kjhskdfjhsf | pi.client.3";
 
 
 
@@ -258,7 +260,7 @@
 // pi.user.*.pi_email
 
 
-              $querypart .= "$localpath.id " . 
+              // $querypart .= "$localpath.id " . 
 
             }
             elseif (is_string($path[$i])) {
