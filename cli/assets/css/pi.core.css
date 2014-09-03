@@ -37,22 +37,22 @@
 
 
 
-  .pi {
-    /*perspective : 800px;*/
+  .π {
+     /*perspective : 800px;*/
     position: absolute;
     display : block;
   }
 
 
 
-  .pi body {
+  body.π {
     background-color  : #29A5C0;
     color             : #f8f8f2;
     margin            : 0;
     padding           : 0;
   }
 
-  .pi header {
+  header.π {
     background-color : #b21;
     /*width: 100%;*/
     height: 240px;
@@ -60,16 +60,16 @@
     clear: right;
   }
 
-  .pi ul {
+  ul.π {
     list-style-type : none;
   }
 
-  .pi div {
+  div.π {
     /*border : dotted white 1px;*/
   }
 
 
-  .pi.stretch {
+  .π.stretch {
     width   : 100%;
     height  : 100%;
   }
@@ -80,14 +80,14 @@
  * 
  */
 
-  .pi.pointer-events-none {
+  .π.pointer-events-none {
     pointer-events : none;
   }
 
 
 
 
-  .pi.flex-container {
+  .π.flex-container {
     /*width           : 100%;*/
     display         : flex;
     flex-direction  : row;
@@ -99,12 +99,12 @@
   }
 
 
-  .pi.flex-item {
+  .π.flex-item {
     /*display: inline-flex;*/
   }
 
 
-  .pi.code {
+  .π.code {
     font-family : monospace;
     color       : #f8f8f2;
   }
@@ -115,36 +115,36 @@
 
 
   /* monokai */
-  .pi.code.comment  { color: #75715e; }
-  .pi.code.keyword  { color: #f92672; }
-  .pi.code.default  { color: #f8f8f2; }
-  .pi.code.reserved { color: #66D9EF; }
-  .pi.code.number   { color: #AE81FF; }
-  .pi.code.string   { color: #e6db74; }
+  .π.code.comment  { color: #75715e; }
+  .π.code.keyword  { color: #f92672; }
+  .π.code.default  { color: #f8f8f2; }
+  .π.code.reserved { color: #66D9EF; }
+  .π.code.number   { color: #AE81FF; }
+  .π.code.string   { color: #e6db74; }
 
 
   /* transitions */
 
 
-  .pi.tween {
+  .π.tween {
     transition-property         : all;
     transition-duration         : 0.6s;
     transition-timing-function  : cubic-bezier(0,0,0.58,1);
   }
 
 
-  .pi.tween.ease-out {
+  .π.tween.ease-out {
     transition-timing-function  : ease-out;
   }
 
-  .pi.tween.ease-in {
+  .π.tween.ease-in {
     transition-timing-function  : ease-in;
   }
 
 
   /* The ugly */
 
-  .pi.hwaccel {  
+  .π.hwaccel {  
     -webkit-transform: translateZ(0); 
   }
 

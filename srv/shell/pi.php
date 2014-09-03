@@ -26,7 +26,7 @@
   }
 
 
-  require_once '../php/lib/colors.php';
+  require_once __DIR__ . '/../php/lib/colors.php';
 
   // save current directory
   $origlocation = getcwd();
