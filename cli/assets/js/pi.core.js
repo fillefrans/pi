@@ -1253,12 +1253,16 @@
 
 
     π.require = function(module, async, defer, callback, onerror) {
+      var
+        result = true;
 
           // handle multiple modules given on the form "module1 module2 ..."
           if(module.indexOf(" ") >=1) {
-            var modules = module.split(" ");
-            for (var i=0; i<modules.length; i++) { π.require(modules[i], async, defer, callback, onerror); }
-            return;
+            var 
+              modules = module.split(" ");
+            for (var i=0; i<modules.length; i++) { result &= π.require(modules[i], async, defer, null, onerror); }
+            if( result && typeof callback === "function" ) { callback.call(this); }
+            return true;
           }
           // already loaded => early escape
           if (π.loaded[module.replace(/\./g,'_')]) {
@@ -1272,8 +1276,8 @@
         script  = document.createElement('script');
 
 
-      script.async    = async || true;
-      script.defer    = defer || true;
+      script.async    = async || false;
+      script.defer    = defer || false;
       script.src      = path + module + '.js';
 
       script.modname  = module.replace(/\./g,'_');
