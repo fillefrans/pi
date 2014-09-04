@@ -1,0 +1,3 @@
+[submodule "etc/apache2/markdown-handler"]
+	path = etc/apache2/markdown-handler
+	url = https://github.com/alue/markdown-handler
