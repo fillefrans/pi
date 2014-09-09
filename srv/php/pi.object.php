@@ -22,7 +22,7 @@
    *  Implements basic Object for the Pi namespace.
    *  ("Object" = "Instance of a Pi Type")
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

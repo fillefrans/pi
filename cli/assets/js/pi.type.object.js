@@ -7,7 +7,7 @@
  * and some binary memory operations
  *
  * @requires    HTML5, or typed array polyfill
- * @author Johan Telstad, jt@enfield.no, 2011-2014
+ * @author Johan Telstad, jt@viewshq.no, 2011-2014
  */
 
 

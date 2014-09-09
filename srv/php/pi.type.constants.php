@@ -7,7 +7,7 @@
    *  
    *  Defines Pi Types and Pi Type Strings
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

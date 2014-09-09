@@ -9,7 +9,7 @@
    *  These types reflect the available data types in HTML5 and Redis
    *  It defines proper aliases for all basic types for JSON, MySQL, PHP, JavaScript
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

@@ -8,7 +8,7 @@
    *  
    *  It defines proper aliases for all basic types for ZMQ
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

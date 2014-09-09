@@ -4,5 +4,5 @@
 
 
 * TODO: Add documentation 
-* Contact [Johan Telstad](mailto:jt@enfield.no) for information
+* Contact [Johan Telstad](mailto:jt@viewshq.no) for information
 

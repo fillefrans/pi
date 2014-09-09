@@ -12,7 +12,7 @@
      * 
      * This is part of the core of the pi server
      *
-     * @author Johan Telstad, jt@enfield.no, 2011-2014
+     * @author Johan Telstad, jt@viewshq.no, 2011-2014
      *
      */
 

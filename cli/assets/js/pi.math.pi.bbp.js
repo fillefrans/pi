@@ -16,7 +16,7 @@
 
 /**
  * JavaScript version of the Bailey–Borwein–Plouffe formula
- *  Translated into javascript by Johan Telstad, <jt@enfield.no> 
+ *  Translated into javascript by Johan Telstad, <jt@viewshq.no> 
  *
  * @author David H. Bailey     2006-09-08
  *

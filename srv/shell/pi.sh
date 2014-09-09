@@ -4,7 +4,7 @@
 # Wraps pi/srv/shell/pi.php as shell script
 # 
 # @requires php5
-# @author Johan Telstad <jt@enfield.no>
+# @author Johan Telstad <jt@viewshq.no>
 
 
 # Absolute path to this script, e.g. {/home/user}/pi/srv/shell/pi.sh

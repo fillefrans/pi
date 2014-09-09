@@ -3,7 +3,7 @@
     /**
      * Run batch through Pi WebService
      *
-     * @author Johan Telstad, jt@enfield.no
+     * @author Johan Telstad, jt@viewshq.no
      * @version v1.0, 04.02.2013
      *
      *  Usage example at the bottom of this file

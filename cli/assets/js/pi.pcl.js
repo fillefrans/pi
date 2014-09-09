@@ -2,7 +2,7 @@
    *
    * π.pcl
    *
-   * @author Johan Telstad, jt@enfield.no, 2011-2013
+   * @author Johan Telstad, jt@viewshq.no, 2011-2014
    *
    */
 

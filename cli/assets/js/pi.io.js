@@ -3,7 +3,7 @@
  *    This is the client side of our interface to the server filesystem
  *    with upload/download and 
  *
- * @author Johan Telstad, jt@enfield.no, 2011-2013
+ * @author Johan Telstad, jt@viewshq.no, 2011-2014
  *
  * 
 **/

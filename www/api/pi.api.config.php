@@ -3,7 +3,7 @@
   /**
    * config script for pi API (json web services)
    *
-   * @author Johan Telstad <jt@enfield.no>
+   * @author Johan Telstad <jt@viewshq.no>
    *
    * @copyright Johan Telstad, 2011-2014
    *

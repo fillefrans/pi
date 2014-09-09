@@ -4,7 +4,7 @@
    *  Pi Type ShortString class
    *  Pascal-style string, up to 255 chars
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

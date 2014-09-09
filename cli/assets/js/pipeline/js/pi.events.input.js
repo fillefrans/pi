@@ -3,7 +3,7 @@
  *    This module handles user input, mouse, keyboard, touch, &c.
  *    It will handle data/message passing, events, and pubsub. In a hurry.
  *
- * @author Johan Telstad, jt@enfield.no, 2011-2013
+ * @author Johan Telstad, jt@viewshq.no, 2011-2014
  *
  * 
  * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 

@@ -7,7 +7,7 @@
    *
    *  A Pi Sorted Set is equivalent to a sparse array
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

@@ -1,12 +1,12 @@
   /**
    *
-   * π v0.4.5
+   * π v0.5.1
    *
    * Pi is an html5-based client-server application platform
    *
    * This is the client part
    *
-   * @author Johan Telstad, jt@enfield.no
+   * @author Johan Telstad, jt@viewshq.no
    * 
    * @copyright Johan Telstad, 2011-2014
    * @copyright Views AS, 2014
@@ -164,7 +164,7 @@
          * This is the client side hub of our messaging system.
          * It will handle data/message passing, events, and pubsub. In a hurry.
          *
-         * @author Johan Telstad, jt@enfield.no, 2011-2013
+         * @author Johan Telstad, jt@viewshq.no, 2011-2014
          *
          * 
          * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 

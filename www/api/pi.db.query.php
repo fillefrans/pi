@@ -9,7 +9,7 @@
      *
      * This is part of the pi server API (json web services)
      *
-     * @author Johan Telstad, jt@enfield.no, 2011-2014
+     * @author Johan Telstad, jt@viewshq.no, 2011-2014
      *
      */
 

@@ -11,7 +11,7 @@
    * - type (optional) Pi Type
    * - ttl
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

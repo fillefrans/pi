@@ -1,7 +1,7 @@
 <?php
 
     /**
-     *  @author Johan Telstad <jt@enfield.no>
+     *  @author Johan Telstad <jt@viewshq.no>
      *  
      * @category pi
      * @package config

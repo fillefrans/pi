@@ -8,7 +8,7 @@
    * running as a Web Worker. 
    * communicates over the PostMessage API
    *
-   * @author Johan Telstad, jt@enfield.no
+   * @author Johan Telstad, jt@viewshq.no
    * @copyright Views AS, 2014
    * 
    */

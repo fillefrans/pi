@@ -7,7 +7,7 @@
    *  A script that reads lines from varnishlog through stdin
    *  and aggregates the data across keys and time
    *
-   *  @author Johan Telstad <jt@enfield.no>, 2011-2014
+   *  @author Johan Telstad <jt@viewshq.no>, 2011-2014
    *  
    */
 

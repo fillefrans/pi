@@ -11,7 +11,7 @@
    * @package pi.shell
    * @version 1.0
    *
-   * @author Johan Telstad <jt@enfield.no>
+   * @author Johan Telstad <jt@viewshq.no>
    *
    * @copyright 2011-2014 Views AS
    */

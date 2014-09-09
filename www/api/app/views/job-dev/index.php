@@ -1,7 +1,7 @@
 <?php
 
 /** WebService Job-dev
- *  @author Johan Telstad, jt@enfield.no
+ *  @author Johan Telstad, jt@viewshq.no
  *  @version  v0.3, 08.02.2013
  *
  */

@@ -3,7 +3,7 @@
   /**
    *  π.webservice.job
    * 
-   *  @author Johan Telstad, jt@enfield.no
+   *  @author Johan Telstad, jt@viewshq.no
    *  @version  v0.3, 23.08.2013
    *
    */

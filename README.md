@@ -69,15 +69,22 @@ Central concepts : **channel**, **address**, **object** and **type**
     - not yet, though
 
 
+####Naming conventions for the pi namespace
+    If '.' is not available, use DASH: '-'
+    If '-' is not available, use UNDERSCORE: '_'
+    
+    If '_' is not to your liking, use camelCase
+
+
 Pi is inspired by flow-based programming and the old-school linux toolchain, 
-where specialized agents can be configured into flexible chains of processing.
+where specialized agents can be configured on-the-fly into flexible chains of 
+processing through unix pipes.
 
 
 
 ####**ABOUT**
-*somewhere between the minuscule and the majuscule*
 
-    scale dynamically, as hardware allows
+    scales dynamically, as hardware allows
 
     work in parallel and sequentially simultaneously 
     (and in real-time) in all connected parts - sending only 

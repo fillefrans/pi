@@ -6,7 +6,7 @@
    *  Implements basic ACL for the Pi namespace.
    *
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    * @todo Add in-script and Redis cache layer to permissions lookup
    */
 

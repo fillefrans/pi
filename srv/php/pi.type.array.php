@@ -6,7 +6,7 @@
    *  quick wrapper around PHP array, to provide TYPE support
    *  and serialization
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

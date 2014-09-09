@@ -6,7 +6,7 @@
    *  A ZMQ wrapper for a Pi Object
    *  Has methods to describe, read, and update a Pi Object as a ZMQ object
    *  
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

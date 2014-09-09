@@ -4,7 +4,7 @@
  *
  * @description Defines Pi Type Library constants, and support functions
  * 
- * @author Johan Telstad, jt@enfield.no, 2011-2014
+ * @author Johan Telstad, jt@viewshq.no, 2011-2014
  */
 
 

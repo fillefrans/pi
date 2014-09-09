@@ -2,7 +2,7 @@
    *
    * π
    *
-   * @author @copyright Johan Telstad, jt@enfield.no, 2011-2013
+   * @author @copyright Johan Telstad, jt@viewshq.no, 2011-2014
    *
    * @version 0.2
    */

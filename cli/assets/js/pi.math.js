@@ -5,7 +5,7 @@
  *  Implements js-equivalents of sets, sorted sets, etc
  *  with related functions to operate on them
  *  
- *  @author Johan Telstad, <jt@enfield.no>, 2011-2013
+ *  @author Johan Telstad, <jt@viewshq.no>, 2011-2014
  * 
  */
 

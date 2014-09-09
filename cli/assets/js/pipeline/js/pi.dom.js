@@ -4,9 +4,9 @@
    *
    * DOM utilities for the Pi client
    *
-   * @author Johan Telstad, jt@enfield.no, 2012-2014
+   * @author Johan Telstad, jt@viewshq.no, 2012-2014
    *
-   * @copyright Johan Telstad, jt@enfield.no, 2012-2014
+   * @copyright Johan Telstad, jt@viewshq.no, 2012-2014
    * @copyright Views AS, 2014
    *
    */

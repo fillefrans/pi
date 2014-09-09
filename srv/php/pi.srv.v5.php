@@ -4,7 +4,7 @@
   /**
    * @package Pi Web Socket Server
    *
-   * @author Johan Telstad <jt@enfield.no>
+   * @author Johan Telstad <jt@viewshq.no>
    *
    * @uses PHP Web Socket Server <phpws>
    * @version 0.5.0
@@ -174,7 +174,7 @@
     /**
      * The pi application server
      *
-     * @author 2011-2014 Johan Telstad, jt@enfield.no
+     * @author 2011-2014 Johan Telstad, jt@viewshq.no
      *
      */
 

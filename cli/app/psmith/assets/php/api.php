@@ -32,7 +32,7 @@ $request = file_get_contents("php://input");
  *  $oUser->addEmail('test@test.com');
  * @version   0.01
  * @since     2014-02-25
- * @author    Johan Telstad <jt@enfield.no>
+ * @author    Johan Telstad <jt@viewshq.no>
  * @copyright 2011-2014 Views AS
  * 
  */
@@ -85,7 +85,7 @@ interface Rest {
    * @throws  InvalidArgumentException
    * @todo    Check access rights with AclController
    *
-   * @author  Johan Telstad <jt@enfield.no>
+   * @author  Johan Telstad <jt@viewshq.no>
    *
    */
   public function create($object);
@@ -102,7 +102,7 @@ interface Rest {
    * @throws  InvalidArgumentException
    * @todo    Check access rights with AclController
    *
-   * @author  Johan Telstad <jt@enfield.no>
+   * @author  Johan Telstad <jt@viewshq.no>
    *
    */
   public function read  ($ids);
@@ -118,7 +118,7 @@ interface Rest {
    * @throws  InvalidArgumentException
    * @todo    Check access rights with AclController
    *
-   * @author  Johan Telstad <jt@enfield.no>
+   * @author  Johan Telstad <jt@viewshq.no>
    *
    */
   public function update($objects);
@@ -134,7 +134,7 @@ interface Rest {
    * @throws  InvalidArgumentException
    * @todo    Check access rights with AclController
    *
-   * @author  Johan Telstad <jt@enfield.no>
+   * @author  Johan Telstad <jt@viewshq.no>
    *
    */
   public function delete($ids);
@@ -166,7 +166,7 @@ interface Rest {
  *  $oUser->addEmail('test@test.com');
  * @version   0.01
  * @since     2014-02-25
- * @author    Johan Telstad <jt@enfield.no>
+ * @author    Johan Telstad <jt@viewshq.no>
  * @copyright 2011-2014 Views AS
  * 
  */

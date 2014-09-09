@@ -8,7 +8,7 @@
    *  Converts between Pi Types in different formats: 
    *  JSON, MySQL, PHP, JavaScript, igbinary, Redis types, etc
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
 

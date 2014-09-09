@@ -16,7 +16,7 @@
    *
    * @copyright 2011-2014 Views AS
    *
-   * @author 2011-2014 Johan Telstad <jt@enfield.no>
+   * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    * 
    */
 

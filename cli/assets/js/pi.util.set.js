@@ -6,7 +6,7 @@
    *  with related functions to operate on them
    *
    * 
-   *  @author Johan Telstad, <jt@enfield.no>, 2011-2014
+   *  @author Johan Telstad, <jt@viewshq.no>, 2011-2014
    *
    */
 
