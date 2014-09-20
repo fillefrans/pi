@@ -369,7 +369,7 @@
           if (!is_string($address)) {
             throw new PiTypeException("Expected 'address' to be String, " . gettype($address) . " received." , 1);
           }
-          if(strpos($address, "|")) {
+          if (strpos($address, "|")) {
 
             if (substr_count($address, "|") > 1) {
               // error: more than on pipe character in raw address
@@ -378,7 +378,7 @@
 
             // rawaddress with channel
             $rawaddress = explode($address, "|", 2);
-            if(count($rawaddress)==2) {
+            if (count($rawaddress)==2) {
               $this->channel = $this->parseChannel($rawaddress[0]);
               $this->address = $this->parseAddress($rawaddress[1]);
               return $this->address;
@@ -412,11 +412,11 @@
 
 
     public static function parseChannel($channel = null) {
-      try {
 
+      try {
   
         if(strpos($channel, "|")) {
-          throw new PiTypeException("Invalid channel: cannot contain pipe character", 1);
+          throw new PiTypeException("Invalid channel name: cannot contain pipe character", 1);
         }
   
         elseif (strpos($channel, ":")) {

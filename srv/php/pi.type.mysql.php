@@ -4,7 +4,6 @@
    *  Pi Type MySQL class
    *
    *  Implements basic Pi Types for MySQL.
-   *  ("Popt" = "Plain Old Pi Type")
    *  
    *  It defines proper aliases for all basic types for MySQL
    *
@@ -14,7 +13,6 @@
 
 
   require_once('pi.type.php');
-  // require_once('pi.db.php');
 
 
     define('MYSQL_ID', 'INT(4) UNSIGNED');

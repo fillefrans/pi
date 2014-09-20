@@ -26,7 +26,7 @@
     define('PIC_AUTH',     1);
     define('PIC_CHAT',     2);
     define('PIC_DEBUG',    3);
-    define('PIC_WARNING',  4);
+    define('PIC_FILE',     4);
     define('PIC_ERROR',    5);
     define('PIC_LOG',      6);
     define('PIC_TYPE',     7);
@@ -46,7 +46,6 @@
   class PiChannelException extends PiException {};
 
 
-
   class PiChannel extends Pi implements JSONSerializable {
 
     protected $name     = 'channel';
@@ -61,7 +60,7 @@
     const AUTH    = PIC_AUTH;
     const CHAT    = PIC_CHAT;
     const DEBUG   = PIC_DEBUG;
-    const WARNING = PIC_WARNING;
+    const FILE    = PIC_FILE;
     const ERROR   = PIC_ERROR;
     const LOG     = PIC_LOG;
     const TYPE    = PIC_TYPE;

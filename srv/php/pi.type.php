@@ -169,7 +169,7 @@
 
   class PiType implements JsonSerializable {
 
-    protected $name     = 'typE';
+    protected $name     = 'type';
 
     // Protected, can be accessed by descendants
     protected $value    = null;
@@ -196,8 +196,8 @@
      * Const, singleton values shared between all descendants
      *
      * @example
-     *   $float = PiType.New(PiType::FLOAT32);
-     *   $float = PiType.New(PI_FLOAT32);
+     *   $float = PiType.Create(PiType::FLOAT32);
+     *   $float = PiType.Create(PI_FLOAT32);
      *
      *   switch ($object->TYPE) {
      *     case PiType::TEL :
@@ -344,7 +344,7 @@
       // parent::__construct();
 
       if ($type === null) {
-        echo "typE is NULL in constructor, setting to " . PI_NULL . "\n";
+        echo "type is NULL in constructor, setting to " . PI_NULL . "\n";
         $this->TYPE = PI_NULL;
         return;
       }
@@ -438,12 +438,12 @@
      * @return PiType Instance of class, if found
      * 
      * @example
-     *       $object  = PiType::New('Object', $args);
-     *       $record  = PiType::New('Struct', $typedef);
-     *       $file    = PiType::New('File', $args);
-     *       $uint    = PiType::New('Uint', $size);
-     *       $image   = PiType::New('Image', $args);
-     *       $utc     = PiType::New('Timestamp'[, $UTC]);
+     *       $object  = PiType::Create('Object', $args);
+     *       $record  = PiType::Create('Struct', $typedef);
+     *       $file    = PiType::Create('File', $args);
+     *       $uint    = PiType::Create('Uint', $size);
+     *       $image   = PiType::Create('Image', $args);
+     *       $utc     = PiType::Create('Timestamp'[, $UTC]);
      * 
      */
 

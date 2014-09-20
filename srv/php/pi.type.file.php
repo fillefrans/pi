@@ -1,8 +1,7 @@
 <?
 
   /**
-   *  Pi Type Permissions class
-   *
+   *  Pi Type File class
    *
    * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
@@ -49,8 +48,7 @@
     protected $filename = "";
     protected $exists   = null;
 
-    // bitfield (12), 4 octal numbers
-    protected $BITS   = 0;
+    protected $BITS   = 8;
 
     protected $permissions  = new PiTypePermissions();
 
@@ -238,22 +236,18 @@
     }
 
 
-    public function toString () {
-      return sprintf("%b", $this->value);
-    }
-
     public function get () {
-      return (bool) $this->value;
+      return $this->value;
     }
 
-    public function set ($value = false) {
-      $this->value = (bool) $value;
+    public function set ($value = null) {
+      $this->value = $value;
     }
 
     public function getset ($value = null) {
       $previous = $this->value;
-      $this->value = (bool) $value;
-      return (bool) $previous;
+      $this->value = $value;
+      return $previous;
     }
 
   }

@@ -22,30 +22,13 @@
 
   require_once('pi.channel.db.php');
 
-
-    // // channels
-    // define('PIC_AUTH',     1);
-    // define('PIC_CHAT',     2);
-    // define('PIC_DEBUG',    3);
-    // define('PIC_WARNING',  4);
-    // define('PIC_ERROR',    5);
-    // define('PIC_LOG',      6);
-    // define('PIC_TYPE',     7);
-    // define('PIC_DB',       8);
-    // define('PIC_PING',     9);
-    // define('PIC_CTRL',     10);
-    // define('PIC_ADMIN',    11);
-    // define('PIC_SYS',      12);
-
-    // // push channel
-    // define('PIC_PUSH',     14);
-    // define('PIC_ZMQ',      15);
+  require_once('pi.type.mysql.php');
 
 
-  class PiChannelDBMySQLException extends PiException {};
+  class PiDBChannelMySQLException extends PiDBChannelException {};
     
 
-  class PiChannelDBMySQL extends PiChannelDB {
+  class PiDBChannelMySQL extends PiDBChannel {
 
     protected $name     = 'mysql';
     protected $TYPE     = null;

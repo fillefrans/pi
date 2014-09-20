@@ -43,10 +43,10 @@
     // define('PIC_ZMQ',      15);
 
 
-  class PiChannelDBException extends PiException {};
+  class PiDBChannelException extends PiChannelException {};
     
 
-  class PiChannelDB extends PiChannel {
+  class PiDBChannel extends PiChannel {
 
     protected $name     = 'db';
     protected $TYPE     = null;
@@ -66,7 +66,7 @@
         throw new InvalidArgumentException("Expected address to be String, received : " . gettype($address), 1);
       }
 
-      // call Pi Channel class constructor (pass arguments)
+      // call Pi Channel class constructor (pass any arguments)
       parent::__construct();
 
       $this->address = $address;
@@ -79,45 +79,6 @@
 
     }
 
-
-
-    public function send($data = null, $address = null, PiType $type = null, $ttl = null) {
-      if ($data === null) {
-        throw new InvalidArgumentException("data cannot be null", 1);
-      }
-      if ($address === null) {
-        // broadcast
-        $this->redis->rPush($this->channel . $this->address, $data);
-      }
-    }
-
-
-    public function receive($data = null, $address = null, $type = null, $ttl = null) {
-      
-    }
-
-
-
-
-    /*
-      $object = PiChannel::New('Object', $args);
-      $file   = PiChannel::New('File', $args);
-      $image  = PiChannel::New('Image', $args);
-      etc, etc
-     */
-
-    /**
-     * "Factory" of sorts, to create new instances of PiChannel descendants
-     * @param string $className Class name, e.g. : FileType, ImageType, DataType, etc
-     * @param Type $args      Arguments for the class constructor
-     */
-
-    public static function New($className, $args) { 
-       if(class_exists($className) && is_subclass_of($className, 'PiChannel'))
-       { 
-          return new $className($args);
-       } 
-    }  
 
 
   }
