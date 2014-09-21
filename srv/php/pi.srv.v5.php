@@ -22,6 +22,7 @@
 
     require_once('pi.type.php');
 
+    ini_set("default_socket_timeout", 6000);
   	require_once('websocket.server.php');
 
 
