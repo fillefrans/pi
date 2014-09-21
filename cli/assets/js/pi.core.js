@@ -110,7 +110,7 @@
             add : function (callback) {
 
               // check input
-              if(typeof callback != "function") {
+              if (typeof callback != "function") {
                 pi.log("Error: Tried to add non-function as callback:", callback);
                 return false;
               }
@@ -132,7 +132,7 @@
                 item    = π.core.callback.__items[id],
                 result  = false;
 
-              if(item && (typeof item.callback == "function")) {        
+              if (item && (typeof item.callback == "function")) {        
 
                 // pi.log("invoking callback " + id + " after " + ( (new Date().getTime()) - item.timestamp ) + "ms");
                 result = item.callback.call(this, data);
@@ -218,23 +218,23 @@
               passPath = false,
               bindTo = this;
               
-              if( typeof uniqueName == "string" ) {
+              if ( typeof uniqueName == "string" ) {
                 unique = uniqueName;
               } 
-              else if( typeof alsoPassPath_or_unique == "string" ) {
+              else if ( typeof alsoPassPath_or_unique == "string" ) {
                 unique = alsoPassPath_or_unique;
               } 
-              else if( typeof obj_or_alsoPassPath_or_unique == "string" ) {
+              else if ( typeof obj_or_alsoPassPath_or_unique == "string" ) {
                 unique = obj_or_alsoPassPath_or_unique;
               }
 
-              if( typeof alsoPassPath_or_unique == "boolean" ) {
+              if ( typeof alsoPassPath_or_unique == "boolean" ) {
                 passPath = alsoPassPath_or_unique;
-              } else if(typeof obj_or_alsoPassPath_or_unique == "boolean") {
+              } else if (typeof obj_or_alsoPassPath_or_unique == "boolean") {
                 passPath = obj_or_alsoPassPath_or_unique;
               }
               
-              if(typeof obj_or_alsoPassPath_or_unique == "object" || typeof obj_or_alsoPassPath_or_unique == "function") {
+              if (typeof obj_or_alsoPassPath_or_unique == "object" || typeof obj_or_alsoPassPath_or_unique == "function") {
                 bindTo = obj_or_alsoPassPath_or_unique;
               }
               
@@ -245,7 +245,7 @@
               // Removes all instances of handler from the passed subscription chunk.
               var _unsubscribe = function(cache, handler) {
                 for(var i = 0; i < cache[unique].length; i++) {
-                  if(handler === undefined || handler === null || cache[unique][i] === handler) {
+                  if (handler === undefined || handler === null || cache[unique][i] === handler) {
                     cache[unique].splice(i, 1);
                     i--;
                   }
@@ -255,7 +255,7 @@
               // Recursively removes all instances of handler from the passed subscription chunk.
               var _deepUnsubscribe = function(cache, handler) {
                 for(sub in cache) {
-                  if(typeof cache[sub] != "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
+                  if (typeof cache[sub] != "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
                   _deepUnsubscribe(cache[sub], handler);
                 }
                 _unsubscribe(cache, handler);
@@ -286,7 +286,7 @@
                 if (passPath) args.push(s);
                 stack.push(cache);
                 for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                  if(cache[s[i]] === undefined) break;
+                  if (cache[s[i]] === undefined) break;
                   cache = cache[s[i]];
                   stack.push(cache);
                 }
@@ -294,7 +294,7 @@
                 var exit = false;
                 while((c = stack.pop())) {
                   for(var j = 0; j < c[unique].length; j++) {
-                    if(c[unique][j].apply(this,args) === false) exit = true;
+                    if (c[unique][j].apply(this,args) === false) exit = true;
                   }
                   if (exit) break;
                 }
@@ -327,7 +327,7 @@
                 if (sub != "") {
                   var s = sub.split(".");
                   for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                    if(cache[s[i]] === undefined) return;
+                    if (cache[s[i]] === undefined) return;
                     cache = cache[s[i]];
                   }
                 }
@@ -369,13 +369,13 @@
               customEvt   = null;
 
             // early escape
-            if(!eventName) {
+            if (!eventName) {
               return false;
             }
 
 
             // are we handicapped ?
-            if(π.browser.isIe() === true) {
+            if (!window.CustomEvent) {
               try {
                 customEvt = document.createEvent("CustomEvent");
                 if (eventData) {
@@ -394,7 +394,7 @@
             else {
               // we are not handicapped
 
-              if(eventData) {
+              if (eventData) {
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
               } else {
                 dispatcher.dispatchEvent(new CustomEvent(eventName));
@@ -447,12 +447,12 @@
 
       count = padto - str.length;
 
-      if(count <= 0 || padto === false) {
+      if (count <= 0 || padto === false) {
         return str;
       }
 
       for(;count--;) {
-        if(padleft) {
+        if (padleft) {
           result = padstr + result;
         }
         else {
@@ -466,14 +466,14 @@
 
     π.basename = function (filename, ext) {
       var
-        filename = filename || null,
-        ext = ext || "",
-        token = "",
-        slashpos = -1;
+        filename  = filename || null,
+        ext       = ext || "",
+        token     = "",
+        slashpos  = -1;
 
 
-      if(filename.lastIndexOf("/") == filename.length-1) {
-
+      if (filename.lastIndexOf("/") == filename.length-1) {
+        filename.length--;
       }
 
       slashpos = filename.lastIndexOf("/");
@@ -486,13 +486,13 @@
         // pi.log("token : " + token);
       }
 
-      if(ext && typeof ext === "string") {
+      if (ext && typeof ext === "string") {
         var strlen = token.length;
-        if(token.lastIndexOf(ext) == (strlen - ext.length)) {
+        if (token.lastIndexOf(ext) == (strlen - ext.length)) {
           // pi.log("That's our baby : " + token.lastIndexOf(ext));
           token = token.substring(0, token.lastIndexOf(ext));
         }
-        else{
+        else {
           // pi.log("not our baby : " + token.lastIndexOf(ext));
         }
       }
@@ -523,11 +523,11 @@
 
     π.log = function(msg, obj) {
 
-      if(!!obj) {
+      if (!!obj) {
         console.log(msg, obj);
       }
       else {
-        if(π.isArray(msg)) {
+        if (π.isArray(msg)) {
           pi.logArray(msg);
         }
         else if (typeof msg === "object") {
@@ -557,7 +557,7 @@
 
     //   for (var item in obj) {
 
-    //     if(!obj.hasOwnProperty(item)) {
+    //     if (!obj.hasOwnProperty(item)) {
     //       pi.log("skipping : " + item.substring(0, 64));
     //       continue;
     //     }
@@ -581,14 +581,14 @@
     //       }
     //     }
 
-    //    if( typeof obj[item] == "object" ) {
+    //    if ( typeof obj[item] == "object" ) {
 
     //       pi.log("searching object " + item + " for " + token);
     //       result = π.search(token, obj[item], where, exact);
     //       pi.log("result : " + result);
 
     //     }
-    //     else{
+    //     else {
 
     //       if (where === 2 || where === 0) {
 
@@ -638,24 +638,24 @@
 
       for (var item in obj) {
 
-        if(where === 0 || where === 1) {
-          if(exact) {
-            if(item == token) {
+        if (where === 0 || where === 1) {
+          if (exact) {
+            if (item == token) {
               return obj[item];
             }
           }
           else {
-            if(item.indexOf(token)>-1) {
+            if (item.indexOf(token)>-1) {
               return obj[item];
             }
           }
         }
 
         // recursion part
-        if(typeof obj[item] == "object") {
+        if (typeof obj[item] == "object") {
 
           result = pi.search(token, obj[item], where, exact, multiple);
-          if(!result) {
+          if (!result) {
             continue;
           }
           else {
@@ -663,7 +663,7 @@
           }
         }
 
-        if(!obj.hasOwnProperty(item)) {
+        if (!obj.hasOwnProperty(item)) {
           pi.log("skipping : " + item.substring(0, 64));
           continue;
         }
@@ -746,7 +746,7 @@
         feature = feature || null,
         elem    = elem    || window;
 
-      if(feature in elem) {
+      if (feature in elem) {
         return;
       }
 
@@ -783,10 +783,11 @@
         fragment  = document.createDocumentFragment(),
         container = document.createElement("div");
 
+      // we do it this way to render the markup before we add it to the DOM
       container.innerHTML = src;
       fragment.appendChild(container);
 
-      if( elem && (elem != document.body) ) {
+      if ( elem && (elem != document.body) ) {
         π.clear(elem);
       }
 
@@ -808,7 +809,7 @@
         element   = elem || null,
         removed   = 0;
 
-      if(!π.isElement(elem)) {
+      if (!π.isElement(elem)) {
         return false;
       }
        
@@ -847,7 +848,7 @@
         newobj      = null;
 
 
-      if(typeof obj == "string") {
+      if (typeof obj == "string") {
         try {
           obj = JSON.parse(obj);
         }
@@ -859,12 +860,12 @@
 
       newobj = {};
       for (var i in obj) {
-        if( (i % 1 === 0) ) {
+        if ( (i % 1 === 0) ) {
           // skip numerical indices
           // continue;
         }
-        if(exceptions !== false) {
-          if(exceptions.indexOf(i)>-1) {
+        if (exceptions !== false) {
+          if (exceptions.indexOf(i)>-1) {
             continue;
           }
         }
@@ -893,8 +894,8 @@
     π.listen = function (address, callback, onerror) {
 
         // early escapes
-        if(!!address) {
-          if(typeof callback != "function") {
+        if (!!address) {
+          if (typeof callback != "function") {
             return false;
           }
         } 
@@ -907,7 +908,7 @@
 
       source.addEventListener('message',  callback, false);
 
-      if(typeof onerror == "function") {
+      if (typeof onerror == "function") {
         source.addEventListener('error',    onerror,  false);
       }
 
@@ -933,18 +934,18 @@
 
 
     π.readstream = function (address, listener, onerror) {
-      if(!π.session._connected) {
-        if(typeof onerror == "function") {
+      if (!π.session._connected) {
+        if (typeof onerror == "function") {
           onerror.call(this, "Error: No session in readstream().");
           return false;
         }
       }
 
-      if(typeof listener == "function") {
+      if (typeof listener == "function") {
         return π.session.addStreamListener(address, listener, onerror);
       }
       else {
-        if(typeof onerror == "function") {
+        if (typeof onerror == "function") {
           onerror.call(this, "Error: Argument #2 is not a function in readstream().");
         }
         return false;
@@ -971,18 +972,18 @@
 
 
     π.readqueue = function (address, listener, onerror) {
-      if(!π.session._connected) {
-        if(typeof onerror == "function") {
+      if (!π.session._connected) {
+        if (typeof onerror == "function") {
           onerror.call(this, "Error: No session in readqueue().");
           return false;
         }
       }
 
-      if(typeof listener == "function") {
+      if (typeof listener == "function") {
         return π.session.addStreamListener(address, listener, onerror);
       }
       else {
-        if(typeof onerror == "function") {
+        if (typeof onerror == "function") {
           onerror.call(this, "Error: No listener in readstream().");
         }
         return false;
@@ -1003,7 +1004,7 @@
     π.on = function(eventaddress, callback, capture) {
 
       // if object, attach all functions by name
-      if( typeof eventaddress === "object" ) {
+      if ( typeof eventaddress === "object" ) {
         var count = 0;
         for (var func in eventaddress) {
           if ( eventaddress.hasOwnProperty(func) && (typeof eventaddress[func] === "function") ) {
@@ -1023,7 +1024,6 @@
 
 
     // ALIAS
-
     π.bind = pi.on;
 
 
@@ -1042,11 +1042,11 @@
         eventaddress  = eventaddress  || false,
         timeout       = timeout       || π._const.DEFAULT_TIMEOUT;
       
-      if( typeof eventaddress != "string" ) {
+      if ( typeof eventaddress != "string" ) {
         return false;
       }
 
-      if( eventaddress.substring(0,7) == 'pi.app.' ) {
+      if ( eventaddress.substring(0,7) == 'pi.app.' ) {
         // await named event locally
         return π.events.subscribe(eventaddress, callback);
       }
@@ -1127,11 +1127,11 @@
           data      : data
         };
 
-        if(typeof callback == "function") {
+        if (typeof callback == "function") {
           packet.callback = π.core.callback.add(callback);
         }
 
-        if(π.session.connected) {
+        if (π.session.connected) {
           // will return true or false
           return π.session.send(packet);
         }
@@ -1162,9 +1162,9 @@
       var
         parameters = { address: address };
 
-      if(typeof callback != "function") {
+      if (typeof callback != "function") {
         pi.log("Error : callback is not a function in readlist().");
-        if(typeof onerror == "function") {
+        if (typeof onerror == "function") {
           onerror.call(this, "callback is not a function in readlist().");
         }
         return false;
@@ -1198,9 +1198,9 @@
       var
         parameters = { address: address };
 
-      if(typeof callback != "function") {
+      if (typeof callback != "function") {
         pi.log("Error : callback is not a function in readdata().");
-        if(typeof onerror == "function") {
+        if (typeof onerror == "function") {
           onerror.call(this, "callback is not a function in readdata().");
         }
         return false;
@@ -1257,16 +1257,16 @@
         result = true;
 
           // handle multiple modules given on the form "module1 module2 ..."
-          if(module.indexOf(" ") >=1) {
+          if (module.indexOf(" ") >=1) {
             var 
               modules = module.split(" ");
             for (var i=0; i<modules.length; i++) { result &= π.require(modules[i], async, defer, null, onerror); }
-            if( result && typeof callback === "function" ) { callback.call(this); }
+            if ( result && typeof callback === "function" ) { callback.call(this); }
             return true;
           }
           // already loaded => early escape
           if (π.loaded[module.replace(/\./g,'_')]) {
-            if( typeof callback === "function" ) { callback.call(this); } 
+            if ( typeof callback === "function" ) { callback.call(this); } 
             return true;
           }
 
@@ -1289,7 +1289,7 @@
 
       script.onload = function () {
         π.loaded[this.modname] = { time: (new Date()).getTime(), loadtime: π.timer.stop(this.modname) };
-        if(typeof this.callback === "function") {
+        if (typeof this.callback === "function") {
           this.callback.call(this, this.modname);
         }
       };
@@ -1321,7 +1321,6 @@
 
         var
 
-          // replace . with _
           id          = timerid.replace(/\./g,'_'),
           timers      = π.timer.timers,
           self        = π.timer.timers[id]  || false,
@@ -1331,30 +1330,29 @@
           tickid      = false;
 
 
-        if(self) {
+        if (self) {
           pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
         }
 
-        if( typeof ontick == "function" ) {
+        if ( typeof ontick == "function" ) {
           tickid = setInterval(ontick, interval);
         }
 
 
         timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
 
-        if(typeof events.publish == "function") {
+        if (typeof events.publish == "function") {
           events.publish("pi.timer." + timerid + ".start", {event: "start", data: timers[id]});
         }
-        if(typeof console.time == "function"){
+        if (typeof console.time == "function"){
           /// console.time(id);
         }
       },
 
 
       check : function(timerid) {
-        var
 
-          // replace . with _
+        var
           id          = timerid.replace(/\./g,'_'),
           timers      = π.timer.__items,
           self        = π.timer.__items[id] || false,
@@ -1364,18 +1362,18 @@
           tickid      = false;
 
 
-        if(self) {
+        if (self) {
           pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
         }
 
-        if(typeof ontick == "function") {
+        if (typeof ontick == "function") {
           tickid = setInterval(ontick, interval);
         }
 
 
         timers[id] = { id : timerid, start : (new Date()).getTime(), tickid : tickid };
 
-        if(typeof events.publish == "function") {
+        if (typeof events.publish == "function") {
           events.publish("pi.timer." + timerid + ".tick", {event: "tick", data: timers[id]});
         }
       },
@@ -1388,18 +1386,18 @@
           history = π.timer.history,
           self    = π.timer.timers[timerid.replace(/\./g,'_')] || false;
 
-        if(typeof console.timeEnd == "function"){
-          /// console.timeEnd(timerid);
-        }
+        // if (typeof console.timeEnd == "function"){
+        //   /// console.timeEnd(timerid);
+        // }
 
-        if(!self) {
+        if (!self) {
           // π.events.publish("pi.timer.items." + timerid, "Warning: stopping non-existent timer \"" + timerid + "\". Results unpredictable.");
           pi.log("Warning: stopping non-existent timer " + timerid + ". Results unpredictable.");
           return false;
         }
 
         // is there an attached tick handler ?
-        if(self.tickid) {
+        if (self.tickid) {
           // if yes, clear tick interval
           clearInterval(self.tickid);
           self.tickid = false;
@@ -1409,12 +1407,10 @@
 
         self.time = self.stop - self.start;
 
-        var 
-          result = self.time;
         history.add(self);
 
         // return timer value
-        return result;
+        return self.time;
       },
 
 
@@ -1424,7 +1420,6 @@
 
         add : function (obj) {
           π.timer.history.log.push(obj);
-          // π.events.publish("pi.timer.on", ["add", obj]);
         },
 
 
@@ -1434,7 +1429,7 @@
 
 
           log.forEach(function(value, index) {
-            if(callback) {
+            if (callback) {
               callback.call(index, value);
             }
             // pi.log("timer[" + value.id + "] : " + value.time + "ms.");
@@ -1462,8 +1457,6 @@
 
   /***   ------   INITIALIZATION    ------
      *
-     *  Code we run after having created the base π object.
-     *
      */
 
 
@@ -1475,15 +1468,14 @@
 
 
   π.require("core.session", false, false);
-  π.require("core.tasks",   false, false);
+  // π.require("core.tasks",   false, false);
 
   π.require("app", false, false);
-  π.require("pcl", false, false);
+  // π.require("pcl", false, false);
 
   pi.events.trigger('pi', new Date().getTime());
 
-
-  /* a safari bug-fix, supposedly. under heavy suspicion of being completely useless */
+  /* a safari bug-fix for iPhone, supposedly. */
   window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);

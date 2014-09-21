@@ -73,7 +73,7 @@
       return (int) $param;
     }
     if(is_string($param)) {
-      $obj_date = DateTime::createFromFormat('d-m-Y H:i', $param);
+      $obj_date = DateTime::createFromFormat('m/d/Y H:i', $param);
       // echo $obj_date->getTimestamp(); // prints 1330010280
       $debug[] = "timestamp : " . $obj_date->getTimestamp();
       return (int) $obj_date->getTimestamp();
@@ -168,7 +168,7 @@
     
     // $packet['data']['param'] = "1";
     
-    $redis->select(PI_DATA);
+    // $redis->select(PI_DATA);
     $redis->rPush($packet['address'], json_encode($packet['data']));
 
   }
