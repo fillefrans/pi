@@ -1,0 +1,1938 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <script>
+    var 
+      π  = {
+        DEBUG : true,
+        __sessionstart : (new Date()).getTime(),
+        browser : {
+          ie9         : false,
+          websockets  : window.WebSocket || window.MozWebSocket || false,
+          webworkers  : window.WebWorker || false
+        }
+      },
+      A_COOL_MILLION = 1000000;
+  </script>
+
+<!--[if IE 9]>
+  <script> π.browser.ie9 = true; </script>
+<![endif]-->
+
+  <title>Clas Ohlson 2014</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  
+  <!-- the core CSS for pi -->
+  <link rel="stylesheet" href="../../assets/css/pi.core.css">
+
+  <!-- the app CSS -->
+  <link rel="stylesheet" href="assets/css/pi.app.css">
+  <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="assets/ico/icon-72.png">
+  <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
+
+  <style type="text/css">
+
+    #visuals {
+      position  : absolute;
+      display   : block;
+      left      : 330px,
+      top       : 200px;
+      width     : 100%;
+      height    : auto;
+    }
+
+
+    #views-map-container {
+      position  : absolute;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #views-map {
+      position  : absolute;
+      display   : block;
+      top       : 12px;
+      left      : -144px; 
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #sexchart-container {
+      position  : absolute;
+      display   : block;
+      left      : 832px;
+      top       : 0px;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #sexchart {
+      position  : absolute;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #statechart {
+      position  : absolute;
+      left      : 216px;
+      top       : 176px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #agechartcontainer {
+      position  : absolute;
+      display   : inline-block;
+      left      : 634px;
+      top       : 364px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechartsvg {
+      position  : absolute;
+      display   : block;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #agechart {
+      position  : absolute;
+      display   : block;
+      left      : 192px;
+      top       : 20px;
+      width     : 100%;
+      height    : auto;
+    }
+
+    #votechart {
+      position  : absolute;
+      left      : 400px;
+      display   : block;
+      width     : 432px;
+      overflow  : hidden;
+      height    : auto;
+    }
+
+
+
+    .bar rect {
+      fill: white;
+      shape-rendering: crispEdges;
+    }
+
+    .bar text {
+      fill: red;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+
+</head>
+ 
+<body class="pi">
+
+
+  <div id="viewReport">
+    <!-- <button id="btnGetViewsReport">get report</button> -->
+  </div>
+
+  <script type="text/javascript">
+
+    function getViewsReport(reportid) {
+      var
+        viewReport      = null,
+        reportProgress  = null,
+
+        reportid  = reportid || 7,
+        xhr       = null,
+        count     = 0,
+        address   = '/api/pi.db.query.php',
+        params    = {
+          address : "pi.data.app.views.job." + reportid,
+          job     : reportid,
+          apikey  : "kroma"
+        };
+
+      viewReport = document.getElementById("viewReport"); 
+
+      xhr = new XMLHttpRequest();
+
+      var formatSize = function(size) {
+        var
+          s = ",",
+          d = ".";
+
+        if (size < 1024) {
+          return size + " bytes";
+        }
+        if (size < 1024*1024) {
+          return "" + (+size >> 10) + " kb";
+        }
+        if (size < 1024*1024*1024) {
+          return "" + (+size >> 20) + d + ((size % (1024*1024))/(1024*1024))  + " mb";
+        }
+
+       return size + " bytes";
+
+      };
+
+
+      xhr.onprogress = function(e) {
+        if (e.lengthComputable) {  
+          var percentComplete = e.loaded / e.total;
+          if (reportProgress) {
+            reportProgress.value = percentComplete;
+            // reportProgress.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          }
+          else {
+          // viewReport.innerHTML = "receiving data : " + formatSize(e.loaded) + " (" + Math.round(100*percentComplete) + " %)";
+          }
+        }
+        else {
+          // viewReport.innerHTML = "loading : " + formatSize(e.loaded);
+        }
+      };
+
+
+      xhr.onload = function(e) { 
+        var 
+          json = this.responseText || '{ "error" : "responseText is undefined or empty." }';
+
+        var
+          data = JSON.parse(json);
+
+        // if (data['items']) {
+        //   document.getElementById("datadump").innerHTML = JSON.stringify(data.items);
+        // }
+
+        if (reportProgress) {
+          reportProgress.style.display = "none";
+        }
+        // pi.log("xhr response received");
+        // viewReport.innerHTML = "api replied : " + json;
+        if (data['log']) {
+          pi.log("server log:");
+          data.log.forEach(function(p, i) {
+            pi.log(++i + " : " + p);
+          });
+        }
+        if (data['items']) {
+          // pi.log('adding ' + data['items'].length + " items");
+          pi.maverick.xfilter.add(data['items']);
+          document.getElementById("btn-clear-filters").style.display = "inline-block";
+
+          // document.body.onclick = clearFilters;
+        }
+        else {
+          pi.log('found no items : ' + json);
+        }
+
+      };
+
+      xhr.onerror = pi.log;
+      xhr.open("post", address, true);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+      pi.log("xhr request : " + JSON.stringify(params));
+
+      reportProgress = document.createElement("progress");
+      reportProgress.value = 0;
+      reportProgress.style.width = "100%";
+      reportProgress.style.height = "100%";
+      // reportProgress.style.top = "0px";
+      // reportProgress.position = "fixed";
+      
+      viewReport.style.height = "4px";
+      viewReport.appendChild(reportProgress);
+
+      xhr.send(JSON.stringify(params));
+
+    }
+
+
+
+      var
+        records = [
+
+          { phone : "4795223479", param1 : "9/15/2014 11:21" },
+          { phone : "4799228802", param1 : "9/15/2014 13:31" },
+          { phone : "4741530310", param1 : "9/15/2014 13:34" },
+          { phone : "4741443933", param1 : "9/15/2014 13:37" },
+          { phone : "4794360077", param1 : "9/15/2014 13:41" },
+          { phone : "4795082962", param1 : "9/15/2014 13:41" },
+          { phone : "4741002875", param1 : "9/15/2014 13:42" },
+          { phone : "4797177605", param1 : "9/15/2014 13:43" },
+          { phone : "4790685983", param1 : "9/15/2014 14:01" },
+          { phone : "4792056157", param1 : "9/15/2014 14:02" },
+          { phone : "4790412240", param1 : "9/15/2014 14:11" },
+          { phone : "4794328901", param1 : "9/15/2014 14:22" },
+          { phone : "4799216006", param1 : "9/15/2014 14:31" },
+          { phone : "4791691878", param1 : "9/15/2014 14:38" },
+          { phone : "4795010441", param1 : "9/15/2014 14:41" },
+          { phone : "4712345678", param1 : "9/15/2014 15:01" },
+          { phone : "4790555254", param1 : "9/15/2014 15:07" },
+          { phone : "4741511239", param1 : "9/15/2014 15:10" },
+          { phone : "4740492923", param1 : "9/15/2014 15:12" },
+          { phone : "4794474049", param1 : "9/15/2014 15:28" },
+          { phone : "4794474049", param1 : "9/15/2014 15:28" },
+          { phone : "4795884980", param1 : "9/15/2014 15:34" },
+          { phone : "4798020263", param1 : "9/15/2014 15:50" },
+          { phone : "4799278702", param1 : "9/15/2014 16:05" },
+          { phone : "4790610161", param1 : "9/15/2014 16:08" },
+          { phone : "4790172091", param1 : "9/15/2014 16:20" },
+          { phone : "4795139210", param1 : "9/15/2014 16:20" },
+          { phone : "4795223479", param1 : "9/15/2014 16:49" },
+          { phone : "4797575821", param1 : "9/15/2014 17:18" },
+          { phone : "4790827369", param1 : "9/15/2014 17:24" },
+          { phone : "4792088583", param1 : "9/15/2014 17:40" },
+          { phone : "4791160774", param1 : "9/15/2014 18:11" },
+          { phone : "4748145281", param1 : "9/15/2014 18:12" },
+          { phone : "4741163105", param1 : "9/15/2014 18:18" },
+          { phone : "4798043434", param1 : "9/15/2014 18:19" },
+          { phone : "4741103549", param1 : "9/15/2014 18:56" },
+          { phone : "4791789015", param1 : "9/15/2014 19:48" },
+          { phone : "4791789015", param1 : "9/15/2014 19:48" },
+          { phone : "4745231988", param1 : "9/15/2014 20:58" },
+          { phone : "4792230486", param1 : "9/15/2014 21:03" },
+          { phone : "4792230486", param1 : "9/15/2014 21:04" },
+          { phone : "4795200200", param1 : "9/15/2014 21:16" },
+          { phone : "4746447713", param1 : "9/15/2014 21:20" },
+          { phone : "4798668017", param1 : "9/15/2014 23:19" },
+          { phone : "4798668017", param1 : "9/15/2014 23:19" },
+          { phone : "4799331111", param1 : "9/15/2014 23:38" },
+          { phone : "4794430001", param1 : "9/15/2014 23:49" },
+          { phone : "4795021674", param1 : "9/16/2014 0:03"} ,
+          { phone : "4748251733", param1 : "9/16/2014 0:43"} ,
+          { phone : "4748251733", param1 : "9/16/2014 0:43"} ,
+          { phone : "4745054489", param1 : "9/16/2014 0:47"} ,
+          { phone : "4797557706", param1 : "9/16/2014 1:36"} ,
+          { phone : "4795152415", param1 : "9/16/2014 1:57"} ,
+          { phone : "4741100121", param1 : "9/16/2014 2:58"} ,
+          { phone : "4790047232", param1 : "9/16/2014 6:07"} ,
+          { phone : "4790171264", param1 : "9/16/2014 6:38"} ,
+          { phone : "4791559610", param1 : "9/16/2014 6:46"} ,
+          { phone : "4793480040", param1 : "9/16/2014 7:03"} ,
+          { phone : "4790914435", param1 : "9/16/2014 7:09"} ,
+          { phone : "4797975150", param1 : "9/16/2014 7:11"} ,
+          { phone : "4792424560", param1 : "9/16/2014 7:20"} ,
+          { phone : "4741764099", param1 : "9/16/2014 7:24"} ,
+          { phone : "4797553747", param1 : "9/16/2014 7:35"} ,
+          { phone : "4792814903", param1 : "9/16/2014 7:36"} ,
+          { phone : "4791339387", param1 : "9/16/2014 7:40"} ,
+          { phone : "4791675475", param1 : "9/16/2014 7:42"} ,
+          { phone : "4791375220", param1 : "9/16/2014 7:42"} ,
+          { phone : "4741205193", param1 : "9/16/2014 7:46"} ,
+          { phone : "4799867108", param1 : "9/16/2014 7:51"} ,
+          { phone : "4792436601", param1 : "9/16/2014 8:01"} ,
+          { phone : "4746766382", param1 : "9/16/2014 8:02"} ,
+          { phone : "4748143285", param1 : "9/16/2014 8:05"} ,
+          { phone : "4748990747", param1 : "9/16/2014 8:11"} ,
+          { phone : "4795737943", param1 : "9/16/2014 8:19"} ,
+          { phone : "4795233733", param1 : "9/16/2014 8:24"} ,
+          { phone : "4799595932", param1 : "9/16/2014 8:26"} ,
+          { phone : "4747277658", param1 : "9/16/2014 8:27"} ,
+          { phone : "4740055860", param1 : "9/16/2014 8:30"} ,
+          { phone : "4792894681", param1 : "9/16/2014 8:35"} ,
+          { phone : "4791192418", param1 : "9/16/2014 8:36"} ,
+          { phone : "4745831821", param1 : "9/16/2014 8:39"} ,
+          { phone : "4792048199", param1 : "9/16/2014 8:41"} ,
+          { phone : "4791120753", param1 : "9/16/2014 8:43"} ,
+          { phone : "4793060322", param1 : "9/16/2014 8:44"} ,
+          { phone : "4799363600", param1 : "9/16/2014 8:46"} ,
+          { phone : "4790206102", param1 : "9/16/2014 8:47"} ,
+          { phone : "4791510437", param1 : "9/16/2014 8:53"} ,
+          { phone : "4799605546", param1 : "9/16/2014 8:58"} ,
+          { phone : "4740454454", param1 : "9/16/2014 9:02"} ,
+          { phone : "4748038375", param1 : "9/16/2014 9:03"} ,
+          { phone : "4792034165", param1 : "9/16/2014 9:03"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:05"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:05"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:06"} ,
+          { phone : "4745447464", param1 : "9/16/2014 9:07"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:08"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:09"} ,
+          { phone : "4793461028", param1 : "9/16/2014 9:09"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:11"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:12"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:13"} ,
+          { phone : "4741309654", param1 : "9/16/2014 9:14"} ,
+          { phone : "4791698131", param1 : "9/16/2014 9:15"} ,
+          { phone : "4797465350", param1 : "9/16/2014 9:20"} ,
+          { phone : "4790876718", param1 : "9/16/2014 9:20"} ,
+          { phone : "4798280304", param1 : "9/16/2014 9:21"} ,
+          { phone : "4740856326", param1 : "9/16/2014 9:22"} ,
+          { phone : "4791616506", param1 : "9/16/2014 9:24"} ,
+          { phone : "4793428734", param1 : "9/16/2014 9:24"} ,
+          { phone : "4793400553", param1 : "9/16/2014 9:32"} ,
+          { phone : "4791141390", param1 : "9/16/2014 9:33"} ,
+          { phone : "4799798351", param1 : "9/16/2014 9:36"} ,
+          { phone : "4797559094", param1 : "9/16/2014 9:37"} ,
+          { phone : "4791885921", param1 : "9/16/2014 9:38"} ,
+          { phone : "4793412379", param1 : "9/16/2014 9:41"} ,
+          { phone : "4799511258", param1 : "9/16/2014 9:42"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:48"} ,
+          { phone : "4799102059", param1 : "9/16/2014 9:49"} ,
+          { phone : "4793014683", param1 : "9/16/2014 9:49"} ,
+          { phone : "4799102059", param1 : "9/16/2014 9:49"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:49"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:49"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:49"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:49"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:49"} ,
+          { phone : "4795940565", param1 : "9/16/2014 9:49"} ,
+          { phone : "4790080225", param1 : "9/16/2014 9:51"} ,
+          { phone : "4795145650", param1 : "9/16/2014 9:55"} ,
+          { phone : "4797748988", param1 : "9/16/2014 9:55"} ,
+          { phone : "4797748988", param1 : "9/16/2014 9:56"} ,
+          { phone : "4797573513", param1 : "9/16/2014 9:58"} ,
+          { phone : "4795223479", param1 : "9/16/2014 9:59"} ,
+          { phone : "4795223479", param1 : "9/16/2014 10:00" },
+          { phone : "4792811507", param1 : "9/16/2014 10:03" },
+          { phone : "4747395389", param1 : "9/16/2014 10:05" },
+          { phone : "4797144138", param1 : "9/16/2014 10:10" },
+          { phone : "4790050552", param1 : "9/16/2014 10:10" },
+          { phone : "4790050818", param1 : "9/16/2014 10:11" },
+          { phone : "4740213865", param1 : "9/16/2014 10:13" },
+          { phone : "4795236890", param1 : "9/16/2014 10:14" },
+          { phone : "4797193982", param1 : "9/16/2014 10:18" },
+          { phone : "4790231354", param1 : "9/16/2014 10:21" },
+          { phone : "4740489786", param1 : "9/16/2014 10:25" },
+          { phone : "4790045143", param1 : "9/16/2014 10:26" },
+          { phone : "4798250777", param1 : "9/16/2014 10:30" },
+          { phone : "4792230486", param1 : "9/16/2014 10:33" },
+          { phone : "4795441442", param1 : "9/16/2014 10:33" },
+          { phone : "4740872404", param1 : "9/16/2014 10:34" },
+          { phone : "4741443933", param1 : "9/16/2014 10:35" },
+          { phone : "4791766539", param1 : "9/16/2014 10:38" },
+          { phone : "4790241001", param1 : "9/16/2014 10:43" },
+          { phone : "4740171479", param1 : "9/16/2014 10:46" },
+          { phone : "4740171479", param1 : "9/16/2014 10:46" },
+          { phone : "4799376035", param1 : "9/16/2014 10:47" },
+          { phone : "4748124220", param1 : "9/16/2014 10:48" },
+          { phone : "4745070139", param1 : "9/16/2014 10:49" },
+          { phone : "4747235359", param1 : "9/16/2014 10:50" },
+          { phone : "4793444162", param1 : "9/16/2014 10:52" },
+          { phone : "4793889703", param1 : "9/16/2014 10:53" },
+          { phone : "4794828658", param1 : "9/16/2014 10:55" },
+          { phone : "4793844057", param1 : "9/16/2014 10:57" },
+          { phone : "4792230486", param1 : "9/16/2014 11:00" },
+          { phone : "4748958772", param1 : "9/16/2014 11:00" },
+          { phone : "4745246887", param1 : "9/16/2014 11:03" },
+          { phone : "4790770273", param1 : "9/16/2014 11:07" },
+          { phone : "4792812111", param1 : "9/16/2014 11:08" },
+          { phone : "4794343981", param1 : "9/16/2014 11:08" },
+          { phone : "4795079564", param1 : "9/16/2014 11:10" },
+          { phone : "4793069185", param1 : "9/16/2014 11:10" },
+          { phone : "4741530310", param1 : "9/16/2014 11:17" },
+          { phone : "4798203197", param1 : "9/16/2014 11:18" },
+          { phone : "4791675475", param1 : "9/16/2014 11:20" },
+          { phone : "4799876302", param1 : "9/16/2014 11:20" },
+          { phone : "4790555360", param1 : "9/16/2014 11:20" },
+          { phone : "4799223030", param1 : "9/16/2014 11:20" },
+          { phone : "4790059604", param1 : "9/16/2014 11:22" },
+          { phone : "4795485034", param1 : "9/16/2014 11:22" },
+          { phone : "4799514351", param1 : "9/16/2014 11:27" },
+          { phone : "4741309508", param1 : "9/16/2014 11:27" },
+          { phone : "4792858318", param1 : "9/16/2014 11:27" },
+          { phone : "4748094886", param1 : "9/16/2014 11:28" },
+          { phone : "4741571113", param1 : "9/16/2014 11:29" },
+          { phone : "4798094273", param1 : "9/16/2014 11:30" },
+          { phone : "4799378120", param1 : "9/16/2014 11:31" },
+          { phone : "4797743143", param1 : "9/16/2014 11:36" },
+          { phone : "4746425641", param1 : "9/16/2014 11:37" },
+          { phone : "4792022273", param1 : "9/16/2014 11:39" },
+          { phone : "4798477368", param1 : "9/16/2014 11:41" },
+          { phone : "4792697263", param1 : "9/16/2014 11:48" },
+          { phone : "4740643743", param1 : "9/16/2014 11:49" },
+          { phone : "4790524916", param1 : "9/16/2014 11:52" },
+          { phone : "4792816667", param1 : "9/16/2014 11:58" },
+          { phone : "4741767032", param1 : "9/16/2014 12:01" },
+          { phone : "4741213160", param1 : "9/16/2014 12:01" },
+          { phone : "4748197692", param1 : "9/16/2014 12:02" },
+          { phone : "4797519343", param1 : "9/16/2014 12:06" },
+          { phone : "4799599459", param1 : "9/16/2014 12:15" },
+          { phone : "4798265777", param1 : "9/16/2014 12:18" },
+          { phone : "4790961040", param1 : "9/16/2014 12:19" },
+          { phone : "4795197535", param1 : "9/16/2014 12:20" },
+          { phone : "4791893409", param1 : "9/16/2014 12:32" },
+          { phone : "4792660329", param1 : "9/16/2014 12:38" },
+          { phone : "4798835888", param1 : "9/16/2014 12:39" },
+          { phone : "4790028283", param1 : "9/16/2014 12:43" },
+          { phone : "4746689877", param1 : "9/16/2014 12:45" },
+          { phone : "4793409184", param1 : "9/16/2014 12:47" },
+          { phone : "4794245345", param1 : "9/16/2014 12:59" },
+          { phone : "4790610161", param1 : "9/16/2014 13:02" },
+          { phone : "4795739104", param1 : "9/16/2014 13:02" },
+          { phone : "4790186677", param1 : "9/16/2014 13:04" },
+          { phone : "4793033898", param1 : "9/16/2014 13:04" },
+          { phone : "4792834233", param1 : "9/16/2014 13:09" },
+          { phone : "4791517231", param1 : "9/16/2014 13:13" },
+          { phone : "4792229997", param1 : "9/16/2014 13:13" },
+          { phone : "4740615239", param1 : "9/16/2014 13:15" },
+          { phone : "4799791177", param1 : "9/16/2014 13:28" },
+          { phone : "4798608983", param1 : "9/16/2014 13:29" },
+          { phone : "4797130335", param1 : "9/16/2014 13:34" },
+          { phone : "4791332734", param1 : "9/16/2014 13:41" },
+          { phone : "4797121671", param1 : "9/16/2014 13:49" },
+          { phone : "4799630328", param1 : "9/16/2014 13:55" },
+          { phone : "4747360701", param1 : "9/16/2014 14:10" },
+          { phone : "4799037031", param1 : "9/16/2014 14:11" },
+          { phone : "4797697636", param1 : "9/16/2014 14:24" },
+          { phone : "4792429657", param1 : "9/16/2014 14:25" },
+          { phone : "4793692800", param1 : "9/16/2014 14:26" },
+          { phone : "4797956233", param1 : "9/16/2014 14:27" },
+          { phone : "4792446486", param1 : "9/16/2014 14:28" },
+          { phone : "4792069159", param1 : "9/16/2014 14:32" },
+          { phone : "4791891465", param1 : "9/16/2014 14:32" },
+          { phone : "4795136563", param1 : "9/16/2014 14:33" },
+          { phone : "4790058603", param1 : "9/16/2014 14:39" },
+          { phone : "4797975472", param1 : "9/16/2014 14:41" },
+          { phone : "4790622379", param1 : "9/16/2014 14:51" },
+          { phone : "4791687544", param1 : "9/16/2014 14:52" },
+          { phone : "4791736018", param1 : "9/16/2014 14:58" },
+          { phone : "4793009906", param1 : "9/16/2014 15:04" },
+          { phone : "4793271509", param1 : "9/16/2014 15:04" },
+          { phone : "4799647080", param1 : "9/16/2014 15:09" },
+          { phone : "4799164015", param1 : "9/16/2014 15:09" },
+          { phone : "4797706261", param1 : "9/16/2014 15:11" },
+          { phone : "4792625683", param1 : "9/16/2014 15:11" },
+          { phone : "4793600786", param1 : "9/16/2014 15:11" },
+          { phone : "4741377968", param1 : "9/16/2014 15:12" },
+          { phone : "4793849043", param1 : "9/16/2014 15:12" },
+          { phone : "4740099533", param1 : "9/16/2014 15:13" },
+          { phone : "4798861458", param1 : "9/16/2014 15:13" },
+          { phone : "4793849095", param1 : "9/16/2014 15:13" },
+          { phone : "4797731359", param1 : "9/16/2014 15:14" },
+          { phone : "4793459022", param1 : "9/16/2014 15:14" },
+          { phone : "4740230400", param1 : "9/16/2014 15:14" },
+          { phone : "4794382820", param1 : "9/16/2014 15:15" },
+          { phone : "4741323407", param1 : "9/16/2014 15:15" },
+          { phone : "4796684448", param1 : "9/16/2014 15:16" },
+          { phone : "4794305748", param1 : "9/16/2014 15:16" },
+          { phone : "4797794469", param1 : "9/16/2014 15:17" },
+          { phone : "4747253606", param1 : "9/16/2014 15:21" },
+          { phone : "4746841958", param1 : "9/16/2014 15:22" },
+          { phone : "4745660522", param1 : "9/16/2014 15:22" },
+          { phone : "4740238795", param1 : "9/16/2014 15:23" },
+          { phone : "4794866744", param1 : "9/16/2014 15:30" },
+          { phone : "4792455848", param1 : "9/16/2014 15:31" },
+          { phone : "4790550310", param1 : "9/16/2014 15:33" },
+          { phone : "4741443933", param1 : "9/16/2014 15:33" },
+          { phone : "4798861329", param1 : "9/16/2014 15:34" },
+          { phone : "4745084210", param1 : "9/16/2014 15:34" },
+          { phone : "4740013231", param1 : "9/16/2014 15:34" },
+          { phone : "4791395052", param1 : "9/16/2014 15:35" },
+          { phone : "4791137484", param1 : "9/16/2014 15:42" },
+          { phone : "4746280131", param1 : "9/16/2014 15:45" },
+          { phone : "4747142201", param1 : "9/16/2014 15:47" },
+          { phone : "4795158053", param1 : "9/16/2014 15:47" },
+          { phone : "4798203183", param1 : "9/16/2014 15:48" },
+          { phone : "4741935738", param1 : "9/16/2014 15:51" },
+          { phone : "4792468726", param1 : "9/16/2014 15:52" },
+          { phone : "4791722909", param1 : "9/16/2014 15:54" },
+          { phone : "4791587115", param1 : "9/16/2014 15:56" },
+          { phone : "4790527617", param1 : "9/16/2014 16:03" },
+          { phone : "4792846581", param1 : "9/16/2014 16:15" },
+          { phone : "4795875285", param1 : "9/16/2014 16:25" },
+          { phone : "4795488148", param1 : "9/16/2014 16:29" },
+          { phone : "4741255599", param1 : "9/16/2014 16:29" },
+          { phone : "4790600673", param1 : "9/16/2014 16:45" },
+          { phone : "4790807000", param1 : "9/16/2014 16:45" },
+          { phone : "4790176330", param1 : "9/16/2014 16:45" },
+          { phone : "4799250357", param1 : "9/16/2014 17:00" },
+          { phone : "4712345678", param1 : "9/16/2014 17:09" },
+          { phone : "4747628089", param1 : "9/16/2014 17:14" },
+          { phone : "4790073157", param1 : "9/16/2014 17:14" },
+          { phone : "4740061188", param1 : "9/16/2014 17:15" },
+          { phone : "4795103134", param1 : "9/16/2014 17:15" },
+          { phone : "4791116095", param1 : "9/16/2014 17:17" },
+          { phone : "4741047023", param1 : "9/16/2014 17:18" },
+          { phone : "4741574181", param1 : "9/16/2014 17:27" },
+          { phone : "4792699934", param1 : "9/16/2014 17:31" },
+          { phone : "4790057616", param1 : "9/16/2014 17:33" },
+          { phone : "4795274718", param1 : "9/16/2014 17:33" },
+          { phone : "4792097330", param1 : "9/16/2014 17:34" },
+          { phone : "4790796190", param1 : "9/16/2014 17:43" },
+          { phone : "4790842031", param1 : "9/16/2014 17:43" },
+          { phone : "4741574181", param1 : "9/16/2014 17:45" },
+          { phone : "4794514978", param1 : "9/16/2014 17:48" },
+          { phone : "4792862102", param1 : "9/16/2014 17:49" },
+          { phone : "4798052747", param1 : "9/16/2014 17:51" },
+          { phone : "4792440492", param1 : "9/16/2014 17:59" },
+          { phone : "4797700785", param1 : "9/16/2014 18:02" },
+          { phone : "4740098242", param1 : "9/16/2014 18:08" },
+          { phone : "4797147252", param1 : "9/16/2014 18:09" },
+          { phone : "4746680902", param1 : "9/16/2014 18:16" },
+          { phone : "4790013290", param1 : "9/16/2014 18:19" },
+          { phone : "4799525187", param1 : "9/16/2014 18:26" },
+          { phone : "4790096030", param1 : "9/16/2014 18:36" },
+          { phone : "4790964596", param1 : "9/16/2014 18:43" },
+          { phone : "4793480704", param1 : "9/16/2014 18:45" },
+          { phone : "4747253799", param1 : "9/16/2014 18:47" },
+          { phone : "4795143846", param1 : "9/16/2014 18:51" },
+          { phone : "4796049060", param1 : "9/16/2014 18:53" },
+          { phone : "4792810890", param1 : "9/16/2014 18:53" },
+          { phone : "4793645288", param1 : "9/16/2014 18:53" },
+          { phone : "4790516753", param1 : "9/16/2014 18:54" },
+          { phone : "4797588752", param1 : "9/16/2014 18:56" },
+          { phone : "4792681248", param1 : "9/16/2014 18:56" },
+          { phone : "4798012189", param1 : "9/16/2014 18:58" },
+          { phone : "4792221718", param1 : "9/16/2014 18:59" },
+          { phone : "4797031828", param1 : "9/16/2014 19:11" },
+          { phone : "4741297211", param1 : "9/16/2014 19:14" },
+          { phone : "4790097302", param1 : "9/16/2014 19:15" },
+          { phone : "4792884681", param1 : "9/16/2014 19:32" },
+          { phone : "4794317559", param1 : "9/16/2014 19:34" },
+          { phone : "4793827037", param1 : "9/16/2014 19:43" },
+          { phone : "4797141324", param1 : "9/16/2014 19:47" },
+          { phone : "4741647961", param1 : "9/16/2014 20:03" },
+          { phone : "4797057726", param1 : "9/16/2014 20:06" },
+          { phone : "4795853246", param1 : "9/16/2014 20:19" },
+          { phone : "4790817543", param1 : "9/16/2014 20:19" },
+          { phone : "4795292296", param1 : "9/16/2014 20:19" },
+          { phone : "4799458428", param1 : "9/16/2014 20:21" },
+          { phone : "4741083816", param1 : "9/16/2014 20:24" },
+          { phone : "4799744447", param1 : "9/16/2014 20:28" },
+          { phone : "4790597466", param1 : "9/16/2014 20:30" },
+          { phone : "4747147964", param1 : "9/16/2014 20:31" },
+          { phone : "4792629265", param1 : "9/16/2014 20:33" },
+          { phone : "4741618370", param1 : "9/16/2014 20:47" },
+          { phone : "4799543213", param1 : "9/16/2014 20:48" },
+          { phone : "4791758400", param1 : "9/16/2014 21:10" },
+          { phone : "4791758400", param1 : "9/16/2014 21:10" },
+          { phone : "4795875052", param1 : "9/16/2014 21:12" },
+          { phone : "4791749876", param1 : "9/16/2014 21:13" },
+          { phone : "4795833195", param1 : "9/16/2014 21:14" },
+          { phone : "4797712634", param1 : "9/16/2014 21:15" },
+          { phone : "4741128288", param1 : "9/16/2014 21:18" },
+          { phone : "4746051619", param1 : "9/16/2014 21:55" },
+          { phone : "4790781707", param1 : "9/16/2014 21:58" },
+          { phone : "4741673025", param1 : "9/16/2014 21:59" },
+          { phone : "4797544993", param1 : "9/16/2014 21:59" },
+          { phone : "4790993593", param1 : "9/16/2014 22:00" },
+          { phone : "4797798905", param1 : "9/16/2014 22:01" },
+          { phone : "4746663278", param1 : "9/16/2014 22:01" },
+          { phone : "4746622922", param1 : "9/16/2014 22:07" },
+          { phone : "4798808177", param1 : "9/16/2014 22:08" },
+          { phone : "4797076329", param1 : "9/16/2014 22:25" },
+          { phone : "4792408057", param1 : "9/16/2014 22:25" },
+          { phone : "4795444154", param1 : "9/16/2014 22:34" },
+          { phone : "4799309025", param1 : "9/16/2014 22:41" },
+          { phone : "4741040149", param1 : "9/16/2014 22:41" },
+          { phone : "4794002400", param1 : "9/16/2014 22:43" },
+          { phone : "4791829180", param1 : "9/16/2014 22:46" },
+          { phone : "4798686850", param1 : "9/16/2014 22:46" },
+          { phone : "4793619629", param1 : "9/16/2014 22:59" },
+          { phone : "4799490915", param1 : "9/16/2014 23:04" },
+          { phone : "4799090265", param1 : "9/16/2014 23:07" },
+          { phone : "4793433079", param1 : "9/16/2014 23:10" },
+          { phone : "4793433079", param1 : "9/16/2014 23:12" },
+          { phone : "4747330753", param1 : "9/16/2014 23:15" },
+          { phone : "4747663505", param1 : "9/16/2014 23:23" },
+          { phone : "4798233355", param1 : "9/16/2014 23:27" },
+          { phone : "4793034773", param1 : "9/16/2014 23:31" },
+          { phone : "4791818699", param1 : "9/16/2014 23:45" },
+          { phone : "4747878202", param1 : "9/16/2014 23:52" },
+          { phone : "4798611237", param1 : "9/16/2014 23:54" },
+          { phone : "4793227400", param1 : "9/17/2014 0:03"} ,
+          { phone : "4791778731", param1 : "9/17/2014 0:05"} ,
+          { phone : "4799747581", param1 : "9/17/2014 0:09"} ,
+          { phone : "4793018790", param1 : "9/17/2014 0:12"} ,
+          { phone : "4740204959", param1 : "9/17/2014 0:12"} ,
+          { phone : "4746588761", param1 : "9/17/2014 4:17"} ,
+          { phone : "4791315353", param1 : "9/17/2014 4:22"} ,
+          { phone : "4799401672", param1 : "9/17/2014 4:54"} ,
+          { phone : "4799401672", param1 : "9/17/2014 4:54"} ,
+          { phone : "4798290875", param1 : "9/17/2014 5:41"} ,
+          { phone : "4798290875", param1 : "9/17/2014 5:41"} ,
+          { phone : "4747754303", param1 : "9/17/2014 6:33"} ,
+          { phone : "4747754303", param1 : "9/17/2014 6:33"} ,
+          { phone : "4797762302", param1 : "9/17/2014 6:53"} ,
+          { phone : "4799099777", param1 : "9/17/2014 7:00"} ,
+          { phone : "4748303067", param1 : "9/17/2014 7:05"} ,
+          { phone : "4798834672", param1 : "9/17/2014 7:17"} ,
+          { phone : "4790013013", param1 : "9/17/2014 7:38"} ,
+          { phone : "4746423142", param1 : "9/17/2014 7:50"} ,
+          { phone : "4799368392", param1 : "9/17/2014 7:52"} ,
+          { phone : "4790056915", param1 : "9/17/2014 7:57"} ,
+          { phone : "4799368392", param1 : "9/17/2014 7:59"} ,
+          { phone : "4740144997", param1 : "9/17/2014 8:05"} ,
+          { phone : "4790130188", param1 : "9/17/2014 8:10"} ,
+          { phone : "4793033898", param1 : "9/17/2014 8:28"} ,
+          { phone : "4797427627", param1 : "9/17/2014 8:32"} ,
+          { phone : "4748241132", param1 : "9/17/2014 8:36"} ,
+          { phone : "4798901091", param1 : "9/17/2014 8:47"} ,
+          { phone : "4792499168", param1 : "9/17/2014 8:47"} ,
+          { phone : "4792263983", param1 : "9/17/2014 9:06"} ,
+          { phone : "4791318378", param1 : "9/17/2014 9:21"} ,
+          { phone : "4792414100", param1 : "9/17/2014 9:23"} ,
+          { phone : "4790678308", param1 : "9/17/2014 10:00" },
+          { phone : "4799151398", param1 : "9/17/2014 10:07" },
+          { phone : "4792465530", param1 : "9/17/2014 10:09" },
+          { phone : "4791549592", param1 : "9/17/2014 10:25" },
+          { phone : "4793822024", param1 : "9/17/2014 10:26" },
+          { phone : "4745035927", param1 : "9/17/2014 10:42" },
+          { phone : "4797799722", param1 : "9/17/2014 10:47" },
+          { phone : "4791819949", param1 : "9/17/2014 10:51" },
+          { phone : "4791819949", param1 : "9/17/2014 10:51" },
+          { phone : "4791819949", param1 : "9/17/2014 10:52" },
+          { phone : "4791819949", param1 : "9/17/2014 10:52" },
+          { phone : "4791819949", param1 : "9/17/2014 10:52" },
+          { phone : "4791819949", param1 : "9/17/2014 10:52" },
+          { phone : "4791819949", param1 : "9/17/2014 10:52" },
+          { phone : "4791819949", param1 : "9/17/2014 10:53" },
+          { phone : "4791819949", param1 : "9/17/2014 10:53" },
+          { phone : "4791819949", param1 : "9/17/2014 10:53" },
+          { phone : "4791819949", param1 : "9/17/2014 10:53" },
+          { phone : "4791819949", param1 : "9/17/2014 10:53" },
+          { phone : "4745219228", param1 : "9/17/2014 11:09" },
+          { phone : "4747386046", param1 : "9/17/2014 11:19" },
+          { phone : "4747386046", param1 : "9/17/2014 11:19" },
+          { phone : "4799307424", param1 : "9/17/2014 11:20" },
+          { phone : "4799307424", param1 : "9/17/2014 11:20" },
+          { phone : "4793452400", param1 : "9/17/2014 11:20" },
+          { phone : "4741040732", param1 : "9/17/2014 11:30" },
+          { phone : "4791517301", param1 : "9/17/2014 11:52" },
+          { phone : "4790586958", param1 : "9/17/2014 11:52" },
+          { phone : "4745464352", param1 : "9/17/2014 11:54" },
+          { phone : "4795454636", param1 : "9/17/2014 11:55" },
+          { phone : "4791639633", param1 : "9/17/2014 11:59" },
+          { phone : "4748209836", param1 : "9/17/2014 11:59" },
+          { phone : "4745141556", param1 : "9/17/2014 11:59" },
+          { phone : "4745464352", param1 : "9/17/2014 12:00" },
+          { phone : "4792421419", param1 : "9/17/2014 12:03" },
+          { phone : "4791586700", param1 : "9/17/2014 12:13" },
+          { phone : "4741223157", param1 : "9/17/2014 12:25" },
+          { phone : "4798412857", param1 : "9/17/2014 12:30" },
+          { phone : "4795053001", param1 : "9/17/2014 12:41" },
+          { phone : "4794894969", param1 : "9/17/2014 12:44" },
+          { phone : "4795033422", param1 : "9/17/2014 12:49" },
+          { phone : "4792090104", param1 : "9/17/2014 12:51" },
+          { phone : "4795975653", param1 : "9/17/2014 12:58" },
+          { phone : "4794151331", param1 : "9/17/2014 12:58" },
+          { phone : "4795775195", param1 : "9/17/2014 13:10" },
+          { phone : "4792899108", param1 : "9/17/2014 13:16" },
+          { phone : "4793484083", param1 : "9/17/2014 13:18" },
+          { phone : "4793081167", param1 : "9/17/2014 13:19" },
+          { phone : "4790871377", param1 : "9/17/2014 13:24" },
+          { phone : "4790871377", param1 : "9/17/2014 13:25" },
+          { phone : "4790871377", param1 : "9/17/2014 13:28" },
+          { phone : "4790830886", param1 : "9/17/2014 13:29" },
+          { phone : "4790871377", param1 : "9/17/2014 13:30" },
+          { phone : "4790871377", param1 : "9/17/2014 13:32" },
+          { phone : "4790871377", param1 : "9/17/2014 13:33" },
+          { phone : "4792845277", param1 : "9/17/2014 13:36" },
+          { phone : "4792622809", param1 : "9/17/2014 13:38" },
+          { phone : "4748074948", param1 : "9/17/2014 13:50" },
+          { phone : "4795332670", param1 : "9/17/2014 13:59" },
+          { phone : "4799603969", param1 : "9/17/2014 14:00" },
+          { phone : "4796626247", param1 : "9/17/2014 14:00" },
+          { phone : "4740021255", param1 : "9/17/2014 14:01" },
+          { phone : "4746425480", param1 : "9/17/2014 14:13" },
+          { phone : "4741526248", param1 : "9/17/2014 14:18" },
+          { phone : "4795974418", param1 : "9/17/2014 14:21" },
+          { phone : "4791667843", param1 : "9/17/2014 14:42" },
+          { phone : "4791667843", param1 : "9/17/2014 14:43" },
+          { phone : "4740045438", param1 : "9/17/2014 14:47" },
+          { phone : "4741610892", param1 : "9/17/2014 14:59" },
+          { phone : "4740249546", param1 : "9/17/2014 15:07" },
+          { phone : "4796625853", param1 : "9/17/2014 15:25" },
+          { phone : "4791107185", param1 : "9/17/2014 15:41" },
+          { phone : "4748004396", param1 : "9/17/2014 15:43" },
+          { phone : "4793217985", param1 : "9/17/2014 16:20" },
+          { phone : "4790775866", param1 : "9/17/2014 16:25" },
+          { phone : "4792654123", param1 : "9/17/2014 16:30" },
+          { phone : "4798449822", param1 : "9/17/2014 16:37" },
+          { phone : "4791173020", param1 : "9/17/2014 16:42" },
+          { phone : "4790815328", param1 : "9/17/2014 16:48" },
+          { phone : "4798854749", param1 : "9/17/2014 17:00" },
+          { phone : "4795006926", param1 : "9/17/2014 17:01" },
+          { phone : "4745242764", param1 : "9/17/2014 17:04" },
+          { phone : "4797516227", param1 : "9/17/2014 17:04" },
+          { phone : "4794973818", param1 : "9/17/2014 17:07" },
+          { phone : "4799470641", param1 : "9/17/2014 17:16" },
+          { phone : "4747659607", param1 : "9/17/2014 17:59" },
+          { phone : "4795175598", param1 : "9/17/2014 18:06" },
+          { phone : "4798474259", param1 : "9/17/2014 18:12" },
+          { phone : "4791355166", param1 : "9/17/2014 18:30" },
+          { phone : "4791327271", param1 : "9/17/2014 18:42" }
+        ];
+
+      var uniques = [];
+
+
+      function sendVotes() {
+        var
+          voteReply = null,
+          xhr       = null,
+          rate      = 0,
+          interval  = null,
+          count     = 0,
+          seconds   = 0,
+          address   = '/api/app/views/job/',
+          params    = {
+            job     : 7,
+            apikey  : "kroma"
+          };
+
+        clearFilters();
+
+        if(!!window.voteInterval) {
+          stopVotes();
+          // document.getElementById("spanMinutes").innerHTML = 5;
+          return false;
+        }
+
+
+        // calculate votes per second
+        seconds = 5 * 60;
+        rate    = records.length/seconds;
+        // pi.log("sending votes @ " + rate + " / sec");
+        pi.log("sending " + records.length + " records @ " + Math.round(100*rate)/100 + " / sec, (every " + (1/rate) + " secs)");
+
+        // pi.log("interval is " + (1000/rate) + " millisec");
+
+
+
+
+
+        window.voteInterval = setInterval( function() {
+
+            // document.getElementById("spanVotes").innerHTML = votes-count;
+            var 
+              record = records.pop();
+
+            if (!record) {
+              stopVotes();
+            }
+
+            if (record.phone && uniques.indexOf(record.phone) >= 0) {
+              return;
+            }
+            else {
+              uniques.push(record.phone);
+            }
+
+            for (var field in record) {
+              params[field] = record[field];
+            }
+
+            
+            // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
+            // voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
+
+            xhr = new XMLHttpRequest();
+
+            xhr.onload = function(e) { 
+              var 
+                json = this.responseText || '{ error : "responseText is undefined or empty." }';
+
+              var
+                data = null,
+                status = {};
+
+              try {
+                data = JSON.parse(json);
+              }
+              catch (e) {
+                pi.log("Error : ", e);
+                pi.log(this.responseText);
+                data = {};
+              }
+
+              status['OK']      = data['OK'] || false;
+              status['message'] = data['message'] || "SERVER ERROR : " + this.responseText;
+              status['request'] = data['request'] || null;
+
+              pi.log("api replied : " + JSON.stringify(status));
+            };
+
+            xhr.onerror = console.log;
+            xhr.open("post", address, true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+            xhr.send(JSON.stringify(params));
+          }, 1000/rate);
+
+        return interval;
+
+      } // function sendVotes()
+
+
+      function stopVotes() {
+        clearInterval(window.voteInterval);
+        clearInterval(window.minuteInterval);
+        
+        window.voteInterval   = null;
+        window.minuteInterval = null;
+
+        alert("records sent!");
+
+        return false;
+      }
+
+
+
+
+  </script>
+
+
+  <!-- This is the demo's div -->
+
+  <div id="demo" data-name="pcl.table.xfilter">
+
+<!--     <div id="loginflex" class="pcl flexbox ontop">
+      <div class="pcl loginbox">
+        <form>
+          <fieldset id="login">
+            <p>
+            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if (this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" type="password">passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
+            </p>
+            <p id="loginReply">
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+ -->
+
+    <div>
+      <div style="width: 600px">
+      <img style="float: right;margin-right:-120px;" src="assets/img/logo.gif" alt="">
+        <div style="width: 180px;" id="views-logo"><p style="margin-left: 8px;">VIEWS | *alpha</p></div>
+
+        <!--p>
+        Send <span id="spanData" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">6</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> minutt(er). <input type="button" id="sender" onclick="sendData();" value="send nå" />
+        </p>
+        <p id="voteReply">
+          Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
+        </p-->
+        <p></p>
+        <input style="display: none; margin-left: 8px;" type="button" id="btn-clear-filters" onclick="clearFilters();" value=" reset ">
+        <!-- <input type="button" id="btn-sex" onclick="showSex(this);" value="sort on sex" /> -->
+      </div>
+
+
+      <script type="text/javascript">
+
+        function showSettings(obj) {
+          var
+            testElement = document.getElementById("sexchart-container");
+
+//          pi.log("element : ", obj);
+          testElement.classList.toggle("flipped");
+        }
+
+
+        function showSex(element, which) {
+          var
+            which = which || 'K',
+            self  = pi.maverick.xfilter;
+
+          self.dimension.forEach(function(p,i) {
+            if (p.title == "sex") {
+              alert("setting sex filter : " + which);
+              p.xd.filter(which);
+              return;
+            }
+          });
+
+          self.refresh();
+
+        }
+
+
+        function clearFilters() {
+          var
+            self      = pi.maverick.xfilter,
+            dimension = null;
+
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+          self.refresh();
+        }
+
+
+
+
+
+        function applyFilter(filter, element) {
+          var
+            filter    = filter || null,
+            self      = pi.maverick.xfilter,
+            dimension = null,
+            element   = element || null;
+
+
+
+          if (filter === null) {
+            return;
+          }
+          if (typeof filter.key == "undefined") {
+            return;
+          }
+
+
+
+          if (!isNaN(parseInt(filter.value,10))) {
+            filter.value = parseInt(filter.value, 10);
+          }
+
+          var
+            elements = document.getElementsByClassName("selected");
+
+          for(var i = 0; i < elements.length; i++) {
+            elements[i].classList.remove("selected");
+          }
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+
+          self.dimension.forEach(function(p) {
+            if (filter.key == p.title) {
+              dimension = p.xd;
+              pi.log("setting filter " + filter.value + " on dimension " + p.title);
+              p.__filter = filter.value;
+              return;
+            }
+          });
+
+          if (dimension) {
+            // pi.log("applying filter value '"+ filter.value + "' to dimension '" + (filter.key) + '"', filter);
+            if (element) {
+              pi.log("toggling class selected");
+              element.classList.toggle("selected");
+            }
+            dimension.filter(filter.value);
+          }
+          else {
+            pi.log("NOT applying filter value '"+ filter.value + "' to dimension '" + filter.key + '"', filter);
+          }
+
+          self.refresh(filter);
+
+        }
+
+
+      </script>
+
+
+      <div id="visuals">
+          <div id="views-map-container">
+            <div id="views-map"></div>
+          </div>
+        
+          <div id="sexchart-container">
+            <div id="sexchart"></div>
+          </div>
+
+          <div id="statechart"></div>
+          <div id="agechartcontainer">
+            <div id="agechartsvg"></div>
+            <div id="agechart"></div>
+          </div>
+
+
+          <!-- <div id="votechart"></div> -->
+
+      </div>
+
+
+      <div id="votelist">
+
+        <table id="xfilter_table">
+          <thead id="xfilter_table_head"><tr><th></th></tr></thead>
+          <tbody id="xfilter_table_body">
+          </tbody>
+        </table>
+        <div id="datadump"></div>
+      </div>
+      
+    </div>
+
+
+
+    <script>
+
+
+      var 
+        xdiv      = document.getElementById("demo"),
+        xtable    = document.getElementById("xfilter_table"),
+        xhead     = document.getElementById("xfilter_table_head"),
+        xbody     = document.getElementById("xfilter_table_body"),
+        xlistener = null,
+
+
+        xfilter = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+          crossfilter : null,
+          dimension   : [],
+
+
+          __onerror : function (err) {
+            pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
+          },
+
+
+          __init : function() {
+            var
+              votelist = document.getElementById("votelist");
+
+            votelist.style.overflow = "hidden";
+            votelist.style.position = "absolute";
+            votelist.style.height   = "100px";
+            votelist.style.display  = "none";
+            votelist.style.top      = "768px";
+          },
+
+
+          _addRow : function (row) {
+            var
+              trow      = document.createElement('tr'),
+              fragment  = document.createDocumentFragment(),
+              cell      = null,
+              newrow    = null;
+
+
+            if (!!row) {
+              newrow = row;
+              // pi.log("new row : " + JSON.stringify(row));
+            }
+            else {
+              pi.log("no row in _addRow() : " + JSON.stringify(row));
+              return false;
+            }
+
+            if (newrow.state) {
+              var
+                thisState = views.map.counties[newrow.state];
+
+              if (thisState) {
+                var
+                  previousFill = thisState.county.attr("fill"),
+                  colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
+                
+
+                thisState.county.attr("fill", colors[Math.floor(Math.random()*colors.length)]);
+
+                thisState.county.animate({fill : "#f8f2f2"}, 1000, "easeOut");
+                // TweenMax.from(thisState, pi._const.TWEEN_TIME, {css: {fill : "#d65a3f"}});
+              }
+            }
+
+            for( var idx in newrow ) {
+
+              // skip isDeceased, isTMReserved, etc
+              if (idx.indexOf('is') === 0) {
+                continue;
+              }
+              if (idx == "idx") {
+                continue;
+              }
+              if (idx == "direktinfo_id") {
+                continue;
+              }
+
+              if (idx == "type" && newrow[idx] == "unknown") {
+                // continue;
+              }
+
+              cell = document.createElement('td');
+              cell.classList.add(idx);
+              trow.appendChild(cell);
+              cell.appendChild(document.createTextNode(idx + " : " + newrow[idx]));
+            }
+
+            fragment.appendChild(trow);
+
+            // add to DOM element
+            return xbody.appendChild(fragment);
+          },
+
+
+          add : function (obj) {
+
+            var
+              self    = pi.maverick.xfilter,
+              isArray = pi.isArray(obj),
+              result  = false;
+
+            if ( isArray || typeof obj == "object" ) {
+              pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
+              result = self.crossfilter.add(obj);
+              self.refresh();
+            }
+            // if (isArray) {
+            //   obj.forEach(function(p, i, arr) {
+            //     self._addRow(p);
+            //   });
+            // votelist.style.display  = "block";
+            // votelist.style.height   = "auto";
+
+            // }
+
+            return result;
+
+          },
+
+
+          refresh : function (filter) {
+            var
+              self = pi.maverick.xfilter;
+
+            self.dimension.forEach(function(e, i, arr) {
+              if ( typeof e.refresh == "function" ) {
+                // // var
+                // //  thisFunc = e.refresh;
+
+                // because forEach messes with the scope
+                if (filter) {
+                  if (filter.key == e.title) {
+                    pi.log("skipping refresh of filtered dimension " + filter.key);
+                    return;
+                  }
+                }
+                e.refresh.call(e);
+
+                // // thisFunc.call(e);
+              }
+            });
+
+            return true;
+          },
+
+
+          onData : function (message) {
+
+            var
+              json    = false,
+              packet  = null,
+              self    = pi.maverick.xfilter,
+              data    = null,
+              row     = {},
+              count   = 0,
+              records = [];
+
+
+            // is it an array?
+            if (pi.isArray(message.data)) {
+              for (var i = 0; i < message.data.length; i++) {
+                try{
+                  packet  = message.data[i];
+                  // packet  = JSON.parse(message.data[i]);
+                }
+                catch(e) {
+                  pi.log('exception : ' + JSON.stringify(e), message[i]);
+                }
+
+                if (!packet) {
+                  continue;
+                }
+
+                var
+                 chunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+                if (chunk) {
+                  records.push(chunk);
+                  self._addRow(chunk);
+                }
+
+              }
+              // pi.log('added ' + count + ' data rows from packet');
+              self.crossfilter.add(records);
+              self.refresh();
+            }
+            else {
+
+              if (!!message.data) {
+                try{
+                  pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
+                  packet  = message.data;
+                  pi.log('packet.toString() : ' + packet.toString());
+
+                  if (packet.toString() == "[]") {
+                    pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
+                    return;
+                  }
+                  // pi.log('packet : ' + JSON.stringify(packet));
+                  pi.log('packet is : ' + !!packet);
+                }
+                catch(e) {
+                  pi.log('skipping : ' + JSON.stringify(message),e);
+                  return;
+                  // pi.log('exception : ' + JSON.stringify(e), message);
+                }
+              }
+              else {
+                pi.log('also skipping : ' + JSON.stringify(message));
+                return;
+              }
+
+              var
+               chunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+              if (chunk) {
+                pi.log("adding chunk : " + JSON.stringify(chunk));
+                self.crossfilter.add([chunk]);
+                self._addRow(chunk);
+              }
+              // pi.log("data: '" + JSON.stringify(chunk) + "' (" + typeof(message) + ")");
+            }
+          },
+
+
+          init : function () {
+            var
+              self  = this,
+              d     = { 
+                        title   : "sex",
+                        element : null,
+                        parent  : document.getElementById("visuals"),
+                        initialized : false,
+                        names       : {},
+                        display     : "rank"
+                      },
+
+              p       = null;
+
+
+            /**
+             * common dimension functions
+             */
+
+            d.refresh = function() {
+              if (this.initialized === false && typeof this.init == "function" ) {
+                // pi.log("initializing : " + this.title);
+                this.init();
+              }
+
+              var
+                html = "",
+                names = this.names,
+                title = this.title,
+                params = {labels : [], values : []},
+                totalsum = 0,
+                results = [];
+
+
+              if (this.display == "rank") {
+                this.xd.group().top(Infinity).forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  html = "<ul style='cursor: default;'>";
+
+                  // pi.log("this : ", this);
+                  if (names["i"+p.key]) {
+
+                    totalsum += p.value;
+                    results.push({ idx : p.key, key : names["i"+p.key], value : p.value});
+                    // line = "<li onclick='applyFilter({key: " + this.title + ", value : " +p.key+"});'><span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key] + '</li>';
+                    // // pi.log("i"+p.key + " : " + p.value);
+                    // html +=  line + "</ul>";
+                  }
+                  else{
+                    // pi.log("no name : " + p.key + " -> " + p.value, names);
+                  }
+                });
+
+                // var currentTitle = this.title;
+
+                // if (title == "votes") {
+                //   title = "param1";
+                // }
+
+                results.forEach(function(p) {
+                  html += "<li onclick='applyFilter({key: \""+title+"\", value : " +p.idx+"}, this);'><span style='float: left; width: 50px; text-align: right'>" + Math.round(1000*p.value/totalsum)/10 + "%</span>&nbsp;&nbsp;" + p.key + "</li>";
+                });
+                html += "</ul>";
+                this.element.innerHTML = html;
+              }
+              else if (this.display == "group") {
+
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line  = "";
+
+                  html = "<ul>";
+
+                  names["i"+p.key] = p.key;
+                  totalsum += p.value;
+                  line = names["i"+p.key] + " : " + p.value;
+
+                  // line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" + names["i"+p.key] + "</span>&nbsp;&nbsp;" + p.value + "</li>";
+
+
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line;
+                });
+                // html += "sum : " + totalsum;
+                this.element.innerHTML = html + "</ul>";
+              }
+              else if (this.display == "genderchart") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if (names["i"+p.key]) {
+                    if (p.key !== "U") {
+                      if (p.key == "M") {
+                      // put men first, because that's the black coloured slice
+                        params.labels.unshift(names["i"+p.key]);
+                        params.values.unshift(parseInt(p.value, 10));
+                      }
+                      else {
+                        params.labels.push(names["i"+p.key]);
+                        params.values.push(parseInt(p.value, 10));
+                      }
+                    }
+                  }
+                });
+
+                // publish values, if any
+                if (params.values.length) {
+                  // pi.log("emitting :", params);
+                  pi.events.publish("pi.data.app.views.sex", params);
+                }
+
+              }
+              else if (this.display == "histogram") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if (!p.key && (p.key !== 0)) {
+
+                    alert("p.key is " + p.key);
+                    return;
+                  }
+                  names["i"+p.key] = p.key;
+                  line = names["i"+p.key] + " : " + p.value;
+                  line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" +
+                  names["i"+p.key] + "</span>" + p.value + "</li>"
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line + "<br />";
+
+                  params.labels.push(parseInt(p.key, 10));
+                  params.values.push(parseInt(p.value, 10));
+                });
+
+                // publish values, if any
+                if (params.values.length) {
+                  // pi.log("emitting : pi.data.app.views.age", params);
+                  pi.events.publish("pi.data.app.views.age", params);
+                }
+                else {
+                  pi.log("no values");
+                }
+              }
+            };
+
+            d.init = function() {
+              // pi.log("initializing : " + this.title);
+              if (!this.element) {
+                this.element = document.getElementById(this.title) || false;
+              }
+              if (!this.element) {
+                this.element = document.createElement("div");
+                this.parent.appendChild(this.element);
+                this.element.id = this.title;
+              }
+              this.initialized = true;
+              // this.element.innerHTML = "initialized : " + this.title;
+            };
+
+            /**
+             * set up sex dimension
+             */
+
+            d.xd = self.crossfilter.dimension(function(p) {
+              return p.sex || "U";
+            });
+
+            d.names = {'iU' : 'Ukjent', 'iM' : "Menn", 'iK' : "Kvinner"};
+            d.title = "sex";
+            d.element = document.getElementById("sexchart");
+            d.display = "genderchart";
+
+            d.element.style.width   = 400;
+            d.element.style.height  = 400;
+            // d.xd.filter('M');
+            self.dimension.push(d);
+
+
+            /**
+             * set up state dimension
+             */
+
+            states = pi.clone(d);
+
+            states.xd = self.crossfilter.dimension(function(p) {
+              return p.state ? parseInt(p.state, 10) : 0;
+            });
+
+            states.title = 'state';
+            states.display = "rank";
+
+            states.element = document.getElementById("statechart");
+            states.names = {};
+            // get state names from array
+            views.map.counties.forEach(function(e, i, arr){
+              states.names['i'+i] = e.title;
+            });
+
+
+            states.initialized = false;
+
+            self.dimension.push(states);
+
+
+            /**
+             * set up age dimension
+             */
+
+            age = pi.clone(d);
+
+            age.xd = self.crossfilter.dimension(function(p) {
+              return p.age || 0;
+            });
+
+            age.title = 'age';
+            age.display = 'histogram';
+            age.element = document.getElementById("agechart");
+            age.initialized = false;
+
+            age.names = {};
+
+
+
+            self.dimension.push(age);
+
+
+
+            // /**
+            //  * set up female vote dimension
+            //  */
+
+            // femaleData = pi.clone(votes);
+
+            // femaleData.xd = self.crossfilter.dimension(function(p) {
+            //   return p.sex = "K";
+            // });
+
+
+            // femaleData.title   = 'femaleData';
+            // femaleData.display = 'rank';
+            // femaleData.element = null;
+            // femaleData.initialized = false;
+
+            // self.dimension.push(femaleData);
+
+
+
+          },
+
+
+          run : function() {
+
+            // private init
+            this.__init();
+
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("xfilter"),
+            this.__tmp        = this.__tmp || {};
+
+
+            this.crossfilter  = crossfilter();
+
+            // this.dimensions   = {
+            //   byState : this.crossfilter.dimension( function(d) { return d.state;   }),
+            //   bySex   : this.crossfilter.dimension( function(d) { return d.sex;     }),
+            //   byAge   : this.crossfilter.dimension( function(d) { return d.age;     }),
+            //   byVote  : this.crossfilter.dimension( function(d) { return d.param1;  }),
+            //   byCity  : this.crossfilter.dimension( function(d) { return d.})
+            // };
+
+            // this.filters = {
+            //   north : null
+            // };
+
+
+            // public init
+            this.init();
+            this.reportid = 7;
+
+            this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
+
+            getViewsReport(this.reportid);
+
+            // set up a listener
+            π.readstream(this.__tmp.address, this.onData, this.__onerror);
+          }
+        };
+
+
+        var
+          sexchart = {
+            element   : null,
+            raphael   : null,
+            width     : 400,
+            height    : 400,
+            amounts   : [], 
+            names     : [],
+            totalsum  : 0,
+            __filter  : false,
+
+            __init : function(options) {
+
+              this.element = document.getElementById("sexchart");
+
+              this.raphael = Raphael(this.element, this.width, this.height);
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.sexchart,
+                previousData  = {
+                  names   : [],
+                  values  : []
+                },
+                tmpAmount = 0;
+
+
+              // clear data arrays
+              while(self.amounts.pop());
+              while(self.names.pop());
+
+
+              self.totalsum = 0;
+
+              // parse data array
+              data.values.forEach(function(p,i, arr) {
+                var
+                  amount = parseInt(p, 10);
+                
+                // pi.log("adding amount : " + amount);
+                self.amounts.push(amount);
+                self.totalsum += amount;
+
+                // pi.log("adding item : " + data.labels[i]);
+                self.names.push({name: data.labels[i], percentage: "%"});
+              }); // data.forEach
+      
+              // calculate percentages
+              self.names.forEach( function(p, idx, arr){
+                p.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
+                // pi.log("setting percentage : " + p.percentage);
+              });
+
+              // pi.log("calling draw()");
+              self.draw();
+            },
+
+            draw : function () {
+              // pi.log("filter is " + this.__filter);
+              this.raphael.clear();
+              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff", this.__filter);
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.sex", this.onData, this.onError);
+              pi.events.subscribe("pi.app.views.sex.filter", applyFilter, this.onError);
+            }
+          };
+
+        var
+          agechart = {
+            element   : null,
+            width     : 200,
+            height    : 384,
+            values    : [], 
+            names     : [],
+            totalsum  : 0,
+            agevalues : [],
+            raphael   : null,
+            
+            groupstops : [12, 18, 25, 40, 65, 100],
+
+            chart         : null,
+            chartoptions  : {
+              range   : {},
+              width   : 224,
+              height  : 400,
+              bars    : {
+                width   : 200,
+                height  : 2
+              }
+            },
+
+            __init : function(options) {
+
+              this.element = document.getElementById("agechart");
+              // this.element = document.createElement("div");
+              // document.body.appendChild(this.element);
+              
+              this.raphael = Raphael(document.getElementById("agechartsvg"), this.width, this.height);
+
+              // pi.log("size : " + this.width + "x" + this.height);
+              // prepare indexed array for individual age values
+              for(var i = 0; i < 100; i++) {
+                this.agevalues.push(0);
+              }
+
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.agechart,
+                currentgroup  = 0,
+                currentcount  = 0,
+                age           = 0,
+                previousage   = 0;
+
+              var
+                values    = self.values,
+                names     = self.names,
+                agevalues = self.agevalues,
+                groupstops = self.groupstops;
+
+              // clear data arrays
+              while(values.pop());
+              while(names.pop());
+              self.totalsum = 0;
+
+              for(var i = 0; i < 128; i++) {
+                // clear histo array
+                agevalues[i] = 0;
+              }
+
+              if (data.labels.length != data.values.length) {
+                alert("labels and values have different length!");
+                alert(data.labels.length + " and " + data.values.length);
+              }
+
+
+              data.values.forEach(function(p, i, arr) {
+                var currentage = data.labels[i];
+
+                if (typeof currentage != "number") {
+                  alert("not a number : " + typeof currentage);
+                  return;
+                }
+
+                if (currentage==0)
+                  return; //continue
+
+                agevalues[currentage] = p;
+
+
+                self.totalsum += p;
+                if (currentage < groupstops[currentgroup]) {
+                  currentcount += p;
+                  }
+                else {
+                  names.push(previousage + "-" + (groupstops[currentgroup] - 1));
+                  values.push(currentcount);
+                  currentcount = 0;
+                  currentgroup++;
+                  previousage = groupstops[currentgroup-1];
+                  }
+              });
+              // add the last group
+              names.push(groupstops[groupstops.length-2] + "+");
+              values.push(currentcount);
+
+              // values.forEach(function(p,i, arr) {
+              //   pi.log(names[i] + " : " + p + "(" + (100 * p/self.totalsum) + ")");
+              // }); 
+      
+              self.draw();
+            },
+
+            draw : function () {
+              var 
+                self = pi.maverick.agechart,
+                html = "",
+                colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
+
+                if (!self.element) {
+                  pi.log("No element!");
+                }
+
+              if (self.chart === null) {
+                self.chart = self.raphael.ageChart(self.chartoptions, self.values, self.names);
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+              
+              pi.events.publish("pi.app.views.agechart.update", self.agevalues);
+
+
+              // list data array
+              self.groupstops.forEach(function(p,i, arr) {
+                html += "<li><span style='float: left; color:" + colors[i] + ";width: 60px; text-align: center'>" + self.names[i] + "</span><span style='color: #ccc;width: 144px; text-align: right'>&nbsp;</span></li>";
+              });
+              if (self.element.innerHTML == "") {
+                self.element.innerHTML = '<p style="text-align:left; margin-left: 44px;font-weight: 700;">ALDER</p><ul>' + html + '</ul>';
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.age", this.onData, this.onError);
+            }
+          };
+
+
+var
+  lifePhase = [
+    {
+      index : 0,
+      name: "00",
+      description: "Dummy"
+    },
+    {
+      index : 1,
+      name: "Ungdom og studenter",
+      description: "18-24 år, uten barn"
+    },
+    {
+      index : 2,
+      name: "Single",
+      description: "25-49 år, singel, uten barn"
+    },
+    {
+      index : 3,
+      name: "Samboere",
+      description: "25-49 år, samboer/gift, uten barn"
+    },
+    {
+      index : 4,
+      name: "Småbarnsfamilier",
+      description: "19-54 år, familie med barn 0-5 år"
+    },
+    {
+      index : 5,
+      name: "Veletablerte familier",
+      description: "19-54 år, familie med barn 6-17 år"
+    },
+    {
+      index : 6,
+      name: "Middelaldrende",
+      description: "50-64 år, uten hjemmeboende barn"
+    },
+    {
+      index : 7,
+      name: "Seniorer",
+      description: "65+ år"
+    }
+  ]; // end lifephase array
+
+
+
+
+
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.log("pi.session.start!");
+          
+          pi.maverick.xfilter = xfilter;
+          pi.maverick.xfilter.run();
+
+          pi.maverick.sexchart = sexchart;
+          pi.maverick.sexchart.run();
+
+          pi.maverick.agechart = agechart;
+          pi.maverick.agechart.run();
+
+        }, false);
+
+
+    </script>
+
+  </div>
+
+  <!-- End of demo's div -->
+
+
+
+  <!--script src="../../assets/js/lib/raphael.min.js"></script-->
+  <script src="../../assets/js/lib/raphael.js"></script>
+  <script src="assets/js/lib/raphael-map-norway.js"></script>
+
+  <!-- Cufon fonts for Raphaël -->
+  <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
+  <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
+
+  <script src="../../assets/js/lib/crossfilter.js"></script>
+
+
+  <!--  bootstrap pi -->
+  <script src="../../assets/js/pi.core.js"></script>
+
+  <!-- Raphaël plugins -->
+  <script src="../../assets/js/pi.lib.raphael.genderchart.js"></script>
+  <script src="../../assets/js/pi.lib.raphael.agechart.js"></script>
+
+
+
+  <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
+  <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
+
+
+  
+  <!--script src="http://d3js.org/d3.v2.min.js?2.10.0"></script-->
+
+  <!--  bootstrap pcl 
+    <script src="../../assets/js/pi.pcl.js"></script>
+  -->
+
+
+</body>
+</html>

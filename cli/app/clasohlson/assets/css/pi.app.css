@@ -1,0 +1,53 @@
+/**
+ *    pi.app.css
+ *
+ *    CSS that loads on application start.
+ *    
+ *    Guidelines for style sheets are: 
+ *    
+ *    don't add custom classes to tags  (a, ul, li, &c)
+ *    create custom classes and namespaces
+ *    use combined classes to mimic inheritance
+ *
+ *  @author Johan Telstad, jt@viewshq.no, 2011-2014
+ * 
+**/
+
+
+
+
+
+  body {
+    font-family         : ubuntu, "helvetica neue", sans-serif;
+    color               : #f8f8f2;
+    margin              : 0;
+    padding             : 0;
+    background-color    : #686B55; /*545644;*/
+/* 818466 */
+    /*  "../../../../assets" is the resource folder for pi proper */
+
+    /*background-image    : url('../img/NRK_logo.svg');*/
+    background-repeat   : no-repeat;
+    background-size     : 298px 106px;
+    background-position : 14px 14px;
+
+
+/*    background-image    : url('../../../../assets/img/views_logo.svg'), url('../img/NRK_logo.svg');
+    background-repeat   : no-repeat;
+    background-size     : 320px 56px, 298px 106px;
+    background-position : right top, 14px 14px;
+*/  }
+
+
+    h1 {
+        color: #168dd9;
+        font-weight: 700;
+        
+    }
+
+
+    li.selected {
+      font-weight   : 700;
+      color         : white;
+    }
+
