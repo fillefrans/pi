@@ -1,5 +1,10 @@
 <?php
 
+  if (!defined("PI_CACHE")) {
+    define('PI_CACHE', 0);
+  }
+
+
   function connectToRedis($timeout=5){
     global $reply, $debug;
     $redis = new Redis();
