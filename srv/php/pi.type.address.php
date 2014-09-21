@@ -3,7 +3,6 @@
   /**
    *  Pi Type Address class
    *
-   *
    * @author 2011-2014 Johan Telstad <jt@viewshq.no>
    */
 
@@ -12,15 +11,15 @@
   require_once('pi.type.php');
 
 
+  class PiAddressException extends PiTypeException {};
 
-  class PiTypeAddress extends PiType {
+  class PiAddress extends PiType {
 
     protected $name   = 'address';
     protected $TYPE   = PiType::ADDRESS;
 
     protected $SIZE   = null;
 
-    // bitfield (12), 4 octal numbers
     protected $BITS   = 8;
 
     protected $value  = null; //default

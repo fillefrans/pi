@@ -26,6 +26,10 @@
   function addToCache(&$row){
     global $db, $reply, $request, $debug;
 
+    if (!is_array($row)) {
+      return false;
+    }
+
     $mysqli = new mysqli($db['host'],$db['user'],$db['password'],$db['db']);
 
     if(mysqli_connect_errno()){
@@ -41,6 +45,7 @@
       $reply['OK']      = 0;
       $reply['message'] = 'Number of fields and values do not match in addToCache()';
       $debug[]          = 'ERROR! Number of fields and values do not match in addToCache()';
+      return false;
     }
 
 

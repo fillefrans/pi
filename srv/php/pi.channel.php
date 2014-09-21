@@ -19,7 +19,7 @@
 
 
 
-  require_once('pi.type.php');
+  require_once('pi.type.address.php');
 
 
     // channels
@@ -127,21 +127,13 @@
 
 
 
-
-    /*
-      $object = PiChannel::New('Object', $args);
-      $file   = PiChannel::New('File', $args);
-      $image  = PiChannel::New('Image', $args);
-      etc, etc
-     */
-
     /**
      * "Factory" of sorts, to create new instances of PiChannel descendants
      * @param string $className Class name, e.g. : FileType, ImageType, DataType, etc
      * @param Type $args      Arguments for the class constructor
      */
 
-    public static function New($className, $args) { 
+    public static function Create($className, $args) { 
        if(class_exists($className) && is_subclass_of($className, 'PiChannel'))
        { 
           return new $className($args);
