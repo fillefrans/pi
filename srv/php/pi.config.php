@@ -63,6 +63,9 @@
     define('REDIS_SOCK', '127.0.0.1');
     //define('REDIS_SOCK', '/tmp/redis.sock');
 
+    // the redis db to use
+    define('PI_APP', 0);
+
 
 
 

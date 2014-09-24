@@ -10,7 +10,7 @@
     $redis = new Redis();
     try{ 
 //      if(false===($redis->connect('127.0.0.1', 6379, $timeout))){
-      if(false===($redis->pconnect('127.0.0.1', 6379))){
+      if(false===($redis->connect('127.0.0.1', 6379))){
         $debug[] = 'Unable to connect to Redis';
         return false;
       }
@@ -38,7 +38,7 @@
         return false;
       }
       // Check if cache exists. If not, create it
-      if($redis->setBit('views.norway_numbercache', 20000000, 1)===0){
+      if($redis->setBit('views.norway_numbercache', 20000000-1, 1)===0){
         $debug[] = 'FIRST RUN. Allocated Redis cache for 20 million numbers.';
       }
       $result = $redis->getBit('views.norway_numbercache', (int) $packedNumber); 

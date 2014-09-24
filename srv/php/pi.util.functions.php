@@ -1,14 +1,14 @@
 <?php
 
 
-  if(!defined('PHP_ROOT')){
+  if (!defined('PHP_ROOT')){
     define('PHP_ROOT', __DIR__ . '/');  
     require_once(PHP_ROOT."pi.config.php");
   }
 
 
   function getFormattedTime($timestamp = false) {
-    if($timestamp === false) {
+    if ($timestamp === false) {
       $timestamp = time();
     }
     return date("H:i:s ", $timestamp);
@@ -16,7 +16,7 @@
 
 
   function getFormattedDate($timestamp=false) {
-    if($timestamp === false) {
+    if ($timestamp === false) {
       $timestamp = time();
     }
     return date("d.m.Y H:i:s ", $timestamp);
@@ -27,12 +27,13 @@
     global $db, $reply, $request, $debug;
 
     if (!is_array($row)) {
+      $debug[] = "ERROR: row is not an array in addToCache()";
       return false;
     }
 
     $mysqli = new mysqli($db['host'],$db['user'],$db['password'],$db['db']);
 
-    if(mysqli_connect_errno()){
+    if (mysqli_connect_errno()){
       $reply['OK'] = 0;
       $reply['message'] = mysqli_connect_error();
       return false;
@@ -41,7 +42,7 @@
     $fields = implode(",", array_keys($row));
     $values = implode("','", $row);
 
-    if(count($fields)!==count($values)){
+    if (count($fields)!==count($values)){
       $reply['OK']      = 0;
       $reply['message'] = 'Number of fields and values do not match in addToCache()';
       $debug[]          = 'ERROR! Number of fields and values do not match in addToCache()';
@@ -53,7 +54,7 @@
                   VALUES('$values');";
     $debug[]   = 'Running query: ' . $query;
 
-    if(FALSE===$mysqli->query($query)){
+    if (FALSE===$mysqli->query($query)){
       $reply['OK'] = 0;
       $reply['message'] = $mysqli->error; 
       $debug[] = 'ERROR! Something went wrong when inserting into cache.'; 
@@ -66,16 +67,17 @@
     $mysqli->close();
   }
 
+
   function getCacheId($idx=null){
     global $db, $reply, $debug;
 
-    if($idx === null){
+    if ($idx === null){
       return false;
     }
 
     $mysqli = new mysqli($db['host'],$db['user'],$db['password'],$db['db']);
 
-    if(mysqli_connect_errno()){
+    if (mysqli_connect_errno()){
       $reply['OK'] = 0;
       $reply['message'] = mysqli_connect_error();
       $debug[] = 'ERROR! '.$reply['message']; 
@@ -88,13 +90,13 @@
         WHERE idx = SHA1('$idx')
         LIMIT 1;";
 
-    if(FALSE===($sqlresult=$mysqli->query($query))){
+    if (FALSE===($sqlresult=$mysqli->query($query))){
       $reply['OK'] = 0;
       $reply['message'] = $mysqli->error; 
       $debug[] = 'ERROR! '. $reply['message']; 
       return false;
     }
-    elseif($sqlresult->num_rows===0){
+    elseif ($sqlresult->num_rows===0){
       $debug[] = 'WARNING! Query of permanent cache query returned 0 rows.';
       //return false;
       $cache_id = "NULL";
@@ -113,7 +115,7 @@
 
     $mysqli = new mysqli($db['host'],$db['user'],$db['password'],$db['db']);
 
-    if(mysqli_connect_errno()){
+    if (mysqli_connect_errno()){
       $reply['OK'] = 0;
       $reply['message'] = mysqli_connect_error();
       $debug[] = 'ERROR! '.$reply['message']; 
@@ -129,7 +131,7 @@
 
 //    $debug[] = 'Running query :'.$query; 
 
-    if(FALSE===$mysqli->query($query)){
+    if (FALSE===$mysqli->query($query)){
       $reply['OK'] = 0;
       $reply['message'] = $mysqli->error; 
       $debug[] = 'ERROR! '. $reply['message']; 
@@ -163,7 +165,7 @@
   function packNumber($number){
     // encode Norwegian phone number into a number between 0 and 20 million
     // this is used for our super-fast bit-array Redis-cache
-    if(isNorwegianMobileNumber($number)!== true ){
+    if (isNorwegianMobileNumber($number)!== true ){
       return false;
      }
     $str = substr($number, -8);
@@ -188,9 +190,9 @@
   */
 
   function generateApiKey($length = 24) {
-    if(function_exists('openssl_random_pseudo_bytes')) {
+    if (function_exists('openssl_random_pseudo_bytes')) {
      $password = base64_encode(openssl_random_pseudo_bytes($length, $strong));
-     if($strong == TRUE){
+     if ($strong == TRUE){
        return substr($password, 0, $length); //base64 is about 33% longer, so we need to truncate the result
      }
     }
@@ -218,7 +220,7 @@
   */
 
   function getFileFingerprint($filename) {
-    if(!file_exists($filename)){
+    if (!file_exists($filename)){
       return false;
     }
     // Max. 5 MB will be read for MD5 hash.

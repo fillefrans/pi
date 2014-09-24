@@ -72,7 +72,7 @@
     if(is_numeric($param)) {
       return (int) $param;
     }
-    if(is_string($param)) {
+    if($param && is_string($param)) {
       $obj_date = DateTime::createFromFormat('m/d/Y H:i', $param);
       // echo $obj_date->getTimestamp(); // prints 1330010280
       $debug[] = "timestamp : " . $obj_date->getTimestamp();
