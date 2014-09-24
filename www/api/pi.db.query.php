@@ -175,6 +175,7 @@
     $query = "SELECT 
           cache.id, cache.zipCode, cache.sex, cache.county, cache.state, cache.age, cache.lifePhase,
           cache.residentialType, cache.CategoryConsumerStrength, cache.CategoryUrban, cache.HouseholdEstimatedIncome,
+          cache.FISEducation, cache.FISWealth, cache.FISIncome, 
           reportlines.cache_id, reportlines.param1, reportlines.id as counter
         FROM cache
         RIGHT JOIN reportlines

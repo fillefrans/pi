@@ -28,15 +28,15 @@ views.direktmedia = {
 						174324, // Vest-Agder
 						443115, // Rogaland
 						490570, // Hordaland
-						108201, // 13 fins ikke
+								 0, // 13 fins ikke
 						108201, // Sogn og fjordane
 						256628, // møre og romsdal
 						297950, // sør-trøndelag
 						133390, // nord-trøndelag
 						238320, // nordland
 						158650, // troms
-						73787, // finnmark
-						2600 // svalbard
+						 73787, // finnmark
+							2600 	// svalbard
 				]
 			}
 	},

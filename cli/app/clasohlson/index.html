@@ -98,11 +98,56 @@
       height    : auto;
     }
 
+    #consumerStrengthchart {
+      position  : absolute;
+      left      : 466px;
+      top       : 276px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #educationchart {
+      position  : absolute;
+      left      : 866px;
+      top       : 676px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #incomechart {
+      position  : absolute;
+      left      : 466px;
+      top       : 426px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #urbanchart {
+      position  : absolute;
+      left      : 866px;
+      top       : 776px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
+    #wealthchart {
+      position  : absolute;
+      left      : 466px;
+      top       : 676px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
     #agechartcontainer {
       position  : absolute;
       display   : inline-block;
-      left      : 634px;
-      top       : 364px;
+      left      : 734px;
+      top       : 384px;
       width     : 100%;
       height    : auto;
     }
@@ -558,6 +603,13 @@
 
           <div id="statechart"></div>
           <div id="lifePhasechart"></div>
+          <div id="consumerStrengthchart"></div>
+
+          <div id="educationchart"></div>
+          <div id="incomechart"></div>
+          <div id="wealthchart"></div>
+          <div id="urbanchart"></div>
+
           <div id="agechartcontainer">
             <div id="agechartsvg"></div>
             <div id="agechart"></div>
@@ -1004,7 +1056,7 @@
              * set up state dimension
              */
 
-            states = pi.clone(d);
+            var states = pi.clone(d);
 
             states.xd = self.crossfilter.dimension(function(p) {
               return p.state ? parseInt(p.state, 10) : 0;
@@ -1030,7 +1082,7 @@
              * set up lifePhase dimension
              */
 
-            lifePhases = pi.clone(d);
+            var lifePhases = pi.clone(d);
 
             lifePhases.xd = self.crossfilter.dimension(function(p) {
               return p.lifePhase ? parseInt(p.lifePhase, 10) : false;
@@ -1108,12 +1160,348 @@
             self.dimension.push(lifePhases);
 
 
+            /**
+             * set up consumerStrength dimension
+             */
+
+            var consumerStrength = pi.clone(d);
+
+            consumerStrength.xd = self.crossfilter.dimension(function(p) {
+              return p.CategoryConsumerStrength ? parseInt(p.CategoryConsumerStrength, 10) : false;
+            });
+
+            consumerStrength.title = 'Kjøpekraft';
+            consumerStrength.display = "rank";
+
+            consumerStrength.element = document.getElementById("consumerStrengthchart");
+            consumerStrength.names = {};
+            consumerStrength.descriptions = {};
+
+            var 
+              CategoryConsumerStrength = [
+                {
+                  index : 0,
+                  name: "",
+                  description: ""
+                },
+                {
+                  index : 1,
+                  name: "Lav",
+                  description: "Lav"
+                },
+                {
+                  index : 2,
+                  name: "Middels",
+                  description: "Middels"
+                },
+                {
+                  index : 3,
+                  name: "Høy",
+                  description: "Høy"
+                }
+              ];
+
+            // get state names from array
+            CategoryConsumerStrength.forEach(function(e, i, arr){
+              consumerStrength.names['i'+i] = e.name;
+              consumerStrength.descriptions['i'+i] = e.description;
+            });
+
+
+            consumerStrength.initialized = false;
+
+            self.dimension.push(consumerStrength);
+
+
+            /**
+             * set up education dimension
+             */
+
+            var education = pi.clone(d);
+
+            education.xd = self.crossfilter.dimension(function(p) {
+              return p.FISEducation ? parseInt(p.FISEducation, 10) : false;
+            });
+
+            education.title = 'Utdannelse';
+            education.display = "rank";
+
+            education.element = document.getElementById("educationchart");
+            education.names = {};
+            education.descriptions = {};
+
+            var 
+            FISEducation = [
+              {
+                index : 0,
+                name: "",
+                description: ""
+              },
+              {
+                index : 1,
+                name: "Lavt",
+                description: "Lavt utdanningsnivå"
+              },
+              {
+                index : 2,
+                name: "Noe lavt",
+                description: "Noe lavt utdanningsnivå"
+              },
+              {
+                index : 3,
+                name: "Middels",
+                description: "Middels utdanningsnivå"
+              },
+              {
+                index : 4,
+                name: "Noe høyt",
+                description: "Noe høyt utdanningsnivå"
+              },
+              {
+                index : 5,
+                name: "Høyt",
+                description: "Høyt utdanningsnivå"
+              }
+            ];
+
+            // get state names from array
+            FISEducation.forEach(function(e, i, arr){
+              education.names['i'+i] = e.name;
+              education.descriptions['i'+i] = e.description;
+            });
+
+
+            education.initialized = false;
+
+            self.dimension.push(education);
+
+
+            /**
+             * set up income dimension
+             */
+
+            var income = pi.clone(d);
+
+            income.xd = self.crossfilter.dimension(function(p) {
+              return p.FISIncome ? parseInt(p.FISIncome, 10) : false;
+            });
+
+            income.title = 'Inntektsgruppe';
+            income.display = "rank";
+
+            income.element = document.getElementById("incomechart");
+            income.names = {};
+            income.descriptions = {};
+
+            var 
+            FISIncome = [
+              {
+                index : 0,
+                name: "00",
+                description: "Dummy"
+              },
+              {
+                index : 1,
+                name: "0-150''",
+                description: "0 - 150.000 kr"
+              },
+              {
+                index : 2,
+                name: "150-200",
+                description: "150.000 - 200.000 kr"
+              },
+              {
+                index : 3,
+                name: "200-250",
+                description: "200.000 - 250.000 kr"
+              },
+              {
+                index : 4,
+                name: "250-300",
+                description: "250.000 - 300.000 kr"
+              },
+              {
+                index : 5,
+                name: "300-350",
+                description: "300.000 - 350.000 kr"
+              },
+              {
+                index : 6,
+                name: "350-400",
+                description: "350.000 - 400.000 kr"
+              },
+              {
+                index : 7,
+                name: "400-450",
+                description: "400.000 - 450.000 kr"
+              },
+              {
+                index : 8,
+                name: "450-500",
+                description: "450.000 - 500.000 kr"
+              },
+              {
+                index : 9,
+                name: "500-600",
+                description: "500.000 - 600.000 kr"
+              },
+              {
+                index : 10,
+                name: "600-700",
+                description: "600.000 - 700.000 kr"
+              },
+              {
+                index : 11,
+                name: "700+",
+                description: "Over 700.000 kr"
+              }
+            ];
+
+            // get state names from array
+            FISIncome.forEach(function(e, i, arr){
+              income.names['i'+i] = e.name;
+              income.descriptions['i'+i] = e.description;
+            });
+
+
+            income.initialized = false;
+
+            self.dimension.push(income);
+
+
+            /**
+             * set up urban dimension
+             */
+
+            var urban = pi.clone(d);
+
+            urban.xd = self.crossfilter.dimension(function(p) {
+              return p.CategoryUrban ? parseInt(p.CategoryUrban, 10) : false;
+            });
+
+            urban.title = 'Bosted';
+            urban.display = "rank";
+
+            urban.element = document.getElementById("urbanchart");
+            urban.names = {};
+            urban.descriptions = {};
+
+            var 
+            CategoryUrban = [
+              {
+                index : 0,
+                name: "",
+                description: ""
+              },
+              {
+                index : 1,
+                name: "By",
+                description: ""
+              },
+              {
+                index : 2,
+                name: "Tettsted",
+                description: ""
+              },
+              {
+                index : 3,
+                name: "Landlig",
+                description: ""
+              }
+            ];
+
+            // get state names from array
+            CategoryUrban.forEach(function(e, i, arr){
+              urban.names['i'+i] = e.name;
+              urban.descriptions['i'+i] = e.description;
+            });
+
+
+            urban.initialized = false;
+
+            self.dimension.push(urban);
+
+
+
+            /**
+             * set up wealth dimension
+             */
+
+            var wealth = pi.clone(d);
+
+            wealth.xd = self.crossfilter.dimension(function(p) {
+              return p.FISWealth ? parseInt(p.FISWealth, 10) : false;
+            });
+
+            wealth.title = 'Formue';
+            wealth.display = "rank";
+
+            wealth.element = document.getElementById("wealthchart");
+            wealth.names = {};
+            wealth.descriptions = {};
+
+            var 
+            FISWealth = [
+              {
+                index : 0,
+                name: "00",
+                description: "dummy"
+              },
+              {
+                index : 1,
+                name: "0",
+                description: "0 kr"
+              },
+              {
+                index : 2,
+                name: "001-025",
+                description: "1.000 - 25.000 kr"
+              },
+              {
+                index : 3,
+                name: "025-100",
+                description: "25.000 - 100.000 kr"
+              },
+              {
+                index : 4,
+                name: "100-250",
+                description: "100.000 - 250.000 kr"
+              },
+              {
+                index : 5,
+                name: "250-500",
+                description: "250.000 - 500.000 kr"
+              },
+              {
+                index : 6,
+                name: "500-750",
+                description: "500.000 - 750.000 kr"
+              },
+              {
+                index : 7,
+                name: "750+",
+                description: "Over 750.000 kr"
+              }
+            ];
+
+            // get state names from array
+            FISWealth.forEach(function(e, i, arr){
+              wealth.names['i'+i] = e.name;
+              wealth.descriptions['i'+i] = e.description;
+            });
+
+
+            wealth.initialized = false;
+
+            self.dimension.push(wealth);
+
+
 
             /**
              * set up age dimension
              */
 
-            age = pi.clone(d);
+            var age = pi.clone(d);
 
             age.xd = self.crossfilter.dimension(function(p) {
               return p.age || 0;
