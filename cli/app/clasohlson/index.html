@@ -89,6 +89,15 @@
       height    : auto;
     }
 
+    #lifePhasechart {
+      position  : absolute;
+      left      : 466px;
+      top       : 76px;
+      display   : block;
+      /*width     : 100%;*/
+      height    : auto;
+    }
+
     #agechartcontainer {
       position  : absolute;
       display   : inline-block;
@@ -140,6 +149,10 @@
       shape-rendering: crispEdges;
     }
 
+    li {
+      list-style-type: none;
+    }
+  
   </style>
 
 </head>
@@ -264,6 +277,1268 @@
     }
 
 
+
+      var uniques = [];
+
+
+      function sendVotes() {
+        var
+          voteReply = null,
+          xhr       = null,
+          rate      = 0,
+          interval  = null,
+          count     = 0,
+          seconds   = 0,
+          address   = '/api/app/views/job/',
+          params    = {
+            job     : 7,
+            apikey  : "kroma"
+          };
+
+        clearFilters();
+
+        if(!!window.voteInterval) {
+          stopVotes();
+          // document.getElementById("spanMinutes").innerHTML = 5;
+          return false;
+        }
+
+
+        // calculate votes per second
+        seconds = 5 * 60;
+        rate    = records.length/seconds;
+        // pi.log("sending votes @ " + rate + " / sec");
+        pi.log("sending " + records.length + " records @ " + Math.round(100*rate)/100 + " / sec, (every " + (1/rate) + " secs)");
+
+        // pi.log("interval is " + (1000/rate) + " millisec");
+
+
+
+
+
+        window.voteInterval = setInterval( function() {
+
+            // document.getElementById("spanVotes").innerHTML = votes-count;
+            var 
+              record = records.pop();
+
+            if (!record) {
+              stopVotes();
+              return;
+            }
+
+            if (record.phone && uniques.indexOf(record.phone) >= 0) {
+              return;
+            }
+            else {
+              uniques.push(record.phone);
+            }
+
+            for (var field in record) {
+              params[field] = record[field];
+            }
+
+            
+            // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
+            // voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
+
+            xhr = new XMLHttpRequest();
+
+            xhr.onload = function(e) { 
+              var 
+                json = this.responseText || '{ error : "responseText is undefined or empty." }';
+
+              var
+                data = null,
+                status = {};
+
+              try {
+                data = JSON.parse(json);
+              }
+              catch (e) {
+                pi.log("Error : ", e);
+                pi.log(this.responseText);
+                data = {};
+              }
+
+              status['OK']      = data['OK'] || false;
+              status['message'] = data['message'] || "SERVER ERROR : " + this.responseText;
+              status['request'] = data['request'] || null;
+
+              pi.log("api replied : " + JSON.stringify(status));
+            };
+
+            xhr.onerror = console.log;
+            xhr.open("post", address, true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+            xhr.send(JSON.stringify(params));
+          }, 1000/rate);
+
+        return interval;
+
+      } // function sendVotes()
+
+
+      function stopVotes() {
+        clearInterval(window.voteInterval);
+        clearInterval(window.minuteInterval);
+        
+        window.voteInterval   = null;
+        window.minuteInterval = null;
+
+        alert("records sent!");
+
+        return false;
+      }
+
+
+
+
+  </script>
+
+
+  <!-- This is the demo's div -->
+
+  <div id="demo" data-name="pcl.table.xfilter">
+
+<!--     <div id="loginflex" class="pcl flexbox ontop">
+      <div class="pcl loginbox">
+        <form>
+          <fieldset id="login">
+            <p>
+            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if (this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" type="password">passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
+            </p>
+            <p id="loginReply">
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+ -->
+
+    <div>
+      <div style="width: 600px">
+      <img style="float: right;margin-right:-120px;" src="assets/img/logo.gif" alt="">
+        <div style="width: 180px;" id="views-logo"><p style="margin-left: 8px;">VIEWS | *alpha</p></div>
+
+        <!--p>
+        Send <span id="spanData" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">6</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> minutt(er). <input type="button" id="sender" onclick="sendData();" value="send nå" />
+        </p>
+        <p id="voteReply">
+          Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
+        </p-->
+        <p></p>
+        <input style="display: none; margin-left: 8px;" type="button" id="btn-clear-filters" onclick="clearFilters();" value=" nullstill ">
+        <!-- <input type="button" id="btn-sex" onclick="showSex(this);" value="sort on sex" /> -->
+      </div>
+
+
+      <script type="text/javascript">
+
+        function showSettings(obj) {
+          var
+            testElement = document.getElementById("sexchart-container");
+
+//          pi.log("element : ", obj);
+          testElement.classList.toggle("flipped");
+        }
+
+
+        function showSex(element, which) {
+          var
+            which = which || 'K',
+            self  = pi.maverick.xfilter;
+
+          self.dimension.forEach(function(p,i) {
+            if (p.title == "sex") {
+              alert("setting sex filter : " + which);
+              p.xd.filter(which);
+              return;
+            }
+          });
+
+          self.refresh();
+
+        }
+
+
+        function clearFilters(refresh) {
+          var
+            self      = pi.maverick.xfilter,
+            dimension = null,
+            refresh   = refresh || true;
+
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+          self.refresh();
+        }
+
+
+
+
+
+        function applyFilter(filter, element) {
+          var
+            filter    = filter || null,
+            self      = pi.maverick.xfilter,
+            dimension = null,
+            element   = element || null;
+
+          if (filter === null) {
+            return;
+          }
+          if (typeof filter.key == "undefined") {
+            return;
+          }
+          else {
+            if (self.previousFilter && self.previousFilter !== filter.key) {
+              clearFilters(true);
+            }
+            self.previousFilter = filter.key;
+          }
+
+          if (!isNaN(parseInt(filter.value,10))) {
+            filter.value = parseInt(filter.value, 10);
+          }
+
+          var
+            elements = document.getElementsByClassName("selected");
+
+          for(var i = 0; i < elements.length; i++) {
+            elements[i].classList.remove("selected");
+          }
+
+          self.dimension.forEach(function(p) {
+            // pi.log("clearing : " + p.title);
+            p.xd.filter(null);
+          });
+
+
+          self.dimension.forEach(function(p) {
+            if (filter.key == p.title) {
+              dimension = p.xd;
+              pi.log("setting filter " + filter.value + " on dimension " + p.title);
+              p.__filter = filter.value;
+              return;
+            }
+          });
+
+          if (dimension) {
+            // pi.log("applying filter value '"+ filter.value + "' to dimension '" + (filter.key) + '"', filter);
+            if (element) {
+              pi.log("toggling class selected");
+              element.classList.toggle("selected");
+            }
+            dimension.filter(filter.value);
+          }
+          else {
+            pi.log("NOT applying filter value '"+ filter.value + "' to dimension '" + filter.key + '"', filter);
+          }
+
+          self.refresh(filter);
+
+        }
+
+
+      </script>
+
+
+      <div id="visuals">
+          <div id="views-map-container">
+            <div id="views-map"></div>
+          </div>
+        
+          <div id="sexchart-container">
+            <div id="sexchart"></div>
+          </div>
+
+          <div id="statechart"></div>
+          <div id="lifePhasechart"></div>
+          <div id="agechartcontainer">
+            <div id="agechartsvg"></div>
+            <div id="agechart"></div>
+          </div>
+
+
+          <!-- <div id="votechart"></div> -->
+
+      </div>
+
+
+      <div id="votelist">
+
+        <table id="xfilter_table">
+          <thead id="xfilter_table_head"><tr><th></th></tr></thead>
+          <tbody id="xfilter_table_body">
+          </tbody>
+        </table>
+        <div id="datadump"></div>
+      </div>
+      
+    </div>
+
+
+
+    <script>
+
+
+      var 
+        xdiv      = document.getElementById("demo"),
+        xtable    = document.getElementById("xfilter_table"),
+        xhead     = document.getElementById("xfilter_table_head"),
+        xbody     = document.getElementById("xfilter_table_body"),
+        xlistener = null,
+
+
+        xfilter = {
+
+          eventsource : null,
+          starttime   : null,
+          element     : null,
+          crossfilter : null,
+          dimension   : [],
+          rawdata     : null,
+
+
+          __onerror : function (err) {
+            pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
+          },
+
+
+          __init : function() {
+            var
+              votelist = document.getElementById("votelist");
+
+            votelist.style.overflow = "hidden";
+            votelist.style.position = "absolute";
+            votelist.style.height   = "100px";
+            votelist.style.display  = "none";
+            votelist.style.top      = "768px";
+          },
+
+
+          _addRow : function (row) {
+            var
+              trow      = document.createElement('tr'),
+              fragment  = document.createDocumentFragment(),
+              cell      = null,
+              newrow    = null;
+
+
+            if (!!row) {
+              newrow = row;
+              // pi.log("new row : " + JSON.stringify(row));
+            }
+            else {
+              pi.log("no row in _addRow() : " + JSON.stringify(row));
+              return false;
+            }
+
+            // if (newrow.state) {
+            //   var
+            //     thisState = views.map.counties[newrow.state];
+
+            //   if (thisState) {
+            //     var
+            //       previousFill = thisState.county.attr("fill"),
+            //       colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
+                
+
+            //     thisState.county.attr("fill", colors[Math.floor(Math.random()*colors.length)]);
+
+            //     thisState.county.animate({fill : "#f8f2f2"}, 1000, "easeOut");
+            //     // TweenMax.from(thisState, pi._const.TWEEN_TIME, {css: {fill : "#d65a3f"}});
+            //   }
+            // }
+
+            for( var idx in newrow ) {
+
+              // skip isDeceased, isTMReserved, etc
+              if (idx.indexOf('is') === 0) {
+                continue;
+              }
+              if (idx == "idx") {
+                continue;
+              }
+              if (idx == "direktinfo_id") {
+                continue;
+              }
+
+              if (idx == "type" && newrow[idx] == "unknown") {
+                // continue;
+              }
+
+              cell = document.createElement('td');
+              cell.classList.add(idx);
+              trow.appendChild(cell);
+              cell.appendChild(document.createTextNode(idx + " : " + newrow[idx]));
+            }
+
+            fragment.appendChild(trow);
+
+            // add to DOM element
+            return xbody.appendChild(fragment);
+          },
+
+
+          add : function (obj) {
+
+            var
+              self    = pi.maverick.xfilter,
+              isArray = pi.isArray(obj),
+              result  = false;
+
+            if ( isArray || typeof obj == "object" ) {
+              pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
+              result = self.crossfilter.add(obj);
+              self.rawdata = obj;
+              self.refresh();
+            }
+            // if (isArray) {
+            //   obj.forEach(function(p, i, arr) {
+            //     self._addRow(p);
+            //   });
+            // votelist.style.display  = "block";
+            // votelist.style.height   = "auto";
+
+            // }
+
+            return result;
+
+          },
+
+
+          refresh : function (filter) {
+            var
+              self = pi.maverick.xfilter;
+
+            self.dimension.forEach(function(d, i, arr) {
+              if ( typeof d.refresh == "function" ) {
+                // // var
+                // //  thisFunc = d.refresh;
+
+                // because forEach messes with the scope
+                if (filter) {
+                  if (filter.key == d.title) {
+                    pi.log("skipping refresh of filtered dimension " + filter.key);
+                    return;
+                  }
+                }
+                d.refresh.call(d);
+
+                // // thisFunc.call(e);
+              }
+            });
+
+            return true;
+          },
+
+
+          onData : function (message) {
+
+            var
+              json    = false,
+              packet  = null,
+              self    = pi.maverick.xfilter,
+              data    = null,
+              row     = {},
+              count   = 0,
+              records = [];
+
+
+            // is it an array?
+            if (pi.isArray(message.data)) {
+              for (var i = 0; i < message.data.length; i++) {
+                try{
+                  packet  = message.data[i];
+                  // packet  = JSON.parse(message.data[i]);
+                }
+                catch(e) {
+                  pi.log('exception : ' + JSON.stringify(e), message[i]);
+                }
+
+                if (!packet) {
+                  continue;
+                }
+
+                var
+                 chunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+                if (chunk) {
+                  records.push(chunk);
+                  self._addRow(chunk);
+                }
+
+              }
+              // pi.log('added ' + count + ' data rows from packet');
+              self.crossfilter.add(records);
+              self.refresh();
+            }
+            else {
+
+              if (!!message.data) {
+                try{
+                  pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
+                  packet  = message.data;
+                  pi.log('packet.toString() : ' + packet.toString());
+
+                  if (packet.toString() == "[]") {
+                    pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
+                    return;
+                  }
+                  // pi.log('packet : ' + JSON.stringify(packet));
+                  pi.log('packet is : ' + !!packet);
+                }
+                catch(e) {
+                  pi.log('skipping : ' + JSON.stringify(message),e);
+                  return;
+                  // pi.log('exception : ' + JSON.stringify(e), message);
+                }
+              }
+              else {
+                pi.log('also skipping : ' + JSON.stringify(message));
+                return;
+              }
+
+              var
+               chunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
+
+              if (chunk) {
+                pi.log("adding chunk : " + JSON.stringify(chunk));
+                self.crossfilter.add([chunk]);
+                self._addRow(chunk);
+              }
+              // pi.log("data: '" + JSON.stringify(chunk) + "' (" + typeof(message) + ")");
+            }
+          },
+
+
+          init : function () {
+            var
+              self  = this,
+              d     = { 
+                        title   : "sex",
+                        element : null,
+                        parent  : document.getElementById("visuals"),
+                        initialized   : false,
+                        names         : {},
+                        descriptions  : {},
+                        display       : "rank"
+                      },
+
+              p       = null;
+
+
+            /**
+             * common dimension functions
+             */
+
+            d.refresh = function() {
+              if (this.initialized === false && typeof this.init == "function" ) {
+                // pi.log("initializing : " + this.title);
+                this.init();
+              }
+
+              var
+                html = "",
+                names = this.names,
+                descriptions = this.descriptions,
+                title = this.title,
+                params = {labels : [], values : []},
+                totalsum = 0,
+                results = [];
+
+
+              if (this.display == "rank") {
+                this.xd.group().top(Infinity).forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  html = "<p style='font-weight: 700; text-align: center'>" + title + "</p><ul style='cursor: default;' title='" + title + "'>";
+
+                  // pi.log("this : ", this);
+                  if (names["i"+p.key]) {
+
+                    totalsum += p.value;
+                    results.push({ idx : p.key, key : names["i"+p.key], value : p.value, desc : descriptions["i"+p.key]});
+                    // line = "<li onclick='applyFilter({key: " + this.title + ", value : " +p.key+"});'><span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key] + '</li>';
+                    // // pi.log("i"+p.key + " : " + p.value);
+                    // html +=  line + "</ul>";
+                  }
+                  else{
+                    // pi.log("no name : " + p.key + " -> " + p.value, names);
+                  }
+                });
+
+                // var currentTitle = this.title;
+
+                // if (title == "votes") {
+                //   title = "param1";
+                // }
+
+                results.forEach(function(p) {
+                  html += "<li onclick='applyFilter({key: \""+title+"\", value : " +p.idx+"}, this);' title=\""+ (p.desc || "") +"\"><span style='float: left; width: 50px; text-align: right'>" + Math.round(1000*p.value/totalsum)/10 + "%</span>&nbsp;&nbsp;" + p.key + "</li>";
+                });
+                html += "</ul>";
+                this.element.innerHTML = html;
+              }
+              else if (this.display == "group") {
+
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line  = "";
+
+                  html = "<ul>";
+
+                  names["i"+p.key] = p.key;
+                  totalsum += p.value;
+                  line = names["i"+p.key] + " : " + p.value;
+
+                  // line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" + names["i"+p.key] + "</span>&nbsp;&nbsp;" + p.value + "</li>";
+
+
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line;
+                });
+                // html += "sum : " + totalsum;
+                this.element.innerHTML = html + "</ul>";
+              }
+              else if (this.display == "genderchart") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if (names["i"+p.key]) {
+                    if (p.key !== "U") {
+                      if (p.key == "M") {
+                      // put men first, because that's the black coloured slice
+                        params.labels.unshift(names["i"+p.key]);
+                        params.values.unshift(parseInt(p.value, 10));
+                      }
+                      else {
+                        params.labels.push(names["i"+p.key]);
+                        params.values.push(parseInt(p.value, 10));
+                      }
+                    }
+                  }
+                });
+
+                // publish values, if any
+                if (params.values.length) {
+                  // pi.log("emitting :", params);
+                  pi.events.publish("pi.data.app.views.sex", params);
+                }
+
+              }
+              else if (this.display == "histogram") {
+                this.xd.group().all().forEach(function(p,i, arr) {
+                  var
+                    line = "";
+
+                  if (!p.key && (p.key !== 0)) {
+
+                    alert("p.key is " + p.key);
+                    return;
+                  }
+                  names["i"+p.key] = p.key;
+                  line = names["i"+p.key] + " : " + p.value;
+                  line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" +
+                  names["i"+p.key] + "</span>" + p.value + "</li>"
+                  // pi.log("i"+p.key + " : " + p.value);
+                  html +=  line + "<br />";
+
+                  params.labels.push(parseInt(p.key, 10));
+                  params.values.push(parseInt(p.value, 10));
+                });
+
+                // publish values, if any
+                if (params.values.length) {
+                  // pi.log("emitting : pi.data.app.views.age", params);
+                  pi.events.publish("pi.data.app.views.age", params);
+                }
+                else {
+                  pi.log("no values");
+                }
+              }
+            };
+
+            d.init = function() {
+              // pi.log("initializing : " + this.title);
+              if (!this.element) {
+                this.element = document.getElementById(this.title) || false;
+              }
+              if (!this.element) {
+                this.element = document.createElement("div");
+                this.parent.appendChild(this.element);
+                this.element.id = this.title;
+              }
+              this.initialized = true;
+              // this.element.innerHTML = "initialized : " + this.title;
+            };
+
+            /**
+             * set up sex dimension
+             */
+
+            d.xd = self.crossfilter.dimension(function(p) {
+              return p.sex || "U";
+            });
+
+            d.names = {'iU' : 'Ukjent', 'iM' : "Menn", 'iK' : "Kvinner"};
+            d.title = "sex";
+            d.element = document.getElementById("sexchart");
+            d.display = "genderchart";
+
+            d.element.style.width   = 400;
+            d.element.style.height  = 400;
+            // d.xd.filter('M');
+            self.dimension.push(d);
+
+
+            /**
+             * set up state dimension
+             */
+
+            states = pi.clone(d);
+
+            states.xd = self.crossfilter.dimension(function(p) {
+              return p.state ? parseInt(p.state, 10) : 0;
+            });
+
+            states.title = 'Fylke';
+            states.display = "rank";
+
+            states.element = document.getElementById("statechart");
+            states.names = {};
+            // get state names from array
+            views.map.counties.forEach(function(e, i, arr){
+              states.names['i'+i] = e.title;
+            });
+
+
+            states.initialized = false;
+
+            self.dimension.push(states);
+
+
+            /**
+             * set up lifePhase dimension
+             */
+
+            lifePhases = pi.clone(d);
+
+            lifePhases.xd = self.crossfilter.dimension(function(p) {
+              return p.lifePhase ? parseInt(p.lifePhase, 10) : false;
+            });
+
+            lifePhases.title = 'Livsfase';
+            lifePhases.display = "rank";
+
+            lifePhases.element = document.getElementById("lifePhasechart");
+            lifePhases.names = {};
+            lifePhases.descriptions = {};
+
+            var 
+            lifePhase = [
+              {
+                index : 0,
+                name: "Ukjent livsfase",
+                description: "Ingen data"
+              },
+
+              // 01    18-24 år, uten barn    Ungdom og studenter
+              // 02    25-49 år, singel, uten barn    Single
+              // 03    25-49 år, samboer/gift, uten barn    Par uten barn
+              // 04    19-54 år, familie med barn 0-5 år    Småbarnsfamilier
+              // 05    19-54 år, familie med barn 6-17 år    Veletablerte familier
+              // 06    50-64 år, uten hjemmeboende barn    Middelaldrende
+              // 07    65+ år    Seniorer
+
+              {
+                index : 1,
+                name: "Ungdom og studenter",
+                description: "18-24 år, uten barn"
+              },
+              {
+                index : 2,
+                name: "Single",
+                description: "25-49 år, singel, uten barn"
+              },
+              {
+                index : 3,
+                name: "Samboere",
+                description: "25-49 år, samboer/gift, uten barn"
+              },
+              {
+                index : 4,
+                name: "Småbarnsfamilier",
+                description: "19-54 år, familie med barn 0-5 år"
+              },
+              {
+                index : 5,
+                name: "Veletablerte familier",
+                description: "19-54 år, familie med barn 6-17 år"
+              },
+              {
+                index : 6,
+                name: "Middelaldrende",
+                description: "50-64 år, uten hjemmeboende barn"
+              },
+              {
+                index : 7,
+                name: "Seniorer",
+                description: "65+ år"
+              }
+            ]; // end lifephase array
+
+            // get state names from array
+            lifePhase.forEach(function(e, i, arr){
+              lifePhases.names['i'+i] = e.name;
+              lifePhases.descriptions['i'+i] = e.description;
+            });
+
+
+            lifePhases.initialized = false;
+
+            self.dimension.push(lifePhases);
+
+
+
+            /**
+             * set up age dimension
+             */
+
+            age = pi.clone(d);
+
+            age.xd = self.crossfilter.dimension(function(p) {
+              return p.age || 0;
+            });
+
+            age.title = 'age';
+            age.display = 'histogram';
+            age.element = document.getElementById("agechart");
+            age.initialized = false;
+
+            age.names = {};
+
+
+
+            self.dimension.push(age);
+
+
+
+            // /**
+            //  * set up female vote dimension
+            //  */
+
+            // femaleData = pi.clone(votes);
+
+            // femaleData.xd = self.crossfilter.dimension(function(p) {
+            //   return p.sex = "K";
+            // });
+
+
+            // femaleData.title   = 'femaleData';
+            // femaleData.display = 'rank';
+            // femaleData.element = null;
+            // femaleData.initialized = false;
+
+            // self.dimension.push(femaleData);
+
+
+
+          },
+
+
+          run : function() {
+
+            // private init
+            this.__init();
+
+            this.starttime    = new Date().getTime();
+            this.element      = document.getElementById("xfilter"),
+            this.__tmp        = this.__tmp || {};
+
+
+            this.crossfilter  = crossfilter();
+
+            // this.dimensions   = {
+            //   byState : this.crossfilter.dimension( function(d) { return d.state;   }),
+            //   bySex   : this.crossfilter.dimension( function(d) { return d.sex;     }),
+            //   byAge   : this.crossfilter.dimension( function(d) { return d.age;     }),
+            //   byVote  : this.crossfilter.dimension( function(d) { return d.param1;  }),
+            //   byCity  : this.crossfilter.dimension( function(d) { return d.})
+            // };
+
+            // this.filters = {
+            //   north : null
+            // };
+
+
+            // public init
+            this.init();
+            this.reportid = 7;
+
+            this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
+
+            getViewsReport(this.reportid);
+
+            // set up a listener
+            π.readstream(this.__tmp.address, this.onData, this.__onerror);
+          }
+        };
+
+
+        var
+          sexchart = {
+            element   : null,
+            raphael   : null,
+            width     : 400,
+            height    : 400,
+            amounts   : [], 
+            names     : [],
+            totalsum  : 0,
+            __filter  : false,
+
+            __init : function(options) {
+
+              this.element = document.getElementById("sexchart");
+
+              this.raphael = Raphael(this.element, this.width, this.height);
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.sexchart,
+                previousData  = {
+                  names   : [],
+                  values  : []
+                },
+                tmpAmount = 0;
+
+
+              // clear data arrays
+              while(self.amounts.length){
+                self.amounts.pop();
+              }
+              while(self.names.length){
+                self.names.pop();
+              }
+
+
+              self.totalsum = 0;
+
+              // parse data array
+              data.values.forEach(function(p,i, arr) {
+                var
+                  amount = parseInt(p, 10);
+                
+                // pi.log("adding amount : " + amount);
+                self.amounts.push(amount);
+                self.totalsum += amount;
+
+                // pi.log("adding item : " + data.labels[i]);
+                self.names.push({name: data.labels[i], percentage: "%"});
+              }); // data.forEach
+      
+              // calculate percentages
+              self.names.forEach( function(p, idx, arr){
+                p.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
+                // pi.log("setting percentage : " + p.percentage);
+              });
+
+              // pi.log("calling draw()");
+              // pi.log("amounts : ", self.amounts);
+              // pi.log("names : ", self.names);
+              self.draw();
+            },
+
+            draw : function () {
+              // pi.log("filter is " + this.__filter);
+              this.raphael.clear();
+              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff", this.__filter);
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.sex", this.onData, this.onError);
+              pi.events.subscribe("pi.app.views.sex.filter", applyFilter, this.onError);
+            }
+          };
+
+        var
+          agechart = {
+            element   : null,
+            width     : 200,
+            height    : 384,
+            values    : [], 
+            names     : [],
+            totalsum  : 0,
+            agevalues : [],
+            raphael   : null,
+            
+            groupstops : [12, 18, 25, 40, 65, 100],
+
+            chart         : null,
+            chartoptions  : {
+              range   : {},
+              width   : 224,
+              height  : 400,
+              bars    : {
+                width   : 200,
+                height  : 2
+              }
+            },
+
+            __init : function(options) {
+
+              this.element = document.getElementById("agechart");
+              // this.element = document.createElement("div");
+              // document.body.appendChild(this.element);
+              
+              this.raphael = Raphael(document.getElementById("agechartsvg"), this.width, this.height);
+
+              // pi.log("size : " + this.width + "x" + this.height);
+              // prepare indexed array for individual age values
+              for(var i = 0; i < 100; i++) {
+                this.agevalues.push(0);
+              }
+
+
+            },
+
+            onError : function(err) {
+              pi.log("Error : " + err, err);
+            },
+
+
+            onData : function(data) {
+              var
+                self          = pi.maverick.agechart,
+                currentgroup  = 0,
+                currentcount  = 0,
+                age           = 0,
+                previousage   = 0;
+
+              var
+                values    = self.values,
+                names     = self.names,
+                agevalues = self.agevalues,
+                groupstops = self.groupstops;
+
+              // clear data arrays
+              while(values.pop());
+              while(names.pop());
+              self.totalsum = 0;
+
+              for(var i = 0; i < 128; i++) {
+                // clear histo array
+                agevalues[i] = 0;
+              }
+
+              if (data.labels.length != data.values.length) {
+                alert("labels and values have different length!");
+                alert(data.labels.length + " and " + data.values.length);
+              }
+
+
+              data.values.forEach(function(p, i, arr) {
+                var currentage = data.labels[i];
+
+                if (typeof currentage != "number") {
+                  alert("not a number : " + typeof currentage);
+                  return;
+                }
+
+                if (currentage==0)
+                  return; //continue
+
+                agevalues[currentage] = p;
+
+
+                self.totalsum += p;
+                if (currentage < groupstops[currentgroup]) {
+                  currentcount += p;
+                  }
+                else {
+                  names.push(previousage + "-" + (groupstops[currentgroup] - 1));
+                  values.push(currentcount);
+                  currentcount = 0;
+                  currentgroup++;
+                  previousage = groupstops[currentgroup-1];
+                  }
+              });
+              // add the last group
+              names.push(groupstops[groupstops.length-2] + "+");
+              values.push(currentcount);
+
+              // values.forEach(function(p,i, arr) {
+              //   pi.log(names[i] + " : " + p + "(" + (100 * p/self.totalsum) + ")");
+              // }); 
+      
+              self.draw();
+            },
+
+            draw : function () {
+              var 
+                self = pi.maverick.agechart,
+                html = "",
+                colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
+
+
+                if (!self.element) {
+                  pi.log("No element!");
+                }
+
+              if (self.chart === null) {
+                self.chart = self.raphael.ageChart(self.chartoptions, self.values, self.names);
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+              
+              pi.events.publish("pi.app.views.agechart.update", self.agevalues);
+
+
+              // list data array
+              self.groupstops.forEach(function(p,i, arr) {
+                html += "<li><span style='float: left; color:" + colors[i] + ";width: 60px; text-align: center'>" + self.names[i] + "</span><span style='color: #ccc;width: 144px; text-align: right'>&nbsp;</span></li>";
+              });
+              if (self.element.innerHTML == "") {
+                self.element.innerHTML = '<p style="text-align:left; margin-left: 44px;font-weight: 700;">ALDER</p><ul>' + html + '</ul>';
+              }
+
+              // self.agevalues.forEach(function(p, i) {
+              //   pi.log(i + " : " + p);
+              // });
+
+            },
+
+            run : function() {
+              this.__init();
+              pi.events.subscribe("pi.data.app.views.age", this.onData, this.onError);
+            }
+          };
+
+
+var
+  lifePhase = [
+    {
+      index : 0,
+      name: "00",
+      description: "Dummy"
+    },
+    {
+      index : 1,
+      name: "Ungdom og studenter",
+      description: "18-24 år, uten barn"
+    },
+    {
+      index : 2,
+      name: "Single",
+      description: "25-49 år, singel, uten barn"
+    },
+    {
+      index : 3,
+      name: "Samboere",
+      description: "25-49 år, samboer/gift, uten barn"
+    },
+    {
+      index : 4,
+      name: "Småbarnsfamilier",
+      description: "19-54 år, familie med barn 0-5 år"
+    },
+    {
+      index : 5,
+      name: "Veletablerte familier",
+      description: "19-54 år, familie med barn 6-17 år"
+    },
+    {
+      index : 6,
+      name: "Middelaldrende",
+      description: "50-64 år, uten hjemmeboende barn"
+    },
+    {
+      index : 7,
+      name: "Seniorer",
+      description: "65+ år"
+    }
+  ]; // end lifephase array
+
+
+
+
+
+
+
+        window.addEventListener("pi.session.start", function() {
+          pi.log("pi.session.start!");
+          
+          pi.maverick.xfilter = xfilter;
+          pi.maverick.xfilter.run();
+
+          pi.maverick.sexchart = sexchart;
+          pi.maverick.sexchart.run();
+
+          pi.maverick.agechart = agechart;
+          pi.maverick.agechart.run();
+
+        }, false);
+
+
+    </script>
+
+  </div>
+
+  <!-- End of demo's div -->
+
+
+
+  <!--script src="../../assets/js/lib/raphael.min.js"></script-->
+  <script src="../../assets/js/lib/raphael.js"></script>
+  <script src="assets/js/lib/raphael-map-norway.js"></script>
+
+  <!-- Cufon fonts for Raphaël -->
+  <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
+  <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
+
+  <script src="../../assets/js/lib/crossfilter.js"></script>
+
+
+  <!--  bootstrap pi -->
+  <script src="../../assets/js/pi.core.js"></script>
+
+  <!-- Raphaël plugins -->
+  <script src="../../assets/js/pi.lib.raphael.genderchart.js"></script>
+  <script src="../../assets/js/pi.lib.raphael.agechart.js"></script>
+
+
+
+  <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
+  <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
+
+
+  
+  <!--script src="http://d3js.org/d3.v2.min.js?2.10.0"></script-->
+
+  <!--  bootstrap pcl 
+    <script src="../../assets/js/pi.pcl.js"></script>
+  -->
+
+<script type="text/javascript">
+  
 
       var
         records = [
@@ -772,1167 +2047,9 @@
           { phone : "4791327271", param1 : "9/17/2014 18:42" }
         ];
 
-      var uniques = [];
-
-
-      function sendVotes() {
-        var
-          voteReply = null,
-          xhr       = null,
-          rate      = 0,
-          interval  = null,
-          count     = 0,
-          seconds   = 0,
-          address   = '/api/app/views/job/',
-          params    = {
-            job     : 7,
-            apikey  : "kroma"
-          };
-
-        clearFilters();
-
-        if(!!window.voteInterval) {
-          stopVotes();
-          // document.getElementById("spanMinutes").innerHTML = 5;
-          return false;
-        }
-
-
-        // calculate votes per second
-        seconds = 5 * 60;
-        rate    = records.length/seconds;
-        // pi.log("sending votes @ " + rate + " / sec");
-        pi.log("sending " + records.length + " records @ " + Math.round(100*rate)/100 + " / sec, (every " + (1/rate) + " secs)");
-
-        // pi.log("interval is " + (1000/rate) + " millisec");
-
-
-
-
-
-        window.voteInterval = setInterval( function() {
-
-            // document.getElementById("spanVotes").innerHTML = votes-count;
-            var 
-              record = records.pop();
-
-            if (!record) {
-              stopVotes();
-            }
-
-            if (record.phone && uniques.indexOf(record.phone) >= 0) {
-              return;
-            }
-            else {
-              uniques.push(record.phone);
-            }
-
-            for (var field in record) {
-              params[field] = record[field];
-            }
-
-            
-            // pi.log("sending vote no. " + count + " of " + votes + " : " + JSON.stringify(params));
-            // voteReply.innerHTML = "sending vote("+params['param1']+") no. " + count + " of " + votes + " : " + JSON.stringify(params);
-
-            xhr = new XMLHttpRequest();
-
-            xhr.onload = function(e) { 
-              var 
-                json = this.responseText || '{ error : "responseText is undefined or empty." }';
-
-              var
-                data = null,
-                status = {};
-
-              try {
-                data = JSON.parse(json);
-              }
-              catch (e) {
-                pi.log("Error : ", e);
-                pi.log(this.responseText);
-                data = {};
-              }
-
-              status['OK']      = data['OK'] || false;
-              status['message'] = data['message'] || "SERVER ERROR : " + this.responseText;
-              status['request'] = data['request'] || null;
-
-              pi.log("api replied : " + JSON.stringify(status));
-            };
-
-            xhr.onerror = console.log;
-            xhr.open("post", address, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
-            xhr.send(JSON.stringify(params));
-          }, 1000/rate);
-
-        return interval;
-
-      } // function sendVotes()
-
-
-      function stopVotes() {
-        clearInterval(window.voteInterval);
-        clearInterval(window.minuteInterval);
-        
-        window.voteInterval   = null;
-        window.minuteInterval = null;
-
-        alert("records sent!");
-
-        return false;
-      }
-
-
-
-
-  </script>
-
-
-  <!-- This is the demo's div -->
-
-  <div id="demo" data-name="pcl.table.xfilter">
-
-<!--     <div id="loginflex" class="pcl flexbox ontop">
-      <div class="pcl loginbox">
-        <form>
-          <fieldset id="login">
-            <p>
-            Logg inn som <span id="loginName" class="bold" contenteditable="true" type="number" title="Klikk for å angi brukernavn" onfocus="{ this.innerHTML=''; return false;}" onblur="{ if (this.innerHTML=='') this.innerHTML='brukernavn'; return false;}">brukernavn</span> / <span id="loginPwd" class="bold" contenteditable="true" title="Klikk for å angi passord" onfocus="{ this.innerHTML=''; return false;}" type="password">passord</span>. <input type="button" id="login" onclick="document.getElementById('loginflex').classList.add('invisible');" value=" logg inn > " />
-            </p>
-            <p id="loginReply">
-            </p>
-          </fieldset>
-        </form>
-      </div>
-    </div>
- -->
-
-    <div>
-      <div style="width: 600px">
-      <img style="float: right;margin-right:-120px;" src="assets/img/logo.gif" alt="">
-        <div style="width: 180px;" id="views-logo"><p style="margin-left: 8px;">VIEWS | *alpha</p></div>
-
-        <!--p>
-        Send <span id="spanData" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">6</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">3</span> minutt(er). <input type="button" id="sender" onclick="sendData();" value="send nå" />
-        </p>
-        <p id="voteReply">
-          Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
-        </p-->
-        <p></p>
-        <input style="display: none; margin-left: 8px;" type="button" id="btn-clear-filters" onclick="clearFilters();" value=" reset ">
-        <!-- <input type="button" id="btn-sex" onclick="showSex(this);" value="sort on sex" /> -->
-      </div>
-
-
-      <script type="text/javascript">
-
-        function showSettings(obj) {
-          var
-            testElement = document.getElementById("sexchart-container");
-
-//          pi.log("element : ", obj);
-          testElement.classList.toggle("flipped");
-        }
-
-
-        function showSex(element, which) {
-          var
-            which = which || 'K',
-            self  = pi.maverick.xfilter;
-
-          self.dimension.forEach(function(p,i) {
-            if (p.title == "sex") {
-              alert("setting sex filter : " + which);
-              p.xd.filter(which);
-              return;
-            }
-          });
-
-          self.refresh();
-
-        }
-
-
-        function clearFilters() {
-          var
-            self      = pi.maverick.xfilter,
-            dimension = null;
-
-
-          self.dimension.forEach(function(p) {
-            // pi.log("clearing : " + p.title);
-            p.xd.filter(null);
-          });
-
-          self.refresh();
-        }
-
-
-
-
-
-        function applyFilter(filter, element) {
-          var
-            filter    = filter || null,
-            self      = pi.maverick.xfilter,
-            dimension = null,
-            element   = element || null;
-
-
-
-          if (filter === null) {
-            return;
-          }
-          if (typeof filter.key == "undefined") {
-            return;
-          }
-
-
-
-          if (!isNaN(parseInt(filter.value,10))) {
-            filter.value = parseInt(filter.value, 10);
-          }
-
-          var
-            elements = document.getElementsByClassName("selected");
-
-          for(var i = 0; i < elements.length; i++) {
-            elements[i].classList.remove("selected");
-          }
-
-          self.dimension.forEach(function(p) {
-            // pi.log("clearing : " + p.title);
-            p.xd.filter(null);
-          });
-
-
-          self.dimension.forEach(function(p) {
-            if (filter.key == p.title) {
-              dimension = p.xd;
-              pi.log("setting filter " + filter.value + " on dimension " + p.title);
-              p.__filter = filter.value;
-              return;
-            }
-          });
-
-          if (dimension) {
-            // pi.log("applying filter value '"+ filter.value + "' to dimension '" + (filter.key) + '"', filter);
-            if (element) {
-              pi.log("toggling class selected");
-              element.classList.toggle("selected");
-            }
-            dimension.filter(filter.value);
-          }
-          else {
-            pi.log("NOT applying filter value '"+ filter.value + "' to dimension '" + filter.key + '"', filter);
-          }
-
-          self.refresh(filter);
-
-        }
-
-
-      </script>
-
-
-      <div id="visuals">
-          <div id="views-map-container">
-            <div id="views-map"></div>
-          </div>
-        
-          <div id="sexchart-container">
-            <div id="sexchart"></div>
-          </div>
-
-          <div id="statechart"></div>
-          <div id="agechartcontainer">
-            <div id="agechartsvg"></div>
-            <div id="agechart"></div>
-          </div>
-
-
-          <!-- <div id="votechart"></div> -->
-
-      </div>
-
-
-      <div id="votelist">
-
-        <table id="xfilter_table">
-          <thead id="xfilter_table_head"><tr><th></th></tr></thead>
-          <tbody id="xfilter_table_body">
-          </tbody>
-        </table>
-        <div id="datadump"></div>
-      </div>
-      
-    </div>
-
-
-
-    <script>
-
-
-      var 
-        xdiv      = document.getElementById("demo"),
-        xtable    = document.getElementById("xfilter_table"),
-        xhead     = document.getElementById("xfilter_table_head"),
-        xbody     = document.getElementById("xfilter_table_body"),
-        xlistener = null,
-
-
-        xfilter = {
-
-          eventsource : null,
-          starttime   : null,
-          element     : null,
-          crossfilter : null,
-          dimension   : [],
-
-
-          __onerror : function (err) {
-            pi.log("Error in xfilter: " + JSON.stringify(err.data), err);
-          },
-
-
-          __init : function() {
-            var
-              votelist = document.getElementById("votelist");
-
-            votelist.style.overflow = "hidden";
-            votelist.style.position = "absolute";
-            votelist.style.height   = "100px";
-            votelist.style.display  = "none";
-            votelist.style.top      = "768px";
-          },
-
-
-          _addRow : function (row) {
-            var
-              trow      = document.createElement('tr'),
-              fragment  = document.createDocumentFragment(),
-              cell      = null,
-              newrow    = null;
-
-
-            if (!!row) {
-              newrow = row;
-              // pi.log("new row : " + JSON.stringify(row));
-            }
-            else {
-              pi.log("no row in _addRow() : " + JSON.stringify(row));
-              return false;
-            }
-
-            if (newrow.state) {
-              var
-                thisState = views.map.counties[newrow.state];
-
-              if (thisState) {
-                var
-                  previousFill = thisState.county.attr("fill"),
-                  colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
-
-                
-
-                thisState.county.attr("fill", colors[Math.floor(Math.random()*colors.length)]);
-
-                thisState.county.animate({fill : "#f8f2f2"}, 1000, "easeOut");
-                // TweenMax.from(thisState, pi._const.TWEEN_TIME, {css: {fill : "#d65a3f"}});
-              }
-            }
-
-            for( var idx in newrow ) {
-
-              // skip isDeceased, isTMReserved, etc
-              if (idx.indexOf('is') === 0) {
-                continue;
-              }
-              if (idx == "idx") {
-                continue;
-              }
-              if (idx == "direktinfo_id") {
-                continue;
-              }
-
-              if (idx == "type" && newrow[idx] == "unknown") {
-                // continue;
-              }
-
-              cell = document.createElement('td');
-              cell.classList.add(idx);
-              trow.appendChild(cell);
-              cell.appendChild(document.createTextNode(idx + " : " + newrow[idx]));
-            }
-
-            fragment.appendChild(trow);
-
-            // add to DOM element
-            return xbody.appendChild(fragment);
-          },
-
-
-          add : function (obj) {
-
-            var
-              self    = pi.maverick.xfilter,
-              isArray = pi.isArray(obj),
-              result  = false;
-
-            if ( isArray || typeof obj == "object" ) {
-              pi.log('adding ' + typeof(obj) + " to crossfilter : " + isArray ? obj.length + " items" : JSON.stringify(obj));
-              result = self.crossfilter.add(obj);
-              self.refresh();
-            }
-            // if (isArray) {
-            //   obj.forEach(function(p, i, arr) {
-            //     self._addRow(p);
-            //   });
-            // votelist.style.display  = "block";
-            // votelist.style.height   = "auto";
-
-            // }
-
-            return result;
-
-          },
-
-
-          refresh : function (filter) {
-            var
-              self = pi.maverick.xfilter;
-
-            self.dimension.forEach(function(e, i, arr) {
-              if ( typeof e.refresh == "function" ) {
-                // // var
-                // //  thisFunc = e.refresh;
-
-                // because forEach messes with the scope
-                if (filter) {
-                  if (filter.key == e.title) {
-                    pi.log("skipping refresh of filtered dimension " + filter.key);
-                    return;
-                  }
-                }
-                e.refresh.call(e);
-
-                // // thisFunc.call(e);
-              }
-            });
-
-            return true;
-          },
-
-
-          onData : function (message) {
-
-            var
-              json    = false,
-              packet  = null,
-              self    = pi.maverick.xfilter,
-              data    = null,
-              row     = {},
-              count   = 0,
-              records = [];
-
-
-            // is it an array?
-            if (pi.isArray(message.data)) {
-              for (var i = 0; i < message.data.length; i++) {
-                try{
-                  packet  = message.data[i];
-                  // packet  = JSON.parse(message.data[i]);
-                }
-                catch(e) {
-                  pi.log('exception : ' + JSON.stringify(e), message[i]);
-                }
-
-                if (!packet) {
-                  continue;
-                }
-
-                var
-                 chunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
-
-                if (chunk) {
-                  records.push(chunk);
-                  self._addRow(chunk);
-                }
-
-              }
-              // pi.log('added ' + count + ' data rows from packet');
-              self.crossfilter.add(records);
-              self.refresh();
-            }
-            else {
-
-              if (!!message.data) {
-                try{
-                  pi.log('parsing message.data (' + typeof message.data + ' bytes/items)');
-                  packet  = message.data;
-                  pi.log('packet.toString() : ' + packet.toString());
-
-                  if (packet.toString() == "[]") {
-                    pi.log('packet is empty array, skipping: ' + JSON.stringify(packet));
-                    return;
-                  }
-                  // pi.log('packet : ' + JSON.stringify(packet));
-                  pi.log('packet is : ' + !!packet);
-                }
-                catch(e) {
-                  pi.log('skipping : ' + JSON.stringify(message),e);
-                  return;
-                  // pi.log('exception : ' + JSON.stringify(e), message);
-                }
-              }
-              else {
-                pi.log('also skipping : ' + JSON.stringify(message));
-                return;
-              }
-
-              var
-               chunk = π.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
-
-              if (chunk) {
-                pi.log("adding chunk : " + JSON.stringify(chunk));
-                self.crossfilter.add([chunk]);
-                self._addRow(chunk);
-              }
-              // pi.log("data: '" + JSON.stringify(chunk) + "' (" + typeof(message) + ")");
-            }
-          },
-
-
-          init : function () {
-            var
-              self  = this,
-              d     = { 
-                        title   : "sex",
-                        element : null,
-                        parent  : document.getElementById("visuals"),
-                        initialized : false,
-                        names       : {},
-                        display     : "rank"
-                      },
-
-              p       = null;
-
-
-            /**
-             * common dimension functions
-             */
-
-            d.refresh = function() {
-              if (this.initialized === false && typeof this.init == "function" ) {
-                // pi.log("initializing : " + this.title);
-                this.init();
-              }
-
-              var
-                html = "",
-                names = this.names,
-                title = this.title,
-                params = {labels : [], values : []},
-                totalsum = 0,
-                results = [];
-
-
-              if (this.display == "rank") {
-                this.xd.group().top(Infinity).forEach(function(p,i, arr) {
-                  var
-                    line = "";
-
-                  html = "<ul style='cursor: default;'>";
-
-                  // pi.log("this : ", this);
-                  if (names["i"+p.key]) {
-
-                    totalsum += p.value;
-                    results.push({ idx : p.key, key : names["i"+p.key], value : p.value});
-                    // line = "<li onclick='applyFilter({key: " + this.title + ", value : " +p.key+"});'><span style='float: left; width: 40px; text-align: right'>" + p.value + "</span>&nbsp;&nbsp;" + names["i"+p.key] + '</li>';
-                    // // pi.log("i"+p.key + " : " + p.value);
-                    // html +=  line + "</ul>";
-                  }
-                  else{
-                    // pi.log("no name : " + p.key + " -> " + p.value, names);
-                  }
-                });
-
-                // var currentTitle = this.title;
-
-                // if (title == "votes") {
-                //   title = "param1";
-                // }
-
-                results.forEach(function(p) {
-                  html += "<li onclick='applyFilter({key: \""+title+"\", value : " +p.idx+"}, this);'><span style='float: left; width: 50px; text-align: right'>" + Math.round(1000*p.value/totalsum)/10 + "%</span>&nbsp;&nbsp;" + p.key + "</li>";
-                });
-                html += "</ul>";
-                this.element.innerHTML = html;
-              }
-              else if (this.display == "group") {
-
-                this.xd.group().all().forEach(function(p,i, arr) {
-                  var
-                    line  = "";
-
-                  html = "<ul>";
-
-                  names["i"+p.key] = p.key;
-                  totalsum += p.value;
-                  line = names["i"+p.key] + " : " + p.value;
-
-                  // line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" + names["i"+p.key] + "</span>&nbsp;&nbsp;" + p.value + "</li>";
-
-
-                  // pi.log("i"+p.key + " : " + p.value);
-                  html +=  line;
-                });
-                // html += "sum : " + totalsum;
-                this.element.innerHTML = html + "</ul>";
-              }
-              else if (this.display == "genderchart") {
-                this.xd.group().all().forEach(function(p,i, arr) {
-                  var
-                    line = "";
-
-                  if (names["i"+p.key]) {
-                    if (p.key !== "U") {
-                      if (p.key == "M") {
-                      // put men first, because that's the black coloured slice
-                        params.labels.unshift(names["i"+p.key]);
-                        params.values.unshift(parseInt(p.value, 10));
-                      }
-                      else {
-                        params.labels.push(names["i"+p.key]);
-                        params.values.push(parseInt(p.value, 10));
-                      }
-                    }
-                  }
-                });
-
-                // publish values, if any
-                if (params.values.length) {
-                  // pi.log("emitting :", params);
-                  pi.events.publish("pi.data.app.views.sex", params);
-                }
-
-              }
-              else if (this.display == "histogram") {
-                this.xd.group().all().forEach(function(p,i, arr) {
-                  var
-                    line = "";
-
-                  if (!p.key && (p.key !== 0)) {
-
-                    alert("p.key is " + p.key);
-                    return;
-                  }
-                  names["i"+p.key] = p.key;
-                  line = names["i"+p.key] + " : " + p.value;
-                  line = "<li onclick='alert(\"hei du\");'><span style='float: left; width: 40px; text-align: center'>" +
-                  names["i"+p.key] + "</span>" + p.value + "</li>"
-                  // pi.log("i"+p.key + " : " + p.value);
-                  html +=  line + "<br />";
-
-                  params.labels.push(parseInt(p.key, 10));
-                  params.values.push(parseInt(p.value, 10));
-                });
-
-                // publish values, if any
-                if (params.values.length) {
-                  // pi.log("emitting : pi.data.app.views.age", params);
-                  pi.events.publish("pi.data.app.views.age", params);
-                }
-                else {
-                  pi.log("no values");
-                }
-              }
-            };
-
-            d.init = function() {
-              // pi.log("initializing : " + this.title);
-              if (!this.element) {
-                this.element = document.getElementById(this.title) || false;
-              }
-              if (!this.element) {
-                this.element = document.createElement("div");
-                this.parent.appendChild(this.element);
-                this.element.id = this.title;
-              }
-              this.initialized = true;
-              // this.element.innerHTML = "initialized : " + this.title;
-            };
-
-            /**
-             * set up sex dimension
-             */
-
-            d.xd = self.crossfilter.dimension(function(p) {
-              return p.sex || "U";
-            });
-
-            d.names = {'iU' : 'Ukjent', 'iM' : "Menn", 'iK' : "Kvinner"};
-            d.title = "sex";
-            d.element = document.getElementById("sexchart");
-            d.display = "genderchart";
-
-            d.element.style.width   = 400;
-            d.element.style.height  = 400;
-            // d.xd.filter('M');
-            self.dimension.push(d);
-
-
-            /**
-             * set up state dimension
-             */
-
-            states = pi.clone(d);
-
-            states.xd = self.crossfilter.dimension(function(p) {
-              return p.state ? parseInt(p.state, 10) : 0;
-            });
-
-            states.title = 'state';
-            states.display = "rank";
-
-            states.element = document.getElementById("statechart");
-            states.names = {};
-            // get state names from array
-            views.map.counties.forEach(function(e, i, arr){
-              states.names['i'+i] = e.title;
-            });
-
-
-            states.initialized = false;
-
-            self.dimension.push(states);
-
-
-            /**
-             * set up age dimension
-             */
-
-            age = pi.clone(d);
-
-            age.xd = self.crossfilter.dimension(function(p) {
-              return p.age || 0;
-            });
-
-            age.title = 'age';
-            age.display = 'histogram';
-            age.element = document.getElementById("agechart");
-            age.initialized = false;
-
-            age.names = {};
-
-
-
-            self.dimension.push(age);
-
-
-
-            // /**
-            //  * set up female vote dimension
-            //  */
-
-            // femaleData = pi.clone(votes);
-
-            // femaleData.xd = self.crossfilter.dimension(function(p) {
-            //   return p.sex = "K";
-            // });
-
-
-            // femaleData.title   = 'femaleData';
-            // femaleData.display = 'rank';
-            // femaleData.element = null;
-            // femaleData.initialized = false;
-
-            // self.dimension.push(femaleData);
-
-
-
-          },
-
-
-          run : function() {
-
-            // private init
-            this.__init();
-
-            this.starttime    = new Date().getTime();
-            this.element      = document.getElementById("xfilter"),
-            this.__tmp        = this.__tmp || {};
-
-
-            this.crossfilter  = crossfilter();
-
-            // this.dimensions   = {
-            //   byState : this.crossfilter.dimension( function(d) { return d.state;   }),
-            //   bySex   : this.crossfilter.dimension( function(d) { return d.sex;     }),
-            //   byAge   : this.crossfilter.dimension( function(d) { return d.age;     }),
-            //   byVote  : this.crossfilter.dimension( function(d) { return d.param1;  }),
-            //   byCity  : this.crossfilter.dimension( function(d) { return d.})
-            // };
-
-            // this.filters = {
-            //   north : null
-            // };
-
-
-            // public init
-            this.init();
-            this.reportid = 7;
-
-            this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
-
-            getViewsReport(this.reportid);
-
-            // set up a listener
-            π.readstream(this.__tmp.address, this.onData, this.__onerror);
-          }
-        };
-
-
-        var
-          sexchart = {
-            element   : null,
-            raphael   : null,
-            width     : 400,
-            height    : 400,
-            amounts   : [], 
-            names     : [],
-            totalsum  : 0,
-            __filter  : false,
-
-            __init : function(options) {
-
-              this.element = document.getElementById("sexchart");
-
-              this.raphael = Raphael(this.element, this.width, this.height);
-
-            },
-
-            onError : function(err) {
-              pi.log("Error : " + err, err);
-            },
-
-
-            onData : function(data) {
-              var
-                self          = pi.maverick.sexchart,
-                previousData  = {
-                  names   : [],
-                  values  : []
-                },
-                tmpAmount = 0;
-
-
-              // clear data arrays
-              while(self.amounts.pop());
-              while(self.names.pop());
-
-
-              self.totalsum = 0;
-
-              // parse data array
-              data.values.forEach(function(p,i, arr) {
-                var
-                  amount = parseInt(p, 10);
-                
-                // pi.log("adding amount : " + amount);
-                self.amounts.push(amount);
-                self.totalsum += amount;
-
-                // pi.log("adding item : " + data.labels[i]);
-                self.names.push({name: data.labels[i], percentage: "%"});
-              }); // data.forEach
-      
-              // calculate percentages
-              self.names.forEach( function(p, idx, arr){
-                p.percentage = ((100*self.amounts[idx])/self.totalsum).toFixed(0) + "%";
-                // pi.log("setting percentage : " + p.percentage);
-              });
-
-              // pi.log("calling draw()");
-              self.draw();
-            },
-
-            draw : function () {
-              // pi.log("filter is " + this.__filter);
-              this.raphael.clear();
-              this.raphael.genderChart(this.width/2, this.height/2, 140, 70, this.amounts, this.names, "#fff", this.__filter);
-            },
-
-            run : function() {
-              this.__init();
-              pi.events.subscribe("pi.data.app.views.sex", this.onData, this.onError);
-              pi.events.subscribe("pi.app.views.sex.filter", applyFilter, this.onError);
-            }
-          };
-
-        var
-          agechart = {
-            element   : null,
-            width     : 200,
-            height    : 384,
-            values    : [], 
-            names     : [],
-            totalsum  : 0,
-            agevalues : [],
-            raphael   : null,
-            
-            groupstops : [12, 18, 25, 40, 65, 100],
-
-            chart         : null,
-            chartoptions  : {
-              range   : {},
-              width   : 224,
-              height  : 400,
-              bars    : {
-                width   : 200,
-                height  : 2
-              }
-            },
-
-            __init : function(options) {
-
-              this.element = document.getElementById("agechart");
-              // this.element = document.createElement("div");
-              // document.body.appendChild(this.element);
-              
-              this.raphael = Raphael(document.getElementById("agechartsvg"), this.width, this.height);
-
-              // pi.log("size : " + this.width + "x" + this.height);
-              // prepare indexed array for individual age values
-              for(var i = 0; i < 100; i++) {
-                this.agevalues.push(0);
-              }
-
-
-            },
-
-            onError : function(err) {
-              pi.log("Error : " + err, err);
-            },
-
-
-            onData : function(data) {
-              var
-                self          = pi.maverick.agechart,
-                currentgroup  = 0,
-                currentcount  = 0,
-                age           = 0,
-                previousage   = 0;
-
-              var
-                values    = self.values,
-                names     = self.names,
-                agevalues = self.agevalues,
-                groupstops = self.groupstops;
-
-              // clear data arrays
-              while(values.pop());
-              while(names.pop());
-              self.totalsum = 0;
-
-              for(var i = 0; i < 128; i++) {
-                // clear histo array
-                agevalues[i] = 0;
-              }
-
-              if (data.labels.length != data.values.length) {
-                alert("labels and values have different length!");
-                alert(data.labels.length + " and " + data.values.length);
-              }
-
-
-              data.values.forEach(function(p, i, arr) {
-                var currentage = data.labels[i];
-
-                if (typeof currentage != "number") {
-                  alert("not a number : " + typeof currentage);
-                  return;
-                }
-
-                if (currentage==0)
-                  return; //continue
-
-                agevalues[currentage] = p;
-
-
-                self.totalsum += p;
-                if (currentage < groupstops[currentgroup]) {
-                  currentcount += p;
-                  }
-                else {
-                  names.push(previousage + "-" + (groupstops[currentgroup] - 1));
-                  values.push(currentcount);
-                  currentcount = 0;
-                  currentgroup++;
-                  previousage = groupstops[currentgroup-1];
-                  }
-              });
-              // add the last group
-              names.push(groupstops[groupstops.length-2] + "+");
-              values.push(currentcount);
-
-              // values.forEach(function(p,i, arr) {
-              //   pi.log(names[i] + " : " + p + "(" + (100 * p/self.totalsum) + ")");
-              // }); 
-      
-              self.draw();
-            },
-
-            draw : function () {
-              var 
-                self = pi.maverick.agechart,
-                html = "",
-                colors = ['#303030', '#FF00DC', '#FF006E', '#FF0000', '#FF6A00', '#FFD800', '#ADF200', '#C5EAEA', '#0094FF', '#BE3DFF', '#999999'];
-
-
-                if (!self.element) {
-                  pi.log("No element!");
-                }
-
-              if (self.chart === null) {
-                self.chart = self.raphael.ageChart(self.chartoptions, self.values, self.names);
-              }
-
-              // self.agevalues.forEach(function(p, i) {
-              //   pi.log(i + " : " + p);
-              // });
-              
-              pi.events.publish("pi.app.views.agechart.update", self.agevalues);
-
-
-              // list data array
-              self.groupstops.forEach(function(p,i, arr) {
-                html += "<li><span style='float: left; color:" + colors[i] + ";width: 60px; text-align: center'>" + self.names[i] + "</span><span style='color: #ccc;width: 144px; text-align: right'>&nbsp;</span></li>";
-              });
-              if (self.element.innerHTML == "") {
-                self.element.innerHTML = '<p style="text-align:left; margin-left: 44px;font-weight: 700;">ALDER</p><ul>' + html + '</ul>';
-              }
-
-              // self.agevalues.forEach(function(p, i) {
-              //   pi.log(i + " : " + p);
-              // });
-
-            },
-
-            run : function() {
-              this.__init();
-              pi.events.subscribe("pi.data.app.views.age", this.onData, this.onError);
-            }
-          };
-
-
-var
-  lifePhase = [
-    {
-      index : 0,
-      name: "00",
-      description: "Dummy"
-    },
-    {
-      index : 1,
-      name: "Ungdom og studenter",
-      description: "18-24 år, uten barn"
-    },
-    {
-      index : 2,
-      name: "Single",
-      description: "25-49 år, singel, uten barn"
-    },
-    {
-      index : 3,
-      name: "Samboere",
-      description: "25-49 år, samboer/gift, uten barn"
-    },
-    {
-      index : 4,
-      name: "Småbarnsfamilier",
-      description: "19-54 år, familie med barn 0-5 år"
-    },
-    {
-      index : 5,
-      name: "Veletablerte familier",
-      description: "19-54 år, familie med barn 6-17 år"
-    },
-    {
-      index : 6,
-      name: "Middelaldrende",
-      description: "50-64 år, uten hjemmeboende barn"
-    },
-    {
-      index : 7,
-      name: "Seniorer",
-      description: "65+ år"
-    }
-  ]; // end lifephase array
-
-
-
-
-
-
-
-        window.addEventListener("pi.session.start", function() {
-          pi.log("pi.session.start!");
-          
-          pi.maverick.xfilter = xfilter;
-          pi.maverick.xfilter.run();
-
-          pi.maverick.sexchart = sexchart;
-          pi.maverick.sexchart.run();
-
-          pi.maverick.agechart = agechart;
-          pi.maverick.agechart.run();
-
-        }, false);
-
-
-    </script>
-
-  </div>
-
-  <!-- End of demo's div -->
-
-
-
-  <!--script src="../../assets/js/lib/raphael.min.js"></script-->
-  <script src="../../assets/js/lib/raphael.js"></script>
-  <script src="assets/js/lib/raphael-map-norway.js"></script>
-
-  <!-- Cufon fonts for Raphaël -->
-  <script src="../../assets/js/fonts/passion_one_400.font.js"></script>
-  <script src="../../assets/js/fonts/ubuntu_cn_400.font.js"></script>
-
-  <script src="../../assets/js/lib/crossfilter.js"></script>
-
-
-  <!--  bootstrap pi -->
-  <script src="../../assets/js/pi.core.js"></script>
-
-  <!-- Raphaël plugins -->
-  <script src="../../assets/js/pi.lib.raphael.genderchart.js"></script>
-  <script src="../../assets/js/pi.lib.raphael.agechart.js"></script>
-
-
-
-  <script src="assets/js/lib/gsap/TimelineMax.min.js"></script>
-  <script src="assets/js/lib/gsap/TweenMax.min.js"></script>
-
-
   
-  <!--script src="http://d3js.org/d3.v2.min.js?2.10.0"></script-->
-
-  <!--  bootstrap pcl 
-    <script src="../../assets/js/pi.pcl.js"></script>
-  -->
-
+</script>
 
 </body>
 </html>
+
