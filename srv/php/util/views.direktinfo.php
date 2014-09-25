@@ -6,7 +6,7 @@ require_once(UTILITIES_DIR."refAwareSoap.php");
 $result = array();
 
 
-$rowheaders   = array('idx','phone','type', 
+$rowheaders   = array('idx','type', 
   'direktinfo_id', 'zipCode', 'county', 'state', 'lat', 'lon', 'community', 'residentialType', 'age', 'lifePhase', 'sex', 'isDeceased', 'isDMReserved', 
   'isTMReserved', 'isHMReserved', 'CategoryConsumerStrength', 'CategoryLifephase', 'CategoryUrban', 'EstimatedLengthOfEducation', 'FISEducation', 
   'FISIncome', 'FISWealth', 'HouseholdEstimatedIncome', 'HouseholdEstimatedMembersCount', 'HouseholdEstimatedWealth', 'LifePhaseProfile',
@@ -143,7 +143,7 @@ function getInfoFromWebService($phone, $extended=true) {
 	$result['type'] = 'person';
 
 	$apiKey= "49NfKV5WKvrhp2iFUti4RfLHnC61i0JquLBTAXCf36A=";//your API key here
-	$client = new SoapClient('http://www.direktinfo.no/service/interopt/SearchService.svc.wsdl', array('trace' => true, 'features' => SOAP_SINGLE_ELEMENT_ARRAYS, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP));
+	$client = new SoapClient('http://www.direktinfo.no/service/interopt/SearchService.svc.wsdl', array(' features' => SOAP_SINGLE_ELEMENT_ARRAYS));
 	
 	$personSearchParameters = array("apiKey"=>$apiKey, "criteria"=>$phone, "productCode"=>"109", "tag"=>"", "pageIndex"=>"0", "pageSize"=>"1"); 
 	$companySearchParameters = array("apiKey"=>$apiKey, "criteria"=>"$phone", "productCode"=>"109", "tag"=>"", "pageIndex"=>"0", "pageSize"=>"1"); 
@@ -151,7 +151,7 @@ function getInfoFromWebService($phone, $extended=true) {
 	$person = $client->SearchPaged($personSearchParameters);
 
 	$json = json_encode($person, JSON_PRETTY_PRINT);
-	// file_put_contents(__DIR__ . "/ws.log", "person($phone) : " . $json ."\n", FILE_APPEND);
+	file_put_contents(__DIR__ . "/ws.log", "person($phone) : " . $json ."\n", FILE_APPEND);
 
 	$personcount = $person->SearchPagedResult->PersonCount;
 
@@ -215,7 +215,7 @@ function getDetailedInfoFromWebService($id, $phone) {
 	$json = json_encode($person, JSON_PRETTY_PRINT);
 	if (strpos($json, "CategoryConsumerStrength") < 0) {
 		$hasDemographics = true;
-		// file_put_contents(__DIR__ . "/ws.log", "consumerlookup ($phone) : " . $json . "\n", FILE_APPEND);
+		file_put_contents(__DIR__ . "/ws.log", "consumerlookup ($phone) : " . $json . "\n", FILE_APPEND);
 	}
 
 	if (isset($person->ConsumerLookupResult->Persons->Person->PersonDemographics->PersonDemographics)) {
@@ -268,12 +268,9 @@ function getDetailedInfoFromWebService($id, $phone) {
 	
 		if ($data->FISEducation) {
 			$result['FISEducation'] = intval(substr($data->FISEducation, 0, 2), 10);
-			file_put_contents(__DIR__ . "/ws.log", "education : " . $data->FISEducation . "\n", FILE_APPEND);
-			
 			}
 		if ($data->FISWealth) {
 			$result['FISWealth'] = intval(substr($data->FISWealth, 0, 2), 10);
-			file_put_contents(__DIR__ . "/ws.log", "wealth : " . $data->FISEducation . "\n", FILE_APPEND);
 			}
 		}
 	else {
