@@ -11,6 +11,9 @@
    * @copyright Johan Telstad, 2011-2014
    * @copyright Views AS, 2014
    * 
+   * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 
+   *           @copyright 2011 by Steven Littiebrant
+   *
    */
 
 
@@ -162,10 +165,12 @@
          * This is where we optimize. Absolutely no blocking code allowed.
          *
          * This is the client side hub of our messaging system.
-         * It will handle data/message passing, events, and pubsub. In a hurry.
+         * It handles data routing, message passing and events independent of
+         * the DOM, using a pubsub approach to implement the Observer Model.
+         * 
+         * This is 10-100x faster than using DOM events or the jQuery approach.
          *
          * @author Johan Telstad, jt@viewshq.no, 2011-2014
-         *
          * 
          * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 
          *           @copyright 2011 by Steven Littiebrant
@@ -357,11 +362,21 @@
           PubSub(π.events, false);
 
 
-
-
-
           // public functions
-          π.events.trigger = function(eventName, eventData, eventElem) {
+
+
+          /**
+           * Wrapper for custom event triggering through 
+           * browser's internal event system
+           *
+           * @param  {String}       eventName   The event name
+           * @param  {Object}       eventData   Optional data object
+           * @param  {HTMLElement}  eventElem   Optional DOM element to use as dispatcher
+           * 
+           * @return {bool}                     Boolean FALSE on failure, or result from dispatchEvent()
+           */
+          
+          π.events.trigger = function ( eventName, eventData, eventElem ) {
             var
               eventName   = eventName || false,
               eventData   = eventData || null,
@@ -417,9 +432,6 @@
 
 
 
-
-
-
     π.browser = π.browser || {};
 
     π.browser.isIe = function (v) {
@@ -431,6 +443,8 @@
       return /ip(hone|od|ad)|android|blackberry.*applewebkit|bb1\d.*mobile/i.test(navigator.userAgent);
     }
 
+
+    // PHP utility functions, JS version
 
     π.isArray = function(obj) {
       return (Object.prototype.toString.call(obj) == "[object Array]");
@@ -503,6 +517,8 @@
     };
 
 
+
+    // π utility functions
 
 
     π.logArray = function (array) {
@@ -704,6 +720,13 @@
     /* DOM-related functions  */
 
 
+    /**
+     * Returns TRUE if param is a DOM Node
+     * 
+     * @param  {DOMElement}  obj    The DOM reference to check
+     * 
+     * @return {bool}               Boolean TRUE if param is a DOM Node, FALSE otherwise.
+     */
     π.isNode = function(obj){
       /** Returns true if it is a DOM node  */
       return (
@@ -800,8 +823,10 @@
      * π.clear 
      *
      * Removes any children from element
-     * @return {integer} Number of children removed
-     *
+     * 
+     * @param   {Object}  elem  The element to clear
+     * 
+     * @return  {bool|integer}       Number of children removed, or boolean FALSE on error
      */
 
     π.clear = function (elem) {
@@ -824,9 +849,14 @@
 
 
 
-
-
-
+    /**
+     * Your bog-standard JS clone proc
+     * 
+     * @param  {Object}   obj   The object to clone
+     * 
+     * @return {Object}         Returns result from Object.create()
+     */
+    
     π.clone = function (obj){
       var
         clone = Object.create(Object.getPrototypeOf(obj)),
