@@ -25,23 +25,25 @@ fi
 
 
 if [ -f "$INSTALL/$GZFILE" ]; then
-  # Control will enter here if $DIRECTORY exists.
+  # Control will enter here if $GZFILE already exists.
   echo "$SERVICE is already installed. \n - removing tarball and retrying install..." 1>&2
-  sudo rm -rf "$INSTALL/$GZFILE"
+  rm -rf "$INSTALL/$GZFILE"
 fi
 
 
 # echo "changing to $INSTALL"
 cd "$INSTALL"
 
+echo "downloading : $URL$GZFILE"
 # printf "downloading $URL$GZFILE..."
 # run as pi system user
-sudo -u "$USERNAME" wget "$URL$GZFILE" --progress=bar:force 2>&1 | tail -f -n +7
+# sudo -u "$USERNAME" wget "$URL$GZFILE" --progress=bar:force 2>&1 | tail -f -n +7
+wget "$URL$GZFILE" --progress=bar:force 2>&1 | tail -f -n +7
 # echo "done!"
 
 printf "decompressing $GZFILE..."
 # run as pi system user
-sudo -u "$USERNAME" tar xvfz "$GZFILE" > /dev/null
+tar xvfz "$GZFILE" > /dev/null
 echo "done!"
 
 
@@ -52,11 +54,12 @@ cd "$VERSION"
 # echo "running ./configure :"
 # sudo -u "$USERNAME" ./configure > /dev/null
 
+apt-get install build-essential libc6-dev-i386
 
 printf "running make..."
-sudo -u "$USERNAME" make 32bit
+make 32bit
 
 printf "make install..."
-sudo make install
+make install
 
 echo "done!"

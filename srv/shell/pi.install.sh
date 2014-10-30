@@ -4,6 +4,63 @@
 
 
 
+USERNAME="pi"
+
+DIRECTORY="/home/$USERNAME"
+
+PIDIRECTORY="$DIRECTORY/src"
+
+GITURL="https://github.com/fillefrans/pi.git"
+
+
+if [ -d "$DIRECTORY/" ]; then
+  echo "user pi already exists"
+else
+  echo "creating user for pi"
+  sudo useradd "$USERNAME"
+  echo "  - creating directories"
+  sudo mkdir "$DIRECTORY/install"
+  echo "  - setting directory group"
+  sudo chgrp -R "$USERNAME" "$DIRECTORY"
+  echo "  - setting permissions"
+  sudo chmod -R g+rwx "$DIRECTORY"
+  echo "done!"
+fi
+
+
+
+if [ -d "$PIDIRECTORY" ]; then
+  # Control will enter here if $PIDIRECTORY exists.
+  tput setaf 1
+  printf "pi is already installed. "
+  tput sgr 0
+  tput setaf 6
+  echo " - use \"pi update\" to retrieve latest version from GitHub."
+  tput sgr 0
+  exit 1
+fi
+
+sudo -u pi git clone --single-branch --depth=1 -b develop "$GITURL" "$PIDIRECTORY"
+
+if [ "$?" > "0" ]; then
+  tput setaf 1
+  echo "git clone exited with error code : $?" 1>&2
+  tput sgr 0
+  exit 1
+fi
+
+
+
+tput setaf 6
+echo "done! You should make sure you have php5-dev installed."
+tput sgr 0
+exit 1
+
+
+
+
+
+
 # Colour commands
 # tput setab [1-7] # Set the background colour using ANSI escape
 # tput setaf [1-7] # Set the foreground colour using ANSI escape
@@ -66,52 +123,3 @@
 # Avoid temporary files by echoing a multiline string and piping it:
 #   echo -e "setf 7\nsetb 1" | tput -S  # set fg white and bg red
 
-
-USERNAME="pi"
-
-DIRECTORY="/home/$USERNAME"
-
-PIDIRECTORY="$DIRECTORY/src"
-
-
-if [ -d "$DIRECTORY/" ]; then
-  echo "user pi already exists"
-else
-  echo "creating user for pi"
-  sudo useradd "$USERNAME"
-  echo "  - creating directories"
-  sudo mkdir "$DIRECTORY/install"
-  echo "  - setting directory group"
-  sudo chgrp -R "$USERNAME" "$DIRECTORY"
-  echo "  - setting permissions"
-  sudo chmod -R g+rwx "$DIRECTORY"
-  echo "done!"
-fi
-
-
-
-if [ -d "$PIDIRECTORY" ]; then
-  # Control will enter here if $PIDIRECTORY exists.
-  tput setaf 1
-  printf "pi is already installed. "
-  tput sgr 0
-  tput setaf 6
-  echo "\n    Use \"pi update\" to retrieve latest version from GitHub."
-  tput sgr 0
-  exit 1
-fi
-
-sudo -u pi git clone --single-branch --depth=1 -b develop https://github.com/fillefrans/pi.git "$PIDIRECTORY"
-
-# if [ "$?" > "0" ]; then
-#   tput setaf 1
-#   echo "git clone exited with error code : $?" 1>&2
-#   tput sgr 0
-#   exit 1
-# fi
-
-
-tput setaf 6
-echo "done!"
-tput sgr 0
-exit 1
