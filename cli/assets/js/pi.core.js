@@ -1,6 +1,6 @@
   /**
    *
-   * π v0.5.1
+   * π v0.5.2.0
    *
    * Pi is an html5-based client-server application platform
    *
@@ -61,6 +61,7 @@
       SRV_ROOT    : "../../../srv/",
 
       LOG_URL     : "/api/log/",
+
       // platform constants
       TWEEN_TIME      : 0.2,
       DEFAULT_TIMEOUT : 30
@@ -81,20 +82,20 @@
 
 
 
-        /**   
-         * core.callback
-          *
-          *   Store references to local callback functions
-          *   Call remote procedure and create a listener for the result
-          *   Invoke local callback when result arrives
-          * 
-          */
-
+       /**
+        * 
+        * @module core.callback
+        *
+        *   Store references to local callback functions
+        *   Call remote procedure and create a listener for the result
+        *   Invoke local callback when result arrives
+        * 
+        */
 
           π.core.callback = π.core.callback || {
 
-            /*
-             * Manages callback handlers
+            /**
+             * @description  Manages callback handlers
              *
              * Issues reply addresses, and invokes related
              * callback when response is received from server
@@ -160,8 +161,6 @@
 
 
         /**
-         *  π.events  
-         *
          * This is where we optimize. Absolutely no blocking code allowed.
          *
          * This is the client side hub of our messaging system.
@@ -366,7 +365,7 @@
 
 
           /**
-           * Wrapper for custom event triggering through 
+           * Wrapper for custom event triggering with
            * browser's internal event system
            *
            * @param  {String}       eventName   The event name
@@ -444,13 +443,31 @@
     }
 
 
-    // PHP utility functions, JS version
 
+    /*    JS versions of PHP utility functions. (PHP under_score => JS camelCase)    */
+
+    /**
+     * JS version of PHP's is_array()
+     * 
+     * @param  {Object}  obj Object reference
+     * 
+     * @return {Boolean}     Boolean TRUE if obj is a native JS array
+     */
     π.isArray = function(obj) {
       return (Object.prototype.toString.call(obj) == "[object Array]");
     }
 
 
+    /**
+     * JS version of PHP's str_pad()
+     * 
+     * @param  {string} str       The string to pad
+     * @param  {int}    padto     Desired length
+     * @param  {string} padstr    Pad with this string
+     * @param  {bool}   padleft   Flag to pad string from the left (default i pad from right)
+     * 
+     * @return {string}     The padded string
+     */
     π.strPad = function(str, padto, padstr, padleft) {
       var
         padstr  = padstr  || "&nbsp;",
@@ -478,6 +495,14 @@
     };
 
 
+    /**
+     * JS version of PHP's basename()
+     * 
+     * @param  {string} filename The full path and filename
+     * @param  {string} ext      The extension to trim
+     * 
+     * @return {string}          The full path without the filename part
+     */
     π.basename = function (filename, ext) {
       var
         filename  = filename || null,
@@ -638,6 +663,16 @@
 
 
 
+    /**
+     * Search an object and its children
+     * 
+     * @param  {[type]} token    [description]
+     * @param  {[type]} obj      [description]
+     * @param  {[type]} where    [description]
+     * @param  {[type]} exact    [description]
+     * @param  {[type]} multiple [description]
+     * @return {[type]}          [description]
+     */
     π.search = function (token, obj, where, exact, multiple) {
       var
         result    = null,
@@ -704,10 +739,7 @@
           }
         }
 
-
-
       } // for var item in obj
-
 
       return result;
 
@@ -721,7 +753,7 @@
 
 
     /**
-     * Returns TRUE if param is a DOM Node
+     * Returns TRUE if obj is a DOM Node
      * 
      * @param  {DOMElement}  obj    The DOM reference to check
      * 
@@ -736,8 +768,17 @@
     };
 
 
+
+    /**
+     * Returns true if obj is a DOM element
+     * 
+     * @param  {HTMLElement}  obj The element to check
+     * 
+     * @return {bool}     Returns true if it is a DOM element
+     */
+
     π.isElement = function(obj){
-      /** Returns true if it is a DOM element   */
+      /**    */
       return (
         typeof HTMLElement === "object" ? obj instanceof HTMLElement : //DOM2
         obj && typeof obj === "object" && obj !== null && obj.nodeType === 1 && typeof obj.nodeName==="string" 
@@ -751,8 +792,6 @@
     /**
      *  Dynamically polyfill missing features
      *  
-     *  @function π.polyfill
-     *
      * @param {string} feature The feature to polyfill
      * 
      * Optional
@@ -854,7 +893,8 @@
      * 
      * @param  {Object}   obj   The object to clone
      * 
-     * @return {Object}         Returns result from Object.create()
+     * @return {Object}         Returns cloned object
+     * @requires HTML5 [Array.forEach]
      */
     
     π.clone = function (obj){
@@ -867,6 +907,22 @@
       });
 
       return clone;
+    };
+
+
+    /**
+     * Your bog-standard JS create proc
+     * 
+     * @param  {Object}   obj   The object to create
+     * 
+     * @return {Object}         Returns new Object
+     */
+    
+    π.create = function (obj){
+      var 
+        f = function() {};
+      f.prototype = obj;
+      return new f();
     };
 
 
@@ -923,7 +979,7 @@
 
     π.listen = function (address, callback, onerror) {
 
-        // early escapes
+        // early escape
         if (!!address) {
           if (typeof callback != "function") {
             return false;
@@ -949,9 +1005,6 @@
 
 
     /** 
-     * π.readstream
-     *
-     * @description 
      * Listen to a data stream in the global namespace
      * 
      * @param  {string}     address   Address in the pi namespace to listen to
@@ -961,7 +1014,6 @@
      * @return {boolean}    Result of operation
      * 
      */
-
 
     π.readstream = function (address, listener, onerror) {
       if (!π.session._connected) {
@@ -987,11 +1039,7 @@
 
 
     /** 
-     *  π.readqueue
-     *  
      * Receive a data queue from the global namespace
-     * 
-     * @function π.readqueue
      * 
      * @param  {string}     address   Address in the pi namespace to receive from
      * @param  {Function}   onerror   Callback on error
@@ -999,7 +1047,6 @@
      * 
      * @return {Boolean}              Result of operation
      */
-
 
     π.readqueue = function (address, listener, onerror) {
       if (!π.session._connected) {
@@ -1024,20 +1071,23 @@
 
 
 
-    /** 
-     * @function π.on
-     *
-     * @description Pi shorthand function, wraps window.addEventListener
-     * 
-     */
-
+  /**
+   * Pi shorthand function, wraps window.addEventListener
+   * 
+   * @param  {string}   eventaddress The Pi Event Address to attach to
+   * @param  {Function} callback     The event handler
+   * @param  {bool}     capture      Capture events, or pass along to next handler in the event chain
+   * 
+   * @return {bool}     Result from addEventListener() 
+   */
+  
     π.on = function(eventaddress, callback, capture) {
 
       // if object, attach all functions by name
-      if ( typeof eventaddress === "object" ) {
+      if ( typeof eventaddress == "object" ) {
         var count = 0;
         for (var func in eventaddress) {
-          if ( eventaddress.hasOwnProperty(func) && (typeof eventaddress[func] === "function") ) {
+          if ( eventaddress.hasOwnProperty(func) && (typeof eventaddress[func] == "function") ) {
             count++;
             π.on(func, eventaddress[func], callback, capture || false);
           }
@@ -1054,18 +1104,15 @@
 
 
     // ALIAS
-    π.bind = pi.on;
+    π.bind = π.on;
 
 
     /** 
-     * @function π.await
-     *
-     * 
+     * Wait for single named event
      * @param  {string}     eventaddress  Address in the pi namespace to wait for
      * @param  {Function}   callback      Callback when return value available
      * @return {boolean}                  Should always return true
      */
-
 
     π.await = function(eventaddress, callback, timeout) {
       var
@@ -1090,18 +1137,13 @@
 
 
     /** 
-     *  π.read
-     * 
      * Read a remote value
      *
-     * @function π.read
-     * 
      * @param  {string}     address   Address in the pi namespace to read from
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback when return value available
      * @return {boolean}              Result if success, false if failure
      */
-
 
     π.read = function(address, callback, onerror) {
     
@@ -1111,8 +1153,6 @@
 
 
     /** 
-     * @function π.write
-     *
      * Write a value to a remote variable location
      * 
      * @param  {string}     address   Address in the pi namespace to write to
@@ -1120,7 +1160,6 @@
      * @param  {Function}   callback  Callback when return value available
      * @return {boolean}              Old value if success, false if failure
      */
-
 
     π.write = function(address, value, callback) {
 
@@ -1130,24 +1169,16 @@
 
 
     /**
-     * π._send
-     *  
-     * @description 
      * Handle app request for sending a message to an address in the pi namespace
      * Conform to pi packet specification
      * 
-     * 
-     * @function π._send
-     *
      * @param  {string}     command   pi command to issue
      * @param  {string}     address   Address in the pi namespace to read from
      * @param  {object}     data      The data to send
      * @param  {Function}   callback  Callback when return value available
      * 
      * @return {boolean}              Result if success, false if failure
-     * 
      */
-
 
     π._send = function(command, address, data, callback, onerror) {
       var
@@ -1174,9 +1205,7 @@
 
 
     /** 
-     * π.readlist
-     *
-     * @description List contents of remote address
+     *  List contents of remote address
      *
      * @param  {string}     address       [channel[:id]|]address
      * @param  {string}     filetype      The file extension
@@ -1185,7 +1214,6 @@
      * @return {string|boolean}           Data set on success, false on failure
      * 
      */
-
 
     π.readlist = function(address, callback, onerror) {
 
@@ -1208,12 +1236,8 @@
 
 
     /** 
-     * π.readdata
+     *  Read a remote data set (mysql|file)
      *
-     * @description Read a remote data set (mysql|file)
-     *
-     * @function π.readdata
-     * 
      * @param  {string}     address       Data address in the pi namespace
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
@@ -1221,7 +1245,6 @@
      * @return {string|boolean}           Data set on success, false on failure
      * 
      */
-
 
     π.readdata = function(address, callback, onerror) {
 
@@ -1243,18 +1266,13 @@
 
 
     /** 
-     * π.readfile
-     *
-     * @description Read a remote (text) file
-     * 
-     * @function π.readfile
+     *  Read a remote (text) file
      * 
      * @param  {string}     fileaddress   File address in the pi namespace
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
      * @return {string|boolean}                  File contents on success, false on failure
      */
-
 
     π.readfile = function(fileaddress, filetype, callback) {
 
@@ -1268,11 +1286,7 @@
 
 
     /** 
-     * π.require
-     *
-     * @description Basic dependency management
-     * 
-     * @function π.require
+     *  Basic dependency management
      * 
      * @param  {string}     module    Name of the pi module to be loaded
      * @param  {boolean}    async     Load script asynchronously
@@ -1280,7 +1294,6 @@
      * @param  {Function}   callback  Callback on loaded
      * @return {boolean}              True for success, false for failure
      */
-
 
     π.require = function(module, async, defer, callback, onerror) {
       var
@@ -1335,9 +1348,7 @@
     */
 
     /**
-     * π.timer
-     * 
-     * @description Utility object for timing purposes
+     *  Utility object for timing purposes
      * @author Johan Telstad
      */
 
@@ -1485,6 +1496,62 @@
 
 
 
+  /**
+   * BOOTSTRAPPING THE DOM
+   *
+   * Search for ["data-src", "data-pi"] attributes starting with "pi."
+   * Set classes based on found elements' pi address. ["pi.video" => addClass("pi video")]
+   * 
+   */
+
+
+  π.__BOOT = {
+    strapped : [],
+    checkIt : function (e) {
+      var
+        self = π.__BOOT;
+      if (self.strapped.indexOf(e) > -1) {
+        // elem was already strapped
+        return false;
+      }
+      else {
+        // return new length of strapped array
+        return self.strapped.push(e);
+      }
+    },
+    strapIt : function (e) {
+      var
+        ref = e.getAttribute("data-src");
+
+      if (typeof ref == "string" && ref.indexOf("pi.") === 0) {
+        pi.log("adding classes : " + ref.replace(".", " "));
+        e.className += ( e.className ? " " + ref.replace(".", " ") : ref.replace(".", " ") );
+      }
+    }
+  };
+
+
+  π._bootstrap = function () {
+    π.timer.start("_bootstrap");
+    var
+      elements,
+      body = document.documentElement;
+
+    elements = document.getElementsByClassName("pi");
+    pi.log("BOOTSTRAP : " + elements.length);
+
+    for (var i = 0; i < elements.length; i++) {
+      // pi.log("STRAP IT: " + e, e);
+      if (π.__BOOT.checkIt(elements.item(i))) {
+        π.__BOOT.strapIt(elements.item(i));
+      }
+    }
+    π.timer.stop("_bootstrap");
+
+  };
+
+  document.addEventListener('DOMContentLoaded',π._bootstrap);
+
   /***   ------   INITIALIZATION    ------
      *
      */
@@ -1494,8 +1561,6 @@
 
   π.str_pad   = π.strPad;
   π.is_array  = π.isArray;
-
-
 
   π.require("core.session", false, false);
   // π.require("core.tasks",   false, false);
