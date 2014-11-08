@@ -1,15 +1,15 @@
   /**
    *
-   * π v0.5.2.0
+   * π v0.5.2.1
    *
-   * Pi is an html5-based client-server application platform
-   *
-   * This is the client part
+   * Pi is an html5-based distributed client-server application platform.
+   * 
+   * This is the client part.
    *
    * @author Johan Telstad, jt@viewshq.no
    * 
    * @copyright Johan Telstad, 2011-2014
-   * @copyright Views AS, 2014
+   * @copyright Views AS, 2014-
    * 
    * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 
    *           @copyright 2011 by Steven Littiebrant
@@ -84,7 +84,7 @@
 
        /**
         * 
-        * @module core.callback
+        * @module π.core.callback
         *
         *   Store references to local callback functions
         *   Call remote procedure and create a listener for the result
@@ -167,7 +167,7 @@
          * It handles data routing, message passing and events independent of
          * the DOM, using a pubsub approach to implement the Observer Model.
          * 
-         * This is 10-100x faster than using DOM events or the jQuery approach.
+         * This is 10-100x faster than using DOM events, or the jQuery approach.
          *
          * @author Johan Telstad, jt@viewshq.no, 2011-2014
          * 
@@ -358,6 +358,7 @@
           appreciated but not required: https://github.com/Groxx/PubSub
         */
 
+          // attach it to pi.events
           PubSub(π.events, false);
 
 
@@ -409,8 +410,10 @@
               // we are not handicapped
 
               if (eventData) {
+                // event has a payload
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
               } else {
+                // event is only named
                 dispatcher.dispatchEvent(new CustomEvent(eventName));
               }
             }
@@ -433,11 +436,22 @@
 
     π.browser = π.browser || {};
 
+    /**
+     * Regex test for Internet Explorer
+     * 
+     * @param  {int}  v     Version to check for
+     * 
+     * @return {Boolean}    Returns true if browser is IE
+     */
     π.browser.isIe = function (v) {
       return RegExp('msie' + (!isNaN(v) ? ('\\s' + v) : ''), 'i').test(navigator.userAgent);
     };
 
-
+    /**
+     * Regex test for handheld devices (smartphones + tablets)
+     * 
+     * @return {Boolean} True if device is a handheld, false otherwise
+     */
     π.browser.isMobile = function(){
       return /ip(hone|od|ad)|android|blackberry.*applewebkit|bb1\d.*mobile/i.test(navigator.userAgent);
     }
@@ -666,12 +680,13 @@
     /**
      * Search an object and its children
      * 
-     * @param  {[type]} token    [description]
-     * @param  {[type]} obj      [description]
-     * @param  {[type]} where    [description]
-     * @param  {[type]} exact    [description]
-     * @param  {[type]} multiple [description]
-     * @return {[type]}          [description]
+     * @param  {string} token     Search string
+     * @param  {Object} obj       The object to search
+     * @param  {int}    where     Flag: 0 => search both keys and values, 1 => keys, 2 => values
+     * @param  {int}    exact     Flag: 1 => match exactly, 0 => match any occurrence
+     * @param  {bool}   multiple  Flag: Return multiple matches
+     * 
+     * @return {Object|bool}      Mathing Object(s), or boolean FALSE if not found.
      */
     π.search = function (token, obj, where, exact, multiple) {
       var
@@ -760,7 +775,6 @@
      * @return {bool}               Boolean TRUE if param is a DOM Node, FALSE otherwise.
      */
     π.isNode = function(obj){
-      /** Returns true if it is a DOM node  */
       return (
         typeof Node === "object" ? obj instanceof Node : 
         obj && typeof obj === "object" && typeof obj.nodeType === "number" && typeof obj.nodeName==="string"
@@ -776,9 +790,7 @@
      * 
      * @return {bool}     Returns true if it is a DOM element
      */
-
     π.isElement = function(obj){
-      /**    */
       return (
         typeof HTMLElement === "object" ? obj instanceof HTMLElement : //DOM2
         obj && typeof obj === "object" && obj !== null && obj.nodeType === 1 && typeof obj.nodeName==="string" 
@@ -792,17 +804,13 @@
     /**
      *  Dynamically polyfill missing features
      *  
-     * @param {string} feature The feature to polyfill
+     * @param {string}      feature   The feature to polyfill
      * 
-     * Optional
-     * @param {DomElement} elem An optional DomElement to use for injection. If
-     * this variable is not present, document.body will be used instead.
+     * @param {DomElement}  elem      An optional DomElement to use for attaching. If this
+     *                                variable is not present, 'window' will be used instead.
      *
-     * @return {Boolean|DomElement} False on failure, or new DomElement reference on success
-     *  
+     * @return {Boolean|DomElement}   False on failure, or new DomElement reference on success
      */
-
-
     π.polyfill = function (feature, elem) {
       var 
         feature = feature || null,
@@ -820,13 +828,8 @@
 
 
 
-
-
-
     /**
-     *  Injects html source into the DOM
-     *  
-     *  @function π.inject 
+     *  Inject html source into the DOM
      *
      * @param {string} src The source to inject
      * 
@@ -837,7 +840,6 @@
      * @return {Boolean|DomElement} False on failure, or new DomElement reference on success
      *  
      */
-
 
     π.inject = function (src, elem) {
       var 
@@ -859,13 +861,11 @@
 
 
     /**
-     * π.clear 
-     *
-     * Removes any children from element
+     * Remove any children from element
      * 
-     * @param   {Object}  elem  The element to clear
+     * @param   {Object}  elem    The element to clear
      * 
-     * @return  {bool|integer}       Number of children removed, or boolean FALSE on error
+     * @return  {bool|integer}    Number of children removed, or boolean FALSE on error
      */
 
     π.clear = function (elem) {
@@ -889,7 +889,7 @@
 
 
     /**
-     * Your bog-standard JS clone proc
+     * Bog-standard JS clone() function
      * 
      * @param  {Object}   obj   The object to clone
      * 
@@ -911,11 +911,11 @@
 
 
     /**
-     * Your bog-standard JS create proc
+     * Bog-standard JS create() function
      * 
-     * @param  {Object}   obj   The object to create
+     * @param  {Object}   obj   The object to create instance if
      * 
-     * @return {Object}         Returns new Object
+     * @return {Object}         Returns new instance of Object
      */
     
     π.create = function (obj){
@@ -927,6 +927,12 @@
 
 
 
+    /**
+     * [copy description]
+     * @param  {[type]} obj        [description]
+     * @param  {[type]} exceptions [description]
+     * @return {[type]}            [description]
+     */
     π.copy = function (obj, exceptions) {
       var
         obj         = obj         || false,
@@ -951,7 +957,7 @@
           // continue;
         }
         if (exceptions !== false) {
-          if (exceptions.indexOf(i)>-1) {
+          if (exceptions.indexOf(i) >- 1) {
             continue;
           }
         }
@@ -965,17 +971,14 @@
 
 
     /** 
-     *  π.listen
      * Listen to an address in the global namespace via EventSource/SSE
-     * 
-     * @function π.listen
      * 
      * @param  {string}     address   Address in the pi namespace to listen to
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback for each message
+     * 
      * @return {Null|EventSource} New EventSource object on success, null on failure.
      */
-
 
     π.listen = function (address, callback, onerror) {
 
@@ -1012,7 +1015,6 @@
      * @param  {function}   listener  Callback for stream data
      * 
      * @return {boolean}    Result of operation
-     * 
      */
 
     π.readstream = function (address, listener, onerror) {
@@ -1109,6 +1111,7 @@
 
     /** 
      * Wait for single named event
+     * 
      * @param  {string}     eventaddress  Address in the pi namespace to wait for
      * @param  {Function}   callback      Callback when return value available
      * @return {boolean}                  Should always return true
@@ -1142,6 +1145,7 @@
      * @param  {string}     address   Address in the pi namespace to read from
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback when return value available
+     * 
      * @return {boolean}              Result if success, false if failure
      */
 
@@ -1158,6 +1162,7 @@
      * @param  {string}     address   Address in the pi namespace to write to
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback when return value available
+     * 
      * @return {boolean}              Old value if success, false if failure
      */
 
@@ -1507,6 +1512,14 @@
 
   π.__BOOT = {
     strapped : [],
+ 
+    /**
+     * Check if element has already been strapped
+     * 
+     * @param  {HTMLElement} e The element to check
+     * 
+     * @return {bool|int}   Boolean FALSE if already strapped, index of newly inserted cache item if not
+     */
     checkIt : function (e) {
       var
         self = π.__BOOT;
@@ -1519,6 +1532,14 @@
         return self.strapped.push(e);
       }
     },
+
+    /**
+     * Strap elements with classes from the data-src attribute, if set
+     * 
+     * @param  {HTMLElement} e The element to strap
+     * 
+     * @return {void}
+     */
     strapIt : function (e) {
       var
         ref = e.getAttribute("data-src");
@@ -1531,6 +1552,13 @@
   };
 
 
+  /**
+   * Bootstrapper for DOM elements
+   *
+   * @return {void}
+   * 
+   * @todo Move this to a DOM-related module, the core should be DOM-independent.
+   */
   π._bootstrap = function () {
     π.timer.start("_bootstrap");
     var
