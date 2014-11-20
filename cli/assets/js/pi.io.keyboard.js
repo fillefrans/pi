@@ -16,7 +16,6 @@
 
 
 
-
     π.io = π.io || {};
 
     π.io.keyboard = π.io.keyboard || {
@@ -61,6 +60,24 @@
         MOVE: "move",
         TEXT: "text",
         WAIT: "wait"
+      },
+
+
+      /**
+       * Bind a function to a key
+       * 
+       * @param  {int|str}  key   The key or met-key to listen for
+       * @param  {Function} f     The event handler
+       * 
+       * @return {void|boolean}     Boolean FALSE on error, otherwise void
+       */
+      bind : function (key, f) {
+        var
+          self  = π.io.keyboard,
+          key   = key || false,
+          f     = f   || null;
+
+
       }
 
     };

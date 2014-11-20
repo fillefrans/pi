@@ -1,0 +1,7 @@
+@font-face {
+	font-family: 'FlamaLight';
+	src: url('fonts/flamalight.eot');
+	src: local('☺'), url('fonts/flamalight.woff') format('woff'), url('fonts/flamalight.ttf') format('truetype'), url('fonts/flamalight.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}

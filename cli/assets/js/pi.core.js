@@ -273,7 +273,7 @@
                   args = null;
 
                 if (arguments.length > 2) {
-                  pi.log("grabbing arguments array");
+                  // pi.log("grabbing arguments array");
                   // If passing args as a set of args instead of an array, grab all but the first.
                   args = Array.prototype.slice.apply(arguments, [1]);
                 } else {
@@ -425,6 +425,74 @@
           // set up aliases for the trigger function
           π.events.emit     = π.events.trigger;
           π.events.dispatch = π.events.trigger;
+
+
+
+          /**
+           * @method trigger
+           *
+           * @param {string} eventName Event name
+           * @param {object} eventData Object containing event data
+           * @param {element} eventElem The element used to dispatch the event
+           *
+           * @return {boolean} Boolean FALSE on failure, TRUE on success
+           * 
+           */
+
+
+          // public functions
+          π.events.trigger = function(eventName, eventData, eventElem) {
+            var
+              eventName   = eventName || false,
+              eventData   = eventData || null,
+              dispatcher  = eventElem || window,
+              customEvt   = null;
+
+            // early escape
+            if(!eventName) {
+              return false;
+            }
+
+            // pi.log("triggering : " + eventName);
+
+            // are we handicapped ?
+            if(pi.browser.isIe() === true) {
+              pi.events.publish(eventName, eventData, eventElem);
+
+              // fuck it, don't even try
+              // try {
+
+
+              //   customEvt = document.createEvent("CustomEvent");
+              //   if (eventData) {
+              //     customEvt.initCustomEvent(eventName, false, false, eventData);
+              //   }
+              //   else {
+              //     customEvt.initCustomEvent(eventName, false, false, {});
+              //   }
+              //   dispatcher.dispatchEvent(customEvt);
+              // }
+              // catch(e) {
+              //   pi.log('Exception : ', e);
+              // }
+            }
+            else {
+              // we are not handicapped, and this is our actual function
+              if(eventData) {
+                dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
+              } else {
+                dispatcher.dispatchEvent(new CustomEvent(eventName));
+              }
+            }
+
+          };
+
+
+
+          // set up aliases for the trigger function
+          π.events.emit     = π.events.trigger;
+          π.events.dispatch = π.events.trigger;
+
 
 
           π.events._loaded = true;
@@ -592,6 +660,11 @@
           console.log(msg);
         }
       }
+
+      if(pi.app.console && typeof pi.app.console.log == "function") {
+        pi.app.console.log(msg, obj);
+      }
+
     };
 
 
@@ -674,6 +747,8 @@
     //   return result;
 
     // };
+
+
 
 
 
@@ -760,6 +835,91 @@
 
     };
 
+
+
+
+    /**
+     * Search an object and its children, 2nd version
+     * 
+     * @param {string}  token     Search term
+     * @param {object}  obj       The object to search through
+     * @param {boolean} exact     Only exact matches
+     * @param {integer} multiple  Not implemented
+     * 
+     * @return {boolean|object} Boolean false for error, or an object matching search criteria
+     *                          Returns null if not found.
+     */
+
+
+    π.search2 = function (token, obj, where, exact, multiple) {
+      var
+        result    = null,
+        multiple  = multiple  || false,
+        token     = token     || null,
+        obj       = obj       || null,
+        exact     = exact     || 1, // 1 => match exactly, 0 => match any occurrence
+        where     = where     || 0; // 0 => search both keys and values, 1 => keys, 2 => values
+
+      if ( !obj || !token ) {
+        pi.log("no obj");
+        return false;
+      }
+
+      for (var item in obj) {
+
+        if(where === 0 || where === 1) {
+          if(exact) {
+            if(item == token) {
+              return obj[item];
+            }
+          }
+          else {
+            if(item.indexOf(token)>-1) {
+              return obj[item];
+            }
+          }
+        }
+
+        // recursion part
+        if(typeof obj[item] == "object") {
+
+          result = pi.search2(token, obj[item], where, exact, multiple);
+          if(!result) {
+            continue;
+          }
+          else {
+            return result;
+          }
+        }
+
+        if(!obj.hasOwnProperty(item)) {
+          pi.log("skipping : " + item.substring(0, 64));
+          continue;
+        }
+
+        if (where === 2 || where === 0) {
+
+          if ( exact == 1 && obj[item].toString() == token ) {
+            pi.log("exact: " + obj[item].toString().substring(0, 64));
+            pi.log("returning : ", obj);
+            result = obj;
+            return obj;
+          }
+          else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
+            pi.log("yes: " + obj[item].toString().substring(0, 64));
+            pi.log("returning : ", obj);
+            result = obj;
+            return obj;
+          }
+          else {
+            // not found
+            result = null;
+          }
+        }
+      } // for var item in obj
+
+      return result;
+    };
 
 
 
@@ -1114,6 +1274,7 @@
      * 
      * @param  {string}     eventaddress  Address in the pi namespace to wait for
      * @param  {Function}   callback      Callback when return value available
+     * 
      * @return {boolean}                  Should always return true
      */
 
@@ -1135,7 +1296,6 @@
         return π._send("await", eventaddress, timeout, callback);
       }
     };
-
 
 
 
@@ -1217,7 +1377,6 @@
      * @param  {Function}   callback      Callback for each return value available
      * 
      * @return {string|boolean}           Data set on success, false on failure
-     * 
      */
 
     π.readlist = function(address, callback, onerror) {
@@ -1241,14 +1400,13 @@
 
 
     /** 
-     *  Read a remote data set (mysql|file)
+     *  Read a remote data set (mysql|file|whatever)
      *
      * @param  {string}     address       Data address in the pi namespace
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
      * 
      * @return {string|boolean}           Data set on success, false on failure
-     * 
      */
 
     π.readdata = function(address, callback, onerror) {
@@ -1276,7 +1434,8 @@
      * @param  {string}     fileaddress   File address in the pi namespace
      * @param  {string}     filetype      The file extension
      * @param  {Function}   callback      Callback for each return value available
-     * @return {string|boolean}                  File contents on success, false on failure
+     * 
+     * @return {string|boolean}           File contents on success, false on failure
      */
 
     π.readfile = function(fileaddress, filetype, callback) {
@@ -1291,13 +1450,18 @@
 
 
     /** 
-     *  Basic dependency management
+     *  Basic dependency management 
      * 
-     * @param  {string}     module    Name of the pi module to be loaded
+     * @param  {string}     module    Name of the pi module to be loaded. If you give a path, 
+     *                                you also have to give a complete filename, with extension. 
+     *                                Otherwise, we assume a js module from root /assets
+     *                                
      * @param  {boolean}    async     Load script asynchronously
      * @param  {boolean}    defer     Use deferred script loading
      * @param  {Function}   callback  Callback on loaded
+     * 
      * @return {boolean}              True for success, false for failure
+     *
      */
 
     π.require = function(module, async, defer, callback, onerror) {
@@ -1326,7 +1490,14 @@
 
       script.async    = async || false;
       script.defer    = defer || false;
-      script.src      = path + module + '.js';
+      // if you give a path, you also have to give a complete filename, with extension
+      if (module.indexOf("/") >= 0) {
+        script.src      = module;
+      }
+      // otherwise, we assume a js module from root /assets 
+      else {
+        script.src      = path + module + '.js';
+      }
 
       script.modname  = module.replace(/\./g,'_');
       script.callback = callback  || false;
@@ -1583,6 +1754,173 @@
   /***   ------   INITIALIZATION    ------
      *
      */
+
+
+  /**
+   * HTML5-ify the Window object
+   */
+
+  window.requestAnimationFrame = 
+      window.requestAnimationFrame || 
+      window.webkitRequestAnimationFrame || 
+      window.mozRequestAnimationFrame || 
+      function(callback) {
+        window.setTimeout(callback, 1000/60)
+      };
+
+  window.cancelAnimationFrame = 
+      window.cancelAnimationFrame || 
+      window.webkitCancelAnimationFrame || 
+      window.mozCancelAnimationFrame || function(id) {
+        clearTimeout(id)
+      };
+
+
+
+/**
+ *
+ * from Dustin Diaz - http://dustindiaz.com/rock-solid-addevent
+ */
+
+    function addEvent( obj, type, fn ) {
+
+      if (obj.addEventListener) {
+        obj.addEventListener( type, fn, false );
+        EventCache.add(obj, type, fn);
+      }
+      else if (obj.attachEvent) {
+        obj["e"+type+fn] = fn;
+        obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
+        obj.attachEvent( "on"+type, obj[type+fn] );
+        EventCache.add(obj, type, fn);
+      }
+      else {
+        obj["on"+type] = obj["e"+type+fn];
+      }
+    }
+
+    var EventCache = function(){
+      var listEvents = [];
+      return {
+        listEvents : listEvents,
+        add : function(node, sEventName, fHandler){
+          listEvents.push(arguments);
+        },
+
+        flush : function(){
+          var i, item;
+          for(i = listEvents.length - 1; i >= 0; i = i - 1){
+            item = listEvents[i];
+            if(item[0].removeEventListener){
+              item[0].removeEventListener(item[1], item[2], item[3]);
+            };
+
+            if(item[1].substring(0, 2) != "on"){
+              item[1] = "on" + item[1];
+            };
+
+            if(item[0].detachEvent){
+              item[0].detachEvent(item[1], item[2]);
+            };
+
+            item[0][item[1]] = null;
+          };
+        }
+      };
+    }();
+
+    addEvent(window,'unload',EventCache.flush);
+
+
+
+
+
+  /** 
+   * @function pi._addEvent(elem, event, fn)
+   *
+   * @description Support function for pi.addEventListener
+   * 
+   * Cross-browser solution from stackflow - 
+   * @author http://stackoverflow.com/users/816620/jfriend00
+   * 
+   */
+
+ 
+    pi._addEvent = function(elem, event, fn) {
+      // avoid memory overhead of new anonymous functions for every event handler that's installed
+      // by using local functions
+      function listenHandler(e) {
+        var ret = fn.apply(this, arguments);
+        if (ret === false) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        return(ret);
+      }
+
+      function attachHandler() {
+        // set the this pointer same as addEventListener when fn is called
+        // and make sure the event is passed to the fn also so that works the same too
+        var ret = fn.call(elem, window.event);   
+        if (ret === false) {
+          window.event.returnValue = false;
+          window.event.cancelBubble = true;
+        }
+        return(ret);
+      }
+
+      if (elem.addEventListener) {
+        elem.addEventListener(event, listenHandler, false);
+      } else {
+        elem.attachEvent("on" + event, attachHandler);
+      }
+    }
+
+
+
+
+    /** 
+     * @function pi.addEventListener
+     *
+     * @description Easy shorthand function
+     * 
+     */
+
+    pi.addEventListener = function (eventaddress, callback, capture) {
+      var
+        elem          = window,
+        eventaddress  = eventaddress  || null,
+        callback      = callback      || null,
+        capture       = capture       || null;
+
+      // handle function signature (element, event, callback)
+      if(typeof eventaddress !== "string" && typeof callback == "string") {
+        elem = eventaddress;
+        eventaddress = callback;
+        callback = capture;
+      }
+
+      if(!eventaddress.indexOf) {
+        pi.log("ERROR: no indexOf, eventaddress is type " + typeof eventaddress);
+        pi.log("eventaddress : " + eventaddress, eventaddress);
+        pi.log("wrong parameters?");
+        pi.log("correct: (eventaddress, callback, capture) OR (element, event, callback)");
+        return;
+      }
+
+      // internal event system for internal events
+      if(eventaddress.indexOf('easy')===0) {
+        // pi.log("subscribing to : " + eventaddress);
+        return pi.events.subscribe(eventaddress, callback);
+      }
+      else {
+        // pi.log("adding event " + eventaddress + " to : " + elem);
+        return pi._addEvent(elem, eventaddress, callback);
+      }
+    };
+
+
+
 
 
   /*    PHP aliases   */
