@@ -49,6 +49,9 @@
    * This is where we will spend a big part of our time.
    * There shouldn't be any blocking code in here at all
    * and no error checking, this function is only called by trusted code
+   * 
+   * @param {Object}  event  Pi Event Object
+   * 
    */
     __onmessage : function (event) {
       var
@@ -70,7 +73,7 @@
         // publish to address
         π.events.publish(packet.address, packet);
       }
-      // packet has neither address or callback
+      // packet has neither address nor callback
       else {
         // orphan packet - no address or callback
         pi.log("onmessage [" + typeof packet + "] ('"+packet.address+"'): ", packet);
@@ -84,9 +87,9 @@
     __init : function (DEBUG) {
 
       var 
-        host        = 'ws://' + this.__server + ':' + this.__port + this.__uri;
+        host = 'ws://' + this.__server + ':' + this.__port + this.__uri;
 
-      if (this.__initialized === true){
+      if (this.__initialized === true) {
         // something is not right
         pi.log("error: __init() called twice ");
         return false;
@@ -97,7 +100,7 @@
     },
 
 
-    __handleError  : function(msg, obj){
+    __handleError  : function(msg, obj) {
       pi.log('error: ' + msg, obj);
     },
 
@@ -147,10 +150,10 @@
 
     __createSocket : function (host) {
       try {
-        if (window.WebSocket){
+        if (window.WebSocket) {
           return new WebSocket(host);
         }
-        else if (window.MozWebSocket){
+        else if (window.MozWebSocket) {
           return new MozWebSocket(host);
         }
         else {
@@ -221,9 +224,9 @@
       var
         self = π.core.session,
         commandpacket = { 
-          command: "unsubscribe",
+          command : "unsubscribe",
           address : address,
-          data : address
+          data    : address
         };
 
       // remove the listener
@@ -239,9 +242,8 @@
         self = π.core.session;
 
       try {
-        if (self.__socket && (self.__socket.readyState === 1)){
-          self.__socket.send(JSON.stringify(obj));
-          return true;
+        if (self.__socket && (self.__socket.readyState === 1)) {
+          return self.__socket.send(JSON.stringify(obj));
         }
         else {
           pi.log("Error: Socket not ready.");
