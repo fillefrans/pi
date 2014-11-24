@@ -362,21 +362,85 @@
           PubSub(π.events, false);
 
 
+
           // public functions
 
 
-          /**
-           * Wrapper for custom event triggering with
-           * browser's internal event system
-           *
-           * @param  {String}       eventName   The event name
-           * @param  {Object}       eventData   Optional data object
-           * @param  {HTMLElement}  eventElem   Optional DOM element to use as dispatcher
-           * 
-           * @return {bool}                     Boolean FALSE on failure, or result from dispatchEvent()
-           */
+          // /**
+          //  * Wrapper for custom event triggering with
+          //  * browser's internal event system
+          //  *
+          //  * @param  {String}       eventName   The event name
+          //  * @param  {Object}       eventData   Optional data object
+          //  * @param  {HTMLElement}  eventElem   Optional DOM element to use as dispatcher
+          //  * 
+          //  * @return {bool}                     Boolean FALSE on failure, or result from dispatchEvent()
+          //  */
           
-          π.events.trigger = function ( eventName, eventData, eventElem ) {
+          // π.events.trigger = function ( eventName, eventData, eventElem ) {
+          //   var
+          //     eventName   = eventName || false,
+          //     eventData   = eventData || null,
+          //     dispatcher  = eventElem || window,
+          //     customEvt   = null;
+
+          //   // early escape
+          //   if (!eventName) {
+          //     return false;
+          //   }
+
+
+          //   // are we handicapped ?
+          //   if (!window.CustomEvent) {
+          //     try {
+          //       customEvt = document.createEvent("CustomEvent");
+          //       if (eventData) {
+          //         customEvt.initCustomEvent(eventName, false, false, eventData);
+          //       }
+          //       else {
+          //         customEvt.initCustomEvent(eventName, false, false, {});
+          //       }
+          //       dispatcher.dispatchEvent(customEvt);
+          //     }
+          //     catch(e) {
+          //       pi.log('Exception : ', e);
+          //     }
+
+          //   }
+          //   else {
+          //     // we are not handicapped
+
+          //     if (eventData) {
+          //       // event has a payload
+          //       dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
+          //     } else {
+          //       // event is only named
+          //       dispatcher.dispatchEvent(new CustomEvent(eventName));
+          //     }
+          //   }
+
+          // };
+
+
+
+          // // set up aliases for the trigger function
+          // π.events.emit     = π.events.trigger;
+          // π.events.dispatch = π.events.trigger;
+
+
+
+          /**
+           * Wrapper for custom event triggering
+           *
+           * @param {string} eventName Event name
+           * @param {object} eventData Object containing event data
+           * @param {element} eventElem The element used to dispatch the event
+           *
+           * @return {boolean} Boolean FALSE on failure, TRUE on success
+           * 
+           */
+
+          π.events.trigger = function(eventName, eventData, eventElem) {
             var
               eventName   = eventName || false,
               eventData   = eventData || null,
@@ -388,75 +452,10 @@
               return false;
             }
 
-
-            // are we handicapped ?
-            if (!window.CustomEvent) {
-              try {
-                customEvt = document.createEvent("CustomEvent");
-                if (eventData) {
-                  customEvt.initCustomEvent(eventName, false, false, eventData);
-                }
-                else {
-                  customEvt.initCustomEvent(eventName, false, false, {});
-                }
-                dispatcher.dispatchEvent(customEvt);
-              }
-              catch(e) {
-                pi.log('Exception : ', e);
-              }
-
-            }
-            else {
-              // we are not handicapped
-
-              if (eventData) {
-                // event has a payload
-                dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
-              } else {
-                // event is only named
-                dispatcher.dispatchEvent(new CustomEvent(eventName));
-              }
-            }
-
-          };
-
-
-
-          // set up aliases for the trigger function
-          π.events.emit     = π.events.trigger;
-          π.events.dispatch = π.events.trigger;
-
-
-
-          /**
-           * @method trigger
-           *
-           * @param {string} eventName Event name
-           * @param {object} eventData Object containing event data
-           * @param {element} eventElem The element used to dispatch the event
-           *
-           * @return {boolean} Boolean FALSE on failure, TRUE on success
-           * 
-           */
-
-
-          // public functions
-          π.events.trigger = function(eventName, eventData, eventElem) {
-            var
-              eventName   = eventName || false,
-              eventData   = eventData || null,
-              dispatcher  = eventElem || window,
-              customEvt   = null;
-
-            // early escape
-            if(!eventName) {
-              return false;
-            }
-
             // pi.log("triggering : " + eventName);
 
             // are we handicapped ?
-            if(pi.browser.isIe() === true) {
+            if (pi.browser.isIe() === true) {
               pi.events.publish(eventName, eventData, eventElem);
 
               // fuck it, don't even try
@@ -478,7 +477,7 @@
             }
             else {
               // we are not handicapped, and this is our actual function
-              if(eventData) {
+              if (eventData) {
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
               } else {
                 dispatcher.dispatchEvent(new CustomEvent(eventName));
@@ -661,7 +660,7 @@
         }
       }
 
-      if(pi.app.console && typeof pi.app.console.log == "function") {
+      if (pi.app.console && typeof pi.app.console.log == "function") {
         pi.app.console.log(msg, obj);
       }
 
@@ -867,24 +866,24 @@
 
       for (var item in obj) {
 
-        if(where === 0 || where === 1) {
-          if(exact) {
-            if(item == token) {
+        if (where === 0 || where === 1) {
+          if (exact) {
+            if (item == token) {
               return obj[item];
             }
           }
           else {
-            if(item.indexOf(token)>-1) {
+            if (item.indexOf(token)>-1) {
               return obj[item];
             }
           }
         }
 
         // recursion part
-        if(typeof obj[item] == "object") {
+        if (typeof obj[item] == "object") {
 
           result = pi.search2(token, obj[item], where, exact, multiple);
-          if(!result) {
+          if (!result) {
             continue;
           }
           else {
@@ -892,7 +891,7 @@
           }
         }
 
-        if(!obj.hasOwnProperty(item)) {
+        if (!obj.hasOwnProperty(item)) {
           pi.log("skipping : " + item.substring(0, 64));
           continue;
         }
@@ -1679,7 +1678,8 @@
    *
    * Search for ["data-src", "data-pi"] attributes starting with "pi."
    * Set classes based on found elements' pi address. ["pi.video" => addClass("pi video")]
-   * 
+   *
+   * @todo Move to pi.html or similar, since the core should be DOM-independent
    */
 
 
@@ -1813,15 +1813,15 @@
           var i, item;
           for(i = listEvents.length - 1; i >= 0; i = i - 1){
             item = listEvents[i];
-            if(item[0].removeEventListener){
+            if (item[0].removeEventListener){
               item[0].removeEventListener(item[1], item[2], item[3]);
             };
 
-            if(item[1].substring(0, 2) != "on"){
+            if (item[1].substring(0, 2) != "on"){
               item[1] = "on" + item[1];
             };
 
-            if(item[0].detachEvent){
+            if (item[0].detachEvent){
               item[0].detachEvent(item[1], item[2]);
             };
 
@@ -1896,13 +1896,13 @@
         capture       = capture       || null;
 
       // handle function signature (element, event, callback)
-      if(typeof eventaddress !== "string" && typeof callback == "string") {
+      if (typeof eventaddress !== "string" && typeof callback == "string") {
         elem = eventaddress;
         eventaddress = callback;
         callback = capture;
       }
 
-      if(!eventaddress.indexOf) {
+      if (!eventaddress.indexOf) {
         pi.log("ERROR: no indexOf, eventaddress is type " + typeof eventaddress);
         pi.log("eventaddress : " + eventaddress, eventaddress);
         pi.log("wrong parameters?");
@@ -1911,7 +1911,7 @@
       }
 
       // internal event system for internal events
-      if(eventaddress.indexOf('easy')===0) {
+      if (eventaddress.indexOf('pi.')===0) {
         // pi.log("subscribing to : " + eventaddress);
         return pi.events.subscribe(eventaddress, callback);
       }
@@ -1921,6 +1921,15 @@
       }
     };
 
+
+  π.events.onWindowMessage = function(msg) {
+    pi.log("onWindowMessage : " + msg, msg);
+    pi.log("data : " + msg.data);
+    pi.log("origin : " + msg.origin);
+    pi.log("source : " + msg.source);
+  }
+
+  window.addEventListener("message", π.events.onWindowMessage, false, true);
 
 
 

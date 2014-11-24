@@ -158,7 +158,7 @@ processing through unix pipes.
 
 ###Server libraries
 * [ApnsPHP: Apple Push Notification & Feedback Provider](https://github.com/duccio/ApnsPHP)
-
+* [mod_adobe_crossdomainpolicy.c](http://www.beamartyr.net/articles/adobepolicyfileserver.html)
 
 ###MISC
 * [why-arent-you-using-git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/)

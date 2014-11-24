@@ -1,15 +1,14 @@
-
 /**
  * @module π.session
  * 
- * @description Session object. This is where we have to debug the pants off of this library
+ *  Session object. This is where we have to debug the pants off of this library
  *  This bit should be bulletproof
  *
  *  Basically, this is where our application runs. 
  *
  * 
- *  We should implement a feedback mechanism for js errors
- *  That way we can monitor apps in the wild and pick up on problems quickly
+ * @todo We should implement a feedback mechanism for js errors.
+ *       That way we can monitor apps in the wild and pick up on problems quickly
  *
  * @author Johan Telstad, 2011-2014
  * 
@@ -59,14 +58,14 @@
       π.events.publish('debug|pi.session.onmessage', packet);
 
       // packet has a callback?
-      if( typeof packet.callback === "function" ) {
+      if (typeof packet.callback === "function" ) {
         pi.log("invoking callback: '" + packet.callback + "' : ", π.callback.__items[packet.callback]);
 
         // invoke callback, pass along packet
         π.core.callback.call(packet.callback, packet);
       }
       // packet has an address?
-      else if(typeof packet.address == "string") {
+      else if (typeof packet.address == "string") {
 
         // publish to address
         π.events.publish(packet.address, packet);
@@ -87,7 +86,7 @@
       var 
         host        = 'ws://' + this.__server + ':' + this.__port + this.__uri;
 
-      if(this.__initialized === true){
+      if (this.__initialized === true){
         // something is not right
         pi.log("error: __init() called twice ");
         return false;
@@ -147,18 +146,18 @@
 
 
     __createSocket : function (host) {
-      try{
+      try {
         if (window.WebSocket){
           return new WebSocket(host);
         }
         else if (window.MozWebSocket){
           return new MozWebSocket(host);
         }
-        else{
+        else {
           return false;
         }
       }
-      catch(ex) {
+      catch (ex) {
         pi.log(ex.name + ": " + ex.message, ex);
       }
     },
@@ -190,15 +189,15 @@
 
     // public
 
-    /** π.core.session.addStreamListener
+    /**
      *
      * Listen to an address in the global namespace via session WebSocket
      * 
      * @param  {string}     address   Address in the pi namespace
      * @param  {Function}   listener  Callback for data chunks
+     * 
      * @return true or false
      */
-
 
     addStreamListener : function (address, listener, onerror) {
       var
@@ -240,7 +239,7 @@
         self = π.core.session;
 
       try {
-        if(self.__socket && (self.__socket.readyState === 1) ){
+        if (self.__socket && (self.__socket.readyState === 1)){
           self.__socket.send(JSON.stringify(obj));
           return true;
         }
@@ -271,7 +270,7 @@
     start : function (DEBUG) {
       π.timer.start("pi.session");
 
-      if( !this.__init(DEBUG) ) {
+      if (!this.__init(DEBUG)) {
         pi.log('session.__init() returned false, aborting...');
         return false;
       }
