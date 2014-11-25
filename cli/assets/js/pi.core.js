@@ -1324,7 +1324,7 @@
      * @param  {Function}   onerror   Callback on error
      * @param  {Function}   callback  Callback when return value available
      * 
-     * @return {boolean}              Old value if success, false if failure
+     * @return {boolean}              Old value on success, false on failure (in callback)
      */
 
     π.write = function(address, value, callback) {
@@ -1834,20 +1834,18 @@
     addEvent(window,'unload',EventCache.flush);
 
 
-
-
-
-  /** 
-   * @function pi._addEvent(elem, event, fn)
-   *
-   * @description Support function for pi.addEventListener
-   * 
-   * Cross-browser solution from stackflow - 
-   * @author http://stackoverflow.com/users/816620/jfriend00
-   * 
-   */
-
- 
+    
+   /**
+    * Support function for pi.addEventListener
+    *   
+    * @param {[type]}   elem  [description]
+    * @param {[type]}   event [description]
+    * @param {Function} fn    [description]
+    * 
+    * Cross-browser solution from stackoverflow
+    * @author http://stackoverflow.com/users/816620/jfriend00
+    * 
+    */
     pi._addEvent = function(elem, event, fn) {
       // avoid memory overhead of new anonymous functions for every event handler that's installed
       // by using local functions
@@ -1881,13 +1879,15 @@
 
 
 
-    /** 
-     * @function pi.addEventListener
-     *
-     * @description Easy shorthand function
+
+    /**
+     * Shorthand function
+     * 
+     * @param {String}    eventaddress The Pi Address to listen to
+     * @param {Function}  callback     Event handler
+     * @param {bool}      capture      Whether or not to capture events
      * 
      */
-
     pi.addEventListener = function (eventaddress, callback, capture) {
       var
         elem          = window,
@@ -1895,7 +1895,7 @@
         callback      = callback      || null,
         capture       = capture       || null;
 
-      // handle function signature (element, event, callback)
+      // handle alternative function signature (element, event, callback)
       if (typeof eventaddress !== "string" && typeof callback == "string") {
         elem = eventaddress;
         eventaddress = callback;
@@ -1912,11 +1912,9 @@
 
       // internal event system for internal events
       if (eventaddress.indexOf('pi.')===0) {
-        // pi.log("subscribing to : " + eventaddress);
         return pi.events.subscribe(eventaddress, callback);
       }
       else {
-        // pi.log("adding event " + eventaddress + " to : " + elem);
         return pi._addEvent(elem, eventaddress, callback);
       }
     };
@@ -1939,11 +1937,9 @@
   π.str_pad   = π.strPad;
   π.is_array  = π.isArray;
 
+  // for now, we place these here
   π.require("core.session", false, false);
-  // π.require("core.tasks",   false, false);
-
   π.require("app", false, false);
-  // π.require("pcl", false, false);
 
   pi.events.trigger('pi', new Date().getTime());
 

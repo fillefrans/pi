@@ -13,11 +13,11 @@
  *    use inheritance
  *
  *
- * 53AAE1, DE0010, E9E466, A5CA72
+ *  colour series: 53AAE1, DE0010, E9E466, A5CA72
  * 
  *  @author Johan Telstad, jt@viewshq.no, 2011-2014
  * 
-**/
+ */
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-  .π {
+  .pi {
      /*perspective : 800px;*/
     position: absolute;
     display : block;
@@ -48,14 +48,14 @@
 
 
 
-  body.π {
+  body.pi {
     background-color  : #29A5C0;
     color             : #f8f8f2;
     margin            : 0;
     padding           : 0;
   }
 
-  header.π {
+  header.pi {
     background-color : #b21;
     /*width: 100%;*/
     height: 240px;
@@ -63,16 +63,16 @@
     clear: right;
   }
 
-  ul.π {
+  ul.pi {
     list-style-type : none;
   }
 
-  div.π {
+  div.pi {
     border : dotted white 1px;
   }
 
 
-  .π.stretch {
+  .pi.stretch {
     width   : 100%;
     height  : 100%;
   }
@@ -83,14 +83,14 @@
  * 
  */
 
-  .π.pointer-events-none {
+  .pi.pointer-events-none {
     pointer-events : none;
   }
 
 
 
 
-  .π.flex-container {
+  .pi.flex-container {
     /*width           : 100%;*/
     display         : flex;
     flex-direction  : row;
@@ -102,12 +102,12 @@
   }
 
 
-  .π.flex-item {
+  .pi.flex-item {
     /*display: inline-flex;*/
   }
 
 
-  .π.code {
+  .pi.code {
     font-family : monospace;
     color       : #f8f8f2;
   }
@@ -118,36 +118,36 @@
 
 
   /* monokai */
-  .π.code.comment  { color: #75715e; }
-  .π.code.keyword  { color: #f92672; }
-  .π.code.default  { color: #f8f8f2; }
-  .π.code.reserved { color: #66D9EF; }
-  .π.code.number   { color: #AE81FF; }
-  .π.code.string   { color: #e6db74; }
+  .pi.code.comment  { color: #75715e; }
+  .pi.code.keyword  { color: #f92672; }
+  .pi.code.default  { color: #f8f8f2; }
+  .pi.code.reserved { color: #66D9EF; }
+  .pi.code.number   { color: #AE81FF; }
+  .pi.code.string   { color: #e6db74; }
 
 
   /* transitions */
 
 
-  .π.tween {
+  .pi.tween {
     transition-property         : all;
     transition-duration         : 0.6s;
     transition-timing-function  : cubic-bezier(0,0,0.58,1);
   }
 
 
-  .π.tween.ease-out {
+  .pi.tween.ease-out {
     transition-timing-function  : ease-out;
   }
 
-  .π.tween.ease-in {
+  .pi.tween.ease-in {
     transition-timing-function  : ease-in;
   }
 
 
   /* The ugly */
 
-  .π.hwaccel {  
+  .pi.hwaccel {  
     -webkit-transform: translateZ(0); 
   }
 
