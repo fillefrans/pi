@@ -9,7 +9,7 @@
         browser : {
           ie9         : false,
           websockets  : window.WebSocket || window.MozWebSocket || false,
-          webworkers  : window.WebWorker || false
+          webworkers  : window.Worker || false
         }
       },
       A_COOL_MILLION = 1000000;
@@ -153,6 +153,9 @@
   <div id="voteReport">
     <!-- <button id="btnGetVoteReport">get report</button> -->
   </div>
+
+
+  <div style="position:absolute;width:640px;height:360px;top:100px;left:100px;background:url('../assets/img/circle-bg.svg');color:#fff;font-weight:900;">TEST</div>
 
   <script type="text/javascript">
 

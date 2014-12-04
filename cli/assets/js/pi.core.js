@@ -247,7 +247,7 @@
               subscriptions[unique] = [];
               
               // Removes all instances of handler from the passed subscription chunk.
-              var _unsubscribe = function(cache, handler) {
+              var _unsubscribe = function (cache, handler) {
                 for(var i = 0; i < cache[unique].length; i++) {
                   if (handler === undefined || handler === null || cache[unique][i] === handler) {
                     cache[unique].splice(i, 1);
@@ -257,7 +257,7 @@
               };
               
               // Recursively removes all instances of handler from the passed subscription chunk.
-              var _deepUnsubscribe = function(cache, handler) {
+              var _deepUnsubscribe = function (cache, handler) {
                 for(sub in cache) {
                   if (typeof cache[sub] != "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
                   _deepUnsubscribe(cache[sub], handler);
@@ -268,7 +268,7 @@
               // Calls all handlers on the path to the passed subscription.
               // ie, "a.b.c" would call "c", then "b", then "a".
               // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
-              bindTo.publish = function(sub, callback_args) {
+              bindTo.publish = function (sub, callback_args) {
                 var 
                   args = null;
 
@@ -306,7 +306,7 @@
               };
 
               
-              bindTo.subscribe = function(sub, handler) {
+              bindTo.subscribe = function (sub, handler) {
                 var cache = subscriptions;
                 sub = sub || "";
                 var s = sub.split(".");
@@ -325,7 +325,7 @@
               // Removes _all_ identical handlers from the subscription.  
               // If no handler is passed, all are removed.
               // If deep, recursively removes handlers beyond the passed sub.
-              bindTo.unsubscribe = function(sub, handler, deep) {
+              bindTo.unsubscribe = function (sub, handler, deep) {
                 var cache = subscriptions;
                 sub = sub || "";
                 if (sub != "") {
@@ -440,7 +440,7 @@
            * 
            */
 
-          π.events.trigger = function(eventName, eventData, eventElem) {
+          π.events.trigger = function (eventName, eventData, eventElem) {
             var
               eventName   = eventName || false,
               eventData   = eventData || null,
@@ -519,7 +519,7 @@
      * 
      * @return {Boolean} True if device is a handheld, false otherwise
      */
-    π.browser.isMobile = function(){
+    π.browser.isMobile = function (){
       return /ip(hone|od|ad)|android|blackberry.*applewebkit|bb1\d.*mobile/i.test(navigator.userAgent);
     }
 
@@ -534,7 +534,7 @@
      * 
      * @return {Boolean}     Boolean TRUE if obj is a native JS array
      */
-    π.isArray = function(obj) {
+    π.isArray = function (obj) {
       return (Object.prototype.toString.call(obj) == "[object Array]");
     }
 
@@ -549,7 +549,7 @@
      * 
      * @return {string}     The padded string
      */
-    π.strPad = function(str, padto, padstr, padleft) {
+    π.strPad = function (str, padto, padstr, padleft) {
       var
         padstr  = padstr  || "&nbsp;",
         padto   = padto   || false,
@@ -632,7 +632,7 @@
         i = array.length;
 
       while(i--) {
-        // π.strPad = function(str, padto, padstr) {
+        // π.strPad = function (str, padto, padstr) {
         pi.log(pi.strPad(i, 4, " ") + " : " + array[i]);
       }
     };
@@ -643,7 +643,7 @@
     };
 
 
-    π.log = function(msg, obj) {
+    π.log = function (msg, obj) {
 
       if (!!obj) {
         console.log(msg, obj);
@@ -933,7 +933,7 @@
      * 
      * @return {bool}               Boolean TRUE if param is a DOM Node, FALSE otherwise.
      */
-    π.isNode = function(obj){
+    π.isNode = function (obj){
       return (
         typeof Node === "object" ? obj instanceof Node : 
         obj && typeof obj === "object" && typeof obj.nodeType === "number" && typeof obj.nodeName==="string"
@@ -949,7 +949,7 @@
      * 
      * @return {bool}     Returns true if it is a DOM element
      */
-    π.isElement = function(obj){
+    π.isElement = function (obj){
       return (
         typeof HTMLElement === "object" ? obj instanceof HTMLElement : //DOM2
         obj && typeof obj === "object" && obj !== null && obj.nodeType === 1 && typeof obj.nodeName==="string" 
@@ -1061,7 +1061,7 @@
         clone = Object.create(Object.getPrototypeOf(obj)),
         props = Object.getOwnPropertyNames(obj);
 
-      props.forEach(function(name){
+      props.forEach(function (name){
         Object.defineProperty(clone, name, Object.getOwnPropertyDescriptor(obj, name));
       });
 
@@ -1079,7 +1079,7 @@
     
     π.create = function (obj){
       var 
-        f = function() {};
+        f = function () {};
       f.prototype = obj;
       return new f();
     };
@@ -1244,7 +1244,7 @@
    * @return {bool}     Result from addEventListener() 
    */
   
-    π.on = function(eventaddress, callback, capture) {
+    π.on = function (eventaddress, callback, capture) {
 
       // if object, attach all functions by name
       if ( typeof eventaddress == "object" ) {
@@ -1279,7 +1279,7 @@
      * @return {boolean}                  Should always return true
      */
 
-    π.await = function(eventaddress, callback, timeout) {
+    π.await = function (eventaddress, callback, timeout) {
       var
         eventaddress  = eventaddress  || false,
         timeout       = timeout       || π._const.DEFAULT_TIMEOUT;
@@ -1310,7 +1310,7 @@
      * @return {boolean}              Result if success, false if failure
      */
 
-    π.read = function(address, callback, onerror) {
+    π.read = function (address, callback, onerror) {
     
       return π._send("read", address, null, callback || false);
     };
@@ -1327,7 +1327,7 @@
      * @return {boolean}              Old value on success, false on failure (in callback)
      */
 
-    π.write = function(address, value, callback) {
+    π.write = function (address, value, callback) {
 
       return π._send("write", address, value, callback);
     };
@@ -1346,7 +1346,7 @@
      * @return {boolean}              Result if success, false if failure
      */
 
-    π._send = function(command, address, data, callback, onerror) {
+    π._send = function (command, address, data, callback, onerror) {
       var
         packet = {
           command   : command, 
@@ -1380,7 +1380,7 @@
      * @return {string|boolean}           Data set on success, false on failure
      */
 
-    π.readlist = function(address, callback, onerror) {
+    π.readlist = function (address, callback, onerror) {
 
       var
         parameters = { address: address };
@@ -1410,7 +1410,7 @@
      * @return {string|boolean}           Data set on success, false on failure
      */
 
-    π.readdata = function(address, callback, onerror) {
+    π.readdata = function (address, callback, onerror) {
 
       var
         parameters = { address: address };
@@ -1439,7 +1439,7 @@
      * @return {string|boolean}           File contents on success, false on failure
      */
 
-    π.readfile = function(fileaddress, filetype, callback) {
+    π.readfile = function (fileaddress, filetype, callback) {
 
       var
         parameters = { fileaddress: fileaddress, filetype: filetype };
@@ -1465,7 +1465,7 @@
      *
      */
 
-    π.require = function(module, async, defer, callback, onerror) {
+    π.require = function (module, async, defer, callback, onerror) {
       var
         result = true;
 
@@ -1509,7 +1509,7 @@
 
       script.onload = function () {
         π.loaded[this.modname] = { time: (new Date()).getTime(), loadtime: π.timer.stop(this.modname) };
-        if (typeof this.callback === "function") {
+        if (typeof this.callback == "function") {
           this.callback.call(this, this.modname);
         }
       };
@@ -1535,7 +1535,7 @@
       timers : {},
 
 
-      start : function(timerid, ontick, interval) {
+      start : function (timerid, ontick, interval) {
 
         var
 
@@ -1568,7 +1568,7 @@
       },
 
 
-      check : function(timerid) {
+      check : function (timerid) {
 
         var
           id          = timerid.replace(/\./g,'_'),
@@ -1597,7 +1597,7 @@
       },
 
 
-      stop : function(timerid) {
+      stop : function (timerid) {
 
         var
           timers  = π.timer.timers,
@@ -1646,7 +1646,7 @@
             log = π.timer.history.log;
 
 
-          log.forEach(function(value, index) {
+          log.forEach(function (value, index) {
             if (callback) {
               callback.call(index, value);
             }
@@ -1766,14 +1766,14 @@
       window.requestAnimationFrame || 
       window.webkitRequestAnimationFrame || 
       window.mozRequestAnimationFrame || 
-      function(callback) {
+      function (callback) {
         window.setTimeout(callback, 1000/60)
       };
 
   window.cancelAnimationFrame = 
       window.cancelAnimationFrame || 
       window.webkitCancelAnimationFrame || 
-      window.mozCancelAnimationFrame || function(id) {
+      window.mozCancelAnimationFrame || function (id) {
         clearTimeout(id)
       };
 
@@ -1792,7 +1792,7 @@
       }
       else if (obj.attachEvent) {
         obj["e"+type+fn] = fn;
-        obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
+        obj[type+fn] = function () { obj["e"+type+fn]( window.event ); }
         obj.attachEvent( "on"+type, obj[type+fn] );
         EventCache.add(obj, type, fn);
       }
@@ -1801,15 +1801,15 @@
       }
     }
 
-    var EventCache = function(){
+    var EventCache = function (){
       var listEvents = [];
       return {
         listEvents : listEvents,
-        add : function(node, sEventName, fHandler){
+        add : function (node, sEventName, fHandler){
           listEvents.push(arguments);
         },
 
-        flush : function(){
+        flush : function (){
           var i, item;
           for(i = listEvents.length - 1; i >= 0; i = i - 1){
             item = listEvents[i];
@@ -1846,7 +1846,7 @@
     * @author http://stackoverflow.com/users/816620/jfriend00
     * 
     */
-    pi._addEvent = function(elem, event, fn) {
+    pi._addEvent = function (elem, event, fn) {
       // avoid memory overhead of new anonymous functions for every event handler that's installed
       // by using local functions
       function listenHandler(e) {
@@ -1920,7 +1920,7 @@
     };
 
 
-  π.events.onWindowMessage = function(msg) {
+  π.events.onWindowMessage = function (msg) {
     pi.log("onWindowMessage : " + msg, msg);
     pi.log("data : " + msg.data);
     pi.log("origin : " + msg.origin);
@@ -1944,6 +1944,6 @@
   pi.events.trigger('pi', new Date().getTime());
 
   /* a safari bug-fix for iPhone, supposedly. */
-  window.addEventListener('load', function(e) {
-      setTimeout(function() { window.scrollTo(0, 1); }, 1);
+  window.addEventListener('load', function (e) {
+      setTimeout(function () { window.scrollTo(0, 1); }, 1);
     }, false);

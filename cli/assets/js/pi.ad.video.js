@@ -20,9 +20,9 @@
   π.ad.video = π.ad.video || {
 
     // reference to video object
-    intro           : null,
-    video           : null,
-    container       : document.getElementById("pi_ad_container"),
+    intro           : document.getElementById("intro"),
+    video           : document.getElementById("video"),
+    container       : document.getElementById("apDiv2"),
     videoController : {},
     loadedMetaData  : false,
     CLICKED         : false,
@@ -31,31 +31,64 @@
 
     onAdClick : function (e) {
       var
-        self = π.ad.video;
+        self = π.ad.video,
+        closebtn = document.getElementById("closebtn"),
+        logo = document.getElementById("ks_logo");
 
-      if (self.CLICKED) {
-        // pi.log("you already clicked!")
-        TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut});
-        // self.CLICKED = true;
+      if (self.CLICKED === true) {
+        pi.log("you already clicked!")
+        TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut, onComplete: self.hideVideo});
+        TweenLite.to(logo, 0.4, {opacity:1, ease:Cubic.easeOut});
+        TweenLite.to(closebtn, 0.4, {top:-100, ease:Cubic.easeOut});
+        TypeWriter.start();
+        self.intro.style.display = "block";
+        self.intro.play();
+        self.CLICKED = false;
       }
       else {
-        // pi.log("Tweeeening !")
+        pi.log("Tweeeening !")
         self.CLICKED = true;
+        closebtn.addEventListener("click", self.onAdClick);
+        TweenLite.to(closebtn, 0.4, {top:0, ease:Cubic.easeOut});
+        TweenLite.to(logo, 0.4, {opacity:0, ease:Cubic.easeOut});
+
         // self.intro.stop();
         self.intro.style.display = "none";
         TweenLite.to(self.container, 0.4, {height:550, ease:Cubic.easeOut, onComplete: self.showVideo});
+
       }
     },
 
 
     showVideo : function () {
       var
-        self = π.ad.video;
+        self  = π.ad.video,
+        tl    = new TimelineMax({delay:0.5, repeat:3, repeatDelay:2});
 
       pi.log("showing video now!");
       self.video.style.display = "block";
       self.videoController.play();
       TypeWriter.hide();
+
+
+      // TweenMax.staggerTo(".socialbtn", 0.5, {opacity:0, y:+100, ease:Cubic.easeOut}, 0.1);
+
+      // self.videoController.showControls();
+    },
+
+    hideVideo : function () {
+      var
+        self  = π.ad.video;
+
+      pi.log("showing video now!");
+      self.videoController.stop();
+      self.videoController.reset();
+      TypeWriter.show();
+      self.video.style.display = "none";
+
+
+      // TweenMax.staggerTo(".socialbtn", 0.5, {opacity:0, y:+100, ease:Cubic.easeOut}, 0.1);
+
       // self.videoController.showControls();
     },
 
@@ -76,7 +109,7 @@
 
       // put callback invocation at the top, to ensure 
       // smooth animation in the fallback scenario (setTimeOut)
-      window.raf(self.onProgress);
+      window.requestAnimationFrame(self.onProgress);
 
       // pi.log("AnimationFrame!");
       t   = self.intro.currentTime;
@@ -91,14 +124,14 @@
           // pi.log("setting opacity to : " + (4 - t));
         }
         else {
-          if (self.intro.style.opacity != 1) {
+          if (self.intro.style.opacity !== 1) {
             pi.log("t : " + t +  ", oh my! resetting opacity to 1");
             self.intro.style.opacity = 1;
           }
         }
       }
       else {
-        if (self.intro.style.opacity != 1) {
+        if (self.intro.style.opacity !== 1) {
           pi.log("t : " + t +  ", resetting opacity to 1");
           self.intro.style.opacity = 1;
         }
@@ -121,7 +154,7 @@
           }, false);
         self.intro.addEventListener("play", function(e) {
           pi.log("starting animation");
-          window.raf(self.onProgress);
+          window.requestAnimationFrame(self.onProgress);
           self.onEvent({event: "video_play"});
           }, false);
         self.video.addEventListener("pause", function(e) {
@@ -133,12 +166,12 @@
 
         self.video.addEventListener("timeupdate", function(e) {
           // pi.log("timeupdate", e);
-          // pi.log("currentTime : "  + self.video.currentTime);
+          pi.log("currentTime : "  + self.video.currentTime);
           }, false);
 
         self.video.addEventListener("progress", function(e) {
           // pi.log("timeupdate", e);
-          pi.log("progress! currentTime : "  + self.video.currentTime);
+          pi.log("progress : "  + self.video.currentTime);
           }, false);
 
         self.videoController.element = self.video;
@@ -219,6 +252,17 @@
       }
 
       return result;
+    },
+
+
+    start : function () {
+      var  
+        self  = π.ad.video,
+        tl    = new TimelineMax({delay:0.5, repeat:-1, repeatDelay:2, yoyo: true, onComplete:restart});
+
+      TweenMax.to(targ, 0.5, {alpha:0.3, repeat:-1, yoyo:true,ease:Linear.easeNone});
+
+
     },
 
 

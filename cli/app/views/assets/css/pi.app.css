@@ -18,28 +18,28 @@
 
 
   body {
-    font-family         : exo, sans-serif;
+    font-family         : trebuchet, sans-serif;
     color               : #f8f8f2;
     margin              : 0;
     padding             : 0;
-    background-color    : #29A5C0;
+    background-color    : #272822;
+    background-image    : url('../img/bg.jpg'); 
 
-    /*  "../../../../assets" is the resource folder for pi proper */
-
-    /*background-image    : url('../img/NRK_logo.svg');*/
-    background-repeat   : no-repeat;
-    background-size     : 298px 106px;
-    background-position : 14px 14px;
-
-
-/*    background-image    : url('../../../../assets/img/views_logo.svg'), url('../img/NRK_logo.svg');
-    background-repeat   : no-repeat;
-    background-size     : 320px 56px, 298px 106px;
-    background-position : right top, 14px 14px;
-*/  }
+  }
 
     li.selected {
       font-weight   : 700;
       color         : white;
     }
 
+
+  .dropcap {
+    margin-right: 9px;
+    float       : left;
+    color       : #231f20;
+    font-size   : 79px;
+    line-height : 58px;
+    display     : block;
+    position    : relative;
+    top         : 4px;
+  }
