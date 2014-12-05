@@ -1,16 +1,16 @@
 ##π
 
-a distributed application platform for HTML5
+a distributed application platform for HTML5 that aims to be:
 
     - fast
     - efficient
     - extensible
     - flexible
     - scalable
-    - provides a communication network between all parts of the namespace
-    - only available in HTML5 compatible browsers
-    - real time
-    - namespaced
+    - a data network across the server and all connected clients and external servers
+    - available in HTML5 compatible browsers
+    - provide developers with real-time events, data streams and messaging
+    
 
 
 Central concepts : **channel**, **address**, **object** and **type**
@@ -59,7 +59,7 @@ Central concepts : **channel**, **address**, **object** and **type**
 
 
 ####TYPE
-    - built-in type library for all basic types, html5 types
+    - any basic type from built-in type library of html4 + html5 types
     - serializable as SQL, JSON, igbinary
 
 
