@@ -185,6 +185,10 @@ processing through unix pipes.
 
 ###HTML5:
 * [Transferable Objects](http://html5-demos.appspot.com/static/workers/transferables/index.html)
+    - and also [Test what postMessage can send as message](http://gregers.no/browserscope/postmessage-object-test.html)
+    postMessage can send messages between frames, windows and web workers. This page tests what your browser is capable of sending with postMessage.
+
+
 * [The TIME tag](http://www.brucelawson.co.uk/2012/best-of-time/)
 
 
