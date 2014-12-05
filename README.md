@@ -84,19 +84,18 @@ processing through unix pipes.
 
 ####**ABOUT**
 
-    scales dynamically, as hardware allows
+    scales dynamically, as hardware allows.
 
-    work in parallel and sequentially simultaneously 
-    (and in real-time) in all connected parts - sending only 
-    the changes made elsewhere to each individual part, while
-    receiving only changes made in return
+    lowers pulse on high load, because larger batches are more efficient
 
-    separating above/below in the namespace, and equating to 
-    before/after, allows us to collapse the changes into
-    their sum at each tick (between adjoining orders of magnitude)
+    run mini-batches for each step of data processing, at every pulse
 
+    namespaced data in memory is flushed to db and to live listeners at every pulse
 
-    which needs explanation, yes
+    heavily influenced by flow-based programming
+
+    embraces the Observer Model
+
 
 
 
@@ -110,7 +109,8 @@ processing through unix pipes.
 
 ####General
 * We require HTML5, using native functions wherever possible
-* should prob. use WebWorkers, and do background processing
+* prefer binary data representation in browser
+* use WebWorkers to do background processing
 * Use documentFragment when adding more than one node to the DOM at a time
 
 
