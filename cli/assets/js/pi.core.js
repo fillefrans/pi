@@ -1466,7 +1466,10 @@
      */
 
     π.require = function (module, async, defer, callback, onerror) {
+
+      /* first, an "early escape" section  */
       var
+        // assume the best
         result = true;
 
           // handle multiple modules given on the form "module1 module2 ..."

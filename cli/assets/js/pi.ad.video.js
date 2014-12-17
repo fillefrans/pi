@@ -23,6 +23,7 @@
     intro           : document.getElementById("intro"),
     video           : document.getElementById("video"),
     container       : document.getElementById("apDiv2"),
+    slideshow       : document.getElementById("slideshow"),
     videoController : {},
     loadedMetaData  : false,
     CLICKED         : false,
@@ -33,28 +34,34 @@
       var
         self = π.ad.video,
         closebtn = document.getElementById("closebtn"),
+        form = document.getElementById("form"),
         logo = document.getElementById("ks_logo");
 
       if (self.CLICKED === true) {
-        pi.log("you already clicked!")
-        TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut, onComplete: self.hideVideo});
+        pi.log("you already clicked!");
+        self.hideVideo();
+        // TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut, onComplete: self.hideVideo});
         TweenLite.to(logo, 0.4, {opacity:1, ease:Cubic.easeOut});
         TweenLite.to(closebtn, 0.4, {top:-100, ease:Cubic.easeOut});
-        TypeWriter.start();
-        self.intro.style.display = "block";
-        self.intro.play();
+        // TweenLite.to(form, 1, {left:"1280px", ease:Cubic.easeOut});
+        TextEffect.start();
+        // self.intro.style.display = "block";
+        // self.intro.play();
         self.CLICKED = false;
       }
       else {
-        pi.log("Tweeeening !")
+        pi.log("Tweeeening !");
         self.CLICKED = true;
         closebtn.addEventListener("click", self.onAdClick);
         TweenLite.to(closebtn, 0.4, {top:0, ease:Cubic.easeOut});
         TweenLite.to(logo, 0.4, {opacity:0, ease:Cubic.easeOut});
-
+        // TweenLite.to(form, 0.8, {opacity:1, ease:Cubic.easeOut});
+        // TweenLite.to(form, 1, {left:"0px", ease:Cubic.easeOut});
+        TextEffect.hide();
         // self.intro.stop();
         self.intro.style.display = "none";
-        TweenLite.to(self.container, 0.4, {height:550, ease:Cubic.easeOut, onComplete: self.showVideo});
+        // TweenLite.to(self.container, 0.4, {height:550, ease:Cubic.easeOut, onComplete: self.showVideo});
+        self.showVideo();
 
       }
     },
@@ -68,7 +75,7 @@
       pi.log("showing video now!");
       self.video.style.display = "block";
       self.videoController.play();
-      TypeWriter.hide();
+      TextEffect.hide();
 
 
       // TweenMax.staggerTo(".socialbtn", 0.5, {opacity:0, y:+100, ease:Cubic.easeOut}, 0.1);
@@ -80,10 +87,10 @@
       var
         self  = π.ad.video;
 
-      pi.log("showing video now!");
+      pi.log("hiding video now!");
       self.videoController.stop();
       self.videoController.reset();
-      TypeWriter.show();
+      TextEffect.show();
       self.video.style.display = "none";
 
 
@@ -125,14 +132,14 @@
         }
         else {
           if (self.intro.style.opacity !== 1) {
-            pi.log("t : " + t +  ", oh my! resetting opacity to 1");
+            // pi.log("t : " + t +  ", oh my! resetting opacity to 1");
             self.intro.style.opacity = 1;
           }
         }
       }
       else {
         if (self.intro.style.opacity !== 1) {
-          pi.log("t : " + t +  ", resetting opacity to 1");
+          // pi.log("t : " + t +  ", resetting opacity to 1");
           self.intro.style.opacity = 1;
         }
       }
@@ -166,12 +173,12 @@
 
         self.video.addEventListener("timeupdate", function(e) {
           // pi.log("timeupdate", e);
-          pi.log("currentTime : "  + self.video.currentTime);
+          // pi.log("currentTime : "  + self.video.currentTime);
           }, false);
 
         self.video.addEventListener("progress", function(e) {
           // pi.log("timeupdate", e);
-          pi.log("progress : "  + self.video.currentTime);
+          // pi.log("progress : "  + self.video.currentTime);
           }, false);
 
         self.videoController.element = self.video;
@@ -262,7 +269,6 @@
 
       TweenMax.to(targ, 0.5, {alpha:0.3, repeat:-1, yoyo:true,ease:Linear.easeNone});
 
-
     },
 
 
@@ -271,6 +277,7 @@
         pi.log("No video object found");
       }
       else {
+        self.slideshow.addEventListener("click", this.onAdClick);
         this.__init();
       }
     }
