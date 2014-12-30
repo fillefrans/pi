@@ -167,7 +167,8 @@
          * It handles data routing, message passing and events independent of
          * the DOM, using a pubsub approach to implement the Observer Model.
          * 
-         * This is 10-100x faster than using DOM events, or the jQuery approach.
+         * This can be up to 10-100x faster than using built-in DOM events, or the jQuery approach.
+         * 
          *
          * @author Johan Telstad, jt@viewshq.no, 2011-2014
          * 
@@ -273,12 +274,10 @@
                   args = null;
 
                 if (arguments.length > 2) {
-                  // pi.log("grabbing arguments array");
                   // If passing args as a set of args instead of an array, grab all but the first.
                   args = Array.prototype.slice.apply(arguments, [1]);
                 } else {
                   args = [callback_args];
-                  // pi.log("args is not an array : " + JSON.stringify(callback_args), callback_args);
                 } 
                 
                 var 
@@ -422,13 +421,6 @@
           // };
 
 
-
-          // // set up aliases for the trigger function
-          // π.events.emit     = π.events.trigger;
-          // π.events.dispatch = π.events.trigger;
-
-
-
           /**
            * Wrapper for custom event triggering
            *
@@ -437,7 +429,7 @@
            * @param {element} eventElem The element used to dispatch the event
            *
            * @return {boolean} Boolean FALSE on failure, TRUE on success
-           * 
+           * @version 2.0
            */
 
           π.events.trigger = function (eventName, eventData, eventElem) {
@@ -452,13 +444,11 @@
               return false;
             }
 
-            // pi.log("triggering : " + eventName);
-
             // are we handicapped ?
             if (pi.browser.isIe() === true) {
               pi.events.publish(eventName, eventData, eventElem);
 
-              // fuck it, don't even try
+              // v2.0 fuck it, don't even try
               // try {
 
 
@@ -625,6 +615,207 @@
 
 
     // π utility functions
+
+
+    /**
+     * Get text value of span element
+     * The purpose of these functions is to avoid re-flowing wherever possible,
+     * and to preclude any tag injection chicanery
+     * 
+     * @param  {string}   id      Id of the span element
+     * 
+     * @return {bool|string}      Text content of span element, or boolean False on error.         
+     */
+    π.gettext = function(id) {
+      var
+        span  = document.getElementById(id) || null;
+
+      if (span === null) {
+        return false;
+      }
+      if (span.textContent) {
+        return span.textContent;
+      }
+      else if (span.innerText) {
+        return span.innerText;
+      }
+      else {
+        return false;
+      }
+    };
+
+
+
+
+    /**
+     * Set text value of span element
+     * The purpose of these functions is to avoid re-flowing wherever possible,
+     * and to preclude any tag injection chicanery
+     * 
+     * @param  {string}   id      Id of the span element
+     * @param  {string}   value   New text value to display
+     * 
+     * @return {bool}         
+     */
+    π.settext = function(id, value) {
+      var
+        span  = document.getElementById(id) || null,
+        value = value || "";
+
+      if (span === null) {
+        return false;
+      }
+      if (span.textContent) {
+        span.textContent = value;
+      }
+      else if (span.innerText) {
+        span.innerText = value;
+      }
+      return true;
+    };
+
+
+    /**
+     * π's internal string heap (not a real heap)
+     * @type {Object}
+     */
+    π.heap = π.heap || {
+      // private
+      __vars : [],
+      
+      add : function (id, value) {
+        var
+          id    = id    || null,
+          value = value || null,
+          self  = π.heap;
+
+        if (id !== null && value !== null) {
+          var piaddr = id;
+          id = id.replace(/\./g,'-');
+
+          var 
+            item = self.__vars[id] = {
+              // the object we throw on the heap, stored at __vars[id]
+              __e : document.getElementById(id) || null,
+              address : piaddr,
+
+              // getters and setters, supported in IE9+ (EcmaScript 5)
+              get element() {
+                return this.__e;
+              },
+              set element(id) {
+                this.__e = (π.isElement(id) ? id : document.getElementById(id)) || null;
+              },
+              get value() {
+                // if element not set, value defaults to null
+                if(!this.__e) return null;
+
+                if (this.__e.textContent) {
+                  // for modern browsers
+                  return this.__e.textContent;
+                }
+                else if (this.__e.innerText) {
+                  // for IE
+                  return this.__e.innerText;
+                }
+                // fallback
+                else return this.__e.innerHTML || "";
+              },
+              set value(s) {
+                // this.__e = this.__e || document.getElementById(s) || null;
+                if(!this.__e) return false;
+
+                if (this.__e.textContent) {
+                  // for modern browsers
+                  this.__e.textContent = s;
+                }
+                else if (this.__e.innerText) {
+                  // for IE
+                  this.__e.innerText = s;
+                }
+                // fallback
+                else this.__e.innerHTML = s;
+              },
+
+            }; // END var item = { ..
+
+        } // END if (id && value)
+        else {
+          // if NOT (id && value)
+          /** @todo rewrite this to an early escape, it's kind of upside-down */
+          return false;
+        }
+      },
+      
+      item : function(id) {
+        var
+          self = π.heap,
+          id = id || false;
+        if (id === false) return false;
+        return self.__vars[id] || self.__vars[id.replace(/\./g, '-')] || null;
+      },
+
+      remove : function(id) {
+        if (π.heap.__vars[id]) {
+          π.heap.__vars[id] = null;
+        } 
+        else if (π.heap.__vars[id.replace(/\./g, '-')]) {
+          π.heap.__vars[id.replace(/\./g, '-')] = null;
+        }
+        else {
+          return false;
+        }
+        return true;
+      },
+      
+      clear : function() {
+        while (π.heap.__vars.length > 0) {
+          π.heap.__vars.pop();
+        }
+      }
+    }; // pi.heap
+
+
+
+
+    /**
+     * Add text value to a span element
+     * The purpose of these function is to avoid re-flowing wherever possible,
+     * and to preclude any tag injection chicanery
+     * 
+     * @param  {string}   id      Id of the span element
+     * @param  {string}   value   Text value to add
+     * @param  {bool}     head    Whether to add text to the left of current value or not
+     * 
+     * @return {bool}
+     */
+    π.addtext = function(id, value, head) {
+      var
+        value = value || "",
+        head  = head  || false,
+        span  = document.getElementById(id) || null;
+
+      if ( !(span || value || id) ) {
+        return false;
+      }
+      if (head) {
+        if (span.textContent) {
+          span.textContent = value + span.textContent;
+        }
+        else if (span.innerText) {
+          span.innerText = value + span.innerText;
+        }
+      }
+      else {
+        if (span.textContent) {
+          span.textContent += value;
+        }
+        else if (span.innerText) {
+          span.innerText += value;
+        }
+      }
+    };
+
 
 
     π.logArray = function (array) {
@@ -1777,16 +1968,49 @@
       window.cancelAnimationFrame || 
       window.webkitCancelAnimationFrame || 
       window.mozCancelAnimationFrame || function (id) {
-        clearTimeout(id)
+        window.clearTimeout(id)
       };
 
 
+  /**
+   * HTML5-ify the Array object
+   */
+  Array.prototype.forEach = Array.prototype.forEach || function(callback, thisArg) {
+      for (var i = 0; i < this.length; i++) {
+          // callback signature forEach : (p, i, arr)
+          callback.call(thisArg || this, this[i], i, this);
+      };
+  };
+   
+  Array.prototype.map = Array.prototype.map || function(callback, thisArg) {
+      var result = [];
+      for (var i = 0; i < this.length; i++) {
+          // same callback signature as forEach : (p, i, arr)
+          result.push(callback.call(thisArg || this, this[i], i, this));
+      };
+      return result;
+  };
+   
+  /**
+   * This does not strictly adhere to the spec. 
+   * If initial is null, it should start at i = 1 and prevVal = this[0].
+   * Instead, we start at i = 0 with prevVal = 0, which amounts to the same
+   * thing, just with an extra function invocation.
+   * 
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
+   */
+  Array.prototype.reduce = Array.prototype.reduce || function(callback, initial) {
+      var accumulated = initial || 0;
+      for (var i = 0; i < this.length; i++) {
+          // callback signature reduce : (prevVal, currVal, i, arr)
+          accumulated = callback(accumulated, this[i], i, this);
+      };
+      return accumulated;
+  };
 
-/**
- *
- * from Dustin Diaz - http://dustindiaz.com/rock-solid-addevent
- */
-
+  /**
+   * from Dustin Diaz - http://dustindiaz.com/rock-solid-addevent
+   */
     function addEvent( obj, type, fn ) {
 
       if (obj.addEventListener) {
@@ -1881,8 +2105,6 @@
 
 
 
-
-
     /**
      * Shorthand function
      * 
@@ -1891,7 +2113,7 @@
      * @param {bool}      capture      Whether or not to capture events
      * 
      */
-    pi.addEventListener = function (eventaddress, callback, capture) {
+    pi.addEventListener = function (eventaddress, callback, capture, c2) {
       var
         elem          = window,
         eventaddress  = eventaddress  || null,
@@ -1900,9 +2122,10 @@
 
       // handle alternative function signature (element, event, callback)
       if (typeof eventaddress !== "string" && typeof callback == "string") {
-        elem = eventaddress;
-        eventaddress = callback;
-        callback = capture;
+        elem          = eventaddress;
+        eventaddress  = callback;
+        callback      = capture;
+        capture       = c2 || false;
       }
 
       if (!eventaddress.indexOf) {
@@ -1913,11 +2136,12 @@
         return;
       }
 
-      // internal event system for internal events
+      // use internal event system for internal events
       if (eventaddress.indexOf('pi.')===0) {
         return pi.events.subscribe(eventaddress, callback);
       }
       else {
+        // use cross-browser addEvent from StackOverflow
         return pi._addEvent(elem, eventaddress, callback);
       }
     };

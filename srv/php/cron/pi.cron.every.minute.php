@@ -5,8 +5,9 @@
      * 
      * This script is run by cron every minute
      *
-     * Start batch scripts as necessary by
-     * adding to the run() method
+     * Start batch scripts as necessary by adding script files to the correct 
+     * subfolder (e.g [pi-root]/srv/php/cron/pi.cron.every.xxx.d/)
+     * Where "xxx" is from the name of the current script file
      * 
      * This class is part of the pi server
      *
@@ -37,10 +38,9 @@
 
 
 
-        private function quit($msg="Goodbye. No message.\n") {
+        private function quit($msg="Goodbye.\n") {
 
           die($msg);
-
         }
 
 
@@ -48,8 +48,14 @@
 
           $this->__init();
           // print("Running : " . basename(__FILE__, '.php') . "\n");
-          $this->publish("Crontab running: " . basename(__FILE__));
-          // $this->quit();
+          $this->publish($this->address, "Crontab running: " . basename(__FILE__));
+
+          $directory  = __DIR__;
+          $basename   = basename(__FILE__, '.php') .".d";
+          $path       = $directory . DIRECTORY_SEPARATOR . $basename;
+
+          // include script files from subdir
+          $this->includeScripts($path);
         }
 
     }

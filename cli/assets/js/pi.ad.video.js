@@ -9,18 +9,16 @@
 
 
   var 
-    π = π || {};
+    π = π || { log : window.console.log || function() {}};
+
+  var pi = pi || π;
 
   π.ad = π.ad || {};
 
-  if (!π.ad) {
-    pi.require("ad");
-  }
 
   π.ad.video = π.ad.video || {
 
     // reference to video object
-    intro           : document.getElementById("intro"),
     video           : document.getElementById("video"),
     container       : document.getElementById("apDiv2"),
     slideshow       : document.getElementById("slideshow"),
@@ -38,11 +36,11 @@
         logo = document.getElementById("ks_logo");
 
       if (self.CLICKED === true) {
-        pi.log("you already clicked!");
+        // alert("you already clicked!");
         self.hideVideo();
         // TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut, onComplete: self.hideVideo});
-        TweenLite.to(logo, 0.4, {opacity:1, ease:Cubic.easeOut});
-        TweenLite.to(closebtn, 0.4, {top:-100, ease:Cubic.easeOut});
+        logo.style.opacity = 1;
+        closebtn.style.display = "none";
         // TweenLite.to(form, 1, {left:"1280px", ease:Cubic.easeOut});
         TextEffect.start();
         // self.intro.style.display = "block";
@@ -50,29 +48,28 @@
         self.CLICKED = false;
       }
       else {
-        pi.log("Tweeeening !");
+        // pi.log("Tweeeening !");
         self.CLICKED = true;
-        closebtn.addEventListener("click", self.onAdClick);
-        TweenLite.to(closebtn, 0.4, {top:0, ease:Cubic.easeOut});
-        TweenLite.to(logo, 0.4, {opacity:0, ease:Cubic.easeOut});
-        // TweenLite.to(form, 0.8, {opacity:1, ease:Cubic.easeOut});
-        // TweenLite.to(form, 1, {left:"0px", ease:Cubic.easeOut});
+        $(closebtn).bind("click", self.onAdClick);
+        closebtn.style.top = 0;
+        closebtn.style.display = "block";
+        logo.style.opacity = 0;
+
         TextEffect.hide();
         // self.intro.stop();
-        self.intro.style.display = "none";
         // TweenLite.to(self.container, 0.4, {height:550, ease:Cubic.easeOut, onComplete: self.showVideo});
         self.showVideo();
 
       }
+      e.preventDefault();
     },
 
 
     showVideo : function () {
       var
-        self  = π.ad.video,
-        tl    = new TimelineMax({delay:0.5, repeat:3, repeatDelay:2});
+        self  = π.ad.video;
 
-      pi.log("showing video now!");
+      // alert("showing video now!"+ this.id);
       self.video.style.display = "block";
       self.videoController.play();
       TextEffect.hide();
@@ -87,10 +84,12 @@
       var
         self  = π.ad.video;
 
-      pi.log("hiding video now!");
-      self.videoController.stop();
-      self.videoController.reset();
+      // alert("hiding video now!"+ this.id);
+      // self.videoController.reset();
+      // self.videoController.stop();
       TextEffect.show();
+      self.video.pause();
+      self.videoController.reset();
       self.video.style.display = "none";
 
 
@@ -105,7 +104,7 @@
 
       if(!!event && event == "video_play") {
       }
-      pi.log("onEvent : " + e.event);
+      // pi.log("onEvent : " + e.event);
     },
 
 
@@ -119,30 +118,9 @@
       window.requestAnimationFrame(self.onProgress);
 
       // pi.log("AnimationFrame!");
-      t   = self.intro.currentTime;
-      end = self.intro.duration;
+      // t   = self.intro.currentTime;
+      // end = self.intro.duration;
 
-      self.previous = t;
-
-      if(t >= 3) {
-        n = 4 - t;
-        if (n > 0) {
-          self.intro.style.opacity = 4 - t;
-          // pi.log("setting opacity to : " + (4 - t));
-        }
-        else {
-          if (self.intro.style.opacity !== 1) {
-            // pi.log("t : " + t +  ", oh my! resetting opacity to 1");
-            self.intro.style.opacity = 1;
-          }
-        }
-      }
-      else {
-        if (self.intro.style.opacity !== 1) {
-          // pi.log("t : " + t +  ", resetting opacity to 1");
-          self.intro.style.opacity = 1;
-        }
-      }
 
     },
 
@@ -150,20 +128,18 @@
       var
         self = π.ad.video;
 
+      // document.body.addEventListener("click", self.onAdClick);
+
       try {
 
         self.video.addEventListener("loadedmetadata", function() {
-            pi.log("loadedmetadata");
+            // pi.log("loadedmetadata");
             self.loadedMetaData = true;
           }, false);
         self.video.addEventListener("error", function(error) {
-            pi.log("error : ", error);
+            // pi.log("error : ", error);
           }, false);
-        self.intro.addEventListener("play", function(e) {
-          pi.log("starting animation");
-          window.requestAnimationFrame(self.onProgress);
-          self.onEvent({event: "video_play"});
-          }, false);
+
         self.video.addEventListener("pause", function(e) {
           self.onEvent({event: "video_pause"});
           }, false);
@@ -189,9 +165,7 @@
             self.video.pause();
         };
         self.videoController.stop = function() {
-            if(self.video.playing) {
               self.video.pause();
-            }
         };
         self.videoController.togglePause = function() {
           if (self.video.paused) {
@@ -246,44 +220,42 @@
 
       result = document.getElementsByTagName("video");
 
-      if (!!result && result.length > 0) {
+      if (!!result && result.length) {
         for (var i = 0; i < result.length; i++) {
           if (result[i].id == "intro") {
             this.intro = result[i];
-            this.intro.addEventListener("click", this.onAdClick);
+            // this.intro.addEventListener("click", this.onAdClick);
           }
           else {
             this.video = result[i];
+            return true;
           }
         }
+      } else {
+        // alert("No video found!");
       }
-
-      return result;
-    },
-
-
-    start : function () {
-      var  
-        self  = π.ad.video,
-        tl    = new TimelineMax({delay:0.5, repeat:-1, repeatDelay:2, yoyo: true, onComplete:restart});
-
-      TweenMax.to(targ, 0.5, {alpha:0.3, repeat:-1, yoyo:true,ease:Linear.easeNone});
 
     },
 
 
     run : function() {
       if (!this._scanForVideo()) {
-        pi.log("No video object found");
+        alert("No video object found");
       }
       else {
-        self.slideshow.addEventListener("click", this.onAdClick);
-        this.__init();
+        if (!!self.slideshow && typeof self.slideshow.addEventListener == "function") {
+          self.slideshow.addEventListener("click", this.onAdClick);
+          this.__init();
+        }
+        else {
+          alert("NO VIDEO");
+        }
       }
     }
 
 
   } // object pi.ad.video
 
-
-  π.ad.video.run();
+  $(document).ready(function() {
+    pi.ad.video.run();
+  });

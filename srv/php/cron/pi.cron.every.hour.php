@@ -4,8 +4,9 @@
      * pi.cron.every.hour
      * 
      * This script is run by cron every hour
-     * Start batch scripts as necessary by
-     * adding to the run() method
+     * Start batch scripts as necessary by adding script files to the correct 
+     * subfolder (e.g [pi-root]/srv/php/cron/pi.cron.every.xxx.d/)
+     * Where "xxx" is from the name of the current script file
      *
      * This class is part of the pi server
      *
@@ -48,10 +49,16 @@
         public function run($dbg=false){
 
           $this->__init();
-          // print("Running : " . basename(__FILE__, '.php') . "\n");
-          $this->publish("Crontab running: " . basename(__FILE__));
-          passthru(  'php ' . __DIR__ . '/pi.tracs.incoming.php');
-          // $this->quit();
+          $this->publish($this->address, "Crontab running: " . basename(__FILE__));
+
+          $directory  = __DIR__;
+          $basename   = basename(__FILE__, '.php') .".d";
+          $path       = $directory . DIRECTORY_SEPARATOR . $basename;
+
+
+          $this->includeScripts($path);
+
+          $this->quit();
         }
 
     }

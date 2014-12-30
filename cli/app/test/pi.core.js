@@ -368,6 +368,98 @@
 
 
 
+    /**
+     * Get text value of span element
+     * 
+     * @param  {string}   id      Id of the span element
+     * 
+     * @return {bool|string}      Text content of span element, or boolean False on error.         
+     */
+    π.gettext = function(id) {
+      var
+        span  = document.getElementById(id) || null;
+
+      if (span === null) {
+        return false;
+      }
+      if (span.textContent) {
+        return span.textContent;
+      }
+      else if (span.innerText) {
+        return span.innerText;
+      }
+      else {
+        return false;
+      }
+    };
+
+
+
+
+    /**
+     * Set text value of span element
+     * 
+     * @param  {string}   id      Id of the span element
+     * @param  {string}   value   New text value to display
+     * 
+     * @return {bool}         
+     */
+    π.settext = function(id, value) {
+      var
+        span  = document.getElementById(id) || null,
+        value = value || "";
+
+      if (span === null) {
+        return false;
+      }
+      if (span.textContent) {
+        span.textContent = value;
+      }
+      else if (span.innerText) {
+        span.innerText = value;
+      }
+      return true;
+    };
+
+
+    /**
+     * Add text value to a span element
+     * 
+     * @param  {string}   id      Id of the span element
+     * @param  {string}   value   Text value to add
+     * @param  {bool}     head    Whether to add text to the left of current value or not
+     * 
+     * @return {bool}
+     */
+    π.addtext = function(id, value, head) {
+      var
+        value = value || "",
+        head = head || false,
+        span = document.getElementById(id) || null;
+
+      if ( !(span || value || id) ) {
+        return false;
+      }
+      if (head) {
+        if (span.textContent) {
+          span.textContent = value + span.textContent;
+        }
+        else if (span.innerText) {
+          span.innerText = value + span.innerText;
+        }
+      }
+      else {
+        if (span.textContent) {
+          span.textContent += value;
+        }
+        else if (span.innerText) {
+          span.innerText += value;
+        }
+      }
+    };
+
+
+
 
 
     π.debug = function(msg, obj) {
