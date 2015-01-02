@@ -18,7 +18,7 @@
   importScripts('pi.math.pi.bbp.js');
 
   // math.pi.longmath contains a js implementation of calculating pi using long math
-  importScripts('pi.math.pi.longmath.js');
+  // importScripts('pi.math.pi.longmath.js');
 
   // a console emulation that passes log messages to the owner thread.
   importScripts("pi.worker.console.js");
@@ -45,7 +45,7 @@
           return false;
         }
 
-        func(msg.data.message.parameters[0], msg.data.message.parameters[1] || null, msg.data.message.parameters[0] || null);
+        func(msg.data.message.parameters[0], msg.data.message.parameters[1] || null, msg.data.message.parameters[2] || null);
         break;
       }
       default: {
