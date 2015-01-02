@@ -747,14 +747,31 @@
         }
       },
       
+      /**
+       * Getter for item at given index
+       * 
+       * @param  {int|string} id The numeric or hash index to get
+       * 
+       * @return {any}    Returns the value stored at given index
+       */
       item : function(id) {
         var
           self = π.heap,
           id = id || false;
-        if (id === false) return false;
+
+        if (id === false) {
+          return false;
+        }
         return self.__vars[id] || self.__vars[id.replace(/\./g, '-')] || null;
       },
 
+      /**
+       * Remove item at given index
+       * 
+       * @param  {int|string} id  The numeric or hash index to get
+       * 
+       * @return {bool}           True on success, False on failure.
+       */
       remove : function(id) {
         if (π.heap.__vars[id]) {
           π.heap.__vars[id] = null;
@@ -769,10 +786,18 @@
       },
       
       clear : function() {
+        var
+          item = null;
+
         while (π.heap.__vars.length > 0) {
-          π.heap.__vars.pop();
+          item = π.heap.__vars.pop();
+          if (item && typeof item.clear == "function") {
+            // call item's own clear(), in item's own context
+            item.clear.call(item);
+          }
         }
       }
+
     }; // pi.heap
 
 
@@ -1667,11 +1692,16 @@
           if (module.indexOf(" ") >=1) {
             var 
               modules = module.split(" ");
-            for (var i=0; i<modules.length; i++) { result &= π.require(modules[i], async, defer, null, onerror); }
+            for (var i=0; i<modules.length; i++) { 
+              // this may seem unnecessary, but is needed to facilitate the use case where
+              // every required module is already loaded. In that case, we want to return immediately.
+              // (i.e., we don't catch errors)
+              result &= π.require(modules[i], async, defer, null, onerror); 
+            }
             if ( result && typeof callback === "function" ) { callback.call(this); }
-            return true;
+            return result;
           }
-          // already loaded => early escape
+          // already loaded => early escape  |  NB: the regex is hardcoded, may occur otherwhere 
           if (π.loaded[module.replace(/\./g,'_')]) {
             if ( typeof callback === "function" ) { callback.call(this); } 
             return true;
@@ -1933,7 +1963,12 @@
       body = document.documentElement;
 
     elements = document.getElementsByClassName("pi");
-    pi.log("BOOTSTRAP : " + elements.length);
+    if (elements.length) {
+      pi.log("No pi elements found : " + elements.length);
+    }
+    else {
+      pi.log("Bootstrapping : " + elements.length + " " + (elements.length === 1 ? "element" : "elements"));
+    }
 
     for (var i = 0; i < elements.length; i++) {
       // pi.log("STRAP IT: " + e, e);
