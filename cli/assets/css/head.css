@@ -17,6 +17,11 @@
 **/
 
 
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
 
 
   /* The ugly */
@@ -26,22 +31,14 @@
   }
 
 
-
-
-  body {
-    font-family       : monospace;
-    background-color  : #272822;
-    color             : #f8f8f2;
-    margin            : 0;
-    padding           : 0;
-  }
-
   header {
+    position: static;
+    display: block;
     background-color : #b21;
     width: 100%;
-    height: 240px;
+    height: 200px;
     overflow: hidden;
-    clear: right;
+    /*clear: right;*/
   }
 
   ul {
@@ -63,8 +60,9 @@
 
     /* animate everything by default */ 
     transition-property         : all;
-    transition-duration         : 0.1s;        
-    transition-timing-function  : cubic-bezier(0,0,0.58,1);
+    transition-duration         : 0.1s;
+
+    transition-timing-function  : cubic-bezier(0,0,0.58,1); /* easeOutCubic */
   }
 
 
@@ -147,11 +145,3 @@
     transition-timing-function  : cubic-bezier(0,0,0.58,1);
   }
 
-
-  .tween.ease-out {
-    transition-timing-function  : ease-out;
-  }
-
-  .tween.ease-in {
-    transition-timing-function  : ease-in;
-  }
