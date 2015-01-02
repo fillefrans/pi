@@ -93,10 +93,10 @@
       s = s - parseInt(s);
     }
 
-    if (logged){
-      logged = true;
-      console.log("s: " + s + ", eps: " + eps + ", t: " + t + ", ak: " + ak + ", bk: " + bk);
-    }
+    // if (logged){
+    //   logged = true;
+    //   console.log("s: " + s + ", eps: " + eps + ", t: " + t + ", ak: " + ak + ", bk: " + bk);
+    // }
 
   /*  Compute a few terms where k >= id. */
 
