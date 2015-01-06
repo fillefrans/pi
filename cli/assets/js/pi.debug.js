@@ -6,9 +6,17 @@
  *
  */
 
-  π.debug.loaded = false,
 
-  π.debug.util = {
+  // This declaration is so we can load before pi.core.js if needed.
+  // Otherwise, we would omit declaration of π and provoke an error
+  // if pi.core.js is not loaded, which is the behaviour we want.
+ var
+   π = π || {};
+
+
+  π.debug = π.debug || {
+    _loaded : false,
+
 
     printf : function() {
 
@@ -25,4 +33,4 @@
   }
 
 
-  π.debug.loaded = true;
+  π.debug._loaded = true;

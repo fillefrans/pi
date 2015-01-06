@@ -2,7 +2,8 @@
    *
    * π v0.5.2.1
    *
-   * Pi is an html5-based distributed client-server application platform.
+   * @module Pi
+   * @description Pi is an html5-based distributed client-server application platform.
    * 
    * This is the client part.
    *
@@ -58,7 +59,6 @@
       PI_ROOT     : "assets/js/",
       LIB_ROOT    : "../../assets/js/",
       API_ROOT    : "/api/",
-      SRV_ROOT    : "../../../srv/",
 
       LOG_URL     : "/api/log/",
 
@@ -84,18 +84,17 @@
 
        /**
         * 
-        * @module π.core.callback
-        *
-        *   Store references to local callback functions
-        *   Call remote procedure and create a listener for the result
-        *   Invoke local callback when result arrives
+        * @module core.callback
+        * @description  Store references to local callback functions
+        *               Call remote procedure and create a listener for the result
+        *               Invoke local callback when result arrives
         * 
         */
 
           π.core.callback = π.core.callback || {
 
             /**
-             * @description  Manages callback handlers
+             * Manages callback handlers
              *
              * Issues reply addresses, and invokes related
              * callback when response is received from server
@@ -429,7 +428,7 @@
            * @param {element} eventElem The element used to dispatch the event
            *
            * @return {boolean} Boolean FALSE on failure, TRUE on success
-           * @version 2.0
+           * @version 2.0 Uses internal messaging system for IE
            */
 
           π.events.trigger = function (eventName, eventData, eventElem) {
@@ -447,6 +446,7 @@
             // are we handicapped ?
             if (pi.browser.isIe() === true) {
               pi.events.publish(eventName, eventData, eventElem);
+              // pi.log("IE");
 
               // v2.0 fuck it, don't even try
               // try {
@@ -467,6 +467,7 @@
             }
             else {
               // we are not handicapped, and this is our actual function
+              // pi.log("triggering : " + eventName);
               if (eventData) {
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
               } else {
@@ -785,6 +786,11 @@
         return true;
       },
       
+      /**
+       * Clear all items from array
+       * Call array items's own 'clear' method, if it exists
+       * @return {void} 
+       */
       clear : function() {
         var
           item = null;
@@ -806,7 +812,7 @@
     /**
      * Add text value to a span element
      * The purpose of these function is to avoid re-flowing wherever possible,
-     * and to preclude any tag injection chicanery
+     * and to prevent any tag injection chicanery
      * 
      * @param  {string}   id      Id of the span element
      * @param  {string}   value   Text value to add
@@ -843,6 +849,13 @@
 
 
 
+    /**
+     * Dump contents of Array object
+     * 
+     * @param  {Array} array The Array to dump
+     * 
+     * @return {void}
+     */
     π.logArray = function (array) {
       var
         i = array.length;
@@ -859,6 +872,14 @@
     };
 
 
+    /**
+     * Universal logging function
+     * 
+     * @param  {string} msg The message to log
+     * @param  {Object} obj An object to accompany the log line
+     * 
+     * @return {void}
+     */
     π.log = function (msg, obj) {
 
       if (!!obj) {
@@ -1007,7 +1028,7 @@
           }
         }
 
-        // recursion part
+        // recurse into object properties
         if (typeof obj[item] == "object") {
 
           result = pi.search(token, obj[item], where, exact, multiple);
@@ -1020,21 +1041,21 @@
         }
 
         if (!obj.hasOwnProperty(item)) {
-          pi.log("skipping : " + item.substring(0, 64));
+          // pi.log("skipping : " + item.substring(0, 64));
           continue;
         }
 
         if (where === 2 || where === 0) {
 
           if ( exact == 1 && obj[item].toString() == token ) {
-            pi.log("exact: " + obj[item].toString().substring(0, 64));
-            pi.log("returning : ", obj);
+            // pi.log("exact: " + obj[item].toString().substring(0, 64));
+            // pi.log("returning : ", obj);
             result = obj;
             return obj;
           }
           else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
-            pi.log("yes: " + obj[item].toString().substring(0, 64));
-            pi.log("returning : ", obj);
+            // pi.log("yes: " + obj[item].toString().substring(0, 64));
+            // pi.log("returning : ", obj);
             result = obj;
             return obj;
           }
@@ -1076,7 +1097,7 @@
         where     = where     || 0; // 0 => search both keys and values, 1 => keys, 2 => values
 
       if ( !obj || !token ) {
-        pi.log("no obj");
+        // pi.log("no obj");
         return false;
       }
 
@@ -1108,21 +1129,21 @@
         }
 
         if (!obj.hasOwnProperty(item)) {
-          pi.log("skipping : " + item.substring(0, 64));
+          // pi.log("skipping : " + item.substring(0, 64));
           continue;
         }
 
         if (where === 2 || where === 0) {
 
           if ( exact == 1 && obj[item].toString() == token ) {
-            pi.log("exact: " + obj[item].toString().substring(0, 64));
-            pi.log("returning : ", obj);
+            // pi.log("exact: " + obj[item].toString().substring(0, 64));
+            // pi.log("returning : ", obj);
             result = obj;
             return obj;
           }
           else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
-            pi.log("yes: " + obj[item].toString().substring(0, 64));
-            pi.log("returning : ", obj);
+            // pi.log("yes: " + obj[item].toString().substring(0, 64));
+            // pi.log("returning : ", obj);
             result = obj;
             return obj;
           }
@@ -1303,10 +1324,12 @@
 
 
     /**
-     * [copy description]
-     * @param  {[type]} obj        [description]
-     * @param  {[type]} exceptions [description]
-     * @return {[type]}            [description]
+     * Copy js object
+     * 
+     * @param  {Object}   obj         The object to copy
+     * @param  {Array}    exceptions  Array of member properties to skip
+     * 
+     * @return {Object}               The copied object
      */
     π.copy = function (obj, exceptions) {
       var
@@ -1451,7 +1474,7 @@
 
 
   /**
-   * Pi shorthand function, wraps window.addEventListener
+   * Shorthand function, wraps window.addEventListener
    * 
    * @param  {string}   eventaddress The Pi Event Address to attach to
    * @param  {Function} callback     The event handler
@@ -1749,10 +1772,8 @@
     */
 
     /**
-     *  Utility object for timing purposes
-     * @author Johan Telstad
+     * Utility object for timing purposes
      */
-
 
     π.timer = {
       
@@ -1903,7 +1924,7 @@
    * Search for ["data-src", "data-pi"] attributes starting with "pi."
    * Set classes based on found elements' pi address. ["pi.video" => addClass("pi video")]
    *
-   * @todo Move to pi.html or similar, since the core should be DOM-independent
+   * @todo Move to pi.html.js or similar, since the core should be DOM-independent
    */
 
 
@@ -1977,7 +1998,7 @@
       }
     }
     π.timer.stop("_bootstrap");
-
+    // pi.events.trigger("pi.ready");
   };
 
   document.addEventListener('DOMContentLoaded',π._bootstrap);
@@ -2100,9 +2121,9 @@
    /**
     * Support function for pi.addEventListener
     *   
-    * @param {[type]}   elem  [description]
-    * @param {[type]}   event [description]
-    * @param {Function} fn    [description]
+    * @param {HTMLElement}  elem    DOM Element to attach to, defaults to window
+    * @param {string}       event   Event name to listen for
+    * @param {Function}     fn      The callback function
     * 
     * Cross-browser solution from stackoverflow
     * @author http://stackoverflow.com/users/816620/jfriend00
@@ -2203,7 +2224,7 @@
   π.require("core.session", false, false);
   π.require("app", false, false);
 
-  pi.events.trigger('pi', new Date().getTime());
+  pi.events.trigger('pi.ready', new Date().getTime());
 
   /* a safari bug-fix for iPhone, supposedly. */
   window.addEventListener('load', function (e) {

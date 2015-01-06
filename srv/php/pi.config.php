@@ -25,7 +25,7 @@
 
     define('APP_NAME',      'Pi Server');
     define('APP_PLATFORM',  'Pi Server/WebSocket');
-    define('APP_VERSION',   'v0.5.1 Beta');
+    define('APP_VERSION',   'v0.5.2.1 Beta');
 
     // mysql settings
 
