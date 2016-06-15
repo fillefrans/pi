@@ -193,7 +193,7 @@
 
 
     /**
-     * Const, singleton values shared between all descendants
+     * Const, singletons shared between all descendants
      *
      * @example
      *   $float = PiType.Create(PiType::FLOAT32);
@@ -462,7 +462,7 @@
         return new $className($args);
       }
       else {
-        throw new InvalidArgumentException("Class not found : $className", 1);
+        throw new InvalidArgumentException("Pi Type Class not found : $className", 1);
       }
     }
 

@@ -253,25 +253,4 @@ processing through unix pipes.
 ####[snippets]
 
 
-    /* CSS inheritance from class to id */
-
-    div.parentDiv,
-    #childDiv
-    {
-        margin-top:3px;
-        margin-left:auto;
-        margin-right:auto;
-        margin-bottom:0px;
-    }
-
-    /*  This will tell your #childDiv to apply the same styles as div.parentDiv has. 
-        Then you extend this set of styles with more  specific to your #childDiv:
-    */
-    #childDiv
-    {
-        background-image:url("customBackground.gif");
-        background-repeat:no-repeat;
-        width:950px;
-        height:572px;
-    }
 

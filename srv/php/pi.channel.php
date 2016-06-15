@@ -5,7 +5,7 @@
    *
    *  Defines and implements basic (typed and untyped) Channels for the Pi namespace.
    *  The available types are defined in the Pi Type Library 
-   *  A typed channel can be thought of as a stream
+   *  A typed channel can be thought of as a stream of records
    *
    * It has the following properties:
    * - name (null, '*', or 'zmq', 'auth', etc)

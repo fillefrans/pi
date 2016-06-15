@@ -255,7 +255,6 @@ class WebSocketServer implements WebSocketObserver {
 
     /**
      * Dispatch an admin message to the associated resource handler or to the servers prefixed onAdmin functions
-
      * @param WebSocketAdminUser $user
      * @param stdClass $obj
      */
@@ -287,7 +286,6 @@ class WebSocketServer implements WebSocketObserver {
 
     /**
      * Dispatch incoming message to the associated resource and to the general onMessage event handler
-
      * @param IWebSocketUser $user
      * @param IWebSocketMessage $msg
      */
