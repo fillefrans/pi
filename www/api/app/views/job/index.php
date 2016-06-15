@@ -245,7 +245,7 @@
       $timers['getCacheId'] = microtime(true)-$getstart;
 
       $debug[] = 'Adding to report.';
-      if (false===($report_id = addToReport($request))) {
+      if (false===($report_id = addToReport($request, $cache_id))) {
         $reply['OK'] = 0;
         $reply['message'] = 'Unable to add number to report.';
         $debug[] = 'Unable to add number to report.';

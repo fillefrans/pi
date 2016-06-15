@@ -1,16 +1,15 @@
   /**
    *
-   * π v0.5.2.1
+   * π @v0.6.2.1
    *
    * @module Pi
    * @description Pi is an html5-based distributed client-server application platform.
    * 
-   * This is the client part.
+   * This is the javascript client.
    *
-   * @author Johan Telstad, jt@viewshq.no
-   * 
-   * @copyright Johan Telstad, 2011-2014
-   * @copyright Views AS, 2014-
+   * @author Johan Telstad, ViewHQ
+   *
+   * @license http://opensource.org/licenses/MIT  MIT
    * 
    * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 
    *           @copyright 2011 by Steven Littiebrant
@@ -22,10 +21,10 @@
       π  = π  || {};
 
 
-  /*  ----  Our top level namespaces  ----  */
+  /*  ----  top level namespaces  ----  */
 
 
-    // The core modules
+    // core modules
     π.core        = π.core        || { _loaded: false, _ns: 'core'      };
     π.callback    = π.callback    || { _loaded: false, _ns: 'callback'  };
     π.session     = π.session     || { _loaded: false, _ns: 'session'   };
@@ -34,7 +33,7 @@
     π.timer       = π.timer       || { _loaded: false, _ns: 'timer'     };
 
 
-    // The built-in libraries
+    // built-in libraries
     π.srv         = π.srv         || { _loaded: false, _ns: 'srv'       };
     π.app         = π.app         || { _loaded: false, _ns: 'app'       };
     π.pcl         = π.pcl         || { _loaded: false, _ns: 'pcl'       };
@@ -45,7 +44,9 @@
 
 
 
-    // For extending the platform
+    // For extending pi
+    π.ext         = π.ext         || { _loaded: false, _ns: 'ext'       };
+    π.fn          = π.fn          || { _loaded: false, _ns: 'fn'        };
     π.lib         = π.lib         || { _loaded: false, _ns: 'lib'       };
     π.util        = π.util        || { _loaded: false, _ns: 'util'      };
     π.plugins     = π.plugins     || { _loaded: false, _ns: 'plugins'   };
@@ -160,15 +161,9 @@
 
 
         /**
-         * This is where we optimize. Absolutely no blocking code allowed.
-         *
-         * This is the client side hub of our messaging system.
-         * It handles data routing, message passing and events independent of
-         * the DOM, using a pubsub approach to implement the Observer Model.
+         * The client-side hub of the pi messaging system.
+         * It handles data routing, message passing and pubsub events.
          * 
-         * This can be up to 10-100x faster than using built-in DOM events, or the jQuery approach.
-         * 
-         *
          * @author Johan Telstad, jt@viewshq.no, 2011-2014
          * 
          * @uses     PubSub.js  -  https://github.com/Groxx/PubSub 
@@ -218,21 +213,57 @@
            */
 
             var PubSub = function PubSub(obj_or_alsoPassPath_or_unique, alsoPassPath_or_unique, uniqueName) {
-              var unique = "_sub",
-              passPath = false,
-              bindTo = this;
+              var 
+                unique        = "_sub",
+                subscriptions = {},
+                passPath      = false,
+                bindTo        = this,
+
+
+                /**
+                 * Removes all instances of handler from the passed subscription chunk.
+                 * @param  {[type]} cache   [description]
+                 * @param  {[type]} handler [description]
+                 * @return {[type]}         [description]
+                 */
+                _unsubscribe = function (cache, handler) {
+                  for (var i = 0; i < cache[unique].length; i++) {
+                    if (handler === undefined || handler === null || cache[unique][i] === handler) {
+                      cache[unique].splice(i, 1);
+                      i--;
+                    }
+                  }
+                },
+
+                /**
+                 * Recursively removes all instances of handler from the passed subscription chunk.
+                 * @param  {[type]} cache   [description]
+                 * @param  {[type]} handler [description]
+                 * @return {[type]}         [description]
+                 */
+                _deepUnsubscribe = function (cache, handler) {
+                  for (sub in cache) {
+                    if (typeof cache[sub] != "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
+                    _deepUnsubscribe(cache[sub], handler);
+                  }
+                  _unsubscribe(cache, handler);
+                };
               
-              if ( typeof uniqueName == "string" ) {
+
+
+              // setup / config
+              
+              if (typeof uniqueName == "string") {
                 unique = uniqueName;
               } 
-              else if ( typeof alsoPassPath_or_unique == "string" ) {
+              else if (typeof alsoPassPath_or_unique == "string") {
                 unique = alsoPassPath_or_unique;
               } 
-              else if ( typeof obj_or_alsoPassPath_or_unique == "string" ) {
+              else if (typeof obj_or_alsoPassPath_or_unique == "string") {
                 unique = obj_or_alsoPassPath_or_unique;
               }
 
-              if ( typeof alsoPassPath_or_unique == "boolean" ) {
+              if (typeof alsoPassPath_or_unique == "boolean") {
                 passPath = alsoPassPath_or_unique;
               } else if (typeof obj_or_alsoPassPath_or_unique == "boolean") {
                 passPath = obj_or_alsoPassPath_or_unique;
@@ -243,79 +274,85 @@
               }
               
               // all subscriptions, nested.
-              var subscriptions = {};
               subscriptions[unique] = [];
               
-              // Removes all instances of handler from the passed subscription chunk.
-              var _unsubscribe = function (cache, handler) {
-                for(var i = 0; i < cache[unique].length; i++) {
-                  if (handler === undefined || handler === null || cache[unique][i] === handler) {
-                    cache[unique].splice(i, 1);
-                    i--;
-                  }
-                }
-              };
-              
-              // Recursively removes all instances of handler from the passed subscription chunk.
-              var _deepUnsubscribe = function (cache, handler) {
-                for(sub in cache) {
-                  if (typeof cache[sub] != "object" || sub === unique || !cache.hasOwnProperty(sub)) continue;
-                  _deepUnsubscribe(cache[sub], handler);
-                }
-                _unsubscribe(cache, handler);
-              };
-              
-              // Calls all handlers on the path to the passed subscription.
-              // ie, "a.b.c" would call "c", then "b", then "a".
-              // If any handler returns false, the event does not bubble up (all handlers at that level are still called)
+
+              /**
+               * Calls all handlers on the path to the passed subscription.
+               * Ie, "a.b.c" would call "c", then "b", then "a".
+               * If any handler returns false, the event does not bubble up (all handlers at that level are still called)
+               * 
+               * @param  {str}            sub
+               * @param  {Array|Object}   callback_args [description]
+               * @return {void}
+               */
               bindTo.publish = function (sub, callback_args) {
                 var 
-                  args = null;
+                  c, s,
+                  sub   = sub || "",
+                  args  = null,
+                  cache = subscriptions,
+                  stack = [],
+                  exit  = false;
 
                 if (arguments.length > 2) {
                   // If passing args as a set of args instead of an array, grab all but the first.
                   args = Array.prototype.slice.apply(arguments, [1]);
-                } else {
+                }
+                else {
                   args = [callback_args];
                 } 
                 
-                var 
-                  cache = subscriptions,
-                  stack = [];
 
-                sub = sub || "";
-                var s = sub.split(".");
-                if (passPath) args.push(s);
+                s = sub.split(".");
+
+                if (passPath) {
+                  args.push(s);
+                }
+
                 stack.push(cache);
-                for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                  if (cache[s[i]] === undefined) break;
+
+                for (var i = 0; i < s.length && s[i] !== ""; i++) {
+                  if (cache[s[i]] === undefined) {
+                    break;
+                  }
                   cache = cache[s[i]];
                   stack.push(cache);
                 }
-                var c;
-                var exit = false;
-                while((c = stack.pop())) {
-                  for(var j = 0; j < c[unique].length; j++) {
-                    if (c[unique][j].apply(this,args) === false) exit = true;
+                while ((c = stack.pop())) {
+                  for (var j = 0; j < c[unique].length; j++) {
+
+                    // if any handler returns boolean FALSE
+                    if (c[unique][j].apply(this,args) === false) {
+                      exit = true;
+                    }
                   }
-                  if (exit) break;
+                  if (exit) {
+                    break;
+                  }
                 }
                 return bindTo;
               };
 
               
               bindTo.subscribe = function (sub, handler) {
-                var cache = subscriptions;
-                sub = sub || "";
-                var s = sub.split(".");
-                for(var i = 0; i < s.length && s[i] !== ""; i++) {
+                var 
+                  s,
+                  cache = subscriptions;
+                  sub = sub || "";
+
+                s = sub.split(".");
+                
+                for (var i = 0; i < s.length && s[i] !== ""; i++) {
                   if (!cache[s[i]]) {
                     cache[s[i]] = {};
                     cache[s[i]][unique] = [];
                   }
                   cache = cache[s[i]];
                 }
+
                 cache[unique].push(handler);
+
                 return bindTo;
               };
               
@@ -324,15 +361,22 @@
               // If no handler is passed, all are removed.
               // If deep, recursively removes handlers beyond the passed sub.
               bindTo.unsubscribe = function (sub, handler, deep) {
-                var cache = subscriptions;
-                sub = sub || "";
-                if (sub != "") {
-                  var s = sub.split(".");
-                  for(var i = 0; i < s.length && s[i] !== ""; i++) {
-                    if (cache[s[i]] === undefined) return;
+                var 
+                  s,
+                  cache = subscriptions,
+                  sub   = sub || "";
+
+                if (sub) {
+                  s = sub.split(".");
+                  
+                  for (var i = 0; i < s.length && s[i] !== ""; i++) {
+                    if (cache[s[i]] === undefined) {
+                      return;
+                    }
                     cache = cache[s[i]];
                   }
                 }
+
                 if (typeof handler == "boolean") {
                   deep = handler;
                   handler = null;
@@ -344,8 +388,9 @@
                   _unsubscribe(cache, handler);
                 }
                 return bindTo;
-              };
-            };
+              }; //unsubscribe
+
+            }; // function PubSub()
 
 
           /*
@@ -375,7 +420,7 @@
           //  * @return {bool}                     Boolean FALSE on failure, or result from dispatchEvent()
           //  */
           
-          // π.events.trigger = function ( eventName, eventData, eventElem ) {
+          // π.events.trigger = function ( eventName, eventData, eventElem) {
           //   var
           //     eventName   = eventName || false,
           //     eventData   = eventData || null,
@@ -446,28 +491,9 @@
             // are we handicapped ?
             if (pi.browser.isIe() === true) {
               pi.events.publish(eventName, eventData, eventElem);
-              // pi.log("IE");
-
-              // v2.0 fuck it, don't even try
-              // try {
-
-
-              //   customEvt = document.createEvent("CustomEvent");
-              //   if (eventData) {
-              //     customEvt.initCustomEvent(eventName, false, false, eventData);
-              //   }
-              //   else {
-              //     customEvt.initCustomEvent(eventName, false, false, {});
-              //   }
-              //   dispatcher.dispatchEvent(customEvt);
-              // }
-              // catch(e) {
-              //   pi.log('Exception : ', e);
-              // }
             }
             else {
-              // we are not handicapped, and this is our actual function
-              // pi.log("triggering : " + eventName);
+              // nope!
               if (eventData) {
                 dispatcher.dispatchEvent(new CustomEvent( eventName, { detail : eventData } ));
               } else {
@@ -510,13 +536,30 @@
      * 
      * @return {Boolean} True if device is a handheld, false otherwise
      */
-    π.browser.isMobile = function (){
+    π.browser.isMobile = function () {
       return /ip(hone|od|ad)|android|blackberry.*applewebkit|bb1\d.*mobile/i.test(navigator.userAgent);
     }
 
 
+ 
+    /**
+     * UUID generator
+     * 
+     * @return  {str[36]}   RFC-4122 v4 UUID
+     *
+     * @author  broofa
+     * @see     http://stackoverflow.com/a/2117523/5027184
+     */
+    π.uuid = function () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var 
+          r = Math.random() * 16|0, 
+          v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+      });
+    }
 
-    /*    JS versions of PHP utility functions. (PHP under_score => JS camelCase)    */
+
 
     /**
      * JS version of PHP's is_array()
@@ -546,6 +589,7 @@
         padto   = padto   || false,
         padleft = padleft || false, // default is to pad on the right
         count   = 0,
+        str     = str.toString(),
         result  = str;
 
       count = padto - str.length;
@@ -554,7 +598,7 @@
         return str;
       }
 
-      for(;count--;) {
+      for (;count--;) {
         if (padleft) {
           result = padstr + result;
         }
@@ -565,7 +609,6 @@
 
       return result;
     };
-
 
     /**
      * JS version of PHP's basename()
@@ -583,39 +626,34 @@
         slashpos  = -1;
 
 
+      // skip the last character, if it's "/"
       if (filename.lastIndexOf("/") == filename.length-1) {
         filename.length--;
       }
 
       slashpos = filename.lastIndexOf("/");
       if (slashpos > -1) {
-        token = filename.substring(slashpos+1);
-        // pi.log("new token : " + token);
+        token = filename.substring(slashpos + 1);
       }
       else {
         token = filename;
-        // pi.log("token : " + token);
       }
 
-      if (ext && typeof ext === "string") {
-        var strlen = token.length;
-        if (token.lastIndexOf(ext) == (strlen - ext.length)) {
-          // pi.log("That's our baby : " + token.lastIndexOf(ext));
-          token = token.substring(0, token.lastIndexOf(ext));
-        }
-        else {
-          // pi.log("not our baby : " + token.lastIndexOf(ext));
+      if (ext && typeof ext == "string") {
+        var
+          pos = token.lastIndexOf(ext);
+
+        if (pos == (token.length - ext.length)) {
+          token = token.substring(0, pos);
         }
       }
 
-      // pi.log("returning : " + token);
       return token;
-
     };
 
 
 
-    // π utility functions
+    // utility functions
 
 
     /**
@@ -677,7 +715,7 @@
 
 
     /**
-     * π's internal string heap (not a real heap)
+     * π's internal string "heap" (not a real heap)
      * @type {Object}
      */
     π.heap = π.heap || {
@@ -826,7 +864,7 @@
         head  = head  || false,
         span  = document.getElementById(id) || null;
 
-      if ( !(span || value || id) ) {
+      if (!(span || value || id)) {
         return false;
       }
       if (head) {
@@ -860,7 +898,7 @@
       var
         i = array.length;
 
-      while(i--) {
+      while (i--) {
         // π.strPad = function (str, padto, padstr) {
         pi.log(pi.strPad(i, 4, " ") + " : " + array[i]);
       }
@@ -905,89 +943,6 @@
 
 
 
-    // π.search = function (token, obj, where, exact, multiple) {
-    //   var
-    //     result    = null,
-    //     multiple  = multiple  || false,
-    //     token     = token     || null,
-    //     obj       = obj       || null,
-    //     exact     = exact     || 1, // 1 => match exactly, 0 => match any occurrence
-    //     where     = where     || 0; // 0 => search both keys and values, 1 => keys, 2 => values
-
-    //   if ( !obj || !token ) {
-    //     pi.log("no obj");
-    //     return false;
-    //   }
-
-    //   for (var item in obj) {
-
-    //     if (!obj.hasOwnProperty(item)) {
-    //       pi.log("skipping : " + item.substring(0, 64));
-    //       continue;
-    //     }
-
-    //     if (where === 1 || where === 0) {
-    //       if ( exact === 1 && item == token ) {
-    //         pi.log("exact: " + item.substring(0, 64));
-    //         pi.log("returning : ", obj);
-    //           result = obj;
-    //         return obj;
-    //       }
-    //       else if ( exact === 0 && item.indexOf(token) != -1) {
-    //         pi.log("yes: " + item.substring(0, 64));
-    //         pi.log("returning : ", obj);
-    //           result = obj;
-    //         return obj;
-    //       }
-    //       else {
-    //         // pi.log("no: " + item.substring(0, 64));
-    //         result = false;
-    //       }
-    //     }
-
-    //    if ( typeof obj[item] == "object" ) {
-
-    //       pi.log("searching object " + item + " for " + token);
-    //       result = π.search(token, obj[item], where, exact);
-    //       pi.log("result : " + result);
-
-    //     }
-    //     else {
-
-    //       if (where === 2 || where === 0) {
-
-    //         if ( exact == 1 && obj[item] == token ) {
-    //           pi.log("exact: " + obj[item].toString().substring(0, 64));
-    //           pi.log("returning : ", obj);
-    //           result = obj;
-    //           return obj;
-    //         }
-    //         else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
-    //           pi.log("yes: " + obj[item].toString().substring(0, 64));
-    //           pi.log("returning : ", obj);
-    //           result = obj;
-    //           return obj;
-    //         }
-    //         else {
-    //           // pi.log("no: " + obj[item].toString().substring(0, 64));
-    //           result = false;
-    //         }
-    //       }
-
-    //     }
-
-
-    //   } // for var item in obj
-
-
-    //   return result;
-
-    // };
-
-
-
-
-
     /**
      * Search an object and its children
      * 
@@ -1008,7 +963,7 @@
         exact     = exact     || 1, // 1 => match exactly, 0 => match any occurrence
         where     = where     || 0; // 0 => search both keys and values, 1 => keys, 2 => values
 
-      if ( !obj || !token ) {
+      if (!obj || !token) {
         pi.log("no obj");
         return false;
       }
@@ -1047,13 +1002,13 @@
 
         if (where === 2 || where === 0) {
 
-          if ( exact == 1 && obj[item].toString() == token ) {
+          if (exact == 1 && obj[item].toString() == token) {
             // pi.log("exact: " + obj[item].toString().substring(0, 64));
             // pi.log("returning : ", obj);
             result = obj;
             return obj;
           }
-          else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
+          else if (exact == 0 && obj[item].toString().indexOf(token) != -1) {
             // pi.log("yes: " + obj[item].toString().substring(0, 64));
             // pi.log("returning : ", obj);
             result = obj;
@@ -1096,7 +1051,7 @@
         exact     = exact     || 1, // 1 => match exactly, 0 => match any occurrence
         where     = where     || 0; // 0 => search both keys and values, 1 => keys, 2 => values
 
-      if ( !obj || !token ) {
+      if (!obj || !token) {
         // pi.log("no obj");
         return false;
       }
@@ -1135,13 +1090,13 @@
 
         if (where === 2 || where === 0) {
 
-          if ( exact == 1 && obj[item].toString() == token ) {
+          if (exact == 1 && obj[item].toString() == token) {
             // pi.log("exact: " + obj[item].toString().substring(0, 64));
             // pi.log("returning : ", obj);
             result = obj;
             return obj;
           }
-          else if ( exact == 0 && obj[item].toString().indexOf(token) != -1) {
+          else if (exact == 0 && obj[item].toString().indexOf(token) != -1) {
             // pi.log("yes: " + obj[item].toString().substring(0, 64));
             // pi.log("returning : ", obj);
             result = obj;
@@ -1247,7 +1202,7 @@
       container.innerHTML = src;
       fragment.appendChild(container);
 
-      if ( elem && (elem != document.body) ) {
+      if (elem && (elem != document.body)) {
         π.clear(elem);
       }
 
@@ -1350,7 +1305,7 @@
 
       newobj = {};
       for (var i in obj) {
-        if ( (i % 1 === 0) ) {
+        if ((i % 1 === 0)) {
           // skip numerical indices
           // continue;
         }
@@ -1486,10 +1441,10 @@
     π.on = function (eventaddress, callback, capture) {
 
       // if object, attach all functions by name
-      if ( typeof eventaddress == "object" ) {
+      if (typeof eventaddress == "object") {
         var count = 0;
         for (var func in eventaddress) {
-          if ( eventaddress.hasOwnProperty(func) && (typeof eventaddress[func] == "function") ) {
+          if (eventaddress.hasOwnProperty(func) && (typeof eventaddress[func] == "function")) {
             count++;
             π.on(func, eventaddress[func], callback, capture || false);
           }
@@ -1523,11 +1478,11 @@
         eventaddress  = eventaddress  || false,
         timeout       = timeout       || π._const.DEFAULT_TIMEOUT;
       
-      if ( typeof eventaddress != "string" ) {
+      if (typeof eventaddress != "string") {
         return false;
       }
 
-      if ( eventaddress.substring(0,7) == 'pi.app.' ) {
+      if (eventaddress.substring(0,7) == 'pi.app.') {
         // await named event locally
         return π.events.subscribe(eventaddress, callback);
       }
@@ -1715,18 +1670,18 @@
           if (module.indexOf(" ") >=1) {
             var 
               modules = module.split(" ");
-            for (var i=0; i<modules.length; i++) { 
+            for (var i = 0; i < modules.length; i++) {
               // this may seem unnecessary, but is needed to facilitate the use case where
               // every required module is already loaded. In that case, we want to return immediately.
               // (i.e., we don't catch errors)
               result &= π.require(modules[i], async, defer, null, onerror); 
             }
-            if ( result && typeof callback === "function" ) { callback.call(this); }
+            if (result && typeof callback === "function") { callback.call(this); }
             return result;
           }
           // already loaded => early escape  |  NB: the regex is hardcoded, may occur otherwhere 
           if (π.loaded[module.replace(/\./g,'_')]) {
-            if ( typeof callback === "function" ) { callback.call(this); } 
+            if (typeof callback === "function") { callback.call(this); } 
             return true;
           }
 
@@ -1740,11 +1695,11 @@
       script.defer    = defer || false;
       // if you give a path, you also have to give a complete filename, with extension
       if (module.indexOf("/") >= 0) {
-        script.src      = module;
+        script.src = module;
       }
       // otherwise, we assume a js module from root /assets 
       else {
-        script.src      = path + module + '.js';
+        script.src = path + module + '.js';
       }
 
       script.modname  = module.replace(/\./g,'_');
@@ -1797,7 +1752,7 @@
           pi.log("Warning: starting timer " + timerid + " for a second time. Results unpredictable.");
         }
 
-        if ( typeof ontick == "function" ) {
+        if (typeof ontick == "function") {
           tickid = setInterval(ontick, interval);
         }
 
@@ -1998,7 +1953,7 @@
       }
     }
     π.timer.stop("_bootstrap");
-    // pi.events.trigger("pi.ready");
+    pi.events.trigger("pi.ready");
   };
 
   document.addEventListener('DOMContentLoaded',π._bootstrap);
@@ -2064,10 +2019,12 @@
       return accumulated;
   };
 
+
+
   /**
    * from Dustin Diaz - http://dustindiaz.com/rock-solid-addevent
    */
-    function addEvent( obj, type, fn ) {
+    function addEvent( obj, type, fn) {
 
       if (obj.addEventListener) {
         obj.addEventListener( type, fn, false );
@@ -2084,7 +2041,7 @@
       }
     }
 
-    var EventCache = function (){
+    var EventCache = function () {
       var listEvents = [];
       return {
         listEvents : listEvents,
@@ -2092,9 +2049,9 @@
           listEvents.push(arguments);
         },
 
-        flush : function (){
+        flush : function () {
           var i, item;
-          for(i = listEvents.length - 1; i >= 0; i = i - 1){
+          for (i = listEvents.length - 1; i >= 0; i = i - 1){
             item = listEvents[i];
             if (item[0].removeEventListener){
               item[0].removeEventListener(item[1], item[2], item[3]);
@@ -2176,8 +2133,8 @@
         callback      = callback      || null,
         capture       = capture       || null;
 
-      // handle alternative function signature (element, event, callback)
-      if (typeof eventaddress !== "string" && typeof callback == "string") {
+      // handle alternative function signature (element, eventaddress, callback, capture)
+      if (typeof eventaddress != "string" && typeof callback == "string") {
         elem          = eventaddress;
         eventaddress  = callback;
         callback      = capture;

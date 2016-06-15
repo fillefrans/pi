@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="../../assets/css/pi.pcl.css">
 
   <!-- the app CSS -->
-  <!-- <link href='http://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'> -->
+  <!-- <link href='https://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'> -->
   <link rel="stylesheet" href="assets/css/pi.app.css">
   <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
@@ -162,7 +162,7 @@
         viewReport      = null,
         reportProgress  = null,
 
-        reportid  = reportid || 6,
+        reportid  = reportid || 11,
         xhr       = null,
         count     = 0,
         address   = '/api/pi.db.query.php',
@@ -631,6 +631,10 @@
                 catch(e) {
                   pi.log('exception : ' + JSON.stringify(e), message[i]);
                 }
+                if (!packet) {
+                  continue;
+                }
+
 
                 var
                  datachunk = pi.copy(packet['row'], ['idx','direktinfo_id','isTMReserved','isDeceased','isHMReserved', 'isDMReserved']);
@@ -967,7 +971,7 @@
 
             // public init
             this.init();
-            this.reportid = 6;
+            this.reportid = 11;
 
             this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
 

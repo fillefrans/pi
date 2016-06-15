@@ -46,7 +46,7 @@
           }
           catch(e) {
             json = { 
-              error : "Easy Error : exception when parsing JSON string",
+              error : "Error : exception when parsing JSON string",
               jsonSource : this.responseText
             };
           }

@@ -22,6 +22,11 @@
     video           : document.getElementById("video"),
     container       : document.getElementById("apDiv2"),
     slideshow       : document.getElementById("slideshow"),
+    quote           : document.getElementById("ks_ad_quote"),
+    tagline         : document.getElementById("ks_ad_tagline"),
+    teaser          : document.getElementById("teaser"),
+    clickarea       : document.getElementById("clickarea"),
+
     videoController : {},
     loadedMetaData  : false,
     CLICKED         : false,
@@ -33,14 +38,18 @@
         self = π.ad.video,
         closebtn = document.getElementById("closebtn"),
         form = document.getElementById("form"),
-        logo = document.getElementById("ks_logo");
+        logo = document.getElementById("ks_logo"),
+        teaser = document.getElementById("teaser"),
+        clickarea = document.getElementById("clickarea");
 
       if (self.CLICKED === true) {
         // alert("you already clicked!");
         self.hideVideo();
-        // TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut, onComplete: self.hideVideo});
+        TweenLite.to(self.container, 0.2, {height:160, ease:Cubic.easeOut, onComplete: self.hideVideo});
         logo.style.opacity = 1;
         closebtn.style.display = "none";
+        teaser.style.display = "block";
+        clickarea.style.display = "none";
         // TweenLite.to(form, 1, {left:"1280px", ease:Cubic.easeOut});
         TextEffect.start();
         // self.intro.style.display = "block";
@@ -53,17 +62,24 @@
         $(closebtn).bind("click", self.onAdClick);
         closebtn.style.top = 0;
         closebtn.style.display = "block";
+        teaser.style.display = "none";
+        clickarea.style.display = "block";
         logo.style.opacity = 0;
 
         TextEffect.hide();
         // self.intro.stop();
-        // TweenLite.to(self.container, 0.4, {height:550, ease:Cubic.easeOut, onComplete: self.showVideo});
+        TweenLite.to(self.container, 0.4, {height:600, ease:Expo.easeOut, onComplete: self.showVideo});
         self.showVideo();
 
       }
       e.preventDefault();
     },
 
+
+    onLinkClick : function () {
+      self.video.pause();
+      window.open("http://www.krigssolv.no");
+    },
 
     showVideo : function () {
       var
@@ -101,6 +117,8 @@
     onEvent : function (e) {
       var
         event = e.event || false;
+
+      
 
       if(!!event && event == "video_play") {
       }
@@ -244,7 +262,11 @@
       }
       else {
         if (!!self.slideshow && typeof self.slideshow.addEventListener == "function") {
-          self.slideshow.addEventListener("click", this.onAdClick);
+          // self.slideshow.addEventListener("click", this.onAdClick);
+          self.ks_ad_quote.addEventListener("click", this.onAdClick);
+          self.ks_ad_tagline.addEventListener("click", this.onAdClick);
+          self.intro.addEventListener("click", this.onAdClick);
+          self.clickarea.addEventListener("click", this.onLinkClick);
           this.__init();
         }
         else {

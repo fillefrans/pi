@@ -100,7 +100,7 @@ processing through unix pipes.
 
 
 
-###Inspired
+###Inspirations
 * [Salvatore Sanfilippo](http://antirez.com/), creator of [Redis](http://redis.io)
 * unix toolchain
 * J. Paul Morrison's [Flow Based Programming](http://www.jpaulmorrison.com/fbp/) - [Wikipedia](http://en.wikipedia.org/wiki/Flow-based_programming)
@@ -108,16 +108,15 @@ processing through unix pipes.
 
 
 ####General
-* We require HTML5, using native functions wherever possible
+* Requires HTML5, using native functions wherever possible
 * prefer binary data representation in browser
 * use WebWorkers to do background processing
-* Use documentFragment when adding more than one node to the DOM at a time
 
 
 
 ####Server-side optimizations
 * Replace the PHP serializer with [igbinary](https://github.com/igbinary/igbinary).
-* Compile Redis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
+* Compile PHPRedis with  [ --enable-redis-igbinary ], to enable binary communication with Redis.
 * Compile Redis as 32-bit, even on 64-bit systems. This is more memory-efficient, as Redis is very pointer-intensive
 * Possible to use Redis for PHP session storage and application shared memory.
 
@@ -240,14 +239,13 @@ processing through unix pipes.
 
 ##Technologies
 
-* HTML5:  WebSockets, WebWorkers, native array functions (each, some, filter, typedarray, etc)
+* HTML5:  WebSockets, WebWorkers, typed arrays and native array functions (each, some, filter, etc)
 * [Varnish](http://varnish-cache.org)
 * [Redis](http://redis.io)
 * PHP
     - [phpredis](https://github.com/nicolasff/phpredis‎) 
     - [igbinary](https://github.com/igbinary/igbinary) 
     - [phpws](https://github.com/Devristo/phpws/)
-
 
 
 

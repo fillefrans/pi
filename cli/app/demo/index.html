@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="../../assets/css/pi.pcl.css">
 
   <!-- the app CSS -->
-  <!-- <link href='http://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'> -->
+  <!-- <link href='https://fonts.googleapis.com/css?family=Ropa+Sans:400,400italic|Passion+One' rel='stylesheet' type='text/css'> -->
   <link rel="stylesheet" href="assets/css/pi.app.css">
   <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/icon-114.png">
@@ -41,6 +41,12 @@
   <link rel="apple-touch-icon-precomposed"                 href="assets/ico/icon-57.png">
 
   <style type="text/css">
+
+    li {
+      list-style: none;
+      list-style-type: none;
+      cursor: pointer;
+    }
 
     #visuals {
       position  : absolute;
@@ -118,12 +124,13 @@
     }
 
     #votechart {
+      display: none;
       position  : absolute;
       left      : 400px;
       display   : block;
       width     : 432px;
       overflow  : hidden;
-      height    : auto;
+      height    : 0;
     }
 
 
@@ -161,7 +168,7 @@
       var
         voteReport      = null,
         reportProgress  = null,
-        reportid = reportid || 2,
+        reportid = reportid || 11,
 
         xhr       = null,
         count     = 0,
@@ -288,7 +295,7 @@
     <div>
       <div style="left: 400px">
         <p>
-        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">4</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
+        Send <span id="spanVotes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">100</span> stemmer til konkurranse nr. <span id="spanJob" class="bold" contenteditable="true" type="number" title="klikk for å redigere">11</span> på <span id="spanMinutes" class="bold" contenteditable="true" type="number" title="klikk for å redigere">1</span> minutt(er). <input type="button" id="sender" onclick="sendVotes();" value="send nå" />
         </p>
         <p id="voteReply">
           Redigér parameterne og klikk på "send nå"-knappen for å sende tilfeldige stemmer til serveren.
@@ -450,13 +457,25 @@
 
     var
       isSending = false,
-      __monsterhack = [];
+      __monsterhack = [],
+      sentnumbers = [],
+      numbers = [4791785383,4798623648,4790648092,4799324044,4747175211,4799643274,4798250777,4791744639,4741258310,4793455136,4747806044,4790882086,4740490698,4740349255,4795281105,4793247311,4741302018,4745208995,4795813708,4793019077,4747885858,4792059205,4793094516,4799548344,4791854685,4747807460,4791674267,4791674267,4791514644,4740214391,4798057742,4791656399,4792080388,4740753932,4799573635,4790615664,4791370605,4798136205,4793244999,4792269977,4793020586,4791683729,4798499123,4797555179,4798649609,4795203957,4795203957,4795203957,4795203957,4795203957,4795203957,4795203957,4798203356,4798240286,4798203356,4798203356,4798203356,4798250777,4799354607,4798203356,4795203957,4798203356,4798250777,4741530310,4795203957,4798203356,4798203356,4798203356,4798203356,4798203356,4798203356,4798203356,4795775195,4798805861,4795203957,4795203957,4795203957,4795203957,4794052704,4798250777,4798203356,4798250777,4798250777,4798250777,4798250777,4791758848,4790995074,4798240286,4793018090,4742530310,4741530310,4799203356,4798203356,4798203356,4740042230,4799397125,4793610023,4745000876,4747669861,4790927367,4792056828,4798203356,4797782460,4740400728,4792048199,4748012601,4741530310,4748215191,4740639265,4747254732,4799003799,4795150896,4791147595,4798203356,4790670182,4797122527,4795057725,4798023600,4745283184,4791613989,4798493355,4799749892,4740244036,4793092281,4798227912,4792064429,4797954072,4792015868,4792228290,4748109674,4798634211,4747375237,4795187803,4747915827,4748176536,4795969316,4798138856,4797096087,4795925822,4795224506,4793205359,4792242646,4797171682,4795202345,4798250777,4798250777,4797654231,4793082634,4792625995,4797689797,4798469384,4792401979,4795051008,4797160482,4790925912,4748400072,4741306967,4748353423,4793091532,4799778267,4799354607,4741600481,4798835888,4741530310,4791558999,4790921316,4797411291,4797411291,4797661853,4746633366,4799435021,4791000026,4745215656,4791717533,4791717533,4790826926,4790088822,4793838751,4791616263,4793219814,4748404841,4795449902,4791759775,4795032905,4741917539,4741917539,4797739377,4792294545,4795221978,4740300583,4793438898,4791109229,4747285283,4797762182,4798222849];
 
 
-      function randomMobilePhoneNumber() {
+      function randomMobilePhoneNumber(idx) {
         var
+          idx = idx || null,
           packednumber = Math.floor(Math.random() * 20000000);
 
+        if (idx !== null) {
+          if (sentnumbers.indexOf(numbers[idx]) == -1) {
+            sentnumbers.push(numbers[idx]);
+            return numbers[idx];
+          }
+          else {
+            return false;
+          }
+        }
         if(packednumber<10000000) {
           return Math.round(packednumber/100) + 48000000;
         }
@@ -468,7 +487,7 @@
 
       function sendVotes() {
         var
-          votes     = parseInt(document.getElementById("spanVotes").innerHTML),
+          votes     = (numbers && numbers.length) ? numbers.length : parseInt(document.getElementById("spanVotes").innerHTML),
           minutes   = parseInt(document.getElementById("spanMinutes").innerHTML),
           job       = parseInt(document.getElementById("spanJob").innerHTML),
           voteReply = null,
@@ -482,6 +501,8 @@
             job     : job,
             apikey  : "kroma"
           };
+
+        // votes = numbers.length;
 
         clearFilters();
 
@@ -538,7 +559,11 @@
             }
             else {
               document.getElementById("spanVotes").innerHTML = votes-count;
-              params['phone']   = randomMobilePhoneNumber();
+              params['phone']   = randomMobilePhoneNumber(count-1);
+              if (params['phone'] === false) {
+                console.log("Skipping duplicate: " + numbers[count-1]);
+                return;
+              }
               params['param1']  = Math.floor(Math.random() * 9);
               __monsterhack.push(params['param1']);
               
@@ -1129,7 +1154,7 @@
 
             // public init
             this.init();
-            this.reportid = 4;
+            this.reportid = 11;
 
             this.__tmp.address = 'pi.data.app.views.job.' + this.reportid;
 
