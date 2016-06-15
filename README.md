@@ -39,7 +39,7 @@ Central concepts : **channel**, **address**, **object** and **type**
      1 : auth
      2 : chat
      3 : debug
-     4 : warning
+     4 : file
      5 : error
      6 : log
      7 : type
@@ -50,6 +50,7 @@ Central concepts : **channel**, **address**, **object** and **type**
     12 : sys
     14 : push
     15 : zmq
+
 
 
 ####EXTERNAL ADDRESS
